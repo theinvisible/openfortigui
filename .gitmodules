@@ -1,0 +1,3 @@
+[submodule "openfortivpn"]
+	path = openfortivpn
+	url = https://github.com/adrienverge/openfortivpn.git
