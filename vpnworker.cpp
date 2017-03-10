@@ -20,7 +20,7 @@ void vpnWorker::process()
     cfg.gateway_port = 10443;
     strncpy(cfg.username, "***REMOVED***", FIELD_SIZE);
     cfg.username[FIELD_SIZE] = '\0';
-    strncpy(cfg.password, "", FIELD_SIZE);
+    strncpy(cfg.password, "***REMOVED***", FIELD_SIZE);
     cfg.password[FIELD_SIZE] = '\0';
     cfg.set_routes = 1;
     run_tunnel(&cfg);

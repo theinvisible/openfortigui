@@ -4,7 +4,9 @@
 #include "vpnworker.h"
 #include "vpnworker2.h"
 
-#include "QThread"
+#include <QThread>
+#include <QProcess>
+#include <QTextStream>
 
 extern "C"  {
 #include "openfortivpn/src/config.h"
@@ -33,12 +35,35 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->show();
     tray->setContextMenu(menu);
 
-    increase_verbosity();
+    QTextStream out(stdout);
+    QStringList arguments;
+    arguments << "-start-vpn";
+
+    QProcess *vpn1 = new QProcess(this);
+    out << "Start vpn";
+    vpn1->start("./openfortigui", arguments);
+    vpn1->waitForStarted();
+    vpn1->waitForReadyRead();
+    out << "Start read";
+    out << vpn1->readAll();
+
+    QProcess *vpn2 = new QProcess(this);
+    out << "Start vpn2";
+    vpn2->start("./openfortigui", arguments);
+    vpn2->waitForStarted();
+    vpn2->waitForReadyRead();
+    out << "Start read";
+    out << vpn2->readAll();
+
+
+    //QProcess *vpn2 = new QProcess(this);
+    //vpn2->start("openfortigui", arguments);
+
+    /*
     increase_verbosity();
     increase_verbosity();
     increase_verbosity();
 
-    /*
     struct vpn_config cfg;
     memset(&cfg, 0, sizeof (cfg));
     strncpy(cfg.gateway_host, "***REMOVED***", FIELD_SIZE);
@@ -52,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
     run_tunnel(&cfg);
     */
 
+    /*
     QThread* thread = new QThread;
     vpnWorker* worker = new vpnWorker();
     worker->moveToThread(thread);
@@ -75,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //connect(worker, SIGNAL(diskRemoved(DeviceDisk*)), this, SLOT(onDiskRemoved(DeviceDisk*)));
     //connect(worker, SIGNAL(diskAdded(DeviceDisk*)), this, SLOT(onDiskAdded(DeviceDisk*)));
     thread2->start();
+    */
 }
 
 MainWindow::~MainWindow()
