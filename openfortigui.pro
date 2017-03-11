@@ -38,7 +38,8 @@ HEADERS  += mainwindow.h \
     openfortivpn/src/userinput.h \
     openfortivpn/src/xml.h \
     vpnworker.h \
-    vpnworker2.h
+    vpnworker2.h \
+    config.h
 
 FORMS    += mainwindow.ui
 
