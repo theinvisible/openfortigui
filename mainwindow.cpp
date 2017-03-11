@@ -37,11 +37,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QTextStream out(stdout);
     QStringList arguments;
+    arguments << "./openfortigui";
     arguments << "-start-vpn";
 
     QProcess *vpn1 = new QProcess(this);
     out << "Start vpn";
-    vpn1->start("./openfortigui", arguments);
+    vpn1->start("sudo", arguments);
     vpn1->waitForStarted();
     vpn1->waitForReadyRead();
     out << "Start read";
@@ -49,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QProcess *vpn2 = new QProcess(this);
     out << "Start vpn2";
-    vpn2->start("./openfortigui", arguments);
+    vpn2->start("sudo", arguments);
     vpn2->waitForStarted();
     vpn2->waitForReadyRead();
     out << "Start read";
