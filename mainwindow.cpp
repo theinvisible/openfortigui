@@ -1,9 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "vpnworker.h"
-#include "vpnworker2.h"
-
 #include <QThread>
 #include <QProcess>
 #include <QTextStream>
@@ -13,6 +10,8 @@ extern "C"  {
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 }
+
+vpnManager *MainWindow::vpnmanager = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->show();
     tray->setContextMenu(menu);
 
+    vpnmanager = new vpnManager(this);
+
+    /*
     QTextStream out(stdout);
     QStringList arguments;
     arguments << "./openfortigui";
@@ -63,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vpn2->waitForReadyRead();
     out << "Start read";
     out << vpn2->readAll();
+    */
 
 
     //QProcess *vpn2 = new QProcess(this);

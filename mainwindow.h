@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+#include "vpnmanager.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -13,6 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     QSystemTrayIcon *tray;
+    static vpnManager *vpnmanager;
 
 public:
     explicit MainWindow(QWidget *parent = 0);

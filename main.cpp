@@ -1,15 +1,63 @@
 #include "mainwindow.h"
 
 #include "config.h"
+#include "ticonfmain.h"
 
 #include <QApplication>
 #include <QCoreApplication>
 #include <QTextStream>
 #include <QCommandLineParser>
+#include <QtDebug>
+#include <QFile>
+#include <QDateTime>
+
+QFile *openfortiguiLog = 0;
+
+void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString & str)
+{
+    const char * msg = str.toStdString().c_str();
+
+    tiConfMain main_settings;
+
+    if(openfortiguiLog == 0)
+    {
+        openfortiguiLog = new QFile(QString("%1/tibackup.log").arg(main_settings.getValue("paths/logs").toString()));
+        openfortiguiLog->open(QIODevice::Append | QIODevice::Text);
+    }
+
+    bool tidebug = main_settings.getValue("main/debug").toBool();
+
+    QTextStream sout(stdout);
+    QTextStream out(openfortiguiLog);
+    QDateTime currentDate = QDateTime::currentDateTime();
+
+    switch (type) {
+    case QtDebugMsg:
+        if(tidebug == true)
+            out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Debug: " << str << "\n";
+        break;
+    case QtWarningMsg:
+        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Warning: " << str << "\n";
+        break;
+    case QtCriticalMsg:
+        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Critical: " << str << "\n";
+        break;
+    case QtInfoMsg:
+        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Info: " << str << "\n";
+        sout << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Info: " << str << "\n";
+        break;
+    case QtFatalMsg:
+        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Fatal: " << str << "\n";
+        openfortiguiLog->flush();
+        abort();
+    }
+
+    openfortiguiLog->flush();
+}
 
 int main(int argc, char *argv[])
 {
-    QTextStream out(stdout);
+    qInstallMessageHandler(logMessageOutput);
 
     if(argc > 1)
     {
@@ -22,7 +70,7 @@ int main(int argc, char *argv[])
         parser.addHelpOption();
         parser.addVersionOption();
 
-        QCommandLineOption startVpnProcess("start-vpn", QCoreApplication::translate("main", "Start vpn-process"));
+        QCommandLineOption startVpnProcess("start-vpn", QCoreApplication::translate("main", "Start vpn-process [must be run as root]"));
         parser.addOption(startVpnProcess);
 
         QCommandLineOption vpnName("vpn-name",
@@ -37,16 +85,14 @@ int main(int argc, char *argv[])
 
         if(startvpn && !vpnname.isEmpty())
         {
-            out << QString("start-vpn process::") << vpnname;
-            out.flush();
+            qInfo() << QString("start-vpn process::") << vpnname;
 
             return a.exec();
         }
     }
     else
     {
-        out << QString("start-main::");
-        out.flush();
+        qInfo() << QString("start-main::");
 
         QApplication a(argc, argv);
         QApplication::setApplicationName(openfortigui_config::name);

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     openfortivpn/src/userinput.c \
     openfortivpn/src/xml.c \
     vpnworker.cpp \
-    vpnworker2.cpp
+    vpnworker2.cpp \
+    vpnmanager.cpp \
+    ticonfmain.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -39,7 +41,9 @@ HEADERS  += mainwindow.h \
     openfortivpn/src/xml.h \
     vpnworker.h \
     vpnworker2.h \
-    config.h
+    config.h \
+    vpnmanager.h \
+    ticonfmain.h
 
 FORMS    += mainwindow.ui
 
