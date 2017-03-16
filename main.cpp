@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "ticonfmain.h"
+#include "proc/vpnprocess.h"
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -21,7 +22,7 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
 
     if(openfortiguiLog == 0)
     {
-        openfortiguiLog = new QFile(QString("%1/tibackup.log").arg(main_settings.getValue("paths/logs").toString()));
+        openfortiguiLog = new QFile(QString("%1/openfortigui.log").arg(main_settings.getValue("paths/logs").toString()));
         openfortiguiLog->open(QIODevice::Append | QIODevice::Text);
     }
 
@@ -86,6 +87,8 @@ int main(int argc, char *argv[])
         if(startvpn && !vpnname.isEmpty())
         {
             qInfo() << QString("start-vpn process::") << vpnname;
+            vpnProcess proc;
+            proc.run(vpnname);
 
             return a.exec();
         }

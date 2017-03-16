@@ -5,6 +5,8 @@
 #include <QLocalSocket>
 #include <QLocalServer>
 
+class vpnClientConnection;
+
 class vpnManager : public QObject
 {
     Q_OBJECT
@@ -17,11 +19,30 @@ public:
 private:
 
     QLocalServer *server;
+    QMap<QString, vpnClientConnection*> connections;
 
 signals:
 
 public slots:
-    void onServerConnected();
+    void onClientConnected();
+};
+
+class vpnClientConnection : public QObject
+{
+    Q_OBJECT
+public:
+
+    explicit vpnClientConnection(const QString &n, QLocalSocket *sock, QObject *parent = 0);
+
+private:
+    QString name;
+    QLocalSocket *socket;
+
+signals:
+
+public slots:
+    void onClientReadyRead();
+    void onClientDisconnected();
 };
 
 #endif // VPNMANAGER_H

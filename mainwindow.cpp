@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->setContextMenu(menu);
 
     vpnmanager = new vpnManager(this);
+    vpnmanager->startvpn1();
 
     /*
     QTextStream out(stdout);
