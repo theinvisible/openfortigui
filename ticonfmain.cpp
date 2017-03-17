@@ -217,6 +217,7 @@ vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname)
 
 bool tiConfVpnProfiles::removeVpnProfileByName(const QString &vpnname)
 {
+    qInfo() << "deletevpn:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), vpnname);
     return QFile::remove(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), vpnname));
 }
 

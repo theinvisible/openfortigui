@@ -57,6 +57,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btnEditVPN">
+        <property name="text">
+         <string>Edit VPN</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnAddVPN">
         <property name="text">
          <string>Add VPN</string>

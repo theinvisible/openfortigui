@@ -9,7 +9,8 @@
 vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) :
     QWidget(parent),
     ui(new Ui::vpnProfileEditor),
-    mode(smode)
+    mode(smode),
+    config(0)
 {
     ui->setupUi(this);
 }
@@ -17,6 +18,34 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
 vpnProfileEditor::~vpnProfileEditor()
 {
     delete ui;
+}
+
+void vpnProfileEditor::loadVpnProfile(const QString &profile)
+{
+    tiConfVpnProfiles vpns;
+    config = vpns.getVpnProfileByName(profile);
+
+    ui->leName->setText(config->name);
+    ui->leGatewayHost->setText(config->gateway_host);
+    ui->sBGatewayPort->setValue(config->gateway_port);
+    ui->leUsername->setText(config->username);
+    ui->lePassword->setText(config->password);
+
+    if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
+    {
+        ui->gbCertificate->setChecked(true);
+
+        ui->leCAFile->setText(config->ca_file);
+        ui->leUserCert->setText(config->user_cert);
+        ui->leUserKey->setText(config->user_key);
+        ui->cbVerifyCert->setChecked(config->verify_cert);
+    }
+
+    ui->leOTP->setText(config->otp);
+    ui->cbSetRoutes->setChecked(config->set_routes);
+    ui->cbSetDNS->setChecked(config->set_dns);
+    ui->cbPPPDUsePeerDNS->setChecked(config->pppd_use_peerdns);
+    ui->cbInsecureSSL->setChecked(config->insecure_ssl);
 }
 
 void vpnProfileEditor::on_btnChooseUserCert_clicked()
@@ -83,32 +112,47 @@ void vpnProfileEditor::on_btnSave_clicked()
     tiConfVpnProfiles vpns;
     vpnProfile vpn;
 
-    if(mode == vpnProfileEditorModeNew)
+    if(mode == vpnProfileEditorModeEdit)
     {
         vpn.name = ui->leName->text();
-        vpn.gateway_host = ui->leGatewayHost->text();
-        vpn.gateway_port = ui->sBGatewayPort->text().toInt();
-        vpn.username = ui->leUsername->text();
-        vpn.password = ui->lePassword->text();
+        if(vpn.name != config->name)
+            vpns.renameVpnProfile(config->name, vpn.name);
 
-        if(ui->gbCertificate->isChecked())
+        if(!ui->gbCertificate->isChecked())
         {
-            vpn.ca_file = ui->leCAFile->text();
-            vpn.user_cert = ui->leUserCert->text();
-            vpn.user_key = ui->leUserKey->text();
-            vpn.verify_cert = ui->cbVerifyCert->isChecked();
+            vpn.ca_file = "";
+            vpn.user_cert = "";
+            vpn.user_key = "";
+            vpn.verify_cert = false;
         }
-
-        vpn.otp = ui->leOTP->text();
-        vpn.set_routes = ui->cbSetRoutes->isChecked();
-        vpn.set_dns = ui->cbSetDNS->isChecked();
-        vpn.pppd_use_peerdns = ui->cbPPPDUsePeerDNS->isChecked();
-        vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
-
-        vpns.saveVpnProfile(vpn);
     }
+
+    vpn.name = ui->leName->text();
+    vpn.gateway_host = ui->leGatewayHost->text();
+    vpn.gateway_port = ui->sBGatewayPort->text().toInt();
+    vpn.username = ui->leUsername->text();
+    vpn.password = ui->lePassword->text();
+
+    if(ui->gbCertificate->isChecked())
+    {
+        vpn.ca_file = ui->leCAFile->text();
+        vpn.user_cert = ui->leUserCert->text();
+        vpn.user_key = ui->leUserKey->text();
+        vpn.verify_cert = ui->cbVerifyCert->isChecked();
+    }
+
+    vpn.otp = ui->leOTP->text();
+    vpn.set_routes = ui->cbSetRoutes->isChecked();
+    vpn.set_dns = ui->cbSetDNS->isChecked();
+    vpn.pppd_use_peerdns = ui->cbPPPDUsePeerDNS->isChecked();
+    vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
+
+    vpns.saveVpnProfile(vpn);
 
     parentWidget()->close();
 
-    emit vpnAdded(vpn);
+    if(mode == vpnProfileEditorModeEdit)
+        emit vpnEdited(vpn);
+    else if(mode == vpnProfileEditorModeNew)
+        emit vpnAdded(vpn);
 }

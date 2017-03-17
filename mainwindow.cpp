@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QDesktopWidget>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 extern "C"  {
 #include "openfortivpn/src/config.h"
@@ -33,27 +34,17 @@ MainWindow::MainWindow(QWidget *parent) :
     move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
 
     QStringList headers;
-    headers << trUtf8("Name") << trUtf8("Gateway") << trUtf8("Benutzer");
+    headers << trUtf8("Status") << trUtf8("Name") << trUtf8("Gateway") << trUtf8("Benutzer");
 
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
 
     ui->tvVpnProfiles->setModel(model);
 
-    QMenu *menu = new QMenu();
-    menu->addAction("Beenden");
-    menu->addAction("Hauptfenster öffnen");
-    menu->addSeparator();
-    menu->addAction(QIcon(":/img/disconnected.png"), "vpn1");
-    menu->addAction(QIcon(":/img/connected.png"), "vpn2");
-    menu->addAction(QIcon(":/img/disconnected.png"), "vpn3");
-    menu->addAction(QIcon(":/img/disconnected.png"), "vpn4");
-    menu->addAction(QIcon(":/img/connected.png"), "vpn5");
-
     tray = new QSystemTrayIcon(this);
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
-    tray->setContextMenu(menu);
+    //tray->setContextMenu(menu);
 
     refreshVpnProfileList();
 
@@ -160,8 +151,85 @@ void MainWindow::on_btnAddVPN_clicked()
     prefWindow->show();
 }
 
+void MainWindow::on_btnDeleteVPN_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    //ui->tvBackupFolders->selectedItems();
+
+    qDebug() << "MainWindow::on_btnDeleteVPN_clicked() -> remove vpn with name::" << vpnName;
+
+    int ret = QMessageBox::warning(this, trUtf8("Delete VPN"),
+                                trUtf8("Warning, the selected vpn will be deleted, continue?"),
+                                QMessageBox::Yes | QMessageBox::No);
+
+    switch(ret)
+    {
+    case QMessageBox::Yes:
+        break;
+    case QMessageBox::No:
+    default:
+        return;
+    }
+
+    tiConfVpnProfiles vpnss;
+    if(vpnss.removeVpnProfileByName(vpnName))
+    {
+        refreshVpnProfileList();
+    }
+    else
+    {
+        QMessageBox::information(this, trUtf8("Delete VPN"), trUtf8("The selected vpn could not be deleted, an error occured."));
+    }
+}
+
+void MainWindow::on_btnEditVPN_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeEdit);
+    f->loadVpnProfile(vpnName);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN"));
+
+    connect(f, SIGNAL(vpnEdited(vpnProfile)), this, SLOT(onvpnEdited(vpnProfile)));
+    prefWindow->show();
+}
+
+void MainWindow::on_tvVpnProfiles_doubleClicked(const QModelIndex &index)
+{
+    on_btnEditVPN_clicked();
+}
+
 
 void MainWindow::onvpnAdded(const vpnProfile &vpn)
+{
+    refreshVpnProfileList();
+}
+
+void MainWindow::onvpnEdited(const vpnProfile &vpn)
 {
     refreshVpnProfileList();
 }
@@ -177,7 +245,16 @@ void MainWindow::refreshVpnProfileList()
     QStandardItem *item = 0;
     QStandardItem *item2 = 0;
     QStandardItem *item3 = 0;
+    QStandardItem *item4 = 0;
     int row = model->rowCount();
+
+    QMenu *menu = tray->contextMenu();
+    if(menu == 0)
+        menu = new QMenu();
+    menu->clear();
+    menu->addAction("Beenden");
+    menu->addAction("Hauptfenster öffnen");
+    menu->addSeparator();
 
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
     for(int i=0; i < vpns.count(); i++)
@@ -188,15 +265,24 @@ void MainWindow::refreshVpnProfileList()
         item = new QStandardItem(vpn->name);
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
+        item4 = new QStandardItem(QIcon(":/img/disconnected.png"), "");
 
         row = model->rowCount();
-        model->setItem(row, 0, item);
-        model->setItem(row, 1, item2);
-        model->setItem(row, 2, item3);
+        model->setItem(row, 0, item4);
+        model->setItem(row, 1, item);
+        model->setItem(row, 2, item2);
+        model->setItem(row, 3, item3);
+
+        // Menu
+        menu->addAction(QIcon(":/img/disconnected.png"), vpn->name);
     }
 
-    ui->tvVpnProfiles->header()->resizeSection(0, 150);
-    ui->tvVpnProfiles->header()->resizeSection(1, 300);
+    ui->tvVpnProfiles->header()->resizeSection(0, 50);
+    ui->tvVpnProfiles->header()->resizeSection(1, 150);
+    ui->tvVpnProfiles->header()->resizeSection(2, 300);
+    ui->tvVpnProfiles->sortByColumn(1);
+
+    tray->setContextMenu(menu);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)

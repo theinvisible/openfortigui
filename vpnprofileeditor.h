@@ -23,10 +23,13 @@ public:
     explicit vpnProfileEditor(QWidget *parent = 0, vpnProfileEditorMode smode = vpnProfileEditorModeNew);
     ~vpnProfileEditor();
 
+    void loadVpnProfile(const QString &profile);
+
 private:
     Ui::vpnProfileEditor *ui;
 
     vpnProfileEditorMode mode;
+    vpnProfile *config;
 
 private slots:
     void on_btnChooseUserCert_clicked();

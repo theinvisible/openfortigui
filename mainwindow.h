@@ -24,7 +24,12 @@ public:
 
 private slots:
     void on_btnAddVPN_clicked();
+    void on_btnDeleteVPN_clicked();
+    void on_btnEditVPN_clicked();
+    void on_tvVpnProfiles_doubleClicked(const QModelIndex &index);
+
     void onvpnAdded(const vpnProfile &vpn);
+    void onvpnEdited(const vpnProfile &vpn);
 
 private:
     Ui::MainWindow *ui;
