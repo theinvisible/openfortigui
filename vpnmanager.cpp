@@ -59,6 +59,7 @@ vpnClientConnection::vpnClientConnection(const QString &n, QLocalSocket *sock, Q
     connect(socket, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
 
+    /*
     QThread::sleep(5);
 
     QByteArray block;
@@ -71,6 +72,7 @@ vpnClientConnection::vpnClientConnection(const QString &n, QLocalSocket *sock, Q
 
     socket->write(block);
     socket->flush();
+    */
 }
 
 void vpnClientConnection::onClientReadyRead()

@@ -4,12 +4,17 @@
 #include <QThread>
 #include <QProcess>
 #include <QTextStream>
+#include <QDesktopWidget>
+#include <QStandardItemModel>
 
 extern "C"  {
 #include "openfortivpn/src/config.h"
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 }
+
+#include "ticonfmain.h"
+#include "vpnprofileeditor.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -18,6 +23,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    installEventFilter(this);
+
+    vpnmanager = new vpnManager(this);
+
+    // Center window on startup
+    QRect geom = QApplication::desktop()->availableGeometry();
+    move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
+
+    QStringList headers;
+    headers << trUtf8("Name") << trUtf8("Gateway") << trUtf8("Benutzer");
+
+    QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
+    model->setHorizontalHeaderLabels(headers);
+
+    ui->tvVpnProfiles->setModel(model);
 
     QMenu *menu = new QMenu();
     menu->addAction("Beenden");
@@ -34,8 +55,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->show();
     tray->setContextMenu(menu);
 
-    vpnmanager = new vpnManager(this);
-    vpnmanager->startvpn1();
+    refreshVpnProfileList();
+
+    //vpnmanager = new vpnManager(this);
+    //vpnmanager->startvpn1();
 
     /*
     QTextStream out(stdout);
@@ -120,4 +143,84 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_btnAddVPN_clicked()
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeNew);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN"));
+
+    connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    prefWindow->show();
+}
+
+
+void MainWindow::onvpnAdded(const vpnProfile &vpn)
+{
+    refreshVpnProfileList();
+}
+
+void MainWindow::refreshVpnProfileList()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    tiConfVpnProfiles vpnss;
+    vpnss.readVpnProfiles();
+
+    model->removeRows(0, model->rowCount());
+
+    QStandardItem *item = 0;
+    QStandardItem *item2 = 0;
+    QStandardItem *item3 = 0;
+    int row = model->rowCount();
+
+    QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
+    for(int i=0; i < vpns.count(); i++)
+    {
+        vpnProfile *vpn = vpns.at(i);
+        qDebug() << "MainWindow::refreshVpnProfileList() -> vpnprofiles found::" << vpn->name;
+
+        item = new QStandardItem(vpn->name);
+        item2 = new QStandardItem(vpn->gateway_host);
+        item3 = new QStandardItem(vpn->username);
+
+        row = model->rowCount();
+        model->setItem(row, 0, item);
+        model->setItem(row, 1, item2);
+        model->setItem(row, 2, item3);
+    }
+
+    ui->tvVpnProfiles->header()->resizeSection(0, 150);
+    ui->tvVpnProfiles->header()->resizeSection(1, 300);
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+    if(object == this && event->type() == QEvent::Close)
+    {
+        /*
+        int ret = QMessageBox::warning(this, QString::fromUtf8("Fenster schließen"),
+                                    QString::fromUtf8("Alle Änderungen gehen verloren. Fortfahren?"),
+                                    QMessageBox::Yes | QMessageBox::No);
+
+        switch(ret)
+        {
+        case QMessageBox::Yes:
+            return false;
+        case QMessageBox::No:
+        default:
+            event->ignore();
+            return true;
+        }
+        */
+
+        return false;
+    }
+
+    return false;
 }

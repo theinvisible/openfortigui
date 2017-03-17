@@ -26,6 +26,8 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 
 #include <QSettings>
 
+#include "vpnprofile.h"
+
 class tiConfMain
 {
 public:
@@ -38,8 +40,32 @@ public:
     void setValue(const QString &iniPath, const QVariant &val);
     void sync();
 
+    static QString formatPath(const QString &path);
+
 private:
     QSettings *settings;
+};
+
+class tiConfVpnProfiles
+{
+public:
+    tiConfVpnProfiles();
+    ~tiConfVpnProfiles();
+
+    void saveVpnProfile(const vpnProfile &profile);
+    void readVpnProfiles();
+
+    QList<vpnProfile*> getVpnProfiles();
+    vpnProfile* getVpnProfileByName(const QString &vpnname);
+
+    bool removeVpnProfileByName(const QString &vpnname);
+
+    bool renameVpnProfile(const QString &oldname, const QString &newname);
+
+private:
+    tiConfMain *main_settings;
+
+    QList<vpnProfile*> vpnprofiles;
 };
 
 #endif // TICONFMAIN_H

@@ -28,7 +28,7 @@ namespace openfortigui_config
 {
     static const char __attribute__ ((unused)) *name = "openfortiGUI";
     static const char __attribute__ ((unused)) *version = "0.1-dev";
-    static const char __attribute__ ((unused)) *file_main = "/etc/openfortigui/main.conf";
+    static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
     static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
     static const char __attribute__ ((unused)) *api_vpn_base_name = "openfortiguivpn";
     static const char __attribute__ ((unused)) *vpnprofiles_local = "~/.openfortigui/vpnprofiles";

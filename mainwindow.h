@@ -5,6 +5,7 @@
 #include <QSystemTrayIcon>
 
 #include "vpnmanager.h"
+#include "vpnprofile.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,8 +22,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_btnAddVPN_clicked();
+    void onvpnAdded(const vpnProfile &vpn);
+
 private:
     Ui::MainWindow *ui;
+
+    void refreshVpnProfileList();
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // MAINWINDOW_H

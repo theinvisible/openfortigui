@@ -28,7 +28,9 @@ SOURCES += main.cpp\
     vpnmanager.cpp \
     ticonfmain.cpp \
     vpnapi.cpp \
-    proc/vpnprocess.cpp
+    proc/vpnprocess.cpp \
+    vpnprofile.cpp \
+    vpnprofileeditor.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -47,9 +49,12 @@ HEADERS  += mainwindow.h \
     vpnmanager.h \
     ticonfmain.h \
     vpnapi.h \
-    proc/vpnprocess.h
+    proc/vpnprocess.h \
+    vpnprofile.h \
+    vpnprofileeditor.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    vpnprofileeditor.ui
 
 RESOURCES += \
     res.qrc
