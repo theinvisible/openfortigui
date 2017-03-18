@@ -1,3 +1,6 @@
 [submodule "openfortivpn"]
 	path = openfortivpn
 	url = https://github.com/adrienverge/openfortivpn.git
+[submodule "qtinyaes"]
+	path = qtinyaes
+	url = https://github.com/Skycoder42/QTinyAes.git

@@ -14,8 +14,10 @@ extern "C"  {
 #include "openfortivpn/src/tunnel.h"
 }
 
+#include "config.h"
 #include "ticonfmain.h"
 #include "vpnprofileeditor.h"
+#include "qtinyaes/QTinyAes/qtinyaes.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -44,9 +46,21 @@ MainWindow::MainWindow(QWidget *parent) :
     tray = new QSystemTrayIcon(this);
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
-    //tray->setContextMenu(menu);
+
+    ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect");
+    ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect");
 
     refreshVpnProfileList();
+
+    QTinyAes aes(QTinyAes::CBC, openfortigui_config::aeskey, "random_iv_128bit");
+
+    QString n = "Rene";
+    qInfo() << "orig::" << n;
+    QByteArray cipher = aes.encrypt(n.toUtf8());
+    QString cstring = QString::fromUtf8(cipher.toBase64());
+    qInfo() << "ciper::" << cstring;
+    QString res = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(cstring.toUtf8())));
+    qInfo() << "result::" << res;
 
     //vpnmanager = new vpnManager(this);
     //vpnmanager->startvpn1();

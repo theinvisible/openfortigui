@@ -87,11 +87,14 @@
     <property name="title">
      <string>Datei</string>
     </property>
-    <addaction name="actionBeenden"/>
+    <addaction name="actionExit"/>
    </widget>
    <addaction name="menuDatei"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="tbActions">
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -100,9 +103,9 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionBeenden">
+  <action name="actionExit">
    <property name="text">
-    <string>Beenden</string>
+    <string>Exit</string>
    </property>
   </action>
  </widget>

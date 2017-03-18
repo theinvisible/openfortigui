@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = openfortigui
 TEMPLATE = app
 
+CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -30,7 +31,9 @@ SOURCES += main.cpp\
     vpnapi.cpp \
     proc/vpnprocess.cpp \
     vpnprofile.cpp \
-    vpnprofileeditor.cpp
+    vpnprofileeditor.cpp \
+    qtinyaes/QTinyAes/qtinyaes.cpp \
+    qtinyaes/QTinyAes/tiny-AES128-C/aes.c
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -51,7 +54,9 @@ HEADERS  += mainwindow.h \
     vpnapi.h \
     proc/vpnprocess.h \
     vpnprofile.h \
-    vpnprofileeditor.h
+    vpnprofileeditor.h \
+    qtinyaes/QTinyAes/tiny-AES128-C/aes.h \
+    qtinyaes/QTinyAes/qtinyaes.h
 
 FORMS    += mainwindow.ui \
     vpnprofileeditor.ui
