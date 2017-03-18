@@ -28,6 +28,7 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include <QDirIterator>
 
 #include "config.h"
+#include "qtinyaes/QTinyAes/qtinyaes.h"
 
 tiConfMain::tiConfMain()
 {
@@ -71,6 +72,7 @@ void tiConfMain::initMainConf()
 
         QSettings conf(tiConfMain::formatPath(openfortigui_config::file_main), QSettings::IniFormat);
         conf.setValue("main/debug", true);
+        conf.setValue("main/aeskey", openfortigui_config::aeskey);
         conf.setValue("paths/vpnprofiles", vpnprofiles_dir);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
         conf.setValue("paths/logs", logs_dir);
@@ -122,13 +124,14 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
         QFile::remove(filename);
 
     QSettings *f = new QSettings(filename, QSettings::IniFormat);
+    QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
 
     f->beginGroup("vpn");
     f->setValue("name", profile.name);
     f->setValue("gateway_host", profile.gateway_host);
     f->setValue("gateway_port", profile.gateway_port);
     f->setValue("username", profile.username);
-    f->setValue("password", profile.password);
+    f->setValue("password", QString::fromUtf8(aes.encrypt(profile.password.toUtf8()).toBase64()));
     f->endGroup();
 
     f->beginGroup("cert");
@@ -166,13 +169,14 @@ void tiConfVpnProfiles::readVpnProfiles()
 
             QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
             vpnProfile *vpnprofile = new vpnProfile;
+            QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
 
             f->beginGroup("vpn");
             vpnprofile->name = f->value("name").toString();
             vpnprofile->gateway_host = f->value("gateway_host").toString();
             vpnprofile->gateway_port = f->value("gateway_port").toInt();
             vpnprofile->username = f->value("username").toString();
-            vpnprofile->password = f->value("password").toString();
+            vpnprofile->password = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(f->value("password").toString().toUtf8())));
             f->endGroup();
 
             f->beginGroup("cert");

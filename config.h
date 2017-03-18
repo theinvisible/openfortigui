@@ -34,6 +34,7 @@ namespace openfortigui_config
     static const char __attribute__ ((unused)) *vpnprofiles_local = "~/.openfortigui/vpnprofiles";
 
     static const char __attribute__ ((unused)) *aeskey = "yowp2IwTTRodgdWp";
+    static const char __attribute__ ((unused)) *aesiv = "VoUT5n5ToogkmQU3";
 }
 
 #endif // CONFIH_H

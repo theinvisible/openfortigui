@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     refreshVpnProfileList();
 
-    QTinyAes aes(QTinyAes::CBC, openfortigui_config::aeskey, "random_iv_128bit");
+    QTinyAes aes(QTinyAes::CBC, openfortigui_config::aeskey, openfortigui_config::aesiv);
 
     QString n = "Rene";
     qInfo() << "orig::" << n;
