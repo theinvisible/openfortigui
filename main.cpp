@@ -3,6 +3,7 @@
 #include "config.h"
 #include "ticonfmain.h"
 #include "proc/vpnprocess.h"
+#include "vpnmanager.h"
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -59,6 +60,8 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
 int main(int argc, char *argv[])
 {
     qInstallMessageHandler(logMessageOutput);
+
+    qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
 
     if(argc > 1)
     {

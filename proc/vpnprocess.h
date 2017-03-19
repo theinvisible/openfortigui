@@ -5,6 +5,7 @@
 #include <QLocalSocket>
 
 #include "config.h"
+#include "vpnworker.h"
 
 class vpnProcess : public QObject
 {
@@ -19,11 +20,13 @@ private:
 
     void closeProcess();
     void startVPN();
+    void sendCMD(const vpnApi &cmd);
 
 signals:
 
 public slots:
     void onServerReadyRead();
+    void onVPNStatusChanged(vpnClientConnection::connectionStatus status);
 };
 
 #endif // VPNPROCESS_H

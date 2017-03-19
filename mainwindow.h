@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+#include <QSignalMapper>
 
 #include "vpnmanager.h"
 #include "vpnprofile.h"
@@ -17,6 +18,7 @@ class MainWindow : public QMainWindow
 
     QSystemTrayIcon *tray;
     static vpnManager *vpnmanager;
+    QSignalMapper* signalMapper;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -32,7 +34,12 @@ private slots:
     void onvpnEdited(const vpnProfile &vpn);
 
     void onStartVPN();
+    void onStartVPN(const QString &vpnname);
+    void onActionStartVPN(const QString &vpnname);
     void onStopVPN();
+    void onStopVPN(const QString &vpnname);
+
+    void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
 
 private:
     Ui::MainWindow *ui;

@@ -3,6 +3,13 @@
 
 #include <QObject>
 #include "vpnprofile.h"
+#include "vpnmanager.h"
+
+extern "C"  {
+#include "openfortivpn/src/config.h"
+#include "openfortivpn/src/log.h"
+#include "openfortivpn/src/tunnel.h"
+}
 
 class vpnWorker : public QObject
 {
@@ -15,7 +22,10 @@ public:
 private:
     vpnProfile vpnConfig;
 
+    void updateStatus(vpnClientConnection::connectionStatus status);
+
 signals:
+    void statusChanged(vpnClientConnection::connectionStatus status);
 
 public slots:
     void process();

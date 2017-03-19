@@ -6,6 +6,9 @@
 #include <QProcess>
 #include <QThread>
 #include <QCoreApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
@@ -16,19 +19,18 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
         qInfo() << "vpnManager::DiskMain() on apiServer->listen::" << server->errorString();
 }
 
-void vpnManager::startvpn1()
+vpnManager::~vpnManager()
 {
-    QStringList arguments;
-    arguments << "./openfortigui";
-    arguments << "--start-vpn";
-    arguments << "--vpn-name";
-    arguments << "vpn1";
+    QMapIterator<QString, vpnClientConnection*> i(connections);
+    while(i.hasNext())
+    {
+        i.next();
 
-    QProcess *vpn1 = new QProcess(this);
-    qInfo() << "Start vpn2";
-    vpn1->start("sudo", arguments);
-    vpn1->waitForStarted();
-    vpn1->waitForReadyRead();
+        if(i.value()->status != vpnClientConnection::STATUS_DISCONNECTED)
+        {
+            stopVPN(i.key());
+        }
+    }
 }
 
 void vpnManager::startVPN(const QString &name)
@@ -49,6 +51,7 @@ void vpnManager::startVPN(const QString &name)
     vpn->start("sudo", arguments);
 
     vpnClientConnection *clientConn = new vpnClientConnection(name);
+    connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connections[name] = clientConn;
 }
 
@@ -63,6 +66,15 @@ void vpnManager::stopVPN(const QString &name)
         connections[name]->sendCMD(apiData);
         connections.remove(name);
     }
+}
+
+vpnClientConnection *vpnManager::getClientConnection(const QString &name)
+{
+    vpnClientConnection *vpn = 0;
+    if(connections.contains(name))
+        vpn = connections[name];
+
+    return vpn;
 }
 
 void vpnManager::onClientConnected()
@@ -87,6 +99,12 @@ void vpnManager::onClientConnected()
 
         //client->disconnectFromServer();
     }
+}
+
+void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
+{
+    qInfo() << "vpnManager::onClientVPNStatusChanged()" << vpnname << "status" << status;
+    emit VPNStatusChanged(vpnname, status);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)
@@ -126,12 +144,26 @@ void vpnClientConnection::onClientReadyRead()
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_5_2);
     in >> cmd;
-    qInfo() << "client api command2::" << cmd.action << "::name::" << cmd.objName;
+    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName;
+
+    QJsonDocument json = QJsonDocument::fromJson(cmd.data);
+    QJsonObject jobj = json.object();
+
+    switch(cmd.action)
+    {
+    case vpnApi::ACTION_VPN_UPDATE_STATUS:
+        status = static_cast<vpnClientConnection::connectionStatus>(jobj["status"].toInt());
+        emit VPNStatusChanged(name, status);
+        break;
+    }
+
     socket->flush();
 }
 
 void vpnClientConnection::onClientDisconnected()
 {
     qInfo() << "client disconnected::" << name;
+    status = vpnClientConnection::STATUS_DISCONNECTED;
+    emit VPNStatusChanged(name, status);
     socket->deleteLater();
 }

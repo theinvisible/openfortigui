@@ -12,11 +12,13 @@ public:
     enum vpnApiAction
     {
         ACTION_HELLO = 0,
-        ACTION_STOP
+        ACTION_STOP,
+        ACTION_VPN_UPDATE_STATUS
     };
 
     QString objName;
     int action;
+    QByteArray data;
 };
 
 QDataStream &operator<<(QDataStream &ds, const vpnApi &obj);

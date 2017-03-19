@@ -23,6 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
     installEventFilter(this);
 
     vpnmanager = new vpnManager(this);
+    connect(vpnmanager, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
+
+    signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
 
     // Center window on startup
     QRect geom = QApplication::desktop()->availableGeometry();
@@ -44,100 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
 
     refreshVpnProfileList();
-
-    /*
-    QTinyAes aes(QTinyAes::CBC, openfortigui_config::aeskey, openfortigui_config::aesiv);
-
-    QString n = "Rene";
-    qInfo() << "orig::" << n;
-    QByteArray cipher = aes.encrypt(n.toUtf8());
-    QString cstring = QString::fromUtf8(cipher.toBase64());
-    qInfo() << "ciper::" << cstring;
-    QString res = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(cstring.toUtf8())));
-    qInfo() << "result::" << res;
-    */
-
-    //vpnmanager = new vpnManager(this);
-    //vpnmanager->startvpn1();
-
-    /*
-    QTextStream out(stdout);
-    QStringList arguments;
-    arguments << "./openfortigui";
-    arguments << "--start-vpn";
-    arguments << "--vpn-name";
-    arguments << "vpn1";
-
-    QStringList arguments2;
-    arguments2 << "./openfortigui";
-    arguments2 << "--start-vpn";
-    arguments2 << "--vpn-name";
-    arguments2 << "vpn2";
-
-    QProcess *vpn1 = new QProcess(this);
-    out << "Start vpn";
-    vpn1->start("sudo", arguments);
-    vpn1->waitForStarted();
-    vpn1->waitForReadyRead();
-    out << "Start read";
-    out << vpn1->readAll();
-
-    QProcess *vpn2 = new QProcess(this);
-    out << "Start vpn2";
-    vpn2->start("sudo", arguments2);
-    vpn2->waitForStarted();
-    vpn2->waitForReadyRead();
-    out << "Start read";
-    out << vpn2->readAll();
-    */
-
-
-    //QProcess *vpn2 = new QProcess(this);
-    //vpn2->start("openfortigui", arguments);
-
-    /*
-    increase_verbosity();
-    increase_verbosity();
-    increase_verbosity();
-
-    struct vpn_config cfg;
-    memset(&cfg, 0, sizeof (cfg));
-    strncpy(cfg.gateway_host, "***REMOVED***", FIELD_SIZE);
-    cfg.gateway_host[FIELD_SIZE] = '\0';
-    cfg.gateway_port = 10443;
-    strncpy(cfg.username, "***REMOVED***", FIELD_SIZE);
-    cfg.username[FIELD_SIZE] = '\0';
-    strncpy(cfg.password, "***REMOVED***", FIELD_SIZE);
-    cfg.password[FIELD_SIZE] = '\0';
-    cfg.set_routes = 1;
-    run_tunnel(&cfg);
-    */
-
-    /*
-    QThread* thread = new QThread;
-    vpnWorker* worker = new vpnWorker();
-    worker->moveToThread(thread);
-    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    //connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-    //connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    //connect(worker, SIGNAL(diskRemoved(DeviceDisk*)), this, SLOT(onDiskRemoved(DeviceDisk*)));
-    //connect(worker, SIGNAL(diskAdded(DeviceDisk*)), this, SLOT(onDiskAdded(DeviceDisk*)));
-    thread->start();
-
-    QThread* thread2 = new QThread;
-    vpnWorker2* worker2 = new vpnWorker2();
-    worker2->moveToThread(thread2);
-    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread2, SIGNAL(started()), worker2, SLOT(process()));
-    //connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
-    //connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    connect(thread2, SIGNAL(finished()), thread2, SLOT(deleteLater()));
-    //connect(worker, SIGNAL(diskRemoved(DeviceDisk*)), this, SLOT(onDiskRemoved(DeviceDisk*)));
-    //connect(worker, SIGNAL(diskAdded(DeviceDisk*)), this, SLOT(onDiskAdded(DeviceDisk*)));
-    thread2->start();
-    */
 }
 
 MainWindow::~MainWindow()
@@ -261,6 +171,29 @@ void MainWindow::onStartVPN()
     vpnmanager->startVPN(vpnName);
 }
 
+void MainWindow::onStartVPN(const QString &vpnname)
+{
+    qInfo() << "start vpn::" << vpnname;
+
+    vpnmanager->startVPN(vpnname);
+}
+
+void MainWindow::onActionStartVPN(const QString &vpnname)
+{
+    qInfo() << "action vpn pressed::" << vpnname;
+
+    vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
+    if(conn != 0)
+    {
+        if(conn->status == vpnClientConnection::STATUS_DISCONNECTED)
+            onStartVPN(vpnname);
+        else
+            onStopVPN(vpnname);
+    }
+    else
+        onStartVPN(vpnname);
+}
+
 void MainWindow::onStopVPN()
 {
     qInfo() << "stop vpn::";
@@ -277,6 +210,16 @@ void MainWindow::onStopVPN()
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
 
     vpnmanager->stopVPN(vpnName);
+}
+
+void MainWindow::onStopVPN(const QString &vpnname)
+{
+    vpnmanager->stopVPN(vpnname);
+}
+
+void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
+{
+    refreshVpnProfileList();
 }
 
 void MainWindow::refreshVpnProfileList()
@@ -307,10 +250,30 @@ void MainWindow::refreshVpnProfileList()
         vpnProfile *vpn = vpns.at(i);
         qDebug() << "MainWindow::refreshVpnProfileList() -> vpnprofiles found::" << vpn->name;
 
+        QIcon status;
+        vpnClientConnection *conn = vpnmanager->getClientConnection(vpn->name);
+        if(conn != 0)
+        {
+            switch(conn->status)
+            {
+            case vpnClientConnection::STATUS_CONNECTED:
+                status = QIcon(":/img/connected.png");
+                break;
+            case vpnClientConnection::STATUS_CONNECTING:
+                status = QIcon(":/img/connecting.png");
+                break;
+            case vpnClientConnection::STATUS_DISCONNECTED:
+            default:
+                status = QIcon(":/img/disconnected.png");
+            }
+        }
+        else
+            status = QIcon(":/img/disconnected.png");
+
         item = new QStandardItem(vpn->name);
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
-        item4 = new QStandardItem(QIcon(":/img/disconnected.png"), "");
+        item4 = new QStandardItem(status, "");
 
         row = model->rowCount();
         model->setItem(row, 0, item4);
@@ -319,7 +282,8 @@ void MainWindow::refreshVpnProfileList()
         model->setItem(row, 3, item3);
 
         // Menu
-        menu->addAction(QIcon(":/img/disconnected.png"), vpn->name);
+        QAction *action = menu->addAction(status, vpn->name, signalMapper, SLOT(map()));
+        signalMapper->setMapping(action, vpn->name) ;
     }
 
     ui->tvVpnProfiles->header()->resizeSection(0, 50);
