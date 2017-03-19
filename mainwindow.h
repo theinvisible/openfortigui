@@ -31,6 +31,9 @@ private slots:
     void onvpnAdded(const vpnProfile &vpn);
     void onvpnEdited(const vpnProfile &vpn);
 
+    void onStartVPN();
+    void onStopVPN();
+
 private:
     Ui::MainWindow *ui;
 

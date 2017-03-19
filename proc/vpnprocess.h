@@ -18,6 +18,7 @@ private:
     QLocalSocket *apiServer;
 
     void closeProcess();
+    void startVPN();
 
 signals:
 

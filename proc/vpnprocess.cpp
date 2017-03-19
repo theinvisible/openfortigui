@@ -4,7 +4,9 @@
 #include <QThread>
 #include <QCoreApplication>
 
+#include "ticonfmain.h"
 #include "vpnapi.h"
+#include "vpnworker.h"
 
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
@@ -26,7 +28,7 @@ void vpnProcess::run(const QString &vpnname)
         out.setVersion(QDataStream::Qt_5_2);
         vpnApi apiData;
         apiData.objName = name;
-        apiData.action = VPN_HELLO;
+        apiData.action = vpnApi::ACTION_HELLO;
         out << apiData;
 
         apiServer->write(block);
@@ -37,6 +39,8 @@ void vpnProcess::run(const QString &vpnname)
         qWarning() << apiServer->errorString();
     }
 
+    startVPN();
+
     //apiClient->close();
     //apiClient->disconnect();
 }
@@ -45,6 +49,23 @@ void vpnProcess::closeProcess()
 {
     qInfo() << "shutting down vpn process::" << name;
     QCoreApplication::exit(0);
+}
+
+void vpnProcess::startVPN()
+{
+    tiConfVpnProfiles profiles;
+    QThread* thread = new QThread;
+    vpnWorker* worker = new vpnWorker();
+    worker->setConfig(*profiles.getVpnProfileByName(name));
+    worker->moveToThread(thread);
+    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    //connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    //connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    //connect(worker, SIGNAL(diskRemoved(DeviceDisk*)), this, SLOT(onDiskRemoved(DeviceDisk*)));
+    //connect(worker, SIGNAL(diskAdded(DeviceDisk*)), this, SLOT(onDiskAdded(DeviceDisk*)));
+    thread->start();
 }
 
 void vpnProcess::onServerReadyRead()
@@ -58,7 +79,7 @@ void vpnProcess::onServerReadyRead()
 
     switch(cmd.action)
     {
-    case VPN_STOP:
+    case vpnApi::ACTION_STOP:
         closeProcess();
         break;
     }

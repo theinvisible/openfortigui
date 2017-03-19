@@ -4,16 +4,16 @@
 #include <QString>
 #include <QDataStream>
 
-enum vpnApiAction
-{
-    VPN_HELLO = 0,
-    VPN_STOP
-};
-
 class vpnApi
 {
 public:
     vpnApi();
+
+    enum vpnApiAction
+    {
+        ACTION_HELLO = 0,
+        ACTION_STOP
+    };
 
     QString objName;
     int action;

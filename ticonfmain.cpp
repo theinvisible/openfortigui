@@ -30,19 +30,21 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include "config.h"
 #include "qtinyaes/QTinyAes/qtinyaes.h"
 
+QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
+
 tiConfMain::tiConfMain()
 {
     settings = 0;
 
     initMainConf();
 
-    if(!QFile(tiConfMain::formatPath(openfortigui_config::file_main)).exists())
+    if(!QFile(tiConfMain::formatPath(tiConfMain::main_config)).exists())
     {
-        qCritical() << QString("tiConfMain::tiConfMain() -> Main configuration file <").append(openfortigui_config::file_main).append("> not found, please fix this...");
+        qCritical() << QString("tiConfMain::tiConfMain() -> Main configuration file <").append(tiConfMain::main_config).append("> not found, please fix this...");
         exit(EXIT_FAILURE);
     }
 
-    settings = new QSettings(tiConfMain::formatPath(openfortigui_config::file_main), QSettings::IniFormat);
+    settings = new QSettings(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
 }
 
 tiConfMain::~tiConfMain()
@@ -53,10 +55,10 @@ tiConfMain::~tiConfMain()
 
 void tiConfMain::initMainConf()
 {
-    QFile conf_main(tiConfMain::formatPath(openfortigui_config::file_main));
+    QFile conf_main(tiConfMain::formatPath(tiConfMain::main_config));
     if(!conf_main.exists())
     {
-        QFileInfo finfo(tiConfMain::formatPath(openfortigui_config::file_main));
+        QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
 
@@ -70,7 +72,7 @@ void tiConfMain::initMainConf()
         QDir logsdir_path(logs_dir);
         logsdir_path.mkpath(logs_dir);
 
-        QSettings conf(tiConfMain::formatPath(openfortigui_config::file_main), QSettings::IniFormat);
+        QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
         conf.setValue("main/debug", true);
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
         conf.setValue("paths/vpnprofiles", vpnprofiles_dir);
@@ -100,6 +102,15 @@ QString tiConfMain::formatPath(const QString &path)
 {
     QString p = path;
     return p.replace("~", QDir::homePath());
+}
+
+QString tiConfMain::setMainConfig(const QString &config)
+{
+    QFile conf_main(tiConfMain::formatPath(config));
+    if(conf_main.exists())
+        tiConfMain::main_config = config;
+
+    return tiConfMain::main_config;
 }
 
 tiConfVpnProfiles::tiConfVpnProfiles()

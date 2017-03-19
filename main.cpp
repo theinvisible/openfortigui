@@ -79,16 +79,28 @@ int main(int argc, char *argv[])
                     QCoreApplication::translate("main", "vpnname"));
         parser.addOption(vpnName);
 
+        QCommandLineOption mainConfig("main-config",
+                    QCoreApplication::translate("main", "Use <mainconfig> as config file"),
+                    QCoreApplication::translate("main", "mainconfig"));
+        parser.addOption(mainConfig);
+
         parser.process(a);
 
-        bool startvpn = parser.isSet(startVpnProcess);
-        QString vpnname = parser.value(vpnName);
+        bool arg_startvpn = parser.isSet(startVpnProcess);
+        QString arg_vpnname = parser.value(vpnName);
+        QString arg_mainconfig = parser.value(mainConfig);
 
-        if(startvpn && !vpnname.isEmpty())
+        if(arg_startvpn && !arg_vpnname.isEmpty())
         {
-            qInfo() << QString("start-vpn process::") << vpnname;
+            qInfo() << QString("start-vpn process::") << arg_vpnname;
+
+            if(!arg_mainconfig.isEmpty())
+                tiConfMain::setMainConfig(arg_mainconfig);
+
+            qInfo() << QString("start-vpn process::config_file::") << tiConfMain::main_config;
+
             vpnProcess proc;
-            proc.run(vpnname);
+            proc.run(arg_vpnname);
 
             return a.exec();
         }

@@ -8,16 +8,9 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 
-extern "C"  {
-#include "openfortivpn/src/config.h"
-#include "openfortivpn/src/log.h"
-#include "openfortivpn/src/tunnel.h"
-}
-
 #include "config.h"
 #include "ticonfmain.h"
 #include "vpnprofileeditor.h"
-#include "qtinyaes/QTinyAes/qtinyaes.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -47,11 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
 
-    ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect");
-    ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect");
+    ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect", this, SLOT(onStartVPN()));
+    ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
 
     refreshVpnProfileList();
 
+    /*
     QTinyAes aes(QTinyAes::CBC, openfortigui_config::aeskey, openfortigui_config::aesiv);
 
     QString n = "Rene";
@@ -61,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qInfo() << "ciper::" << cstring;
     QString res = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(cstring.toUtf8())));
     qInfo() << "result::" << res;
+    */
 
     //vpnmanager = new vpnManager(this);
     //vpnmanager->startvpn1();
@@ -246,6 +241,42 @@ void MainWindow::onvpnAdded(const vpnProfile &vpn)
 void MainWindow::onvpnEdited(const vpnProfile &vpn)
 {
     refreshVpnProfileList();
+}
+
+void MainWindow::onStartVPN()
+{
+    qInfo() << "start vpn::";
+
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+
+    vpnmanager->startVPN(vpnName);
+}
+
+void MainWindow::onStopVPN()
+{
+    qInfo() << "stop vpn::";
+
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+
+    vpnmanager->stopVPN(vpnName);
 }
 
 void MainWindow::refreshVpnProfileList()

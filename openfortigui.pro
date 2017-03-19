@@ -24,8 +24,6 @@ SOURCES += main.cpp\
     openfortivpn/src/tunnel.c \
     openfortivpn/src/userinput.c \
     openfortivpn/src/xml.c \
-    vpnworker.cpp \
-    vpnworker2.cpp \
     vpnmanager.cpp \
     ticonfmain.cpp \
     vpnapi.cpp \
@@ -33,7 +31,8 @@ SOURCES += main.cpp\
     vpnprofile.cpp \
     vpnprofileeditor.cpp \
     qtinyaes/QTinyAes/qtinyaes.cpp \
-    qtinyaes/QTinyAes/tiny-AES128-C/aes.c
+    qtinyaes/QTinyAes/tiny-AES128-C/aes.c \
+    proc/vpnworker.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -46,8 +45,6 @@ HEADERS  += mainwindow.h \
     openfortivpn/src/tunnel.h \
     openfortivpn/src/userinput.h \
     openfortivpn/src/xml.h \
-    vpnworker.h \
-    vpnworker2.h \
     config.h \
     vpnmanager.h \
     ticonfmain.h \
@@ -56,7 +53,8 @@ HEADERS  += mainwindow.h \
     vpnprofile.h \
     vpnprofileeditor.h \
     qtinyaes/QTinyAes/tiny-AES128-C/aes.h \
-    qtinyaes/QTinyAes/qtinyaes.h
+    qtinyaes/QTinyAes/qtinyaes.h \
+    proc/vpnworker.h
 
 FORMS    += mainwindow.ui \
     vpnprofileeditor.ui

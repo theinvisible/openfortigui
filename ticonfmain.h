@@ -34,6 +34,8 @@ public:
     tiConfMain();
     ~tiConfMain();
 
+    static QString main_config;
+
     void initMainConf();
 
     QVariant getValue(const QString &iniPath);
@@ -41,6 +43,7 @@ public:
     void sync();
 
     static QString formatPath(const QString &path);
+    static QString setMainConfig(const QString &config);
 
 private:
     QSettings *settings;
