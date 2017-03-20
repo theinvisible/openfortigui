@@ -24,6 +24,7 @@ public:
     QString ca_file;
     QString user_cert;
     QString user_key;
+    QString trusted_cert;
     bool verify_cert;
     bool insecure_ssl;
 };

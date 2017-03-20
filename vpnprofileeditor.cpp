@@ -31,13 +31,14 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile)
     ui->leUsername->setText(config->username);
     ui->lePassword->setText(config->password);
 
-    if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
+    if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty() || !config->trusted_cert.isEmpty())
     {
         ui->gbCertificate->setChecked(true);
 
         ui->leCAFile->setText(config->ca_file);
         ui->leUserCert->setText(config->user_cert);
         ui->leUserKey->setText(config->user_key);
+        ui->leTrustedCert->setText(config->trusted_cert);
         ui->cbVerifyCert->setChecked(config->verify_cert);
     }
 
@@ -138,6 +139,7 @@ void vpnProfileEditor::on_btnSave_clicked()
         vpn.ca_file = ui->leCAFile->text();
         vpn.user_cert = ui->leUserCert->text();
         vpn.user_key = ui->leUserKey->text();
+        vpn.trusted_cert = ui->leTrustedCert->text();
         vpn.verify_cert = ui->cbVerifyCert->isChecked();
     }
 

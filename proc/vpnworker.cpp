@@ -191,6 +191,8 @@ void vpnWorker::process()
     {
         config.user_cert = strdup(vpnConfig.user_cert.toStdString().c_str());
         config.user_key = strdup(vpnConfig.user_key.toStdString().c_str());
+        if(!vpnConfig.trusted_cert.isEmpty())
+            add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
     }
 
     qInfo() << "usercert::" << config.user_cert;

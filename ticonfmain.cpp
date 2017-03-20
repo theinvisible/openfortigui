@@ -150,6 +150,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("user_cert", profile.user_cert);
     f->setValue("user_key", profile.user_key);
     f->setValue("verify_cert", profile.verify_cert);
+    f->setValue("trusted_cert", profile.trusted_cert);
     f->endGroup();
 
     f->beginGroup("options");
@@ -195,6 +196,7 @@ void tiConfVpnProfiles::readVpnProfiles()
             vpnprofile->user_cert = f->value("user_cert").toString();
             vpnprofile->user_key = f->value("user_key").toString();
             vpnprofile->verify_cert = f->value("verify_cert").toBool();
+            vpnprofile->trusted_cert = f->value("trusted_cert").toString();
             f->endGroup();
 
             f->beginGroup("options");

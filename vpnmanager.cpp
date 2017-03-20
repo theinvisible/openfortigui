@@ -104,6 +104,10 @@ void vpnManager::onClientConnected()
 void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
     qInfo() << "vpnManager::onClientVPNStatusChanged()" << vpnname << "status" << status;
+
+    if(status == vpnClientConnection::STATUS_DISCONNECTED)
+        connections.remove(vpnname);
+
     emit VPNStatusChanged(vpnname, status);
 }
 

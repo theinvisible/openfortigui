@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/img">
-        <file alias="app.png">icon/app.png</file>
         <file alias="connected.png">img/connected.png</file>
         <file alias="disconnected.png">img/disconnected.png</file>
         <file alias="connecting.png">img/connecting.png</file>
+        <file alias="app.png">app-entry/openfortigui.png</file>
     </qresource>
 </RCC>

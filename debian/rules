@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	mkdir -p debian/openfortigui/usr/bin
+	mkdir -p debian/openfortigui/usr/share/polkit-1/actions
+	mkdir -p debian/openfortigui/usr/share/applications
+	mkdir -p debian/openfortigui/usr/share/pixmaps
+	cp -a openfortigui debian/openfortigui/usr/bin/.
+	cp -a app-entry/openfortigui.desktop debian/openfortigui/usr/share/applications/.
+	cp -a app-entry/openfortigui.png debian/openfortigui/usr/share/pixmaps/.
