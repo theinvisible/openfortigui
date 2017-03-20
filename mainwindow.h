@@ -38,6 +38,8 @@ private slots:
     void onActionStartVPN(const QString &vpnname);
     void onStopVPN();
     void onStopVPN(const QString &vpnname);
+    void onQuit();
+    void onActionAbout();
 
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
 

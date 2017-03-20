@@ -85,11 +85,28 @@
    </property>
    <widget class="QMenu" name="menuDatei">
     <property name="title">
-     <string>Datei</string>
+     <string>File</string>
     </property>
-    <addaction name="actionExit"/>
+    <addaction name="actionMenuHide"/>
+    <addaction name="actionMenuExit"/>
+   </widget>
+   <widget class="QMenu" name="menuVPN">
+    <property name="title">
+     <string>VPN</string>
+    </property>
+    <addaction name="actionMenuConnect"/>
+    <addaction name="actionMenuDisconnect"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionMenuAbout"/>
    </widget>
    <addaction name="menuDatei"/>
+   <addaction name="menuVPN"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="tbActions">
    <property name="toolButtonStyle">
@@ -103,13 +120,43 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionExit">
+  <action name="actionMenuExit">
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
+  <action name="actionMenuAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionMenuConnect">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/connected.png</normaloff>:/img/connected.png</iconset>
+   </property>
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionMenuDisconnect">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/disconnected.png</normaloff>:/img/disconnected.png</iconset>
+   </property>
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </action>
+  <action name="actionMenuHide">
+   <property name="text">
+    <string>Hide</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

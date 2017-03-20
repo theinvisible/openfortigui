@@ -47,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect", this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
 
+    connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
+    connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
+    connect(ui->actionMenuConnect, SIGNAL(triggered(bool)), this, SLOT(onStartVPN()));
+    connect(ui->actionMenuDisconnect, SIGNAL(triggered(bool)), this, SLOT(onStopVPN()));
+    connect(ui->actionMenuAbout, SIGNAL(triggered(bool)), this, SLOT(onActionAbout()));
+
     refreshVpnProfileList();
 }
 
@@ -82,7 +88,15 @@ void MainWindow::on_btnDeleteVPN_clicked()
     }
 
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
-    //ui->tvBackupFolders->selectedItems();
+    vpnClientConnection *cl = vpnmanager->getClientConnection(vpnName);
+    if(cl != 0 && cl->status != vpnClientConnection::STATUS_DISCONNECTED)
+    {
+        QMessageBox::warning(this, trUtf8("Delete VPN"),
+                                        trUtf8("The VPN state must be disconnected to perform this action."),
+                                        QMessageBox::Ok);
+
+        return;
+    }
 
     qDebug() << "MainWindow::on_btnDeleteVPN_clicked() -> remove vpn with name::" << vpnName;
 
@@ -122,6 +136,15 @@ void MainWindow::on_btnEditVPN_clicked()
     }
 
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    vpnClientConnection *cl = vpnmanager->getClientConnection(vpnName);
+    if(cl != 0 && cl->status != vpnClientConnection::STATUS_DISCONNECTED)
+    {
+        QMessageBox::warning(this, trUtf8("Delete VPN"),
+                                        trUtf8("The VPN state must be disconnected to perform this action."),
+                                        QMessageBox::Ok);
+
+        return;
+    }
 
     QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
@@ -217,6 +240,11 @@ void MainWindow::onStopVPN(const QString &vpnname)
     vpnmanager->stopVPN(vpnname);
 }
 
+void MainWindow::onQuit()
+{
+    QCoreApplication::quit();
+}
+
 void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
     refreshVpnProfileList();
@@ -240,8 +268,8 @@ void MainWindow::refreshVpnProfileList()
     if(menu == 0)
         menu = new QMenu();
     menu->clear();
-    menu->addAction("Beenden");
-    menu->addAction("Hauptfenster öffnen");
+    menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
+    menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
     menu->addSeparator();
 
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
@@ -298,24 +326,25 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
     if(object == this && event->type() == QEvent::Close)
     {
-        /*
-        int ret = QMessageBox::warning(this, QString::fromUtf8("Fenster schließen"),
-                                    QString::fromUtf8("Alle Änderungen gehen verloren. Fortfahren?"),
-                                    QMessageBox::Yes | QMessageBox::No);
+        hide();
 
-        switch(ret)
-        {
-        case QMessageBox::Yes:
-            return false;
-        case QMessageBox::No:
-        default:
-            event->ignore();
-            return true;
-        }
-        */
-
-        return false;
+        event->ignore();
+        return true;
     }
 
     return false;
+}
+
+void MainWindow::onActionAbout()
+{
+    QMessageBox::about(this, trUtf8("About openFortiGUI"), trUtf8("<b>openFortiGUI %1</b> <br><br>"
+                                                             "Developer: <b>Rene Hadler</b> <br>"
+                                                             "eMail: <a href=mailto:'rene@hadler.me'>rene@hadler.me</a> <br>"
+                                                             "Website: <a href=https://hadler.me>https://hadler.me</a></p>"
+                                                             "<p>This program uses following libs/resources:</p>"
+                                                              "QT: <a href='https://www.qt.io'>https://www.qt.io</a> <br>"
+                                                              "openfortivpn: <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a> <br>"
+                                                              "QTinyAes: <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a> <br>"
+                                                              "tiny-AES128-C: <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a> <br>"
+                                                              "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version));
 }

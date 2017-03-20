@@ -12,6 +12,8 @@
 #include <QtDebug>
 #include <QFile>
 #include <QDateTime>
+#include <QProcess>
+#include <QFileInfo>
 
 QFile *openfortiguiLog = 0;
 
@@ -55,6 +57,28 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
     }
 
     openfortiguiLog->flush();
+}
+
+bool isRunningAlready()
+{
+    QStringList arguments;
+    arguments << "-A";
+
+    QProcess *ch = new QProcess();
+    ch->start("ps", arguments);
+    ch->waitForFinished(5000);
+    ch->waitForReadyRead(5000);
+    QString line;
+    int count = 0;
+    while(!ch->atEnd())
+    {
+        line = QString::fromLatin1(ch->readLine());
+        if(line.contains(QFileInfo(QCoreApplication::applicationFilePath()).fileName()))
+            count++;
+    }
+    delete ch;
+
+    return (count > 1) ? true : false;
 }
 
 int main(int argc, char *argv[])
@@ -115,6 +139,12 @@ int main(int argc, char *argv[])
         QApplication a(argc, argv);
         QApplication::setApplicationName(openfortigui_config::name);
         QApplication::setApplicationVersion(openfortigui_config::version);
+
+        if(isRunningAlready())
+        {
+            qInfo() << "This application is already running, exiting now.";
+            exit(0);
+        }
 
         MainWindow w;
         w.show();
