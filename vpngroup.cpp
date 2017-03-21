@@ -4,5 +4,5 @@ vpnGroup::vpnGroup()
 {
     name = "";
 
-    QList<QString>members;
+    QStringList members;
 }

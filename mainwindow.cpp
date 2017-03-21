@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tray = new QSystemTrayIcon(this);
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
+    tray_menu = tray->contextMenu();
 
     ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect", this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
@@ -62,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMenuAbout, SIGNAL(triggered(bool)), this, SLOT(onActionAbout()));
 
     refreshVpnProfileList();
+    refreshVpnGroupList();
 }
 
 MainWindow::~MainWindow()
@@ -209,8 +211,104 @@ void MainWindow::on_btnAddGroup_clicked()
     prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN-Group"));
 
-    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    connect(f, SIGNAL(vpnGroupAdded(vpnGroup)), this, SLOT(onvpnGroupAdded(vpnGroup)));
     prefWindow->show();
+}
+
+void MainWindow::on_btnDeleteGroup_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVPNGroups->model());
+    QItemSelectionModel *selmodel = ui->tvVPNGroups->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnGroupName = model->itemFromIndex(sellist.at(0))->text();
+
+    qDebug() << "MainWindow::on_btnDeleteGroup_clicked() -> remove vpngroup with name::" << vpnGroupName;
+
+    int ret = QMessageBox::warning(this, trUtf8("Delete VPN-Group"),
+                                trUtf8("Warning, the selected vpn-group will be deleted, continue?"),
+                                QMessageBox::Yes | QMessageBox::No);
+
+    switch(ret)
+    {
+    case QMessageBox::Yes:
+        break;
+    case QMessageBox::No:
+    default:
+        return;
+    }
+
+    tiConfVpnGroups vpngroupss;
+    if(vpngroupss.removeVpnGroupByName(vpnGroupName))
+    {
+        refreshVpnGroupList();
+    }
+    else
+    {
+        QMessageBox::information(this, trUtf8("Delete VPN-group"), trUtf8("The selected vpn-group could not be deleted, an error occured."));
+    }
+}
+
+void MainWindow::on_btnEditGroup_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVPNGroups->model());
+    QItemSelectionModel *selmodel = ui->tvVPNGroups->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnGroup = model->itemFromIndex(sellist.at(0))->text();
+
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeEdit);
+    f->loadVpnGroup(vpnGroup);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Edit VPN-Group"));
+
+    connect(f, SIGNAL(vpnGroupEdited(vpnGroup)), this, SLOT(onvpnGroupEdited(vpnGroup)));
+    prefWindow->show();
+}
+
+void MainWindow::on_btnCopyGroup_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVPNGroups->model());
+    QItemSelectionModel *selmodel = ui->tvVPNGroups->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnGroupName = model->itemFromIndex(sellist.at(0))->text();
+    bool ok;
+    QString vpnGroupNameNew = QInputDialog::getText(this, tr("Copy Group-profile"),
+                                             tr("Enter the new Group-profile name"), QLineEdit::Normal,
+                                             "", &ok);
+
+    if (ok && !vpnGroupNameNew.isEmpty())
+    {
+        tiConfVpnGroups groups;
+        groups.copyVpnGroup(vpnGroupName, vpnGroupNameNew);
+        refreshVpnGroupList();
+    }
+}
+
+void MainWindow::on_tvVPNGroups_doubleClicked(const QModelIndex &index)
+{
+    on_btnEditGroup_clicked();
 }
 
 void MainWindow::onvpnAdded(const vpnProfile &vpn)
@@ -221,6 +319,16 @@ void MainWindow::onvpnAdded(const vpnProfile &vpn)
 void MainWindow::onvpnEdited(const vpnProfile &vpn)
 {
     refreshVpnProfileList();
+}
+
+void MainWindow::onvpnGroupAdded(const vpnGroup &vpngroup)
+{
+    refreshVpnGroupList();
+}
+
+void MainWindow::onvpnGroupEdited(const vpnGroup &vpngroup)
+{
+    refreshVpnGroupList();
 }
 
 void MainWindow::onStartVPN()
@@ -311,13 +419,14 @@ void MainWindow::refreshVpnProfileList()
     QStandardItem *item4 = 0;
     int row = model->rowCount();
 
-    QMenu *menu = tray->contextMenu();
-    if(menu == 0)
-        menu = new QMenu();
-    menu->clear();
-    menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
-    menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
-    menu->addSeparator();
+    if(tray_menu == 0)
+        tray_menu = new QMenu();
+    tray_menu->clear();
+    tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
+    tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
+    tray_menu->addSeparator();
+    tray_menu->addAction(trUtf8("VPN-Groups"));
+    tray_menu->addSeparator();
 
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
     for(int i=0; i < vpns.count(); i++)
@@ -357,7 +466,7 @@ void MainWindow::refreshVpnProfileList()
         model->setItem(row, 3, item3);
 
         // Menu
-        QAction *action = menu->addAction(status, vpn->name, signalMapper, SLOT(map()));
+        QAction *action = tray_menu->addAction(status, vpn->name, signalMapper, SLOT(map()));
         signalMapper->setMapping(action, vpn->name) ;
     }
 
@@ -366,7 +475,64 @@ void MainWindow::refreshVpnProfileList()
     ui->tvVpnProfiles->header()->resizeSection(2, 300);
     ui->tvVpnProfiles->sortByColumn(1);
 
-    tray->setContextMenu(menu);
+    tray->setContextMenu(tray_menu);
+}
+
+void MainWindow::refreshVpnGroupList()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVPNGroups->model());
+    tiConfVpnGroups vpngroupss;
+    vpngroupss.readVpnGroups();
+
+    model->removeRows(0, model->rowCount());
+
+    QStandardItem *item = 0;
+    QStandardItem *item2 = 0;
+    QStandardItem *item3 = 0;
+    int row = model->rowCount();
+
+    QList<vpnGroup*> vpngroups = vpngroupss.getVpnGroups();
+    for(int i=0; i < vpngroups.count(); i++)
+    {
+        vpnGroup *vpngroup = vpngroups.at(i);
+        qDebug() << "MainWindow::refreshVpnGroupList() -> vpngroups found::" << vpngroup->name;
+
+        QIcon status;
+        /*
+        vpnClientConnection *conn = vpnmanager->getClientConnection(vpngroup->name);
+        if(conn != 0)
+        {
+            switch(conn->status)
+            {
+            case vpnClientConnection::STATUS_CONNECTED:
+                status = QIcon(":/img/connected.png");
+                break;
+            case vpnClientConnection::STATUS_CONNECTING:
+                status = QIcon(":/img/connecting.png");
+                break;
+            case vpnClientConnection::STATUS_DISCONNECTED:
+            default:
+                status = QIcon(":/img/disconnected.png");
+            }
+        }
+        else
+            status = QIcon(":/img/disconnected.png");
+        */
+        status = QIcon(":/img/disconnected.png");
+
+        item = new QStandardItem(vpngroup->name);
+        item2 = new QStandardItem(vpngroup->members.join(", "));
+        item3 = new QStandardItem(status, "");
+
+        row = model->rowCount();
+        model->setItem(row, 0, item3);
+        model->setItem(row, 1, item);
+        model->setItem(row, 2, item2);
+    }
+
+    ui->tvVPNGroups->header()->resizeSection(0, 50);
+    ui->tvVPNGroups->header()->resizeSection(1, 150);
+    ui->tvVPNGroups->sortByColumn(1);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)

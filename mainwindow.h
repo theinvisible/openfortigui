@@ -7,6 +7,7 @@
 
 #include "vpnmanager.h"
 #include "vpnprofile.h"
+#include "vpngroup.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,9 +33,15 @@ private slots:
     void on_tvVpnProfiles_doubleClicked(const QModelIndex &index);
 
     void on_btnAddGroup_clicked();
+    void on_btnDeleteGroup_clicked();
+    void on_btnEditGroup_clicked();
+    void on_btnCopyGroup_clicked();
+    void on_tvVPNGroups_doubleClicked(const QModelIndex &index);
 
     void onvpnAdded(const vpnProfile &vpn);
     void onvpnEdited(const vpnProfile &vpn);
+    void onvpnGroupAdded(const vpnGroup &vpngroup);
+    void onvpnGroupEdited(const vpnGroup &vpngroup);
 
     void onStartVPN();
     void onStartVPN(const QString &vpnname);
@@ -49,7 +56,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    QMenu *tray_menu;
+
     void refreshVpnProfileList();
+    void refreshVpnGroupList();
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);
