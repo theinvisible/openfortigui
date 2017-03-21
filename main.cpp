@@ -111,9 +111,13 @@ int main(int argc, char *argv[])
                     QCoreApplication::translate("main", "mainconfig"));
         parser.addOption(mainConfig);
 
+        QCommandLineOption killVPNProcesses("kill-vpn-processes", QCoreApplication::translate("main", "Kills all vpn-processes"));
+        parser.addOption(killVPNProcesses);
+
         parser.process(a);
 
         bool arg_startvpn = parser.isSet(startVpnProcess);
+        bool arg_killvpnprocesses = parser.isSet(killVPNProcesses);
         QString arg_vpnname = parser.value(vpnName);
         QString arg_mainconfig = parser.value(mainConfig);
 
@@ -130,6 +134,18 @@ int main(int argc, char *argv[])
             proc.run(arg_vpnname);
 
             return a.exec();
+        }
+        else if(arg_killvpnprocesses)
+        {
+            qInfo() << QString("kill-vpn-processes executed::");
+
+            QStringList arguments;
+            arguments << QFileInfo(QCoreApplication::applicationFilePath()).fileName();
+
+            QProcess *ch = new QProcess();
+            ch->start("killall", arguments);
+            ch->waitForFinished(5000);
+            delete ch;
         }
     }
     else

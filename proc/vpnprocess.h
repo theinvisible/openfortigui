@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QLocalSocket>
+#include <QThread>
 
 #include "config.h"
 #include "vpnworker.h"
@@ -17,6 +18,7 @@ public:
 private:
     QString name;
     QLocalSocket *apiServer;
+    QThread* thread_vpn;
 
     void closeProcess();
     void startVPN();
@@ -26,6 +28,7 @@ signals:
 
 public slots:
     void onServerReadyRead();
+    void onServerDisconnected();
     void onVPNStatusChanged(vpnClientConnection::connectionStatus status);
 };
 

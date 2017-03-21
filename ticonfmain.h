@@ -27,6 +27,7 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include <QSettings>
 
 #include "vpnprofile.h"
+#include "vpngroup.h"
 
 class tiConfMain
 {
@@ -64,11 +65,35 @@ public:
     bool removeVpnProfileByName(const QString &vpnname);
 
     bool renameVpnProfile(const QString &oldname, const QString &newname);
+    bool copyVpnProfile(const QString &origname, const QString &cpname);
 
 private:
     tiConfMain *main_settings;
 
     QList<vpnProfile*> vpnprofiles;
+};
+
+class tiConfVpnGroups
+{
+public:
+    tiConfVpnGroups();
+    ~tiConfVpnGroups();
+
+    void saveVpnGroup(const vpnGroup &group);
+    void readVpnGroups();
+
+    QList<vpnGroup *> getVpnGroups();
+    vpnGroup* getVpnGroupByName(const QString &groupname);
+
+    bool removeVpnGroupByName(const QString &groupname);
+
+    bool renameVpnGroup(const QString &oldname, const QString &newname);
+    bool copyVpnGroup(const QString &origname, const QString &cpname);
+
+private:
+    tiConfMain *main_settings;
+
+    QList<vpnGroup*> vpngroups;
 };
 
 #endif // TICONFMAIN_H

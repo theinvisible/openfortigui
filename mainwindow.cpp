@@ -7,10 +7,12 @@
 #include <QDesktopWidget>
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include "config.h"
 #include "ticonfmain.h"
 #include "vpnprofileeditor.h"
+#include "vpngroupeditor.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -32,13 +34,19 @@ MainWindow::MainWindow(QWidget *parent) :
     QRect geom = QApplication::desktop()->availableGeometry();
     move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
 
+    // Treeview VPNs
     QStringList headers;
     headers << trUtf8("Status") << trUtf8("Name") << trUtf8("Gateway") << trUtf8("Benutzer");
-
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
-
     ui->tvVpnProfiles->setModel(model);
+
+    // Treeview VPN-Groups
+    QStringList headers2;
+    headers2 << trUtf8("Status") << trUtf8("Name") << trUtf8("VPNs");
+    QStandardItemModel *model2 = new QStandardItemModel(ui->tvVPNGroups);
+    model2->setHorizontalHeaderLabels(headers2);
+    ui->tvVPNGroups->setModel(model2);
 
     tray = new QSystemTrayIcon(this);
     tray->setIcon(QIcon(":/img/app.png"));
@@ -154,10 +162,35 @@ void MainWindow::on_btnEditVPN_clicked()
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
     prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN"));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Edit VPN"));
 
     connect(f, SIGNAL(vpnEdited(vpnProfile)), this, SLOT(onvpnEdited(vpnProfile)));
     prefWindow->show();
+}
+
+void MainWindow::on_btnCopyVPN_clicked()
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1)
+    {
+        return;
+    }
+
+    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    bool ok;
+    QString vpnNameNew = QInputDialog::getText(this, tr("Copy VPN-profile"),
+                                             tr("Enter the new VPN-profile name"), QLineEdit::Normal,
+                                             "", &ok);
+
+    if (ok && !vpnNameNew.isEmpty())
+    {
+        tiConfVpnProfiles profiles;
+        profiles.copyVpnProfile(vpnName, vpnNameNew);
+        refreshVpnProfileList();
+    }
 }
 
 void MainWindow::on_tvVpnProfiles_doubleClicked(const QModelIndex &index)
@@ -165,6 +198,20 @@ void MainWindow::on_tvVpnProfiles_doubleClicked(const QModelIndex &index)
     on_btnEditVPN_clicked();
 }
 
+void MainWindow::on_btnAddGroup_clicked()
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeNew);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN-Group"));
+
+    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    prefWindow->show();
+}
 
 void MainWindow::onvpnAdded(const vpnProfile &vpn)
 {

@@ -77,6 +77,7 @@ void tiConfMain::initMainConf()
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
         conf.setValue("paths/vpnprofiles", vpnprofiles_dir);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
+        conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
         conf.setValue("paths/logs", logs_dir);
         conf.setValue("paths/initd", openfortigui_config::initd_default);
         conf.sync();
@@ -242,4 +243,134 @@ bool tiConfVpnProfiles::renameVpnProfile(const QString &oldname, const QString &
 {
     return QFile::rename(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), oldname),
                          QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), newname));
+}
+
+bool tiConfVpnProfiles::copyVpnProfile(const QString &origname, const QString &cpname)
+{
+    vpnProfile *vpn = getVpnProfileByName(origname);
+    vpnProfile newvpn = *vpn;
+    newvpn.name = cpname;
+    saveVpnProfile(newvpn);
+
+    return true;
+}
+
+tiConfVpnGroups::tiConfVpnGroups()
+{
+    main_settings = new tiConfMain();
+    QList<vpnGroup*> vpngroups;
+}
+
+tiConfVpnGroups::~tiConfVpnGroups()
+{
+    delete main_settings;
+}
+
+void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
+{
+    QString filename = QString(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString())).append("/%1.conf").arg(group.name);
+    QDir localvpndir(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()));
+    if(!localvpndir.exists())
+        localvpndir.mkpath(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()));
+
+    if(QFile::exists(filename))
+        QFile::remove(filename);
+
+    QSettings *f = new QSettings(filename, QSettings::IniFormat);
+
+    f->beginGroup("group");
+    f->setValue("name", group.name);
+
+    f->beginWriteArray("members");
+    QListIterator<QString> it(group.members);
+    int i = 0;
+    while(it.hasNext())
+    {
+        f->setArrayIndex(i);
+        f->setValue("member", it.next());
+        i++;
+    }
+    f->endArray();
+    f->endGroup();
+
+    f->sync();
+    delete f;
+}
+
+void tiConfVpnGroups::readVpnGroups()
+{
+    // TODO if job objects exist we must *delete* them first
+    vpngroups.clear();
+
+    QString vpngroupsdir = tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString());
+    QDirIterator it_localgroupdir(vpngroupsdir);
+    QString vpngroupfilepath;
+    while (it_localgroupdir.hasNext())
+    {
+        vpngroupfilepath = it_localgroupdir.next();
+        if(vpngroupfilepath.endsWith(".conf"))
+        {
+            qDebug() << "tiConfVpnGroups::readVpnGroups() -> vpngroup found:" << vpngroupfilepath;
+
+            QSettings *f = new QSettings(vpngroupfilepath, QSettings::IniFormat);
+            vpnGroup *vpngroup = new vpnGroup;
+
+            f->beginGroup("group");
+            vpngroup->name = f->value("name").toString();
+            int size = f->beginReadArray("members");
+            for (int i = 0; i < size; ++i)
+            {
+                f->setArrayIndex(i);
+                vpngroup->members.append(f->value("member").toString());
+            }
+            f->endArray();
+            f->endGroup();
+
+
+            vpngroups.append(vpngroup);
+            delete f;
+        }
+    }
+}
+
+QList<vpnGroup *> tiConfVpnGroups::getVpnGroups()
+{
+    return vpngroups;
+}
+
+vpnGroup *tiConfVpnGroups::getVpnGroupByName(const QString &groupname)
+{
+    readVpnGroups();
+    vpnGroup *vpngroup = 0;
+
+    for(int i=0; i < vpngroups.count(); i++)
+    {
+        vpngroup = vpngroups.at(i);
+        if(vpngroup->name == groupname)
+            return vpngroup;
+    }
+
+    return vpngroup;
+}
+
+bool tiConfVpnGroups::removeVpnGroupByName(const QString &groupname)
+{
+    qInfo() << "deletegroup:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), groupname);
+    return QFile::remove(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), groupname));
+}
+
+bool tiConfVpnGroups::renameVpnGroup(const QString &oldname, const QString &newname)
+{
+    return QFile::rename(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), oldname),
+                         QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), newname));
+}
+
+bool tiConfVpnGroups::copyVpnGroup(const QString &origname, const QString &cpname)
+{
+    vpnGroup *vpngroup = getVpnGroupByName(origname);
+    vpnGroup newvpngroup = *vpngroup;
+    newvpngroup.name = cpname;
+    saveVpnGroup(newvpngroup);
+
+    return true;
 }

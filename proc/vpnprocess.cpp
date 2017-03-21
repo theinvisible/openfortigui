@@ -1,7 +1,6 @@
 #include "vpnprocess.h"
 
 #include <QDataStream>
-#include <QThread>
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -25,6 +24,8 @@ void vpnProcess::run(const QString &vpnname)
     apiServer->connectToServer(openfortigui_config::name);
     if(apiServer->waitForConnected(1000))
     {
+        connect(apiServer, SIGNAL(disconnected()), this, SLOT(onServerDisconnected()));
+
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_5_2);
@@ -56,18 +57,17 @@ void vpnProcess::closeProcess()
 void vpnProcess::startVPN()
 {
     tiConfVpnProfiles profiles;
-    QThread* thread = new QThread;
+    thread_vpn = new QThread;
     vpnWorker* worker = new vpnWorker();
     worker->setConfig(*profiles.getVpnProfileByName(name));
-    worker->moveToThread(thread);
+    worker->moveToThread(thread_vpn);
     //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(thread_vpn, SIGNAL(started()), worker, SLOT(process()));
+    connect(worker, SIGNAL(finished()), thread_vpn, SLOT(quit()));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    connect(thread_vpn, SIGNAL(finished()), thread_vpn, SLOT(deleteLater()));
     connect(worker, SIGNAL(statusChanged(vpnClientConnection::connectionStatus)), this, SLOT(onVPNStatusChanged(vpnClientConnection::connectionStatus)));
-    //connect(worker, SIGNAL(diskAdded(DeviceDisk*)), this, SLOT(onDiskAdded(DeviceDisk*)));
-    thread->start();
+    thread_vpn->start();
 }
 
 void vpnProcess::sendCMD(const vpnApi &cmd)
@@ -104,6 +104,16 @@ void vpnProcess::onServerReadyRead()
     }
 
     apiServer->flush();
+}
+
+void vpnProcess::onServerDisconnected()
+{
+    qInfo() << "server socket disconnected, exiting";
+
+    thread_vpn->quit();
+    QThread::sleep(2);
+    thread_vpn->terminate();
+    QCoreApplication::quit();
 }
 
 void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status)
