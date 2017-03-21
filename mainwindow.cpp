@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
+    signalMapperGroups = new QSignalMapper(this);
+    connect(signalMapperGroups, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPNGroup(QString)));
 
     // Center window on startup
     QRect geom = QApplication::desktop()->availableGeometry();
@@ -52,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
     tray_menu = tray->contextMenu();
+    tray_group_menu = new QMenu("VPN-Groups");
 
     ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect", this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
@@ -333,10 +336,13 @@ void MainWindow::onvpnGroupEdited(const vpnGroup &vpngroup)
 
 void MainWindow::onStartVPN()
 {
-    qInfo() << "start vpn::";
+    qInfo() << "active-tab::" << ui->tabMain->currentIndex();
 
-    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
-    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    // Tab-ID 0 = VPNs, Tab-ID 1 = VPN-Groups
+    QTreeView *tree = (ui->tabMain->currentIndex() == 0) ? ui->tvVpnProfiles : ui->tvVPNGroups;
+
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(tree->model());
+    QItemSelectionModel *selmodel = tree->selectionModel();
     QModelIndexList sellist = selmodel->selectedRows(1);
 
     if(sellist.count() < 1)
@@ -344,14 +350,25 @@ void MainWindow::onStartVPN()
         return;
     }
 
-    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    QString itemName = model->itemFromIndex(sellist.at(0))->text();
 
-    vpnmanager->startVPN(vpnName);
+    if(ui->tabMain->currentIndex() == 1)
+    {
+        tiConfVpnGroups groups;
+        vpnGroup *group = groups.getVpnGroupByName(itemName);
+        QStringListIterator it(group->members);
+        while(it.hasNext())
+        {
+            vpnmanager->startVPN(it.next());
+        }
+    }
+    else
+        vpnmanager->startVPN(itemName);
 }
 
 void MainWindow::onStartVPN(const QString &vpnname)
 {
-    qInfo() << "start vpn::" << vpnname;
+    qInfo() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
 
     vpnmanager->startVPN(vpnname);
 }
@@ -372,12 +389,52 @@ void MainWindow::onActionStartVPN(const QString &vpnname)
         onStartVPN(vpnname);
 }
 
+void MainWindow::onActionStartVPNGroup(const QString &vpnname)
+{
+    qInfo() << "action vpn-group pressed::" << vpnname;
+
+    tiConfVpnGroups groups;
+    vpnClientConnection *conn;
+    vpnGroup *vpngroup = groups.getVpnGroupByName(vpnname);
+    QStringListIterator it(vpngroup->members);
+    vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
+    int connCount = 0;
+    while(it.hasNext())
+    {
+        conn = vpnmanager->getClientConnection(it.next());
+        if(conn != 0)
+        {
+            if(conn->status == vpnClientConnection::STATUS_CONNECTED)
+                connCount+=1;
+        }
+    }
+
+    if(connCount == vpngroup->members.count())
+        vpnGroupStatus = vpnClientConnection::STATUS_CONNECTED;
+    else if(connCount < vpngroup->members.count() && connCount > 0)
+        vpnGroupStatus = vpnClientConnection::STATUS_CONNECTING;
+    else
+        vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
+
+    QStringListIterator it2(vpngroup->members);
+    while(it2.hasNext())
+    {
+        if(vpnGroupStatus == vpnClientConnection::STATUS_DISCONNECTED)
+            vpnmanager->startVPN(it2.next());
+        else
+            vpnmanager->stopVPN(it2.next());
+    }
+}
+
 void MainWindow::onStopVPN()
 {
-    qInfo() << "stop vpn::";
+    qInfo() << "stop vpn::" << ui->tabMain->currentIndex();
 
-    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
-    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    // Tab-ID 0 = VPNs, Tab-ID 1 = VPN-Groups
+    QTreeView *tree = (ui->tabMain->currentIndex() == 0) ? ui->tvVpnProfiles : ui->tvVPNGroups;
+
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(tree->model());
+    QItemSelectionModel *selmodel = tree->selectionModel();
     QModelIndexList sellist = selmodel->selectedRows(1);
 
     if(sellist.count() < 1)
@@ -385,9 +442,20 @@ void MainWindow::onStopVPN()
         return;
     }
 
-    QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    QString itemName = model->itemFromIndex(sellist.at(0))->text();
 
-    vpnmanager->stopVPN(vpnName);
+    if(ui->tabMain->currentIndex() == 1)
+    {
+        tiConfVpnGroups groups;
+        vpnGroup *group = groups.getVpnGroupByName(itemName);
+        QStringListIterator it(group->members);
+        while(it.hasNext())
+        {
+            vpnmanager->stopVPN(it.next());
+        }
+    }
+    else
+        vpnmanager->stopVPN(itemName);
 }
 
 void MainWindow::onStopVPN(const QString &vpnname)
@@ -403,6 +471,7 @@ void MainWindow::onQuit()
 void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
     refreshVpnProfileList();
+    refreshVpnGroupList();
 }
 
 void MainWindow::refreshVpnProfileList()
@@ -425,7 +494,7 @@ void MainWindow::refreshVpnProfileList()
     tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
     tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
     tray_menu->addSeparator();
-    tray_menu->addAction(trUtf8("VPN-Groups"));
+    tray_menu->addMenu(tray_group_menu);
     tray_menu->addSeparator();
 
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
@@ -491,6 +560,9 @@ void MainWindow::refreshVpnGroupList()
     QStandardItem *item3 = 0;
     int row = model->rowCount();
 
+    tray_group_menu->clear();
+
+    vpnClientConnection *conn;
     QList<vpnGroup*> vpngroups = vpngroupss.getVpnGroups();
     for(int i=0; i < vpngroups.count(); i++)
     {
@@ -498,27 +570,38 @@ void MainWindow::refreshVpnGroupList()
         qDebug() << "MainWindow::refreshVpnGroupList() -> vpngroups found::" << vpngroup->name;
 
         QIcon status;
-        /*
-        vpnClientConnection *conn = vpnmanager->getClientConnection(vpngroup->name);
-        if(conn != 0)
+        QStringListIterator it(vpngroup->members);
+        vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
+        int connCount = 0;
+        while(it.hasNext())
         {
-            switch(conn->status)
+            conn = vpnmanager->getClientConnection(it.next());
+            if(conn != 0)
             {
-            case vpnClientConnection::STATUS_CONNECTED:
-                status = QIcon(":/img/connected.png");
-                break;
-            case vpnClientConnection::STATUS_CONNECTING:
-                status = QIcon(":/img/connecting.png");
-                break;
-            case vpnClientConnection::STATUS_DISCONNECTED:
-            default:
-                status = QIcon(":/img/disconnected.png");
+                if(conn->status == vpnClientConnection::STATUS_CONNECTED)
+                    connCount+=1;
             }
         }
+
+        if(connCount == vpngroup->members.count())
+            vpnGroupStatus = vpnClientConnection::STATUS_CONNECTED;
+        else if(connCount < vpngroup->members.count() && connCount > 0)
+            vpnGroupStatus = vpnClientConnection::STATUS_CONNECTING;
         else
+            vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
+
+        switch(vpnGroupStatus)
+        {
+        case vpnClientConnection::STATUS_CONNECTED:
+            status = QIcon(":/img/connected.png");
+            break;
+        case vpnClientConnection::STATUS_CONNECTING:
+            status = QIcon(":/img/connecting.png");
+            break;
+        case vpnClientConnection::STATUS_DISCONNECTED:
+        default:
             status = QIcon(":/img/disconnected.png");
-        */
-        status = QIcon(":/img/disconnected.png");
+        }
 
         item = new QStandardItem(vpngroup->name);
         item2 = new QStandardItem(vpngroup->members.join(", "));
@@ -528,6 +611,10 @@ void MainWindow::refreshVpnGroupList()
         model->setItem(row, 0, item3);
         model->setItem(row, 1, item);
         model->setItem(row, 2, item2);
+
+        // Menu
+        QAction *action = tray_group_menu->addAction(status, vpngroup->name, signalMapperGroups, SLOT(map()));
+        signalMapperGroups->setMapping(action, vpngroup->name) ;
     }
 
     ui->tvVPNGroups->header()->resizeSection(0, 50);

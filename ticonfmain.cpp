@@ -69,6 +69,8 @@ void tiConfMain::initMainConf()
         vpnprofiles_path.mkpath(vpnprofiles_dir);
         QDir localvpnprofiles_path(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
         localvpnprofiles_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
+        QDir localvpngroups_path(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
+        localvpngroups_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
         QDir logsdir_path(logs_dir);
         logsdir_path.mkpath(logs_dir);
 
@@ -81,6 +83,24 @@ void tiConfMain::initMainConf()
         conf.setValue("paths/logs", logs_dir);
         conf.setValue("paths/initd", openfortigui_config::initd_default);
         conf.sync();
+    }
+    else
+    {
+        QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
+        QDir conf_main_dir = finfo.absoluteDir();
+        conf_main_dir.mkpath(conf_main_dir.absolutePath());
+
+        QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
+        QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
+
+        QDir vpnprofiles_path(vpnprofiles_dir);
+        vpnprofiles_path.mkpath(vpnprofiles_dir);
+        QDir localvpnprofiles_path(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
+        localvpnprofiles_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
+        QDir localvpngroups_path(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
+        localvpngroups_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
+        QDir logsdir_path(logs_dir);
+        logsdir_path.mkpath(logs_dir);
     }
 }
 

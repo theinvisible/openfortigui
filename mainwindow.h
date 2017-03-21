@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
 
     QSystemTrayIcon *tray;
     static vpnManager *vpnmanager;
-    QSignalMapper* signalMapper;
+    QSignalMapper *signalMapper, *signalMapperGroups;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -46,6 +46,7 @@ private slots:
     void onStartVPN();
     void onStartVPN(const QString &vpnname);
     void onActionStartVPN(const QString &vpnname);
+    void onActionStartVPNGroup(const QString &vpnname);
     void onStopVPN();
     void onStopVPN(const QString &vpnname);
     void onQuit();
@@ -57,6 +58,7 @@ private:
     Ui::MainWindow *ui;
 
     QMenu *tray_menu;
+    QMenu *tray_group_menu;
 
     void refreshVpnProfileList();
     void refreshVpnGroupList();
