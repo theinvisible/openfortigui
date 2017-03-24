@@ -11,7 +11,7 @@
 
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
-
+    init_last_tunnel = false;
 }
 
 void vpnProcess::run(const QString &vpnname)
@@ -56,18 +56,24 @@ void vpnProcess::closeProcess()
 
 void vpnProcess::startVPN()
 {
+    qInfo() << "vpnProcess::startVPN::slot";
+
     tiConfVpnProfiles profiles;
     thread_vpn = new QThread;
-    vpnWorker* worker = new vpnWorker();
-    worker->setConfig(*profiles.getVpnProfileByName(name));
-    worker->moveToThread(thread_vpn);
+    thread_worker = new vpnWorker();
+    thread_worker->setConfig(*profiles.getVpnProfileByName(name));
+    thread_worker->moveToThread(thread_vpn);
     //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-    connect(thread_vpn, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(finished()), thread_vpn, SLOT(quit()));
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread_vpn, SIGNAL(started()), thread_worker, SLOT(process()));
+    connect(thread_worker, SIGNAL(finished()), thread_vpn, SLOT(quit()));
+    connect(thread_worker, SIGNAL(finished()), thread_worker, SLOT(deleteLater()));
     connect(thread_vpn, SIGNAL(finished()), thread_vpn, SLOT(deleteLater()));
-    connect(worker, SIGNAL(statusChanged(vpnClientConnection::connectionStatus)), this, SLOT(onVPNStatusChanged(vpnClientConnection::connectionStatus)));
+    connect(thread_worker, SIGNAL(statusChanged(vpnClientConnection::connectionStatus)), this, SLOT(onVPNStatusChanged(vpnClientConnection::connectionStatus)));
     thread_vpn->start();
+
+    observer = new QTimer(this);
+    connect(observer, SIGNAL(timeout()), this, SLOT(onObserverUpdate()));
+    observer->start(500);
 }
 
 void vpnProcess::sendCMD(const vpnApi &cmd)
@@ -135,3 +141,32 @@ void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status
     sendCMD(cmd);
 }
 
+void vpnProcess::onObserverUpdate()
+{
+    qInfo() << "vpnWorker::onObserverUpdate::slot";
+
+
+    if(thread_worker->ptr_tunnel != 0)
+    {
+        if(!init_last_tunnel)
+        {
+            last_tunnel = *(thread_worker->ptr_tunnel);
+            init_last_tunnel = true;
+        }
+
+        qInfo() << "vpnWorker::onObserverUpdate::state" << thread_worker->ptr_tunnel->state;
+
+        if(thread_worker->ptr_tunnel->state != last_tunnel.state)
+        {
+            switch(thread_worker->ptr_tunnel->state)
+            {
+            case STATE_DOWN:
+                onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
+                break;
+            case STATE_UP:
+                onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
+                break;
+            }
+        }
+    }
+}

@@ -19,6 +19,10 @@ private:
     QString name;
     QLocalSocket *apiServer;
     QThread* thread_vpn;
+    vpnWorker *thread_worker;
+    QTimer *observer;
+    struct tunnel last_tunnel;
+    bool init_last_tunnel;
 
     void closeProcess();
     void startVPN();
@@ -30,6 +34,9 @@ public slots:
     void onServerReadyRead();
     void onServerDisconnected();
     void onVPNStatusChanged(vpnClientConnection::connectionStatus status);
+
+private slots:
+    void onObserverUpdate();
 };
 
 #endif // VPNPROCESS_H

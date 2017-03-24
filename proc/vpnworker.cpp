@@ -160,7 +160,7 @@ static int pppd_terminate(struct tunnel *tunnel)
 
 vpnWorker::vpnWorker(QObject *parent) : QObject(parent)
 {
-
+    ptr_tunnel = 0;
 }
 
 void vpnWorker::setConfig(vpnProfile c)
@@ -176,6 +176,8 @@ void vpnWorker::updateStatus(vpnClientConnection::connectionStatus status)
 
 void vpnWorker::process()
 {
+    qInfo() << "vpnWorker::process::slot";
+
     struct vpn_config config;
     memset(&config, 0, sizeof (config));
     init_logging();
@@ -292,9 +294,10 @@ void vpnWorker::process()
     }
 
     tunnel.state = STATE_CONNECTING;
+    ptr_tunnel = &tunnel;
     ret = 0;
 
-    updateStatus(vpnClientConnection::STATUS_CONNECTED);
+    //updateStatus(vpnClientConnection::STATUS_CONNECTED);
 
     log_info("Custom: %s.\n", tunnel.config->gateway_host);
     // Step 6: perform io between pppd and the gateway, while tunnel is up
@@ -307,15 +310,17 @@ void vpnWorker::process()
             tunnel.on_ppp_if_down(&tunnel);
 
     tunnel.state = STATE_DISCONNECTING;
+    emit finished();
 
 err_start_tunnel:
     pppd_terminate(&tunnel);
     log_info("Terminated pppd.\n");
+    emit finished();
 err_tunnel:
     log_info("Closed connection to gateway.\n");
     tunnel.state = STATE_DOWN;
 
-    updateStatus(vpnClientConnection::STATUS_DISCONNECTED);
+    //updateStatus(vpnClientConnection::STATUS_DISCONNECTED);
 
     if (ssl_connect(&tunnel)) {
         log_info("Could not log out.\n");
@@ -323,4 +328,5 @@ err_tunnel:
         auth_log_out(&tunnel);
         log_info("Logged out.\n");
     }
+    emit finished();
 }

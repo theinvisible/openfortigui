@@ -148,7 +148,7 @@ void vpnClientConnection::onClientReadyRead()
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_5_2);
     in >> cmd;
-    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName;
+    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName << "::name::" << cmd.objName;
 
     QJsonDocument json = QJsonDocument::fromJson(cmd.data);
     QJsonObject jobj = json.object();

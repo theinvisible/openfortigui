@@ -2,6 +2,7 @@
 #define VPNWORKER_H
 
 #include <QObject>
+#include <QTimer>
 #include "vpnprofile.h"
 #include "vpnmanager.h"
 
@@ -17,6 +18,7 @@ class vpnWorker : public QObject
 public:
     explicit vpnWorker(QObject *parent = 0);
 
+    struct tunnel *ptr_tunnel;
     void setConfig(vpnProfile c);
 
 private:
@@ -26,6 +28,7 @@ private:
 
 signals:
     void statusChanged(vpnClientConnection::connectionStatus status);
+    void finished();
 
 public slots:
     void process();
