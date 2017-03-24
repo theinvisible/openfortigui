@@ -167,6 +167,8 @@ void vpnProcess::onObserverUpdate()
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
                 break;
             }
+
+            last_tunnel.state = thread_worker->ptr_tunnel->state;
         }
     }
 }
