@@ -178,6 +178,8 @@ void vpnWorker::process()
 {
     struct vpn_config config;
     memset(&config, 0, sizeof (config));
+    init_logging();
+    init_vpn_config(&config);
     strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), FIELD_SIZE);
     config.gateway_host[FIELD_SIZE] = '\0';
     config.gateway_port = vpnConfig.gateway_port;
@@ -195,7 +197,15 @@ void vpnWorker::process()
             add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
     }
 
+    config.set_dns = 1;
+    config.verify_cert = 0;
+    config.insecure_ssl = 0;
+    config.pppd_use_peerdns = 1;
+
     qInfo() << "usercert::" << config.user_cert;
+
+    increase_verbosity();
+    increase_verbosity();
 
     //run_tunnel(&config);
 

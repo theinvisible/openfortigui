@@ -17,7 +17,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     openfortivpn/src/config.c \
     openfortivpn/src/hdlc.c \
-    openfortivpn/src/http.c \
+    openfortivpn_local/src/http.c \
     openfortivpn/src/io.c \
     openfortivpn/src/ipv4.c \
     openfortivpn/src/log.c \
