@@ -1,3 +1,9 @@
+openfortigui (0.2.2-1) precise; urgency=low
+
+  * Added german translation
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 25 Mar 2017 20:21:00 +0100
+
 openfortigui (0.2.0-1) precise; urgency=low
 
   * Added VPN-Group functions
