@@ -14,6 +14,8 @@
 #include <QDateTime>
 #include <QProcess>
 #include <QFileInfo>
+#include <QLibraryInfo>
+#include <QTranslator>
 
 QFile *openfortiguiLog = 0;
 
@@ -87,11 +89,19 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
 
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
+    QTranslator openfortiguiTranslator;
+    openfortiguiTranslator.load("openfortigui_" + QLocale::system().name(), ":/translations");
+
     if(argc > 1)
     {
         QCoreApplication a(argc, argv);
         QCoreApplication::setApplicationName(openfortigui_config::name);
         QCoreApplication::setApplicationVersion(openfortigui_config::version);
+        a.installTranslator(&qtTranslator);
+        a.installTranslator(&openfortiguiTranslator);
 
         QCommandLineParser parser;
         parser.setApplicationDescription("Help for openfortiGUI options");
@@ -155,6 +165,8 @@ int main(int argc, char *argv[])
         QApplication a(argc, argv);
         QApplication::setApplicationName(openfortigui_config::name);
         QApplication::setApplicationVersion(openfortigui_config::version);
+        a.installTranslator(&qtTranslator);
+        a.installTranslator(&openfortiguiTranslator);
 
         if(isRunningAlready())
         {

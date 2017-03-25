@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Treeview VPNs
     QStringList headers;
-    headers << trUtf8("Status") << trUtf8("Name") << trUtf8("Gateway") << trUtf8("Benutzer");
+    headers << trUtf8("Status") << trUtf8("Name") << trUtf8("Gateway") << trUtf8("User");
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
     ui->tvVpnProfiles->setModel(model);
@@ -54,10 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
     tray_menu = tray->contextMenu();
-    tray_group_menu = new QMenu("VPN-Groups");
+    tray_group_menu = new QMenu(trUtf8("VPN-Groups"));
 
-    ui->tbActions->addAction(QIcon(":/img/connected.png"), "Connect", this, SLOT(onStartVPN()));
-    ui->tbActions->addAction(QIcon(":/img/disconnected.png"), "Disconnect", this, SLOT(onStopVPN()));
+    ui->tbActions->addAction(QIcon(":/img/connected.png"), trUtf8("Connect"), this, SLOT(onStartVPN()));
+    ui->tbActions->addAction(QIcon(":/img/disconnected.png"), trUtf8("Disconnect"), this, SLOT(onStopVPN()));
 
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
@@ -253,7 +253,7 @@ void MainWindow::on_btnDeleteGroup_clicked()
     }
     else
     {
-        QMessageBox::information(this, trUtf8("Delete VPN-group"), trUtf8("The selected vpn-group could not be deleted, an error occured."));
+        QMessageBox::information(this, trUtf8("Delete VPN-Group"), trUtf8("The selected vpn-group could not be deleted, an error occured."));
     }
 }
 

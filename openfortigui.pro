@@ -13,6 +13,8 @@ TEMPLATE = app
 
 CONFIG += c++11
 
+TRANSLATIONS = lang/openfortigui_de.ts
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     openfortivpn/src/config.c \
