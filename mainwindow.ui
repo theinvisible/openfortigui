@@ -51,6 +51,10 @@
             <property name="text">
              <string>Delete VPN</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/delete.png</normaloff>:/img/delete.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -71,6 +75,10 @@
             <property name="text">
              <string>Copy VPN</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/copy.png</normaloff>:/img/copy.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -78,12 +86,20 @@
             <property name="text">
              <string>Edit VPN</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/edit.png</normaloff>:/img/edit.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="btnAddVPN">
             <property name="text">
              <string>Add VPN</string>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
             </property>
            </widget>
           </item>
@@ -119,6 +135,10 @@
             <property name="text">
              <string>Delete Group</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/delete.png</normaloff>:/img/delete.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -139,6 +159,10 @@
             <property name="text">
              <string>Copy Group</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/copy.png</normaloff>:/img/copy.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -146,12 +170,20 @@
             <property name="text">
              <string>Edit Group</string>
             </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/edit.png</normaloff>:/img/edit.png</iconset>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="btnAddGroup">
             <property name="text">
              <string>Add Group</string>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
             </property>
            </widget>
           </item>

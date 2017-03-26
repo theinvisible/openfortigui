@@ -6,6 +6,10 @@
         <file alias="app.png">app-entry/openfortigui.png</file>
         <file alias="local.png">img/local.png</file>
         <file alias="global.png">img/global.png</file>
+        <file alias="delete.png">img/delete.png</file>
+        <file alias="copy.png">img/copy.png</file>
+        <file alias="edit.png">img/edit.png</file>
+        <file alias="add.png">img/add.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>
