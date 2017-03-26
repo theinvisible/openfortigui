@@ -42,6 +42,19 @@ MainWindow::MainWindow(QWidget *parent) :
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
     ui->tvVpnProfiles->setModel(model);
+    ui->tvVpnProfiles->setRootIsDecorated(true);
+    root_local_vpn = new QStandardItem(QIcon(":/img/local.png"), tr("Local VPNs"));
+    root_local_vpn->setData(vpnProfile::Origin_LOCAL);
+    root_global_vpn = new QStandardItem(QIcon(":/img/global.png"), tr("Global VPNs"));
+    root_global_vpn->setData(vpnProfile::Origin_GLOBAL);
+    model->setItem(0, 0, root_local_vpn);
+    model->setItem(1, 0, root_global_vpn);
+    ui->tvVpnProfiles->setExpanded(model->indexFromItem(root_local_vpn), true);
+    ui->tvVpnProfiles->setExpanded(model->indexFromItem(root_global_vpn), true);
+    ui->tvVpnProfiles->header()->resizeSection(0, 150);
+    ui->tvVpnProfiles->header()->resizeSection(1, 150);
+    ui->tvVpnProfiles->header()->resizeSection(2, 300);
+    ui->tvVpnProfiles->sortByColumn(1);
 
     // Treeview VPN-Groups
     QStringList headers2;
@@ -67,6 +80,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     refreshVpnProfileList();
     refreshVpnGroupList();
+
+    tiConfMain main_settings;
+    watcherVpnProfiles = new QFileSystemWatcher(this);
+    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/globalvpnprofiles").toString()));
+    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpnprofiles").toString()));
+    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpngroups").toString()));
+    connect(watcherVpnProfiles, SIGNAL(directoryChanged(QString)), this, SLOT(onWatcherVpnProfilesChanged(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -100,7 +120,19 @@ void MainWindow::on_btnDeleteVPN_clicked()
         return;
     }
 
+    if(model->itemFromIndex(sellist.at(0))->parent()->data().toInt() == vpnProfile::Origin_GLOBAL)
+    {
+        QMessageBox::warning(this, trUtf8("Delete VPN"),
+                                        trUtf8("Global VPN-Profiles cannot be deleted."),
+                                        QMessageBox::Ok);
+
+        return;
+    }
+
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    if(vpnName.isEmpty())
+        return;
+
     vpnClientConnection *cl = vpnmanager->getClientConnection(vpnName);
     if(cl != 0 && cl->status != vpnClientConnection::STATUS_DISCONNECTED)
     {
@@ -148,11 +180,16 @@ void MainWindow::on_btnEditVPN_clicked()
         return;
     }
 
+
+
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    if(vpnName.isEmpty())
+        return;
+
     vpnClientConnection *cl = vpnmanager->getClientConnection(vpnName);
     if(cl != 0 && cl->status != vpnClientConnection::STATUS_DISCONNECTED)
     {
-        QMessageBox::warning(this, trUtf8("Delete VPN"),
+        QMessageBox::warning(this, trUtf8("Edit VPN"),
                                         trUtf8("The VPN state must be disconnected to perform this action."),
                                         QMessageBox::Ok);
 
@@ -185,6 +222,9 @@ void MainWindow::on_btnCopyVPN_clicked()
     }
 
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+    if(vpnName.isEmpty())
+        return;
+
     bool ok;
     QString vpnNameNew = QInputDialog::getText(this, tr("Copy VPN-profile"),
                                              tr("Enter the new VPN-profile name"), QLineEdit::Normal,
@@ -472,6 +512,19 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 {
     refreshVpnProfileList();
     refreshVpnGroupList();
+
+    if(isHidden())
+    {
+        switch(status)
+        {
+        case vpnClientConnection::STATUS_CONNECTED:
+            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is connected").arg(vpnname), QSystemTrayIcon::Information, 2000);
+            break;
+        case vpnClientConnection::STATUS_DISCONNECTED:
+            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is disconnected").arg(vpnname), QSystemTrayIcon::Information, 2000);
+            break;
+        }
+    }
 }
 
 void MainWindow::refreshVpnProfileList()
@@ -480,13 +533,14 @@ void MainWindow::refreshVpnProfileList()
     tiConfVpnProfiles vpnss;
     vpnss.readVpnProfiles();
 
-    model->removeRows(0, model->rowCount());
+    root_local_vpn->removeRows(0, root_local_vpn->rowCount());
+    root_global_vpn->removeRows(0, root_global_vpn->rowCount());
 
     QStandardItem *item = 0;
     QStandardItem *item2 = 0;
     QStandardItem *item3 = 0;
     QStandardItem *item4 = 0;
-    int row = model->rowCount();
+    int localRow = 0, globalRow = 0;
 
     if(tray_menu == 0)
         tray_menu = new QMenu();
@@ -511,38 +565,54 @@ void MainWindow::refreshVpnProfileList()
             {
             case vpnClientConnection::STATUS_CONNECTED:
                 status = QIcon(":/img/connected.png");
+                item4 = new QStandardItem(status, tr("Connected"));
                 break;
             case vpnClientConnection::STATUS_CONNECTING:
                 status = QIcon(":/img/connecting.png");
+                item4 = new QStandardItem(status, tr("Connecting"));
                 break;
             case vpnClientConnection::STATUS_DISCONNECTED:
             default:
                 status = QIcon(":/img/disconnected.png");
+                item4 = new QStandardItem(status, tr("Disconnected"));
             }
         }
         else
+        {
             status = QIcon(":/img/disconnected.png");
+            item4 = new QStandardItem(status, tr("Disconnected"));
+        }
 
         item = new QStandardItem(vpn->name);
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
-        item4 = new QStandardItem(status, "");
 
-        row = model->rowCount();
-        model->setItem(row, 0, item4);
-        model->setItem(row, 1, item);
-        model->setItem(row, 2, item2);
-        model->setItem(row, 3, item3);
+        switch(vpn->origin_location)
+        {
+            case vpnProfile::Origin_LOCAL:
+            {
+                localRow = root_local_vpn->rowCount();
+                root_local_vpn->setChild(localRow, 0, item4);
+                root_local_vpn->setChild(localRow, 1, item);
+                root_local_vpn->setChild(localRow, 2, item2);
+                root_local_vpn->setChild(localRow, 3, item3);
+                break;
+            }
+            case vpnProfile::Origin_GLOBAL:
+            {
+                globalRow = root_global_vpn->rowCount();
+                root_global_vpn->setChild(globalRow, 0, item4);
+                root_global_vpn->setChild(globalRow, 1, item);
+                root_global_vpn->setChild(globalRow, 2, item2);
+                root_global_vpn->setChild(globalRow, 3, item3);
+                break;
+            }
+        }
 
         // Menu
         QAction *action = tray_menu->addAction(status, vpn->name, signalMapper, SLOT(map()));
         signalMapper->setMapping(action, vpn->name) ;
     }
-
-    ui->tvVpnProfiles->header()->resizeSection(0, 50);
-    ui->tvVpnProfiles->header()->resizeSection(1, 150);
-    ui->tvVpnProfiles->header()->resizeSection(2, 300);
-    ui->tvVpnProfiles->sortByColumn(1);
 
     tray->setContextMenu(tray_menu);
 }
@@ -646,5 +716,11 @@ void MainWindow::onActionAbout()
                                                               "openfortivpn: <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a> <br>"
                                                               "QTinyAes: <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a> <br>"
                                                               "tiny-AES128-C: <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a> <br>"
-                                                              "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version));
+                                                                  "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version));
+}
+
+void MainWindow::onWatcherVpnProfilesChanged(const QString &path)
+{
+    refreshVpnProfileList();
+    refreshVpnGroupList();
 }

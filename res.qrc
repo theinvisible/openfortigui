@@ -4,6 +4,8 @@
         <file alias="disconnected.png">img/disconnected.png</file>
         <file alias="connecting.png">img/connecting.png</file>
         <file alias="app.png">app-entry/openfortigui.png</file>
+        <file alias="local.png">img/local.png</file>
+        <file alias="global.png">img/global.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>

@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <QLibraryInfo>
 #include <QTranslator>
+#include <QMessageBox>
 
 QFile *openfortiguiLog = 0;
 
@@ -171,6 +172,9 @@ int main(int argc, char *argv[])
         if(isRunningAlready())
         {
             qInfo() << "This application is already running, exiting now.";
+            QMessageBox::critical(0, QApplication::tr("Application error"),
+                                            QApplication::tr("This application is already running, exiting now."),
+                                            QMessageBox::Ok);
             exit(0);
         }
 

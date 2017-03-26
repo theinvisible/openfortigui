@@ -31,7 +31,7 @@
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="indentation">
-           <number>10</number>
+           <number>15</number>
           </property>
           <property name="rootIsDecorated">
            <bool>false</bool>

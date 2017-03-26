@@ -9,7 +9,14 @@ class vpnProfile
 public:
     explicit vpnProfile();
 
+    enum Origin
+    {
+        Origin_LOCAL = 0,
+        Origin_GLOBAL
+    };
+
     QString name;
+    Origin origin_location;
 
     QString gateway_host;
     qint16 gateway_port;

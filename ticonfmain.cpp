@@ -62,11 +62,8 @@ void tiConfMain::initMainConf()
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
 
-        QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
 
-        QDir vpnprofiles_path(vpnprofiles_dir);
-        vpnprofiles_path.mkpath(vpnprofiles_dir);
         QDir localvpnprofiles_path(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
         localvpnprofiles_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
         QDir localvpngroups_path(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
@@ -77,7 +74,7 @@ void tiConfMain::initMainConf()
         QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
         conf.setValue("main/debug", true);
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
-        conf.setValue("paths/vpnprofiles", vpnprofiles_dir);
+        conf.setValue("paths/globalvpnprofiles", openfortigui_config::vpnprofiles_global);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
         conf.setValue("paths/logs", logs_dir);
@@ -93,8 +90,6 @@ void tiConfMain::initMainConf()
         QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
 
-        QDir vpnprofiles_path(vpnprofiles_dir);
-        vpnprofiles_path.mkpath(vpnprofiles_dir);
         QDir localvpnprofiles_path(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
         localvpnprofiles_path.mkpath(tiConfMain::formatPath(openfortigui_config::vpnprofiles_local));
         QDir localvpngroups_path(tiConfMain::formatPath(openfortigui_config::vpngroups_local));
@@ -190,45 +185,64 @@ void tiConfVpnProfiles::readVpnProfiles()
     // TODO if job objects exist we must *delete* them first
     vpnprofiles.clear();
 
-    QString vpnprofilesdir = tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString());
-    QDirIterator it_localvpndir(vpnprofilesdir);
-    QString vpnprofilefilepath;
-    while (it_localvpndir.hasNext())
+    QMap<vpnProfile::Origin, QString> profileDirs;
+    profileDirs[vpnProfile::Origin_LOCAL] = tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString());
+    profileDirs[vpnProfile::Origin_GLOBAL] = tiConfMain::formatPath(main_settings->getValue("paths/globalvpnprofiles").toString());
+
+    QMapIterator<vpnProfile::Origin, QString> it_profileDirs(profileDirs);
+    while(it_profileDirs.hasNext())
     {
-        vpnprofilefilepath = it_localvpndir.next();
-        if(vpnprofilefilepath.endsWith(".conf"))
+        it_profileDirs.next();
+
+        QDirIterator it_localvpndir(it_profileDirs.value());
+        QString vpnprofilefilepath;
+        while (it_localvpndir.hasNext())
         {
-            qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
+            vpnprofilefilepath = it_localvpndir.next();
+            if(vpnprofilefilepath.endsWith(".conf"))
+            {
+                qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
 
-            QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
-            vpnProfile *vpnprofile = new vpnProfile;
-            QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
+                QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
+                vpnProfile *vpnprofile = new vpnProfile;
+                QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
 
-            f->beginGroup("vpn");
-            vpnprofile->name = f->value("name").toString();
-            vpnprofile->gateway_host = f->value("gateway_host").toString();
-            vpnprofile->gateway_port = f->value("gateway_port").toInt();
-            vpnprofile->username = f->value("username").toString();
-            vpnprofile->password = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(f->value("password").toString().toUtf8())));
-            f->endGroup();
+                f->beginGroup("vpn");
+                vpnprofile->name = f->value("name").toString();
+                vpnprofile->gateway_host = f->value("gateway_host").toString();
+                vpnprofile->gateway_port = f->value("gateway_port").toInt();
+                vpnprofile->username = f->value("username").toString();
+                vpnprofile->password = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(f->value("password").toString().toUtf8())));
+                f->endGroup();
 
-            f->beginGroup("cert");
-            vpnprofile->ca_file = f->value("ca_file").toString();
-            vpnprofile->user_cert = f->value("user_cert").toString();
-            vpnprofile->user_key = f->value("user_key").toString();
-            vpnprofile->verify_cert = f->value("verify_cert").toBool();
-            vpnprofile->trusted_cert = f->value("trusted_cert").toString();
-            f->endGroup();
+                f->beginGroup("cert");
+                vpnprofile->ca_file = f->value("ca_file").toString();
+                vpnprofile->user_cert = f->value("user_cert").toString();
+                vpnprofile->user_key = f->value("user_key").toString();
+                vpnprofile->verify_cert = f->value("verify_cert").toBool();
+                vpnprofile->trusted_cert = f->value("trusted_cert").toString();
+                f->endGroup();
 
-            f->beginGroup("options");
-            vpnprofile->set_routes = f->value("set_routes").toBool();
-            vpnprofile->set_dns = f->value("set_dns").toBool();
-            vpnprofile->pppd_use_peerdns = f->value("pppd_use_peerdns").toBool();
-            vpnprofile->insecure_ssl = f->value("insecure_ssl").toBool();
-            f->endGroup();
+                f->beginGroup("options");
+                vpnprofile->set_routes = f->value("set_routes").toBool();
+                vpnprofile->set_dns = f->value("set_dns").toBool();
+                vpnprofile->pppd_use_peerdns = f->value("pppd_use_peerdns").toBool();
+                vpnprofile->insecure_ssl = f->value("insecure_ssl").toBool();
+                f->endGroup();
 
-            vpnprofiles.append(vpnprofile);
-            delete f;
+                switch(it_profileDirs.key())
+                {
+                case vpnProfile::Origin_LOCAL:
+                    vpnprofile->origin_location = vpnProfile::Origin_LOCAL;
+                    break;
+                case vpnProfile::Origin_GLOBAL:
+                    vpnprofile->origin_location = vpnProfile::Origin_GLOBAL;
+                    break;
+                }
+
+                vpnprofiles.append(vpnprofile);
+                delete f;
+            }
         }
     }
 }
@@ -238,7 +252,7 @@ QList<vpnProfile *> tiConfVpnProfiles::getVpnProfiles()
     return vpnprofiles;
 }
 
-vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname)
+vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin)
 {
     readVpnProfiles();
     vpnProfile *vpn = 0;
@@ -246,7 +260,7 @@ vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname)
     for(int i=0; i < vpnprofiles.count(); i++)
     {
         vpn = vpnprofiles.at(i);
-        if(vpn->name == vpnname)
+        if(vpn->name == vpnname && vpn->origin_location == sourceOrigin)
             return vpn;
     }
 
@@ -265,9 +279,9 @@ bool tiConfVpnProfiles::renameVpnProfile(const QString &oldname, const QString &
                          QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), newname));
 }
 
-bool tiConfVpnProfiles::copyVpnProfile(const QString &origname, const QString &cpname)
+bool tiConfVpnProfiles::copyVpnProfile(const QString &origname, const QString &cpname, vpnProfile::Origin sourceOrigin)
 {
-    vpnProfile *vpn = getVpnProfileByName(origname);
+    vpnProfile *vpn = getVpnProfileByName(origname, sourceOrigin);
     vpnProfile newvpn = *vpn;
     newvpn.name = cpname;
     saveVpnProfile(newvpn);

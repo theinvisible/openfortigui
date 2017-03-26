@@ -20,10 +20,10 @@ vpnProfileEditor::~vpnProfileEditor()
     delete ui;
 }
 
-void vpnProfileEditor::loadVpnProfile(const QString &profile)
+void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin sourceOrigin)
 {
     tiConfVpnProfiles vpns;
-    config = vpns.getVpnProfileByName(profile);
+    config = vpns.getVpnProfileByName(profile, sourceOrigin);
 
     ui->leName->setText(config->name);
     ui->leGatewayHost->setText(config->gateway_host);
@@ -47,6 +47,30 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile)
     ui->cbSetDNS->setChecked(config->set_dns);
     ui->cbPPPDUsePeerDNS->setChecked(config->pppd_use_peerdns);
     ui->cbInsecureSSL->setChecked(config->insecure_ssl);
+
+    if(config->origin_location == vpnProfile::Origin_GLOBAL)
+    {
+        ui->leName->setDisabled(true);
+        ui->leGatewayHost->setDisabled(true);
+        ui->sBGatewayPort->setDisabled(true);
+        ui->leUsername->setDisabled(true);
+        ui->lePassword->setDisabled(true);
+        ui->gbCertificate->setDisabled(true);
+        ui->leCAFile->setDisabled(true);
+        ui->leUserCert->setDisabled(true);
+        ui->leUserKey->setDisabled(true);
+        ui->leTrustedCert->setDisabled(true);
+        ui->cbVerifyCert->setDisabled(true);
+        ui->leOTP->setDisabled(true);
+        ui->cbSetRoutes->setDisabled(true);
+        ui->cbSetDNS->setDisabled(true);
+        ui->cbPPPDUsePeerDNS->setDisabled(true);
+        ui->cbInsecureSSL->setDisabled(true);
+        ui->btnSave->setDisabled(true);
+        ui->btnChooseCAFile->setDisabled(true);
+        ui->btnChooseUserCert->setDisabled(true);
+        ui->btnChooseUserKey->setDisabled(true);
+    }
 }
 
 void vpnProfileEditor::on_btnChooseUserCert_clicked()

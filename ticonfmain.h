@@ -60,12 +60,12 @@ public:
     void readVpnProfiles();
 
     QList<vpnProfile*> getVpnProfiles();
-    vpnProfile* getVpnProfileByName(const QString &vpnname);
+    vpnProfile* getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);
 
     bool removeVpnProfileByName(const QString &vpnname);
 
     bool renameVpnProfile(const QString &oldname, const QString &newname);
-    bool copyVpnProfile(const QString &origname, const QString &cpname);
+    bool copyVpnProfile(const QString &origname, const QString &cpname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);
 
 private:
     tiConfMain *main_settings;
