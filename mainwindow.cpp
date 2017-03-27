@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tray->show();
     tray_menu = tray->contextMenu();
     tray_group_menu = new QMenu(trUtf8("VPN-Groups"));
+    connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onTrayIconActivated(QSystemTrayIcon::ActivationReason)));
 
     ui->tbActions->addAction(QIcon(":/img/connected.png"), trUtf8("Connect"), this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), trUtf8("Disconnect"), this, SLOT(onStopVPN()));
@@ -510,6 +511,8 @@ void MainWindow::onQuit()
 
 void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
+    qInfo() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
+
     refreshVpnProfileList();
     refreshVpnGroupList();
 
@@ -717,6 +720,11 @@ void MainWindow::onActionAbout()
                                                               "QTinyAes: <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a> <br>"
                                                               "tiny-AES128-C: <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a> <br>"
                                                                   "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version));
+}
+
+void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    qInfo() << "trayiconreason::" << reason;
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)

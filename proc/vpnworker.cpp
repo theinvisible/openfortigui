@@ -227,9 +227,8 @@ void vpnWorker::process()
     tunnel.ssl_handle = NULL;
     tunnel.ssl_context = NULL;
 
-    tunnel.state = STATE_DOWN;
-
-    updateStatus(vpnClientConnection::STATUS_CONNECTING);
+    tunnel.state = STATE_CONNECTING;
+    ptr_tunnel = &tunnel;
 
     // Step 0: get gateway host IP
     ret = get_gateway_host_ip(&tunnel);
@@ -294,7 +293,6 @@ void vpnWorker::process()
     }
 
     tunnel.state = STATE_CONNECTING;
-    ptr_tunnel = &tunnel;
     ret = 0;
 
     //updateStatus(vpnClientConnection::STATUS_CONNECTED);

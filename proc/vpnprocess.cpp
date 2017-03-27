@@ -124,8 +124,6 @@ void vpnProcess::onServerDisconnected()
 
 void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status)
 {
-    qInfo() << "vpn status change::" << status;
-
     QJsonDocument json;
     QJsonObject jsTop;
 
@@ -143,28 +141,34 @@ void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status
 
 void vpnProcess::onObserverUpdate()
 {
-    qInfo() << "vpnWorker::onObserverUpdate::slot";
-
-
     if(thread_worker->ptr_tunnel != 0)
     {
         if(!init_last_tunnel)
         {
             last_tunnel = *(thread_worker->ptr_tunnel);
+            last_tunnel.state = STATE_DOWN;
             init_last_tunnel = true;
         }
 
-        qInfo() << "vpnWorker::onObserverUpdate::state" << thread_worker->ptr_tunnel->state;
+        qInfo() << "vpnProcess::onObserverUpdate::status_name" << name << "state" << thread_worker->ptr_tunnel->state;
 
         if(thread_worker->ptr_tunnel->state != last_tunnel.state)
         {
+            qInfo() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << thread_worker->ptr_tunnel->state;
+
             switch(thread_worker->ptr_tunnel->state)
             {
             case STATE_DOWN:
+                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
                 onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
                 break;
             case STATE_UP:
+                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
+                break;
+            case STATE_CONNECTING:
+                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
+                onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTING);
                 break;
             }
 
