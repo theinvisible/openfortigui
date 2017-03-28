@@ -54,7 +54,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVpnProfiles->header()->resizeSection(0, 150);
     ui->tvVpnProfiles->header()->resizeSection(1, 150);
     ui->tvVpnProfiles->header()->resizeSection(2, 300);
-    ui->tvVpnProfiles->sortByColumn(1);
 
     // Treeview VPN-Groups
     QStringList headers2;
@@ -117,9 +116,10 @@ void MainWindow::on_btnDeleteVPN_clicked()
     QModelIndexList sellist = selmodel->selectedRows(1);
 
     if(sellist.count() < 1)
-    {
         return;
-    }
+
+    if(model->itemFromIndex(sellist.at(0))->parent() == 0)
+        return;
 
     if(model->itemFromIndex(sellist.at(0))->parent()->data().toInt() == vpnProfile::Origin_GLOBAL)
     {
@@ -521,10 +521,10 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
         switch(status)
         {
         case vpnClientConnection::STATUS_CONNECTED:
-            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is connected").arg(vpnname), QSystemTrayIcon::Information, 2000);
+            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is connected").arg(vpnname), QSystemTrayIcon::Information, 4000);
             break;
         case vpnClientConnection::STATUS_DISCONNECTED:
-            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is disconnected").arg(vpnname), QSystemTrayIcon::Information, 2000);
+            tray->showMessage(tr("VPN-Status"), tr("VPN %1 is disconnected").arg(vpnname), QSystemTrayIcon::Information, 4000);
             break;
         }
     }
@@ -554,6 +554,9 @@ void MainWindow::refreshVpnProfileList()
     tray_menu->addMenu(tray_group_menu);
     tray_menu->addSeparator();
 
+    ui->tvVpnProfiles->setSortingEnabled(false);
+
+    QMap<QString, QAction*> trayItems;
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
     for(int i=0; i < vpns.count(); i++)
     {
@@ -613,11 +616,22 @@ void MainWindow::refreshVpnProfileList()
         }
 
         // Menu
-        QAction *action = tray_menu->addAction(status, vpn->name, signalMapper, SLOT(map()));
-        signalMapper->setMapping(action, vpn->name) ;
+        QAction *action = new QAction(status, vpn->name, tray_menu);
+        connect(action, SIGNAL(triggered(bool)), signalMapper, SLOT(map()));
+        signalMapper->setMapping(action, vpn->name);
+        trayItems[vpn->name] = action;
+    }
+
+    QMapIterator<QString, QAction*> itItems(trayItems);
+    while(itItems.hasNext())
+    {
+        itItems.next();
+        tray_menu->insertAction(0, itItems.value());
     }
 
     tray->setContextMenu(tray_menu);
+    ui->tvVpnProfiles->setSortingEnabled(true);
+    ui->tvVpnProfiles->sortByColumn(1, Qt::AscendingOrder);
 }
 
 void MainWindow::refreshVpnGroupList()
@@ -627,6 +641,7 @@ void MainWindow::refreshVpnGroupList()
     vpngroupss.readVpnGroups();
 
     model->removeRows(0, model->rowCount());
+    ui->tvVPNGroups->setSortingEnabled(false);
 
     QStandardItem *item = 0;
     QStandardItem *item2 = 0;
@@ -636,6 +651,7 @@ void MainWindow::refreshVpnGroupList()
     tray_group_menu->clear();
 
     vpnClientConnection *conn;
+    QMap<QString, QAction*> trayItems;
     QList<vpnGroup*> vpngroups = vpngroupss.getVpnGroups();
     for(int i=0; i < vpngroups.count(); i++)
     {
@@ -686,13 +702,23 @@ void MainWindow::refreshVpnGroupList()
         model->setItem(row, 2, item2);
 
         // Menu
-        QAction *action = tray_group_menu->addAction(status, vpngroup->name, signalMapperGroups, SLOT(map()));
-        signalMapperGroups->setMapping(action, vpngroup->name) ;
+        QAction *action = new QAction(status, vpngroup->name, tray_group_menu);
+        connect(action, SIGNAL(triggered(bool)), signalMapperGroups, SLOT(map()));
+        signalMapperGroups->setMapping(action, vpngroup->name);
+        trayItems[vpngroup->name] = action;
+    }
+
+    QMapIterator<QString, QAction*> itItems(trayItems);
+    while(itItems.hasNext())
+    {
+        itItems.next();
+        tray_group_menu->insertAction(0, itItems.value());
     }
 
     ui->tvVPNGroups->header()->resizeSection(0, 50);
     ui->tvVPNGroups->header()->resizeSection(1, 150);
-    ui->tvVPNGroups->sortByColumn(1);
+    ui->tvVPNGroups->setSortingEnabled(true);
+    ui->tvVPNGroups->sortByColumn(1, Qt::AscendingOrder);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
@@ -725,6 +751,13 @@ void MainWindow::onActionAbout()
 void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     qInfo() << "trayiconreason::" << reason;
+    if(reason == QSystemTrayIcon::Trigger)
+    {
+        if(isHidden())
+            show();
+        else
+            hide();
+    }
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)

@@ -1,3 +1,9 @@
+openfortigui (0.2.4-1) precise; urgency=low
+
+  * Bugfixes
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 28 Mar 2017 09:11:00 +0100
+
 openfortigui (0.2.3-1) precise; urgency=low
 
   * Divided into local and global profile-dirs
