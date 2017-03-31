@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     qtinyaes/QTinyAes/tiny-AES128-C/aes.c \
     proc/vpnworker.cpp \
     vpngroup.cpp \
-    vpngroupeditor.cpp
+    vpngroupeditor.cpp \
+    vpnsetting.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -60,11 +61,13 @@ HEADERS  += mainwindow.h \
     qtinyaes/QTinyAes/qtinyaes.h \
     proc/vpnworker.h \
     vpngroup.h \
-    vpngroupeditor.h
+    vpngroupeditor.h \
+    vpnsetting.h
 
 FORMS    += mainwindow.ui \
     vpnprofileeditor.ui \
-    vpngroupeditor.ui
+    vpngroupeditor.ui \
+    vpnsetting.ui
 
 RESOURCES += \
     res.qrc

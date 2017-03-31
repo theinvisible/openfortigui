@@ -29,7 +29,7 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
 
     if(openfortiguiLog == 0)
     {
-        openfortiguiLog = new QFile(QString("%1/openfortigui.log").arg(main_settings.getValue("paths/logs").toString()));
+        openfortiguiLog = new QFile(QString("%1/openfortigui.log").arg(tiConfMain::formatPath(main_settings.getValue("paths/logs").toString())));
         openfortiguiLog->open(QIODevice::Append | QIODevice::Text);
     }
 

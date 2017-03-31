@@ -54,6 +54,7 @@ private slots:
     void onQuit();
     void onActionAbout();
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void onVPNSettings();
 
     void onWatcherVpnProfilesChanged(const QString &path);
 

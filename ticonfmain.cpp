@@ -120,6 +120,12 @@ QString tiConfMain::formatPath(const QString &path)
     return p.replace("~", QDir::homePath());
 }
 
+QString tiConfMain::formatPathReverse(const QString &path)
+{
+    QString p = path;
+    return p.replace(QDir::homePath(), "~");
+}
+
 QString tiConfMain::setMainConfig(const QString &config)
 {
     QFile conf_main(tiConfMain::formatPath(config));

@@ -44,6 +44,7 @@ public:
     void sync();
 
     static QString formatPath(const QString &path);
+    static QString formatPathReverse(const QString &path);
     static QString setMainConfig(const QString &config);
 
 private:

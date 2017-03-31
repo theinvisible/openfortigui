@@ -13,6 +13,7 @@
 #include "ticonfmain.h"
 #include "vpnprofileeditor.h"
 #include "vpngroupeditor.h"
+#include "vpnsetting.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -74,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
+    connect(ui->actionMenuSettings, SIGNAL(triggered(bool)), this, SLOT(onVPNSettings()));
     connect(ui->actionMenuConnect, SIGNAL(triggered(bool)), this, SLOT(onStartVPN()));
     connect(ui->actionMenuDisconnect, SIGNAL(triggered(bool)), this, SLOT(onStopVPN()));
     connect(ui->actionMenuAbout, SIGNAL(triggered(bool)), this, SLOT(onActionAbout()));
@@ -758,6 +760,21 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
         else
             hide();
     }
+}
+
+void MainWindow::onVPNSettings()
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnSetting *f = new vpnSetting(prefWindow);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Settings"));
+
+    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    prefWindow->show();
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)

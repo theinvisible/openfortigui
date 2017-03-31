@@ -210,6 +210,8 @@
     </property>
     <addaction name="actionMenuHide"/>
     <addaction name="actionMenuExit"/>
+    <addaction name="separator"/>
+    <addaction name="actionMenuSettings"/>
    </widget>
    <widget class="QMenu" name="menuVPN">
     <property name="title">
@@ -275,6 +277,11 @@
   <action name="actionMenuHide">
    <property name="text">
     <string>Hide</string>
+   </property>
+  </action>
+  <action name="actionMenuSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

@@ -1,3 +1,9 @@
+openfortigui (0.2.5-1) precise; urgency=low
+
+  * Added settings window
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 31 Mar 2017 09:14:00 +0100
+
 openfortigui (0.2.4-1) precise; urgency=low
 
   * Bugfixes
