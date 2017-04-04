@@ -8,6 +8,7 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QScreen>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -72,6 +73,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tbActions->addAction(QIcon(":/img/connected.png"), trUtf8("Connect"), this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), trUtf8("Disconnect"), this, SLOT(onStopVPN()));
+    ui->tbActions->addSeparator();
+    ui->tbActions->addAction(QIcon(":/img/add.png"), trUtf8("Add"), this, SLOT(onTbActionAdd()));
+    ui->tbActions->addAction(QIcon(":/img/edit.png"), trUtf8("Edit"), this, SLOT(onTbActionEdit()));
+    ui->tbActions->addAction(QIcon(":/img/copy.png"), trUtf8("Copy"), this, SLOT(onTbActionCopy()));
+    ui->tbActions->addSeparator();
+    ui->tbActions->addAction(QIcon(":/img/delete.png"), trUtf8("Delete"), this, SLOT(onTbActionDelete()));
+    ui->tbActions->addSeparator();
+    ui->tbActions->addAction(QIcon(":/img/about.png"), trUtf8("About"), this, SLOT(onActionAbout()));
 
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
@@ -357,6 +366,38 @@ void MainWindow::on_tvVPNGroups_doubleClicked(const QModelIndex &index)
     on_btnEditGroup_clicked();
 }
 
+void MainWindow::onTbActionAdd()
+{
+    if(ui->tabMain->currentIndex() == 0)
+        on_btnAddVPN_clicked();
+    else
+        on_btnAddGroup_clicked();
+}
+
+void MainWindow::onTbActionEdit()
+{
+    if(ui->tabMain->currentIndex() == 0)
+        on_btnEditVPN_clicked();
+    else
+        on_btnEditGroup_clicked();
+}
+
+void MainWindow::onTbActionCopy()
+{
+    if(ui->tabMain->currentIndex() == 0)
+        on_btnCopyVPN_clicked();
+    else
+        on_btnCopyGroup_clicked();
+}
+
+void MainWindow::onTbActionDelete()
+{
+    if(ui->tabMain->currentIndex() == 0)
+        on_btnDeleteVPN_clicked();
+    else
+        on_btnDeleteGroup_clicked();
+}
+
 void MainWindow::onvpnAdded(const vpnProfile &vpn)
 {
     refreshVpnProfileList();
@@ -532,6 +573,15 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     }
 }
 
+MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
+{
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect geo = screen->geometry();
+    QRect geoAvail = screen->availableGeometry();
+
+    return (geoAvail.top() > geo.top()) ? MainWindow::TASKBAR_POSITION_TOP : MainWindow::TASKBAR_POSITION_BOTTOM;
+}
+
 void MainWindow::refreshVpnProfileList()
 {
     QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
@@ -550,11 +600,15 @@ void MainWindow::refreshVpnProfileList()
     if(tray_menu == 0)
         tray_menu = new QMenu();
     tray_menu->clear();
-    tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
-    tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
-    tray_menu->addSeparator();
-    tray_menu->addMenu(tray_group_menu);
-    tray_menu->addSeparator();
+    if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_TOP)
+    {
+        tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
+        tray_menu->addAction(trUtf8("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
+        tray_menu->addSeparator();
+        tray_menu->addMenu(tray_group_menu);
+        tray_menu->addSeparator();
+    }
 
     ui->tvVpnProfiles->setSortingEnabled(false);
 
@@ -629,6 +683,16 @@ void MainWindow::refreshVpnProfileList()
     {
         itItems.next();
         tray_menu->insertAction(0, itItems.value());
+    }
+
+    if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_BOTTOM)
+    {
+        tray_menu->addSeparator();
+        tray_menu->addMenu(tray_group_menu);
+        tray_menu->addSeparator();
+        tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
+        tray_menu->addAction(trUtf8("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
     }
 
     tray->setContextMenu(tray_menu);

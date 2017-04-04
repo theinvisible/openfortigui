@@ -209,9 +209,9 @@
      <string>File</string>
     </property>
     <addaction name="actionMenuHide"/>
-    <addaction name="actionMenuExit"/>
     <addaction name="separator"/>
     <addaction name="actionMenuSettings"/>
+    <addaction name="actionMenuExit"/>
    </widget>
    <widget class="QMenu" name="menuVPN">
     <property name="title">
@@ -252,6 +252,10 @@
    </property>
   </action>
   <action name="actionMenuAbout">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/about.png</normaloff>:/img/about.png</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>

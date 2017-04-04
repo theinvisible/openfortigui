@@ -27,6 +27,13 @@ public:
     static vpnManager *vpnmanager;
     QSignalMapper *signalMapper, *signalMapperGroups;
 
+    enum TASKBAR_POSITION {
+        TASKBAR_POSITION_TOP,
+        TASKBAR_POSITION_BOTTOM
+    };
+
+    static TASKBAR_POSITION taskbarPosition();
+
 private slots:
     void on_btnAddVPN_clicked();
     void on_btnDeleteVPN_clicked();
@@ -39,6 +46,11 @@ private slots:
     void on_btnEditGroup_clicked();
     void on_btnCopyGroup_clicked();
     void on_tvVPNGroups_doubleClicked(const QModelIndex &index);
+
+    void onTbActionAdd();
+    void onTbActionEdit();
+    void onTbActionCopy();
+    void onTbActionDelete();
 
     void onvpnAdded(const vpnProfile &vpn);
     void onvpnEdited(const vpnProfile &vpn);

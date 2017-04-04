@@ -1,3 +1,9 @@
+openfortigui (0.2.6-1) precise; urgency=low
+
+  * Added some more actionbar buttons, Adjust traymenu on trayposition, smaller bugfixes/improvments
+
+ -- Rene Hadler <rene@hadler.me>  Mon, 03 Apr 2017 15:14:00 +0100
+
 openfortigui (0.2.5-1) precise; urgency=low
 
   * Added settings window
