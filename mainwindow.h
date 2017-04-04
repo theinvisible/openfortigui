@@ -47,7 +47,6 @@ private slots:
     void on_btnCopyGroup_clicked();
     void on_tvVPNGroups_doubleClicked(const QModelIndex &index);
 
-    void onTbActionAdd();
     void onTbActionEdit();
     void onTbActionCopy();
     void onTbActionDelete();

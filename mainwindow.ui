@@ -44,67 +44,6 @@
           </attribute>
          </widget>
         </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="btnDeleteVPN">
-            <property name="text">
-             <string>Delete VPN</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/delete.png</normaloff>:/img/delete.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnCopyVPN">
-            <property name="text">
-             <string>Copy VPN</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/copy.png</normaloff>:/img/copy.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnEditVPN">
-            <property name="text">
-             <string>Edit VPN</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/edit.png</normaloff>:/img/edit.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnAddVPN">
-            <property name="text">
-             <string>Add VPN</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -127,67 +66,6 @@
            <bool>true</bool>
           </property>
          </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QPushButton" name="btnDeleteGroup">
-            <property name="text">
-             <string>Delete Group</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/delete.png</normaloff>:/img/delete.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnCopyGroup">
-            <property name="text">
-             <string>Copy Group</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/copy.png</normaloff>:/img/copy.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnEditGroup">
-            <property name="text">
-             <string>Edit Group</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/edit.png</normaloff>:/img/edit.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnAddGroup">
-            <property name="text">
-             <string>Add Group</string>
-            </property>
-            <property name="icon">
-             <iconset resource="res.qrc">
-              <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>

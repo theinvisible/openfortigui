@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QScreen>
+#include <QToolButton>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -71,10 +72,20 @@ MainWindow::MainWindow(QWidget *parent) :
     tray_group_menu = new QMenu(trUtf8("VPN-Groups"));
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onTrayIconActivated(QSystemTrayIcon::ActivationReason)));
 
+    QToolButton *tbtnAdd = new QToolButton();
+    QMenu *tmnuAdd = new QMenu(tbtnAdd);
+    tmnuAdd->addAction(tr("VPN"), this, SLOT(on_btnAddVPN_clicked()));
+    tmnuAdd->addAction(tr("VPN-Group"), this, SLOT(on_btnAddGroup_clicked()));
+    tbtnAdd->setPopupMode(QToolButton::InstantPopup);
+    tbtnAdd->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    tbtnAdd->setMenu(tmnuAdd);
+    tbtnAdd->setIcon(QIcon(":/img/add.png"));
+    tbtnAdd->setText(tr("Add"));
+
     ui->tbActions->addAction(QIcon(":/img/connected.png"), trUtf8("Connect"), this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), trUtf8("Disconnect"), this, SLOT(onStopVPN()));
     ui->tbActions->addSeparator();
-    ui->tbActions->addAction(QIcon(":/img/add.png"), trUtf8("Add"), this, SLOT(onTbActionAdd()));
+    ui->tbActions->addWidget(tbtnAdd);
     ui->tbActions->addAction(QIcon(":/img/edit.png"), trUtf8("Edit"), this, SLOT(onTbActionEdit()));
     ui->tbActions->addAction(QIcon(":/img/copy.png"), trUtf8("Copy"), this, SLOT(onTbActionCopy()));
     ui->tbActions->addSeparator();
@@ -364,14 +375,6 @@ void MainWindow::on_btnCopyGroup_clicked()
 void MainWindow::on_tvVPNGroups_doubleClicked(const QModelIndex &index)
 {
     on_btnEditGroup_clicked();
-}
-
-void MainWindow::onTbActionAdd()
-{
-    if(ui->tabMain->currentIndex() == 0)
-        on_btnAddVPN_clicked();
-    else
-        on_btnAddGroup_clicked();
 }
 
 void MainWindow::onTbActionEdit()
