@@ -11,15 +11,15 @@
     <message>
         <location filename="../mainwindow.ui" line="25"/>
         <location filename="../mainwindow.ui" line="96"/>
-        <location filename="../mainwindow.cpp" line="77"/>
+        <location filename="../mainwindow.cpp" line="79"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="148"/>
-        <location filename="../mainwindow.cpp" line="162"/>
-        <location filename="../mainwindow.cpp" line="171"/>
-        <location filename="../mainwindow.cpp" line="191"/>
+        <location filename="../mainwindow.cpp" line="150"/>
+        <location filename="../mainwindow.cpp" line="164"/>
+        <location filename="../mainwindow.cpp" line="173"/>
+        <location filename="../mainwindow.cpp" line="193"/>
         <source>Delete VPN</source>
         <translation>VPN löschen</translation>
     </message>
@@ -28,7 +28,7 @@
         <translation type="vanished">VPN kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="215"/>
+        <location filename="../mainwindow.cpp" line="217"/>
         <source>Edit VPN</source>
         <translation>VPN bearbeiten</translation>
     </message>
@@ -38,7 +38,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="51"/>
-        <location filename="../mainwindow.cpp" line="72"/>
+        <location filename="../mainwindow.cpp" line="74"/>
         <source>VPN-Groups</source>
         <translation>VPN-Gruppen</translation>
     </message>
@@ -75,19 +75,19 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="138"/>
-        <location filename="../mainwindow.cpp" line="94"/>
+        <location filename="../mainwindow.cpp" line="96"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="147"/>
-        <location filename="../mainwindow.cpp" line="85"/>
+        <location filename="../mainwindow.cpp" line="87"/>
         <source>Connect</source>
         <translation>Verbinden</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="156"/>
-        <location filename="../mainwindow.cpp" line="86"/>
+        <location filename="../mainwindow.cpp" line="88"/>
         <source>Disconnect</source>
         <translation>Trennen</translation>
     </message>
@@ -98,181 +98,181 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="166"/>
-        <location filename="../mainwindow.cpp" line="609"/>
-        <location filename="../mainwindow.cpp" line="697"/>
+        <location filename="../mainwindow.cpp" line="628"/>
+        <location filename="../mainwindow.cpp" line="716"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="44"/>
-        <location filename="../mainwindow.cpp" line="63"/>
+        <location filename="../mainwindow.cpp" line="46"/>
+        <location filename="../mainwindow.cpp" line="65"/>
         <source>Status</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="44"/>
-        <location filename="../mainwindow.cpp" line="63"/>
+        <location filename="../mainwindow.cpp" line="46"/>
+        <location filename="../mainwindow.cpp" line="65"/>
         <source>Name</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="44"/>
+        <location filename="../mainwindow.cpp" line="46"/>
         <source>Gateway</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="44"/>
+        <location filename="../mainwindow.cpp" line="46"/>
         <source>User</source>
         <translation>Benutzer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="49"/>
+        <location filename="../mainwindow.cpp" line="51"/>
         <source>Local VPNs</source>
         <translation>Lokale VPNs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="51"/>
+        <location filename="../mainwindow.cpp" line="53"/>
         <source>Global VPNs</source>
         <translation>Globale VPNs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="63"/>
+        <location filename="../mainwindow.cpp" line="65"/>
         <source>VPNs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="78"/>
+        <location filename="../mainwindow.cpp" line="80"/>
         <source>VPN-Group</source>
         <translation>VPN-Gruppe</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="83"/>
+        <location filename="../mainwindow.cpp" line="85"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="89"/>
+        <location filename="../mainwindow.cpp" line="91"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="90"/>
+        <location filename="../mainwindow.cpp" line="92"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="92"/>
+        <location filename="../mainwindow.cpp" line="94"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="149"/>
+        <location filename="../mainwindow.cpp" line="151"/>
         <source>Global VPN-Profiles cannot be deleted.</source>
         <translation>Globale VPN-Profile können nicht gelöscht werden.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="163"/>
-        <location filename="../mainwindow.cpp" line="216"/>
+        <location filename="../mainwindow.cpp" line="165"/>
+        <location filename="../mainwindow.cpp" line="218"/>
         <source>The VPN state must be disconnected to perform this action.</source>
         <translation>Die VPN muss getrennt sein um diese Aktion durchzuführen.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="172"/>
+        <location filename="../mainwindow.cpp" line="174"/>
         <source>Warning, the selected vpn will be deleted, continue?</source>
         <translation>Achtung, die gewählte VPN wird unwiderruflich gelöscht, weiter?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="191"/>
+        <location filename="../mainwindow.cpp" line="193"/>
         <source>The selected vpn could not be deleted, an error occured.</source>
         <translation>Die gewählte VPN konnte nicht gelöscht werden, ein Fehler ist aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="252"/>
+        <location filename="../mainwindow.cpp" line="254"/>
         <source>Copy VPN-profile</source>
         <translation>VPN-Profil kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="253"/>
+        <location filename="../mainwindow.cpp" line="255"/>
         <source>Enter the new VPN-profile name</source>
         <translation>Geben sie den neuen VPN-Namen an</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="299"/>
-        <location filename="../mainwindow.cpp" line="319"/>
+        <location filename="../mainwindow.cpp" line="301"/>
+        <location filename="../mainwindow.cpp" line="321"/>
         <source>Delete VPN-Group</source>
         <translation>VPN-Gruppe löschen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="300"/>
+        <location filename="../mainwindow.cpp" line="302"/>
         <source>Warning, the selected vpn-group will be deleted, continue?</source>
         <translation>Achtung, die gewählte VPN-Gruppe wird unwiderruflich gelöscht, weiter?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="319"/>
+        <location filename="../mainwindow.cpp" line="321"/>
         <source>The selected vpn-group could not be deleted, an error occured.</source>
         <translation>Die gewählte VPN-Gruppe konnte nicht gelöscht werden, ein Fehler ist aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="363"/>
+        <location filename="../mainwindow.cpp" line="365"/>
         <source>Copy Group-profile</source>
         <translation>Gruppen-Profil kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="364"/>
+        <location filename="../mainwindow.cpp" line="366"/>
         <source>Enter the new Group-profile name</source>
         <translation>Geben sie den neuen Gruppen-Namen an</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="570"/>
-        <location filename="../mainwindow.cpp" line="573"/>
+        <location filename="../mainwindow.cpp" line="572"/>
+        <location filename="../mainwindow.cpp" line="575"/>
         <source>VPN-Status</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="570"/>
+        <location filename="../mainwindow.cpp" line="572"/>
         <source>VPN %1 is connected</source>
         <translation>VPN %1 ist verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="573"/>
+        <location filename="../mainwindow.cpp" line="575"/>
         <source>VPN %1 is disconnected</source>
         <translation>VPN %1 ist getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="608"/>
-        <location filename="../mainwindow.cpp" line="698"/>
+        <location filename="../mainwindow.cpp" line="627"/>
+        <location filename="../mainwindow.cpp" line="717"/>
         <source>Quit app</source>
         <translation>App beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="610"/>
-        <location filename="../mainwindow.cpp" line="696"/>
+        <location filename="../mainwindow.cpp" line="629"/>
+        <location filename="../mainwindow.cpp" line="715"/>
         <source>Show mainwindow</source>
         <translation>Zeige Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="633"/>
+        <location filename="../mainwindow.cpp" line="652"/>
         <source>Connected</source>
         <translation>Verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="637"/>
+        <location filename="../mainwindow.cpp" line="656"/>
         <source>Connecting</source>
         <translation>Verbinden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="642"/>
-        <location filename="../mainwindow.cpp" line="648"/>
+        <location filename="../mainwindow.cpp" line="661"/>
+        <location filename="../mainwindow.cpp" line="667"/>
         <source>Disconnected</source>
         <translation>Getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="808"/>
+        <location filename="../mainwindow.cpp" line="827"/>
         <source>About openFortiGUI</source>
         <translation>Über openFortiGUI</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="808"/>
+        <location filename="../mainwindow.cpp" line="827"/>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
         <translation>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Diesess Programm verwendet folgende weitere Ressourcen/Bibliotheken:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
     </message>
@@ -285,12 +285,12 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="175"/>
+        <location filename="../main.cpp" line="176"/>
         <source>Application error</source>
         <translation>Anwendungsfehler</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="176"/>
+        <location filename="../main.cpp" line="177"/>
         <source>This application is already running, exiting now.</source>
         <translation>Diese Anwendung läuft bereits, schließe nun diese Instanz.</translation>
     </message>
@@ -298,27 +298,32 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../mainwindow.cpp" line="128"/>
+        <location filename="../mainwindow.cpp" line="130"/>
         <source> - Add VPN</source>
         <translation> - VPN hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="230"/>
+        <location filename="../mainwindow.cpp" line="232"/>
         <source> - Edit VPN</source>
         <translation> - VPN bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="278"/>
+        <location filename="../mainwindow.cpp" line="280"/>
         <source> - Add VPN-Group</source>
         <translation> - VPN-Gruppe hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="344"/>
+        <location filename="../mainwindow.cpp" line="346"/>
         <source> - Edit VPN-Group</source>
         <translation> - VPN-Gruppe bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="841"/>
+        <location filename="../mainwindow.cpp" line="591"/>
+        <source> - Login</source>
+        <translation>- Anmelden</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="860"/>
         <source> - Settings</source>
         <translation>- Einstellungen</translation>
     </message>
@@ -398,6 +403,39 @@
         <location filename="../vpngroupeditor.cpp" line="19"/>
         <source>Status</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>vpnLogin</name>
+    <message>
+        <location filename="../vpnlogin.ui" line="14"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnlogin.ui" line="20"/>
+        <source>Please enter your login details.</source>
+        <translation>Bitte geben Sie ihre Benutzerdaten an.</translation>
+    </message>
+    <message>
+        <location filename="../vpnlogin.ui" line="72"/>
+        <source>Username</source>
+        <translation>Benutzername</translation>
+    </message>
+    <message>
+        <location filename="../vpnlogin.ui" line="89"/>
+        <source>Password</source>
+        <translation>Passwort</translation>
+    </message>
+    <message>
+        <location filename="../vpnlogin.ui" line="122"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../vpnlogin.ui" line="142"/>
+        <source>Submit</source>
+        <translation>Absenden</translation>
     </message>
 </context>
 <context>

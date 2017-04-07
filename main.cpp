@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
         QApplication::setApplicationVersion(openfortigui_config::version);
         a.installTranslator(&qtTranslator);
         a.installTranslator(&openfortiguiTranslator);
+        a.setQuitOnLastWindowClosed(false);
 
         if(isRunningAlready())
         {

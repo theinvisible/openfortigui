@@ -13,7 +13,9 @@ public:
     {
         ACTION_HELLO = 0,
         ACTION_STOP,
-        ACTION_VPN_UPDATE_STATUS
+        ACTION_VPN_UPDATE_STATUS,
+        ACTION_CRED_REQUEST,
+        ACTION_CRED_SUBMIT
     };
 
     QString objName;

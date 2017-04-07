@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QMessageBox>
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
@@ -52,6 +53,7 @@ void vpnManager::startVPN(const QString &name)
 
     vpnClientConnection *clientConn = new vpnClientConnection(name);
     connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
+    connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
     connections[name] = clientConn;
 }
 
@@ -62,6 +64,8 @@ void vpnManager::stopVPN(const QString &name)
         vpnApi apiData;
         apiData.objName = name;
         apiData.action = vpnApi::ACTION_STOP;
+
+        qInfo() << "vpnManager::stopVPN::" << apiData.objName << "::" << apiData.action;
 
         connections[name]->sendCMD(apiData);
         connections.remove(name);
@@ -75,6 +79,27 @@ vpnClientConnection *vpnManager::getClientConnection(const QString &name)
         vpn = connections[name];
 
     return vpn;
+}
+
+void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, const QString &password)
+{
+    if(connections.contains(vpnname))
+    {
+        QJsonDocument json;
+        QJsonObject jsTop;
+        vpnClientConnection *vpn = connections[vpnname];
+        vpnApi data;
+        data.action = vpnApi::ACTION_CRED_SUBMIT;
+        data.objName = vpnname;
+
+        jsTop["username"] = username;
+        jsTop["password"] = password;
+
+        json.setObject(jsTop);
+        data.data = json.toJson();
+
+        vpn->sendCMD(data);
+    }
 }
 
 void vpnManager::onClientConnected()
@@ -111,6 +136,11 @@ void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     emit VPNStatusChanged(vpnname, status);
 }
 
+void vpnManager::onClientVPNCredRequest(QString vpnname)
+{
+    emit VPNCredRequest(vpnname);
+}
+
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)
 {
     name = n;
@@ -132,6 +162,8 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
     out.setVersion(QDataStream::Qt_5_2);
     out << cmd;
 
+    qInfo() << "vpnClientConnection::sendCMD::" << cmd.objName << "::" << cmd.action;
+
     if(!socket->isOpen())
     {
         qInfo() << "Socket ist nicht offen";
@@ -148,7 +180,7 @@ void vpnClientConnection::onClientReadyRead()
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_5_2);
     in >> cmd;
-    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName << "::name::" << cmd.objName;
+    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName;
 
     QJsonDocument json = QJsonDocument::fromJson(cmd.data);
     QJsonObject jobj = json.object();
@@ -158,6 +190,9 @@ void vpnClientConnection::onClientReadyRead()
     case vpnApi::ACTION_VPN_UPDATE_STATUS:
         status = static_cast<vpnClientConnection::connectionStatus>(jobj["status"].toInt());
         emit VPNStatusChanged(name, status);
+        break;
+    case vpnApi::ACTION_CRED_REQUEST:
+        emit VPNCredRequest(name);
         break;
     }
 

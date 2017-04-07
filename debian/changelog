@@ -1,3 +1,15 @@
+openfortigui (0.2.8-2) precise; urgency=low
+
+  * Added german translation
+
+ -- Rene Hadler <rene@hadler.me>  Mon, 07 Apr 2017 13:34:00 +0100
+
+openfortigui (0.2.8-1) precise; urgency=low
+
+  * Show window for login if necessary, Some fixes
+
+ -- Rene Hadler <rene@hadler.me>  Mon, 07 Apr 2017 13:14:00 +0100
+
 openfortigui (0.2.7-1) precise; urgency=low
 
   * Fixes & Cleanups

@@ -16,6 +16,7 @@
 #include "vpnprofileeditor.h"
 #include "vpngroupeditor.h"
 #include "vpnsetting.h"
+#include "vpnlogin.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vpnmanager = new vpnManager(this);
     connect(vpnmanager, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
+    connect(vpnmanager, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)));
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
@@ -574,6 +576,23 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
             break;
         }
     }
+}
+
+void MainWindow::onClientVPNCredRequest(QString vpnname)
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnLogin *f = new vpnLogin(prefWindow);
+    f->setData(vpnmanager, vpnname);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Login"));
+    f->initAfter();
+
+    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    prefWindow->show();
 }
 
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()

@@ -24,9 +24,19 @@ private:
     struct tunnel last_tunnel;
     bool init_last_tunnel;
 
+    bool cred_received;
+    struct struct_cred_data
+    {
+        QString username;
+        QString password;
+    };
+    struct_cred_data cred_data;
+
     void closeProcess();
     void startVPN();
     void sendCMD(const vpnApi &cmd);
+
+    void requestCred();
 
 signals:
 

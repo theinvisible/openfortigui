@@ -70,6 +70,7 @@ private slots:
     void onWatcherVpnProfilesChanged(const QString &path);
 
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
+    void onClientVPNCredRequest(QString vpnname);
 
 private:
     Ui::MainWindow *ui;

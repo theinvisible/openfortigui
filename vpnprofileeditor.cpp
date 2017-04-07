@@ -128,11 +128,13 @@ void vpnProfileEditor::on_btnSave_clicked()
         return;
     }
 
+    /*
     if(ui->leUsername->text().isEmpty() || ui->lePassword->text().isEmpty())
     {
         QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a username and password for the VPN."));
         return;
     }
+    */
 
     tiConfVpnProfiles vpns;
     vpnProfile vpn;

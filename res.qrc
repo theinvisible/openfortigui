@@ -11,6 +11,7 @@
         <file alias="edit.png">img/edit.png</file>
         <file alias="add.png">img/add.png</file>
         <file alias="about.png">img/about.png</file>
+        <file alias="login.png">img/login.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>

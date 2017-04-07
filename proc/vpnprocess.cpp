@@ -59,9 +59,35 @@ void vpnProcess::startVPN()
     qInfo() << "vpnProcess::startVPN::slot";
 
     tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(name);
+
+    if(profile->username.isEmpty() || profile->password.isEmpty())
+    {
+        cred_received = false;
+        requestCred();
+
+        // Wait for cred received
+        int wmax = 0;
+        while(!cred_received && wmax < 30)
+        {
+            QThread::sleep(1);
+            QCoreApplication::processEvents();
+            wmax++;
+        }
+
+        if(wmax == 30)
+        {
+            closeProcess();
+            return;
+        }
+
+        profile->username = cred_data.username;
+        profile->password = cred_data.password;
+    }
+
     thread_vpn = new QThread;
     thread_worker = new vpnWorker();
-    thread_worker->setConfig(*profiles.getVpnProfileByName(name));
+    thread_worker->setConfig(*profile);
     thread_worker->moveToThread(thread_vpn);
     //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
     connect(thread_vpn, SIGNAL(started()), thread_worker, SLOT(process()));
@@ -93,6 +119,21 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
     apiServer->flush();
 }
 
+void vpnProcess::requestCred()
+{
+    QJsonDocument json;
+    QJsonObject jsTop;
+
+    json.setObject(jsTop);
+
+    vpnApi cmd;
+    cmd.objName = name;
+    cmd.action = vpnApi::ACTION_CRED_REQUEST;
+    cmd.data = json.toJson();
+
+    sendCMD(cmd);
+}
+
 void vpnProcess::onServerReadyRead()
 {
     qInfo() << "server sent something::";
@@ -102,10 +143,18 @@ void vpnProcess::onServerReadyRead()
     in >> cmd;
     qInfo() << "server api command2::" << cmd.action << "::name::" << cmd.objName;
 
+    QJsonDocument json = QJsonDocument::fromJson(cmd.data);
+    QJsonObject jobj = json.object();
+
     switch(cmd.action)
     {
     case vpnApi::ACTION_STOP:
         closeProcess();
+        break;
+    case vpnApi::ACTION_CRED_SUBMIT:
+        cred_data.username = jobj["username"].toString();
+        cred_data.password = jobj["password"].toString();
+        cred_received = true;
         break;
     }
 
