@@ -112,19 +112,19 @@ void vpnProfileEditor::on_btnSave_clicked()
 {
     if(ui->leName->text().isEmpty())
     {
-        QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a name for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a name for the VPN."));
         return;
     }
 
     if(ui->leGatewayHost->text().isEmpty())
     {
-        QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a gateway for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway for the VPN."));
         return;
     }
 
     if(ui->sBGatewayPort->text().isEmpty())
     {
-        QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a gateway-port for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway-port for the VPN."));
         return;
     }
 

@@ -24,6 +24,7 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     tiConfVpnProfiles vpns;
     vpns.readVpnProfiles();
 
+    ui->tvMembers->setSortingEnabled(false);
     model->removeRows(0, model->rowCount());
 
     QStandardItem *item = 0;
@@ -46,6 +47,8 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     }
 
     ui->tvMembers->header()->resizeSection(0, 50);
+    ui->tvMembers->setSortingEnabled(true);
+    ui->tvMembers->sortByColumn(1, Qt::AscendingOrder);
 }
 
 vpnGroupEditor::~vpnGroupEditor()
@@ -85,7 +88,7 @@ void vpnGroupEditor::on_btnSave_clicked()
 {
     if(ui->leName->text().isEmpty())
     {
-        QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a name for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN-Group"), trUtf8("You must set a name for the VPN-group."));
         return;
     }
 
@@ -104,13 +107,27 @@ void vpnGroupEditor::on_btnSave_clicked()
 
     QStandardItem *item = 0, *item2 = 0;
     QList<QString> members;
+    tiConfVpnProfiles vpns;
+    vpns.readVpnProfiles();
+    vpnProfile *vpnprofile;
     for(int i=0; i<model->rowCount(); i++)
     {
         item = model->item(i, 0);
         item2 = model->item(i, 1);
 
         if(item->checkState() == Qt::Checked)
+        {
+            vpnprofile = vpns.getVpnProfileByName(item2->text());
+            if(vpnprofile != 0 && (vpnprofile->name.isEmpty() || vpnprofile->password.isEmpty()))
+            {
+                QMessageBox::warning(this, trUtf8("VPN-Group"), trUtf8("You must set username and password for each group you want to include in a group. "
+                                                                       "First missing on VPN: %1").arg(vpnprofile->name));
+
+                return;
+            }
+
             members.append(item2->text());
+        }
     }
     vpngroup.members = members;
 

@@ -370,6 +370,8 @@
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="24"/>
+        <location filename="../vpngroupeditor.cpp" line="88"/>
+        <location filename="../vpngroupeditor.cpp" line="120"/>
         <source>VPN-Group</source>
         <translation>VPN-Gruppe</translation>
     </message>
@@ -403,6 +405,16 @@
         <location filename="../vpngroupeditor.cpp" line="19"/>
         <source>Status</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpngroupeditor.cpp" line="88"/>
+        <source>You must set a name for the VPN-group.</source>
+        <translation>Es muss ein Name für die VPN-Gruppe angegeben werden.</translation>
+    </message>
+    <message>
+        <location filename="../vpngroupeditor.cpp" line="120"/>
+        <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
+        <translation>Es muss für jedes VPN-Profil Benutzername und Passwort gesetzt sein das in eine Gruppe inkludiert werden soll. Erste VPN mit fehlenden Infos: %1</translation>
     </message>
 </context>
 <context>
@@ -572,6 +584,28 @@
         <location filename="../vpnprofileeditor.cpp" line="100"/>
         <source>Select the CA-file</source>
         <translation>Wähle die CA-Datei</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.cpp" line="115"/>
+        <location filename="../vpnprofileeditor.cpp" line="121"/>
+        <location filename="../vpnprofileeditor.cpp" line="127"/>
+        <source>VPN</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.cpp" line="115"/>
+        <source>You must set a name for the VPN.</source>
+        <translation>Es muss ein Name für die VPN gesetzt sein.</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.cpp" line="121"/>
+        <source>You must set a gateway for the VPN.</source>
+        <translation>Es muss ein Gateway für die VPN gesetzt sein.</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.cpp" line="127"/>
+        <source>You must set a gateway-port for the VPN.</source>
+        <translation>Es muss ein Gateway-Port für die VPN gesetzt sein.</translation>
     </message>
 </context>
 <context>
