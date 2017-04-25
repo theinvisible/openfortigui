@@ -10,7 +10,6 @@ stages:
 run-build:  
   stage: build
   script:
-    - autoreconf -fvi
     - debuild -us -uc
     - mkdir build
     - mv ../openforti*.deb build/
