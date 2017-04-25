@@ -10,7 +10,8 @@ stages:
 run-build:  
   stage: build
   script:
-    - debuild -us -uc
+    - debuild clean
+    - echo "y" | debuild -us -uc
     - mkdir build
     - mv ../openforti*.deb build/
 
