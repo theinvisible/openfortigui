@@ -10,7 +10,6 @@ stages:
 run-build:  
   stage: build
   script:
-    - apt-get install -y libssl-dev 
     - autoreconf -fvi
     - debuild -us -uc
     - mkdir build
