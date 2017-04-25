@@ -10,6 +10,8 @@ stages:
 run-build:  
   stage: build
   script:
+    - git submodule init && git submodule update
+    - cd qtinyaes && git submodule init && git submodule update && cd ..
     - debuild clean
     - echo "y" | debuild -us -uc
     - mkdir build
