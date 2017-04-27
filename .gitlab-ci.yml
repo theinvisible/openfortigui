@@ -26,7 +26,7 @@ build-ubuntu-1604-64:
     - build-ubuntu-1604-64
 
 # Stage "debian"
-build-debian-8-64:  
+build-debian-9-64:  
   stage: build
   script:
     - git submodule init && git submodule update
@@ -42,4 +42,4 @@ build-debian-8-64:
       - build/*
 
   tags:
-    - build-debian-8-64
+    - build-debian-9-64
