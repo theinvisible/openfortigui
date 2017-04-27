@@ -5,7 +5,7 @@ Maintainer: Rene Hadler <rene@hadler.me>
 Build-Depends: debhelper (>= 8.0.0)
 
 Package: openfortigui
-Architecture: amd64
+Architecture: amd64 i386
 Depends: ${shlibs:Depends}, sudo, qttranslations5-l10n
 Conflicts:
 Replaces:
