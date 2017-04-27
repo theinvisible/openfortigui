@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>499</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,6 +48,12 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>VPN-Server</string>
             </property>
@@ -58,6 +64,12 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_3">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Username</string>
             </property>
@@ -65,6 +77,12 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_4">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Password</string>
             </property>
@@ -72,6 +90,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_5">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>VPN-Port</string>
             </property>
@@ -133,6 +157,12 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>User-Key</string>
             </property>
@@ -140,6 +170,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_8">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>CA-File</string>
             </property>
@@ -147,6 +183,12 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_9">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Verify Certificate</string>
             </property>
@@ -206,6 +248,18 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_15">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>150</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>Trusted-Cert (SHA256)</string>
             </property>
@@ -245,6 +299,12 @@
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_11">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Set routes</string>
             </property>
@@ -252,6 +312,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_12">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Set DNS</string>
             </property>
@@ -259,6 +325,12 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_13">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>PPPD use peerdns</string>
             </property>
@@ -266,6 +338,12 @@
           </item>
           <item row="4" column="0">
            <widget class="QLabel" name="label_14">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Insecure SSL</string>
             </property>
