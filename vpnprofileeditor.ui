@@ -285,19 +285,6 @@
          </property>
          <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>OTP</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
            <widget class="QLabel" name="label_11">
             <property name="minimumSize">
              <size>
@@ -310,7 +297,17 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbSetRoutes">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
            <widget class="QLabel" name="label_12">
             <property name="minimumSize">
              <size>
@@ -323,7 +320,17 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="cbSetDNS">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
            <widget class="QLabel" name="label_13">
             <property name="minimumSize">
              <size>
@@ -336,7 +343,17 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbPPPDUsePeerDNS">
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
            <widget class="QLabel" name="label_14">
             <property name="minimumSize">
              <size>
@@ -349,40 +366,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="leOTP"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbSetRoutes">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbSetDNS">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="1">
-           <widget class="QCheckBox" name="cbPPPDUsePeerDNS">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
            <widget class="QCheckBox" name="cbInsecureSSL">
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>

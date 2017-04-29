@@ -528,7 +528,7 @@
     <message>
         <location filename="../vpnprofileeditor.ui" line="210"/>
         <source>Trusted-Cert (SHA256)</source>
-        <translation>Vertrautes-Zertifikat (SHA256)</translation>
+        <translation>Vertr. Zertifikat (SHA256)</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="224"/>

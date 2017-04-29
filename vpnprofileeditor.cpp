@@ -42,7 +42,6 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbVerifyCert->setChecked(config->verify_cert);
     }
 
-    ui->leOTP->setText(config->otp);
     ui->cbSetRoutes->setChecked(config->set_routes);
     ui->cbSetDNS->setChecked(config->set_dns);
     ui->cbPPPDUsePeerDNS->setChecked(config->pppd_use_peerdns);
@@ -61,7 +60,6 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->leUserKey->setDisabled(true);
         ui->leTrustedCert->setDisabled(true);
         ui->cbVerifyCert->setDisabled(true);
-        ui->leOTP->setDisabled(true);
         ui->cbSetRoutes->setDisabled(true);
         ui->cbSetDNS->setDisabled(true);
         ui->cbPPPDUsePeerDNS->setDisabled(true);
@@ -169,7 +167,6 @@ void vpnProfileEditor::on_btnSave_clicked()
         vpn.verify_cert = ui->cbVerifyCert->isChecked();
     }
 
-    vpn.otp = ui->leOTP->text();
     vpn.set_routes = ui->cbSetRoutes->isChecked();
     vpn.set_dns = ui->cbSetDNS->isChecked();
     vpn.pppd_use_peerdns = ui->cbPPPDUsePeerDNS->isChecked();

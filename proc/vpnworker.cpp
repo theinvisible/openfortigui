@@ -199,10 +199,10 @@ void vpnWorker::process()
             add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
     }
 
-    config.set_dns = 1;
-    config.verify_cert = 0;
-    config.insecure_ssl = 0;
-    config.pppd_use_peerdns = 1;
+    config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
+    config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
+    config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
+    config.pppd_use_peerdns = (vpnConfig.insecure_ssl) ? 1 : 0;
 
     qInfo() << "usercert::" << config.user_cert;
 
