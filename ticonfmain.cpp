@@ -28,7 +28,7 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include <QDirIterator>
 
 #include "config.h"
-#include "qtinyaes/qtinyaes.h"
+#include "qtinyaes/QTinyAes/qtinyaes.h"
 
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
 

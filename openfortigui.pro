@@ -32,7 +32,7 @@ SOURCES += main.cpp\
     proc/vpnprocess.cpp \
     vpnprofile.cpp \
     vpnprofileeditor.cpp \
-    qtinyaes/qtinyaes.cpp \
+    qtinyaes/QTinyAes/qtinyaes.cpp \
     qtinyaes/tiny-AES128-C/aes.c \
     proc/vpnworker.cpp \
     vpngroup.cpp \
@@ -59,7 +59,7 @@ HEADERS  += mainwindow.h \
     vpnprofile.h \
     vpnprofileeditor.h \
     qtinyaes/tiny-AES128-C/aes.h \
-    qtinyaes/qtinyaes.h \
+    qtinyaes/QTinyAes/qtinyaes.h \
     proc/vpnworker.h \
     vpngroup.h \
     vpngroupeditor.h \
@@ -74,7 +74,5 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     res.qrc
-
-INCLUDEPATH += qtinyaes/tiny-AES128-C
 
 unix:!macx:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil
