@@ -12,6 +12,9 @@ build-ubuntu-1604-64:
   script:
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
+    - cd openfortivpn && git pull origin master && cd ..
+    - cd qtinyaes && git pull origin master && git submodule init && git submodule update && cd ..
+    - cd qtinyaes/tiny-AES128-C && git pull origin master && cd ../..
     - debuild clean
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - mkdir build
@@ -31,6 +34,9 @@ build-ubuntu-1604-32:
   script:
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
+    - cd openfortivpn && git pull origin master && cd ..
+    - cd qtinyaes && git pull origin master && git submodule init && git submodule update && cd ..
+    - cd qtinyaes/tiny-AES128-C && git pull origin master && cd ../..
     - debuild clean
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - mkdir build
@@ -50,6 +56,9 @@ build-debian-9-64:
   script:
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
+    - cd openfortivpn && git pull origin master && cd ..
+    - cd qtinyaes && git pull origin master && git submodule init && git submodule update && cd ..
+    - cd qtinyaes/tiny-AES128-C && git pull origin master && cd ../..
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - mkdir build
     - mv ../openforti*.deb build/

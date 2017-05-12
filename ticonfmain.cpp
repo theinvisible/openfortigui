@@ -28,7 +28,7 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include <QDirIterator>
 
 #include "config.h"
-#include "qtinyaes/QTinyAes/qtinyaes.h"
+#include "qtinyaes/qtinyaes.h"
 
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
 
@@ -74,6 +74,7 @@ void tiConfMain::initMainConf()
         QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
         conf.setValue("main/debug", true);
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
+        conf.setValue("main/start_minimized", false);
         conf.setValue("paths/globalvpnprofiles", openfortigui_config::vpnprofiles_global);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);

@@ -90,6 +90,8 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
 
+    tiConfMain main_settings;
+
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
@@ -180,7 +182,9 @@ int main(int argc, char *argv[])
         }
 
         MainWindow w;
-        w.show();
+
+        if(main_settings.getValue("main/start_minimized").toBool() == false)
+            w.show();
 
         return a.exec();
     }

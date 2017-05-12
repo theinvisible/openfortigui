@@ -285,12 +285,12 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="176"/>
+        <location filename="../main.cpp" line="178"/>
         <source>Application error</source>
         <translation>Anwendungsfehler</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="177"/>
+        <location filename="../main.cpp" line="179"/>
         <source>This application is already running, exiting now.</source>
         <translation>Diese Anwendung läuft bereits, schließe nun diese Instanz.</translation>
     </message>
@@ -331,32 +331,32 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="112"/>
+        <location filename="../main.cpp" line="114"/>
         <source>Start vpn-process [must be run as root]</source>
         <translation>Starte VPN-Prozess [muss als root ausgeführt werden]</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="116"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Set vpn name &lt;vpnname&gt;</source>
         <translation>Setzte VPN-Name &lt;vpnname&gt;</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="117"/>
+        <location filename="../main.cpp" line="119"/>
         <source>vpnname</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="121"/>
+        <location filename="../main.cpp" line="123"/>
         <source>Use &lt;mainconfig&gt; as config file</source>
         <translation>Verwende &lt;mainconfig&gt; als Config-Datei</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="122"/>
+        <location filename="../main.cpp" line="124"/>
         <source>mainconfig</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="125"/>
+        <location filename="../main.cpp" line="127"/>
         <source>Kills all vpn-processes</source>
         <translation>Beende alle VPN-Prozesse</translation>
     </message>
@@ -370,8 +370,8 @@
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="24"/>
-        <location filename="../vpngroupeditor.cpp" line="88"/>
-        <location filename="../vpngroupeditor.cpp" line="120"/>
+        <location filename="../vpngroupeditor.cpp" line="91"/>
+        <location filename="../vpngroupeditor.cpp" line="123"/>
         <source>VPN-Group</source>
         <translation>VPN-Gruppe</translation>
     </message>
@@ -387,17 +387,17 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.ui" line="54"/>
+        <location filename="../vpngroupeditor.ui" line="60"/>
         <source>Members</source>
         <translation>Mitglieder</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.ui" line="88"/>
+        <location filename="../vpngroupeditor.ui" line="94"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.ui" line="108"/>
+        <location filename="../vpngroupeditor.ui" line="114"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
@@ -407,12 +407,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="88"/>
+        <location filename="../vpngroupeditor.cpp" line="91"/>
         <source>You must set a name for the VPN-group.</source>
         <translation>Es muss ein Name für die VPN-Gruppe angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="120"/>
+        <location filename="../vpngroupeditor.cpp" line="123"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
         <translation>Es muss für jedes VPN-Profil Benutzername und Passwort gesetzt sein das in eine Gruppe inkludiert werden soll. Erste VPN mit fehlenden Infos: %1</translation>
     </message>
@@ -435,17 +435,17 @@
         <translation>Benutzername</translation>
     </message>
     <message>
-        <location filename="../vpnlogin.ui" line="89"/>
+        <location filename="../vpnlogin.ui" line="95"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location filename="../vpnlogin.ui" line="122"/>
+        <location filename="../vpnlogin.ui" line="128"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnlogin.ui" line="142"/>
+        <location filename="../vpnlogin.ui" line="148"/>
         <source>Submit</source>
         <translation>Absenden</translation>
     </message>
@@ -464,7 +464,7 @@
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="30"/>
-        <location filename="../vpnprofileeditor.ui" line="230"/>
+        <location filename="../vpnprofileeditor.ui" line="284"/>
         <source>Common</source>
         <translation>Allgemein</translation>
     </message>
@@ -474,136 +474,131 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="52"/>
+        <location filename="../vpnprofileeditor.ui" line="58"/>
         <source>VPN-Server</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="62"/>
+        <location filename="../vpnprofileeditor.ui" line="74"/>
         <source>Username</source>
         <translation>Benutzername</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="69"/>
+        <location filename="../vpnprofileeditor.ui" line="87"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="76"/>
+        <location filename="../vpnprofileeditor.ui" line="100"/>
         <source>VPN-Port</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="112"/>
+        <location filename="../vpnprofileeditor.ui" line="136"/>
         <source>Certificate</source>
         <translation>Zertifikate</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="130"/>
+        <location filename="../vpnprofileeditor.ui" line="154"/>
         <source>User-Certificate</source>
         <translation>Benutzer-Zertifikat</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="137"/>
+        <location filename="../vpnprofileeditor.ui" line="167"/>
         <source>User-Key</source>
         <translation>Benutzer-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="144"/>
+        <location filename="../vpnprofileeditor.ui" line="180"/>
         <source>CA-File</source>
         <translation>CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="151"/>
+        <location filename="../vpnprofileeditor.ui" line="193"/>
         <source>Verify Certificate</source>
         <translation>Zertifikat verifizieren</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="173"/>
-        <location filename="../vpnprofileeditor.ui" line="187"/>
-        <location filename="../vpnprofileeditor.ui" line="201"/>
+        <location filename="../vpnprofileeditor.ui" line="215"/>
+        <location filename="../vpnprofileeditor.ui" line="229"/>
+        <location filename="../vpnprofileeditor.ui" line="243"/>
         <source>Choose</source>
         <translation>Wählen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="210"/>
+        <location filename="../vpnprofileeditor.ui" line="264"/>
         <source>Trusted-Cert (SHA256)</source>
         <translation>Vertr. Zertifikat (SHA256)</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="224"/>
+        <location filename="../vpnprofileeditor.ui" line="278"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="242"/>
-        <source>OTP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../vpnprofileeditor.ui" line="249"/>
+        <location filename="../vpnprofileeditor.ui" line="296"/>
         <source>Set routes</source>
         <translation>Setze Routen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="256"/>
+        <location filename="../vpnprofileeditor.ui" line="319"/>
         <source>Set DNS</source>
         <translation>Setze DNS</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="263"/>
+        <location filename="../vpnprofileeditor.ui" line="342"/>
         <source>PPPD use peerdns</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="270"/>
+        <location filename="../vpnprofileeditor.ui" line="365"/>
         <source>Insecure SSL</source>
         <translation>Unsicheres SSL</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="355"/>
+        <location filename="../vpnprofileeditor.ui" line="417"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="375"/>
+        <location filename="../vpnprofileeditor.ui" line="437"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="80"/>
+        <location filename="../vpnprofileeditor.cpp" line="78"/>
         <source>Select the user-cert</source>
         <translation>Wähle das Benutzer-Zertifikat</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="90"/>
+        <location filename="../vpnprofileeditor.cpp" line="88"/>
         <source>Select the user-key</source>
         <translation>Wähle den Benutzer-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="100"/>
+        <location filename="../vpnprofileeditor.cpp" line="98"/>
         <source>Select the CA-file</source>
         <translation>Wähle die CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="115"/>
-        <location filename="../vpnprofileeditor.cpp" line="121"/>
-        <location filename="../vpnprofileeditor.cpp" line="127"/>
+        <location filename="../vpnprofileeditor.cpp" line="113"/>
+        <location filename="../vpnprofileeditor.cpp" line="119"/>
+        <location filename="../vpnprofileeditor.cpp" line="125"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="115"/>
+        <location filename="../vpnprofileeditor.cpp" line="113"/>
         <source>You must set a name for the VPN.</source>
         <translation>Es muss ein Name für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="121"/>
+        <location filename="../vpnprofileeditor.cpp" line="119"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>Es muss ein Gateway für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="127"/>
+        <location filename="../vpnprofileeditor.cpp" line="125"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Es muss ein Gateway-Port für die VPN gesetzt sein.</translation>
     </message>
@@ -626,55 +621,60 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="41"/>
+        <location filename="../vpnsetting.ui" line="47"/>
         <source>AES-Key</source>
         <translation>AES-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="63"/>
+        <location filename="../vpnsetting.ui" line="70"/>
+        <source>Start minimized</source>
+        <translation>Minimiert starten</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="89"/>
         <source>Paths</source>
         <translation>Pfade</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="77"/>
+        <location filename="../vpnsetting.ui" line="103"/>
         <source>Local VPN-Profiles</source>
         <translation>Lokale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="84"/>
+        <location filename="../vpnsetting.ui" line="116"/>
         <source>Local VPN-Groups</source>
         <translation>Lokale VPN-Gruppen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="91"/>
+        <location filename="../vpnsetting.ui" line="129"/>
         <source>Global VPN-Profiles</source>
         <translation>Globale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="98"/>
+        <location filename="../vpnsetting.ui" line="142"/>
         <source>Logs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="110"/>
-        <location filename="../vpnsetting.ui" line="124"/>
-        <location filename="../vpnsetting.ui" line="138"/>
-        <location filename="../vpnsetting.ui" line="152"/>
+        <location filename="../vpnsetting.ui" line="154"/>
+        <location filename="../vpnsetting.ui" line="168"/>
+        <location filename="../vpnsetting.ui" line="182"/>
+        <location filename="../vpnsetting.ui" line="196"/>
         <source>Choose</source>
         <translation>Wählen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="181"/>
+        <location filename="../vpnsetting.ui" line="225"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="201"/>
+        <location filename="../vpnsetting.ui" line="245"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.cpp" line="74"/>
+        <location filename="../vpnsetting.cpp" line="76"/>
         <source>Choose a directory</source>
         <translation>Wähle ein Verzeichnis</translation>
     </message>

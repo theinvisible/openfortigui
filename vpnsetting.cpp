@@ -12,6 +12,7 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->setupUi(this);
 
     tiConfMain confMain;
+    ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
     ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
 
@@ -34,6 +35,7 @@ void vpnSetting::on_btnCancel_clicked()
 void vpnSetting::on_btnSave_clicked()
 {
     tiConfMain confMain;
+    confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
     confMain.setValue("main/aeskey", ui->leAESKey->text());
 
