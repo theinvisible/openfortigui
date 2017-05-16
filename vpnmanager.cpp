@@ -50,6 +50,10 @@ void vpnManager::startVPN(const QString &name)
     QProcess *vpn = new QProcess(this);
     qInfo() << "Start vpn::" << name;
     vpn->start("sudo", arguments);
+    // Close read channel to avoid memory leak
+    // TODO: Process output later on
+    vpn->closeReadChannel(QProcess::StandardOutput);
+    vpn->closeReadChannel(QProcess::StandardError);
 
     vpnClientConnection *clientConn = new vpnClientConnection(name);
     connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));

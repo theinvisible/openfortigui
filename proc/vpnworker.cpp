@@ -206,8 +206,8 @@ void vpnWorker::process()
 
     qInfo() << "usercert::" << config.user_cert;
 
-    increase_verbosity();
-    increase_verbosity();
+    //increase_verbosity();
+    //increase_verbosity();
 
     //run_tunnel(&config);
 
