@@ -5,9 +5,10 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFile>
+#include <QRegExp>
 
 #include "ticonfmain.h"
-#include "vpnapi.h"
 
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
@@ -61,6 +62,11 @@ void vpnProcess::startVPN()
     tiConfVpnProfiles profiles;
     vpnProfile *profile = profiles.getVpnProfileByName(name);
 
+    // Reset stats
+    stats.bytes_read = 0;
+    stats.bytes_written = 0;
+    stats.vpn_start = 0;
+
     if(profile->username.isEmpty() || profile->password.isEmpty())
     {
         cred_received = false;
@@ -100,6 +106,10 @@ void vpnProcess::startVPN()
     observer = new QTimer(this);
     connect(observer, SIGNAL(timeout()), this, SLOT(onObserverUpdate()));
     observer->start(500);
+
+    observerStats = new QTimer(this);
+    connect(observerStats, SIGNAL(timeout()), this, SLOT(onStatsUpdate()));
+    observerStats->start(2000);
 }
 
 void vpnProcess::sendCMD(const vpnApi &cmd)
@@ -119,6 +129,35 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
     apiServer->flush();
 }
 
+void vpnProcess::updateStats()
+{
+    if(thread_worker->ptr_tunnel != 0)
+    {
+        QFile file("/proc/net/dev");
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+
+        QTextStream in(&file);
+        QString line = in.readLine();
+        QStringList lineParse;
+        QRegExp reParse = QRegExp("^\\S{1,}$");
+        while (!line.isNull())
+        {
+            lineParse = line.split(" ").filter(reParse);
+            if(lineParse[0].left(lineParse[0].length() - 1) == thread_worker->ptr_tunnel->ppp_iface)
+            {
+                stats.bytes_read = lineParse[1].toLongLong();
+                stats.bytes_written = lineParse[9].toLongLong();
+                file.close();
+                return;
+            }
+
+            line = in.readLine();
+        }
+        file.close();
+    }
+}
+
 void vpnProcess::requestCred()
 {
     QJsonDocument json;
@@ -129,6 +168,25 @@ void vpnProcess::requestCred()
     vpnApi cmd;
     cmd.objName = name;
     cmd.action = vpnApi::ACTION_CRED_REQUEST;
+    cmd.data = json.toJson();
+
+    sendCMD(cmd);
+}
+
+void vpnProcess::submitStats()
+{
+    QJsonDocument json;
+    QJsonObject jsTop;
+
+    jsTop["bytes_read"] = stats.bytes_read;
+    jsTop["bytes_written"] = stats.bytes_written;
+    jsTop["vpn_start"] = stats.vpn_start;
+
+    json.setObject(jsTop);
+
+    vpnApi cmd;
+    cmd.objName = name;
+    cmd.action = vpnApi::ACTION_VPNSTATS_SUBMIT;
     cmd.data = json.toJson();
 
     sendCMD(cmd);
@@ -155,6 +213,9 @@ void vpnProcess::onServerReadyRead()
         cred_data.username = jobj["username"].toString();
         cred_data.password = jobj["password"].toString();
         cred_received = true;
+        break;
+    case vpnApi::ACTION_VPNSTATS_REQUEST:
+        submitStats();
         break;
     }
 
@@ -199,8 +260,6 @@ void vpnProcess::onObserverUpdate()
             init_last_tunnel = true;
         }
 
-        qInfo() << "vpnProcess::onObserverUpdate::status_name" << name << "state" << thread_worker->ptr_tunnel->state;
-
         if(thread_worker->ptr_tunnel->state != last_tunnel.state)
         {
             qInfo() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << thread_worker->ptr_tunnel->state;
@@ -212,7 +271,7 @@ void vpnProcess::onObserverUpdate()
                 onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
                 break;
             case STATE_UP:
-                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
+                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state << "ppp-interface::" << thread_worker->ptr_tunnel->ppp_iface;
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
                 break;
             case STATE_CONNECTING:
@@ -223,5 +282,14 @@ void vpnProcess::onObserverUpdate()
 
             last_tunnel.state = thread_worker->ptr_tunnel->state;
         }
+    }
+}
+
+void vpnProcess::onStatsUpdate()
+{
+    if(thread_worker->ptr_tunnel->state == STATE_UP)
+    {
+        updateStats();
+        submitStats();
     }
 }

@@ -33,6 +33,7 @@ private:
 signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);
+    void VPNStatsUpdate(QString vpnname, vpnStats stats);
 
 public slots:
     void onClientReadyRead();
@@ -53,6 +54,8 @@ public:
     vpnClientConnection *getClientConnection(const QString &name);
     void submitVPNCred(const QString &vpnname, const QString &username, const QString &password);
 
+    void requestStats(const QString &vpnname);
+
 private:
 
     QLocalServer *server;
@@ -61,11 +64,13 @@ private:
 signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);
+    void VPNStatsUpdate(QString vpnname, vpnStats stats);
 
 public slots:
     void onClientConnected();
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
+    void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
 };
 
 #endif // VPNMANAGER_H

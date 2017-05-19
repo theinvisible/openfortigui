@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "vpnworker.h"
+#include "vpnapi.h"
 
 class vpnProcess : public QObject
 {
@@ -20,7 +21,7 @@ private:
     QLocalSocket *apiServer;
     QThread* thread_vpn;
     vpnWorker *thread_worker;
-    QTimer *observer;
+    QTimer *observer, *observerStats;
     struct tunnel last_tunnel;
     bool init_last_tunnel;
 
@@ -32,11 +33,15 @@ private:
     };
     struct_cred_data cred_data;
 
+    vpnStats stats;
+
     void closeProcess();
     void startVPN();
     void sendCMD(const vpnApi &cmd);
+    void updateStats();
 
     void requestCred();
+    void submitStats();
 
 signals:
 
@@ -47,6 +52,7 @@ public slots:
 
 private slots:
     void onObserverUpdate();
+    void onStatsUpdate();
 };
 
 #endif // VPNPROCESS_H

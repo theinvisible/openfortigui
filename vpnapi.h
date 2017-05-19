@@ -15,12 +15,20 @@ public:
         ACTION_STOP,
         ACTION_VPN_UPDATE_STATUS,
         ACTION_CRED_REQUEST,
-        ACTION_CRED_SUBMIT
+        ACTION_CRED_SUBMIT,
+        ACTION_VPNSTATS_REQUEST,
+        ACTION_VPNSTATS_SUBMIT
     };
 
     QString objName;
     int action;
     QByteArray data;
+};
+
+class vpnStats
+{
+public:
+    qint64 bytes_read, bytes_written, vpn_start;
 };
 
 QDataStream &operator<<(QDataStream &ds, const vpnApi &obj);

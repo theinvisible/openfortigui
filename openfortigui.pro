@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     vpngroup.cpp \
     vpngroupeditor.cpp \
     vpnsetting.cpp \
-    vpnlogin.cpp
+    vpnlogin.cpp \
+    vpnhelper.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -64,7 +65,8 @@ HEADERS  += mainwindow.h \
     vpngroup.h \
     vpngroupeditor.h \
     vpnsetting.h \
-    vpnlogin.h
+    vpnlogin.h \
+    vpnhelper.h
 
 FORMS    += mainwindow.ui \
     vpnprofileeditor.ui \

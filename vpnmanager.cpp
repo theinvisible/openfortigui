@@ -58,6 +58,7 @@ void vpnManager::startVPN(const QString &name)
     vpnClientConnection *clientConn = new vpnClientConnection(name);
     connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
+    connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
     connections[name] = clientConn;
 }
 
@@ -106,6 +107,26 @@ void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, 
     }
 }
 
+void vpnManager::requestStats(const QString &vpnname)
+{
+    qInfo() << "vpnManager::requestStats";
+
+    if(connections.contains(vpnname))
+    {
+        QJsonDocument json;
+        QJsonObject jsTop;
+        vpnClientConnection *vpn = connections[vpnname];
+        vpnApi data;
+        data.action = vpnApi::ACTION_VPNSTATS_REQUEST;
+        data.objName = vpnname;
+
+        json.setObject(jsTop);
+        data.data = json.toJson();
+
+        vpn->sendCMD(data);
+    }
+}
+
 void vpnManager::onClientConnected()
 {
     qInfo() << "vpnManager::onClientConnected()";
@@ -143,6 +164,11 @@ void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 void vpnManager::onClientVPNCredRequest(QString vpnname)
 {
     emit VPNCredRequest(vpnname);
+}
+
+void vpnManager::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
+{
+    emit VPNStatsUpdate(vpnname, stats);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)
@@ -184,7 +210,6 @@ void vpnClientConnection::onClientReadyRead()
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_5_2);
     in >> cmd;
-    qInfo() << "client sent data::" << cmd.action << "::name::" << cmd.objName;
 
     QJsonDocument json = QJsonDocument::fromJson(cmd.data);
     QJsonObject jobj = json.object();
@@ -197,6 +222,13 @@ void vpnClientConnection::onClientReadyRead()
         break;
     case vpnApi::ACTION_CRED_REQUEST:
         emit VPNCredRequest(name);
+        break;
+    case vpnApi::ACTION_VPNSTATS_SUBMIT:
+        vpnStats stats;
+        stats.bytes_read = jobj["bytes_read"].toVariant().toLongLong();
+        stats.bytes_written = jobj["bytes_written"].toVariant().toLongLong();
+        stats.vpn_start = jobj["vpn_start"].toVariant().toLongLong();
+        emit VPNStatsUpdate(name, stats);
         break;
     }
 

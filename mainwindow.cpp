@@ -17,6 +17,7 @@
 #include "vpngroupeditor.h"
 #include "vpnsetting.h"
 #include "vpnlogin.h"
+#include "vpnhelper.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vpnmanager = new vpnManager(this);
     connect(vpnmanager, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(vpnmanager, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)));
+    connect(vpnmanager, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)));
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
@@ -43,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Treeview VPNs
     QStringList headers;
-    headers << trUtf8("Status") << trUtf8("Name") << trUtf8("Gateway") << trUtf8("User");
+    headers << tr("Status") << tr("Name") << tr("Gateway") << tr("User") << tr("Traffic RX/TX");
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
     ui->tvVpnProfiles->setModel(model);
@@ -62,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Treeview VPN-Groups
     QStringList headers2;
-    headers2 << trUtf8("Status") << trUtf8("Name") << trUtf8("VPNs");
+    headers2 << tr("Status") << tr("Name") << tr("VPNs");
     QStandardItemModel *model2 = new QStandardItemModel(ui->tvVPNGroups);
     model2->setHorizontalHeaderLabels(headers2);
     ui->tvVPNGroups->setModel(model2);
@@ -595,6 +597,28 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
     prefWindow->show();
 }
 
+void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
+{
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(root_local_vpn->model());
+
+    QStandardItem *itemVpnName, *itemVpnTraffic;
+    for(int i=0; i<root_local_vpn->rowCount(); i++)
+    {
+        itemVpnName = root_local_vpn->child(i, 1);
+        itemVpnTraffic = root_local_vpn->child(i, 4);
+
+        if(itemVpnName == 0)
+            continue;
+
+        if(itemVpnName->text() == vpnname)
+        {
+            QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
+            itemVpnTraffic->setText(disp);
+            return;
+        }
+    }
+}
+
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
 {
     QScreen *screen = QGuiApplication::primaryScreen();
@@ -680,6 +704,7 @@ void MainWindow::refreshVpnProfileList()
                 root_local_vpn->setChild(localRow, 1, item);
                 root_local_vpn->setChild(localRow, 2, item2);
                 root_local_vpn->setChild(localRow, 3, item3);
+                root_local_vpn->setChild(localRow, 4, new QStandardItem());
                 break;
             }
             case vpnProfile::Origin_GLOBAL:
@@ -689,6 +714,7 @@ void MainWindow::refreshVpnProfileList()
                 root_global_vpn->setChild(globalRow, 1, item);
                 root_global_vpn->setChild(globalRow, 2, item2);
                 root_global_vpn->setChild(globalRow, 3, item3);
+                root_global_vpn->setChild(globalRow, 4, new QStandardItem());
                 break;
             }
         }

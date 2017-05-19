@@ -72,6 +72,8 @@ private slots:
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
 
+    void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
+
 private:
     Ui::MainWindow *ui;
 

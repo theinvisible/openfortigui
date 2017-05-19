@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(logMessageOutput);
 
     qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
+    qRegisterMetaType<vpnStats>("vpnStats");
 
     tiConfMain main_settings;
 
