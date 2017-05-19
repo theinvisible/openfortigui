@@ -14,5 +14,5 @@ QString vpnHelper::formatByteUnits(qint64 num)
     else if(num >= 1024)
         return QString("%1K").arg(QString::number((double)num / 1024, 'f', 2));
     else
-        return QString("%1").arg(num);
+        return QString("%1B").arg(num);
 }
