@@ -32,7 +32,7 @@ SOURCES += main.cpp\
     proc/vpnprocess.cpp \
     vpnprofile.cpp \
     vpnprofileeditor.cpp \
-    qtinyaes/QTinyAes/qtinyaes.cpp \
+    qtinyaes/qtinyaes.cpp \
     qtinyaes/tiny-AES128-C/aes.c \
     proc/vpnworker.cpp \
     vpngroup.cpp \
@@ -60,7 +60,7 @@ HEADERS  += mainwindow.h \
     vpnprofile.h \
     vpnprofileeditor.h \
     qtinyaes/tiny-AES128-C/aes.h \
-    qtinyaes/QTinyAes/qtinyaes.h \
+    qtinyaes/qtinyaes.h \
     proc/vpnworker.h \
     vpngroup.h \
     vpngroupeditor.h \
