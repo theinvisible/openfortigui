@@ -77,4 +77,6 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     res.qrc
 
+INCLUDEPATH += qtinyaes/tiny-AES128-C
+
 unix:!macx:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil
