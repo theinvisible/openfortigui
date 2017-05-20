@@ -599,6 +599,15 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
 
 void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 {
+    vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
+
+    if(conn != 0)
+    {
+        QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
+        conn->item_stats->setText(disp);
+    }
+
+    /*
     QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(root_local_vpn->model());
 
     QStandardItem *itemVpnName, *itemVpnTraffic;
@@ -617,6 +626,7 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
             return;
         }
     }
+    */
 }
 
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
@@ -641,6 +651,7 @@ void MainWindow::refreshVpnProfileList()
     QStandardItem *item2 = 0;
     QStandardItem *item3 = 0;
     QStandardItem *item4 = 0;
+    QStandardItem *item5 = 0;
     int localRow = 0, globalRow = 0;
 
     if(tray_menu == 0)
@@ -694,6 +705,10 @@ void MainWindow::refreshVpnProfileList()
         item = new QStandardItem(vpn->name);
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
+        item5 = new QStandardItem();
+        if(conn != 0)
+            conn->item_stats = item5;
+
 
         switch(vpn->origin_location)
         {
@@ -704,7 +719,7 @@ void MainWindow::refreshVpnProfileList()
                 root_local_vpn->setChild(localRow, 1, item);
                 root_local_vpn->setChild(localRow, 2, item2);
                 root_local_vpn->setChild(localRow, 3, item3);
-                root_local_vpn->setChild(localRow, 4, new QStandardItem());
+                root_local_vpn->setChild(localRow, 4, item5);
                 break;
             }
             case vpnProfile::Origin_GLOBAL:
@@ -714,7 +729,7 @@ void MainWindow::refreshVpnProfileList()
                 root_global_vpn->setChild(globalRow, 1, item);
                 root_global_vpn->setChild(globalRow, 2, item2);
                 root_global_vpn->setChild(globalRow, 3, item3);
-                root_global_vpn->setChild(globalRow, 4, new QStandardItem());
+                root_global_vpn->setChild(globalRow, 4, item5);
                 break;
             }
         }

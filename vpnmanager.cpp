@@ -175,6 +175,7 @@ vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QO
 {
     name = n;
     status = STATUS_DISCONNECTED;
+    item_stats = 0;
 }
 
 void vpnClientConnection::setSocket(QLocalSocket *sock)

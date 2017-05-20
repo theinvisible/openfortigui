@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QLocalSocket>
 #include <QLocalServer>
+#include <QStandardItem>
 
 class vpnClientConnection : public QObject
 {
@@ -22,6 +23,7 @@ public:
     };
 
     connectionStatus status;
+    QStandardItem *item_stats;
 
     void setSocket(QLocalSocket *sock);
     void sendCMD(const vpnApi &cmd);

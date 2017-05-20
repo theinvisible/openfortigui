@@ -1,3 +1,9 @@
+openfortigui (0.2.12-1) precise; urgency=low
+
+  * Added stats info for traffic, some bugfixes
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 20 May 2017 11:53:00 +0100
+
 openfortigui (0.2.11-2) precise; urgency=low
 
   * Fixed memory leak
