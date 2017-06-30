@@ -18,10 +18,24 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     connect(server, SIGNAL(newConnection()), this, SLOT(onClientConnected()));
     if(!server->listen(openfortigui_config::name))
         qInfo() << "vpnManager::DiskMain() on apiServer->listen::" << server->errorString();
+
+    // Start VPN-Logger Thread
+    logger_thread = new QThread;
+    logger = new vpnLogger();
+    logger->moveToThread(logger_thread);
+    //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(logger_thread, SIGNAL(started()), logger, SLOT(process()));
+    connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
+    connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
+    connect(logger_thread, SIGNAL(finished()), logger_thread, SLOT(deleteLater()));
+    logger_thread->start();
 }
 
 vpnManager::~vpnManager()
 {
+    if(logger_thread->isRunning())
+        logger_thread->quit();
+
     QMapIterator<QString, vpnClientConnection*> i(connections);
     while(i.hasNext())
     {
@@ -47,19 +61,23 @@ void vpnManager::startVPN(const QString &name)
     arguments << "--main-config";
     arguments << QString("'%1'").arg(tiConfMain::main_config);
 
-    QProcess *vpn = new QProcess(this);
+    QProcess *vpnProc = new QProcess(this);
     qInfo() << "Start vpn::" << name;
-    vpn->start("sudo", arguments);
+    vpnProc->start("sudo", arguments);
     // Close read channel to avoid memory leak
     // TODO: Process output later on
-    vpn->closeReadChannel(QProcess::StandardOutput);
-    vpn->closeReadChannel(QProcess::StandardError);
+    vpnProc->waitForStarted();
+    //vpnProc->closeReadChannel(QProcess::StandardOutput);
+    //vpnProc->closeReadChannel(QProcess::StandardError);
 
     vpnClientConnection *clientConn = new vpnClientConnection(name);
+    clientConn->proc = vpnProc;
     connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
     connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
     connections[name] = clientConn;
+
+    logger->addVPN(name, vpnProc);
 }
 
 void vpnManager::stopVPN(const QString &name)

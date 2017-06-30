@@ -10,6 +10,7 @@
 #include "vpnmanager.h"
 #include "vpnprofile.h"
 #include "vpngroup.h"
+#include "vpnlogger.h"
 
 namespace Ui {
 class MainWindow;

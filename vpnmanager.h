@@ -7,6 +7,9 @@
 #include <QLocalSocket>
 #include <QLocalServer>
 #include <QStandardItem>
+#include <QProcess>
+
+#include <vpnlogger.h>
 
 class vpnClientConnection : public QObject
 {
@@ -24,6 +27,7 @@ public:
 
     connectionStatus status;
     QStandardItem *item_stats;
+    QProcess *proc;
 
     void setSocket(QLocalSocket *sock);
     void sendCMD(const vpnApi &cmd);
@@ -62,6 +66,8 @@ private:
 
     QLocalServer *server;
     QMap<QString, vpnClientConnection*> connections;
+    QThread *logger_thread;
+    vpnLogger *logger;
 
 signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
