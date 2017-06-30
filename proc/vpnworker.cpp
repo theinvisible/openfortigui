@@ -25,6 +25,10 @@ extern "C"  {
 #include <QDebug>
 #include <QCoreApplication>
 
+// -------------------
+// Included from tunnel.c
+// -------------------
+
 static int on_ppp_if_up(struct tunnel *tunnel)
 {
     log_info("Interface %s is UP.\n", tunnel->ppp_iface);
