@@ -46,6 +46,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->cbSetDNS->setChecked(config->set_dns);
     ui->cbPPPDUsePeerDNS->setChecked(config->pppd_use_peerdns);
     ui->cbInsecureSSL->setChecked(config->insecure_ssl);
+    ui->cbDebug->setChecked(config->debug);
 
     if(config->origin_location == vpnProfile::Origin_GLOBAL)
     {
@@ -171,6 +172,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.set_dns = ui->cbSetDNS->isChecked();
     vpn.pppd_use_peerdns = ui->cbPPPDUsePeerDNS->isChecked();
     vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
+    vpn.debug = ui->cbDebug->isChecked();
 
     vpns.saveVpnProfile(vpn);
 

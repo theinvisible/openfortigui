@@ -187,6 +187,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("set_dns", profile.set_dns);
     f->setValue("pppd_use_peerdns", profile.pppd_use_peerdns);
     f->setValue("insecure_ssl", profile.insecure_ssl);
+    f->setValue("debug", profile.debug);
     f->endGroup();
 
     f->sync();
@@ -241,6 +242,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->set_dns = f->value("set_dns").toBool();
                 vpnprofile->pppd_use_peerdns = f->value("pppd_use_peerdns").toBool();
                 vpnprofile->insecure_ssl = f->value("insecure_ssl").toBool();
+                vpnprofile->debug = f->value("debug").toBool();
                 f->endGroup();
 
                 switch(it_profileDirs.key())

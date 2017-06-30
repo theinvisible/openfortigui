@@ -34,6 +34,7 @@ public:
     QString trusted_cert;
     bool verify_cert;
     bool insecure_ssl;
+    bool debug;
 };
 
 #endif // VPNPROFILE_H

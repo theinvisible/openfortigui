@@ -216,6 +216,9 @@ void vpnWorker::process()
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
     config.pppd_use_peerdns = (vpnConfig.insecure_ssl) ? 1 : 0;
 
+    if(vpnConfig.debug)
+        increase_verbosity();
+
     qInfo() << "usercert::" << config.user_cert;
 
     //increase_verbosity();
