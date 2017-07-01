@@ -142,6 +142,12 @@ QString tiConfMain::setMainConfig(const QString &config)
     return tiConfMain::main_config;
 }
 
+QString tiConfMain::getAppDir()
+{
+    QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
+    return finfo.absoluteDir().absolutePath();
+}
+
 tiConfVpnProfiles::tiConfVpnProfiles()
 {
     main_settings = new tiConfMain();

@@ -10,6 +10,8 @@
 #include <QInputDialog>
 #include <QScreen>
 #include <QToolButton>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -62,6 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVpnProfiles->header()->resizeSection(1, 150);
     ui->tvVpnProfiles->header()->resizeSection(2, 300);
 
+    connect(ui->tvVpnProfiles, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ontvVpnProfilesCustomContextMenu(const QPoint &)));
+
     // Treeview VPN-Groups
     QStringList headers2;
     headers2 << tr("Status") << tr("Name") << tr("VPNs");
@@ -100,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
     connect(ui->actionMenuSettings, SIGNAL(triggered(bool)), this, SLOT(onVPNSettings()));
+    connect(ui->actionMenuLogs, SIGNAL(triggered(bool)), this, SLOT(onActionLogs()));
     connect(ui->actionMenuConnect, SIGNAL(triggered(bool)), this, SLOT(onStartVPN()));
     connect(ui->actionMenuDisconnect, SIGNAL(triggered(bool)), this, SLOT(onStopVPN()));
     connect(ui->actionMenuAbout, SIGNAL(triggered(bool)), this, SLOT(onActionAbout()));
@@ -606,27 +611,29 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
         QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
         conn->item_stats->setText(disp);
     }
+}
 
-    /*
-    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(root_local_vpn->model());
+void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
+{
+    QModelIndex index = ui->tvVpnProfiles->indexAt(point);
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
 
-    QStandardItem *itemVpnName, *itemVpnTraffic;
-    for(int i=0; i<root_local_vpn->rowCount(); i++)
+    QStandardItem *item = model->itemFromIndex(index.sibling(index.row(), 1));
+    if(item == 0)
+        return;
+
+    QString vpnname = item->text();
+    if(vpnname.isEmpty())
+        return;
+
+    QMenu menu;
+    QAction *a_viewlogs = menu.addAction(QIcon(":/img/log.png"), tr("View logs"));
+    QAction *choosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
+
+    if(choosen == a_viewlogs)
     {
-        itemVpnName = root_local_vpn->child(i, 1);
-        itemVpnTraffic = root_local_vpn->child(i, 4);
-
-        if(itemVpnName == 0)
-            continue;
-
-        if(itemVpnName->text() == vpnname)
-        {
-            QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
-            itemVpnTraffic->setText(disp);
-            return;
-        }
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/vpn/%2.log").arg(tiConfMain::getAppDir(), vpnname)));
     }
-    */
 }
 
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
@@ -660,7 +667,7 @@ void MainWindow::refreshVpnProfileList()
     if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_TOP)
     {
         tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
-        tray_menu->addAction(trUtf8("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(QIcon(":/img/settings.png"), trUtf8("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
         tray_menu->addSeparator();
         tray_menu->addMenu(tray_group_menu);
@@ -754,7 +761,7 @@ void MainWindow::refreshVpnProfileList()
         tray_menu->addMenu(tray_group_menu);
         tray_menu->addSeparator();
         tray_menu->addAction(trUtf8("Show mainwindow"), this, SLOT(show()));
-        tray_menu->addAction(trUtf8("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(QIcon(":/img/settings.png"), trUtf8("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(trUtf8("Quit app"), this, SLOT(onQuit()));
     }
 
@@ -902,6 +909,11 @@ void MainWindow::onVPNSettings()
 
     //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
     prefWindow->show();
+}
+
+void MainWindow::onActionLogs()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/").arg(tiConfMain::getAppDir())));
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)

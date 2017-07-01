@@ -52,12 +52,16 @@ void vpnProcess::run(const QString &vpnname)
 void vpnProcess::closeProcess()
 {
     qInfo() << "shutting down vpn process::" << name;
-    QCoreApplication::exit(0);
+    //QCoreApplication::exit(0);
+    thread_vpn->quit();
+    QThread::sleep(2);
+    thread_vpn->terminate();
+    QCoreApplication::quit();
 }
 
 void vpnProcess::startVPN()
 {
-    qInfo() << "vpnProcess::startVPN::slot";
+    qDebug() << "vpnProcess::startVPN::slot";
 
     tiConfVpnProfiles profiles;
     vpnProfile *profile = profiles.getVpnProfileByName(name);
@@ -121,7 +125,7 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
 
     if(!apiServer->isOpen())
     {
-        qInfo() << "Socket ist nicht offen";
+        qWarning() << "Socket not open";
         return;
     }
 
@@ -226,10 +230,7 @@ void vpnProcess::onServerDisconnected()
 {
     qInfo() << "server socket disconnected, exiting";
 
-    thread_vpn->quit();
-    QThread::sleep(2);
-    thread_vpn->terminate();
-    QCoreApplication::quit();
+    closeProcess();
 }
 
 void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status)
@@ -262,20 +263,20 @@ void vpnProcess::onObserverUpdate()
 
         if(thread_worker->ptr_tunnel->state != last_tunnel.state)
         {
-            qInfo() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << thread_worker->ptr_tunnel->state;
+            qDebug() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << thread_worker->ptr_tunnel->state;
 
             switch(thread_worker->ptr_tunnel->state)
             {
             case STATE_DOWN:
-                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
+                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
                 onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
                 break;
             case STATE_UP:
-                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state << "ppp-interface::" << thread_worker->ptr_tunnel->ppp_iface;
+                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state << "ppp-interface::" << thread_worker->ptr_tunnel->ppp_iface;
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
                 break;
             case STATE_CONNECTING:
-                qInfo() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
+                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTING);
                 break;
             }

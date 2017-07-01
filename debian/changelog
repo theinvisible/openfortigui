@@ -1,3 +1,9 @@
+openfortigui (0.2.14-1) precise; urgency=low
+
+  * Added extended logs
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 1 Jul 2017 22:43:00 +0100
+
 openfortigui (0.2.13-1) precise; urgency=low
 
   * Update openfortivpn to latest upstream

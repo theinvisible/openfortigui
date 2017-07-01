@@ -27,6 +27,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTreeView" name="tvVpnProfiles">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -86,9 +89,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionMenuHide"/>
-    <addaction name="separator"/>
     <addaction name="actionMenuSettings"/>
+    <addaction name="actionMenuLogs"/>
+    <addaction name="separator"/>
+    <addaction name="actionMenuHide"/>
     <addaction name="actionMenuExit"/>
    </widget>
    <widget class="QMenu" name="menuVPN">
@@ -162,8 +166,21 @@
    </property>
   </action>
   <action name="actionMenuSettings">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/settings.png</normaloff>:/img/settings.png</iconset>
+   </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionMenuLogs">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/log.png</normaloff>:/img/log.png</iconset>
+   </property>
+   <property name="text">
+    <string>Logs</string>
    </property>
   </action>
  </widget>

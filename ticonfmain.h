@@ -47,6 +47,8 @@ public:
     static QString formatPathReverse(const QString &path);
     static QString setMainConfig(const QString &config);
 
+    static QString getAppDir();
+
 private:
     QSettings *settings;
 };

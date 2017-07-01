@@ -67,6 +67,7 @@ private slots:
     void onActionAbout();
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void onVPNSettings();
+    void onActionLogs();
 
     void onWatcherVpnProfilesChanged(const QString &path);
 
@@ -74,6 +75,7 @@ private slots:
     void onClientVPNCredRequest(QString vpnname);
 
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
+    void ontvVpnProfilesCustomContextMenu(const QPoint &point);
 
 private:
     Ui::MainWindow *ui;
