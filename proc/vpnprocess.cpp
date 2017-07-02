@@ -53,6 +53,7 @@ void vpnProcess::closeProcess()
 {
     qInfo() << "shutting down vpn process::" << name;
     //QCoreApplication::exit(0);
+    thread_worker->end();
     thread_vpn->quit();
     QThread::sleep(2);
     thread_vpn->terminate();

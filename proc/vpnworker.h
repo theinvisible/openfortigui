@@ -32,6 +32,7 @@ signals:
 
 public slots:
     void process();
+    void end();
 };
 
 #endif // VPNWORKER_H

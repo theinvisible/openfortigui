@@ -627,12 +627,27 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
         return;
 
     QMenu menu;
+    QAction *a_connect = menu.addAction(QIcon(":/img/connected.png"), tr("Connect"));
+    QAction *a_disconnect = menu.addAction(QIcon(":/img/disconnected.png"), tr("Disconnect"));
     QAction *a_viewlogs = menu.addAction(QIcon(":/img/log.png"), tr("View logs"));
     QAction *choosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
 
     if(choosen == a_viewlogs)
     {
         QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/vpn/%2.log").arg(tiConfMain::getAppDir(), vpnname)));
+        return;
+    }
+
+    if(choosen == a_connect)
+    {
+        onStartVPN(vpnname);
+        return;
+    }
+
+    if(choosen == a_disconnect)
+    {
+        onStopVPN(vpnname);
+        return;
     }
 }
 

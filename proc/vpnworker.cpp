@@ -343,3 +343,8 @@ err_tunnel:
     }
     emit finished();
 }
+
+void vpnWorker::end()
+{
+    ptr_tunnel->on_ppp_if_down(ptr_tunnel);
+}
