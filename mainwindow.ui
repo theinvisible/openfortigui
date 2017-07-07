@@ -129,6 +129,10 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionMenuExit">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/quit.png</normaloff>:/img/quit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -161,6 +165,10 @@
    </property>
   </action>
   <action name="actionMenuHide">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/hide.png</normaloff>:/img/hide.png</iconset>
+   </property>
    <property name="text">
     <string>Hide</string>
    </property>
