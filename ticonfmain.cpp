@@ -290,7 +290,7 @@ vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname, vpnPr
 
 bool tiConfVpnProfiles::removeVpnProfileByName(const QString &vpnname)
 {
-    qInfo() << "deletevpn:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), vpnname);
+    qDebug() << "deletevpn:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), vpnname);
     return QFile::remove(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()), vpnname));
 }
 
@@ -410,7 +410,7 @@ vpnGroup *tiConfVpnGroups::getVpnGroupByName(const QString &groupname)
 
 bool tiConfVpnGroups::removeVpnGroupByName(const QString &groupname)
 {
-    qInfo() << "deletegroup:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), groupname);
+    qDebug() << "deletegroup:::::" << QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), groupname);
     return QFile::remove(QString("%1/%2.conf").arg(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()), groupname));
 }
 

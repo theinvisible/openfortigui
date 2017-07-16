@@ -17,7 +17,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     server = new QLocalServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(onClientConnected()));
     if(!server->listen(openfortigui_config::name))
-        qInfo() << "vpnManager::DiskMain() on apiServer->listen::" << server->errorString();
+        qDebug() << "vpnManager::DiskMain() on apiServer->listen::" << server->errorString();
 
     // Start VPN-Logger Thread
     logger_thread = new QThread;
@@ -62,7 +62,7 @@ void vpnManager::startVPN(const QString &name)
     arguments << QString("'%1'").arg(tiConfMain::main_config);
 
     QProcess *vpnProc = new QProcess(this);
-    qInfo() << "Start vpn::" << name;
+    qDebug() << "Start vpn::" << name;
     vpnProc->start("sudo", arguments);
     // Close read channel to avoid memory leak
     // TODO: Process output later on
@@ -88,7 +88,7 @@ void vpnManager::stopVPN(const QString &name)
         apiData.objName = name;
         apiData.action = vpnApi::ACTION_STOP;
 
-        qInfo() << "vpnManager::stopVPN::" << apiData.objName << "::" << apiData.action;
+        qDebug() << "vpnManager::stopVPN::" << apiData.objName << "::" << apiData.action;
 
         connections[name]->sendCMD(apiData);
         connections.remove(name);
@@ -127,7 +127,7 @@ void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, 
 
 void vpnManager::requestStats(const QString &vpnname)
 {
-    qInfo() << "vpnManager::requestStats";
+    qDebug() << "vpnManager::requestStats";
 
     if(connections.contains(vpnname))
     {
@@ -147,7 +147,7 @@ void vpnManager::requestStats(const QString &vpnname)
 
 void vpnManager::onClientConnected()
 {
-    qInfo() << "vpnManager::onClientConnected()";
+    qDebug() << "vpnManager::onClientConnected()";
     if(server->hasPendingConnections())
     {
         QLocalSocket *client = server->nextPendingConnection();
@@ -156,22 +156,20 @@ void vpnManager::onClientConnected()
         QDataStream in(client);
         in.setVersion(QDataStream::Qt_5_2);
         in >> cmd;
-        qInfo() << "client api helo command::" << cmd.action << "::name::" << cmd.objName;
+        qDebug() << "client api helo command::" << cmd.action << "::name::" << cmd.objName;
         client->flush();
 
         //vpnClientConnection *clientConn = new vpnClientConnection(cmd.objName, client);
         if(connections.contains(cmd.objName))
             connections[cmd.objName]->setSocket(client);
         else
-            qInfo() << "no socket assigend";
-
-        //client->disconnectFromServer();
+            qWarning() << "no socket assigend";
     }
 }
 
 void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
-    qInfo() << "vpnManager::onClientVPNStatusChanged()" << vpnname << "status" << status;
+    qDebug() << "vpnManager::onClientVPNStatusChanged()" << vpnname << "status" << status;
 
     if(status == vpnClientConnection::STATUS_DISCONNECTED)
         connections.remove(vpnname);
@@ -211,11 +209,11 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
     out.setVersion(QDataStream::Qt_5_2);
     out << cmd;
 
-    qInfo() << "vpnClientConnection::sendCMD::" << cmd.objName << "::" << cmd.action;
+    qDebug() << "vpnClientConnection::sendCMD::" << cmd.objName << "::" << cmd.action;
 
     if(!socket->isOpen())
     {
-        qInfo() << "Socket ist nicht offen";
+        qWarning() << "Socket ist nicht offen";
         return;
     }
 
@@ -256,7 +254,7 @@ void vpnClientConnection::onClientReadyRead()
 
 void vpnClientConnection::onClientDisconnected()
 {
-    qInfo() << "client disconnected::" << name;
+    qDebug() << "client disconnected::" << name;
     status = vpnClientConnection::STATUS_DISCONNECTED;
     emit VPNStatusChanged(name, status);
     socket->deleteLater();

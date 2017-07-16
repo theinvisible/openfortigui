@@ -188,7 +188,7 @@ void vpnWorker::updateStatus(vpnClientConnection::connectionStatus status)
 
 void vpnWorker::process()
 {
-    qInfo() << "vpnWorker::process::slot";
+    qDebug() << "vpnWorker::process::slot";
 
     struct vpn_config config;
     memset(&config, 0, sizeof (config));
@@ -218,13 +218,6 @@ void vpnWorker::process()
 
     if(vpnConfig.debug)
         increase_verbosity();
-
-    qInfo() << "usercert::" << config.user_cert;
-
-    //increase_verbosity();
-    //increase_verbosity();
-
-    //run_tunnel(&config);
 
     int ret;
     struct tunnel tunnel;
@@ -310,8 +303,6 @@ void vpnWorker::process()
     tunnel.state = STATE_CONNECTING;
     ret = 0;
 
-    //updateStatus(vpnClientConnection::STATUS_CONNECTED);
-
     log_info("Custom: %s.\n", tunnel.config->gateway_host);
     // Step 6: perform io between pppd and the gateway, while tunnel is up
     io_loop(&tunnel);
@@ -332,8 +323,6 @@ err_start_tunnel:
 err_tunnel:
     log_info("Closed connection to gateway.\n");
     tunnel.state = STATE_DOWN;
-
-    //updateStatus(vpnClientConnection::STATUS_DISCONNECTED);
 
     if (ssl_connect(&tunnel)) {
         log_info("Could not log out.\n");

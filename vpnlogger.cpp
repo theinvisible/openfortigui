@@ -15,7 +15,7 @@ vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
 
 void vpnLogger::addVPN(const QString &name, QProcess *proc)
 {
-    qInfo() << "add logger" << tiConfMain::main_config;
+    qDebug() << "add logger" << tiConfMain::main_config;
     loggers.insert(name, proc);
     connect(proc, SIGNAL(readyReadStandardError()), logMapper, SLOT(map()));
     connect(proc, SIGNAL(readyReadStandardOutput()), logMapper, SLOT(map()));

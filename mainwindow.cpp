@@ -432,7 +432,7 @@ void MainWindow::onvpnGroupEdited(const vpnGroup &vpngroup)
 
 void MainWindow::onStartVPN()
 {
-    qInfo() << "active-tab::" << ui->tabMain->currentIndex();
+    qDebug() << "active-tab::" << ui->tabMain->currentIndex();
 
     // Tab-ID 0 = VPNs, Tab-ID 1 = VPN-Groups
     QTreeView *tree = (ui->tabMain->currentIndex() == 0) ? ui->tvVpnProfiles : ui->tvVPNGroups;
@@ -464,14 +464,14 @@ void MainWindow::onStartVPN()
 
 void MainWindow::onStartVPN(const QString &vpnname)
 {
-    qInfo() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
+    qDebug() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
 
     vpnmanager->startVPN(vpnname);
 }
 
 void MainWindow::onActionStartVPN(const QString &vpnname)
 {
-    qInfo() << "action vpn pressed::" << vpnname;
+    qDebug() << "action vpn pressed::" << vpnname;
 
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
     if(conn != 0)
@@ -487,7 +487,7 @@ void MainWindow::onActionStartVPN(const QString &vpnname)
 
 void MainWindow::onActionStartVPNGroup(const QString &vpnname)
 {
-    qInfo() << "action vpn-group pressed::" << vpnname;
+    qDebug() << "action vpn-group pressed::" << vpnname;
 
     tiConfVpnGroups groups;
     vpnClientConnection *conn;
@@ -524,7 +524,7 @@ void MainWindow::onActionStartVPNGroup(const QString &vpnname)
 
 void MainWindow::onStopVPN()
 {
-    qInfo() << "stop vpn::" << ui->tabMain->currentIndex();
+    qDebug() << "stop vpn::" << ui->tabMain->currentIndex();
 
     // Tab-ID 0 = VPNs, Tab-ID 1 = VPN-Groups
     QTreeView *tree = (ui->tabMain->currentIndex() == 0) ? ui->tvVpnProfiles : ui->tvVPNGroups;
@@ -566,7 +566,7 @@ void MainWindow::onQuit()
 
 void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
-    qInfo() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
+    qDebug() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
 
     refreshVpnProfileList();
     refreshVpnGroupList();
@@ -662,7 +662,6 @@ MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
 
 void MainWindow::refreshVpnProfileList()
 {
-    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
     tiConfVpnProfiles vpnss;
     vpnss.readVpnProfiles();
 
@@ -892,16 +891,16 @@ void MainWindow::onActionAbout()
                                                              "eMail: <a href=mailto:'rene@hadler.me'>rene@hadler.me</a> <br>"
                                                              "Website: <a href=https://hadler.me>https://hadler.me</a></p>"
                                                              "<p>This program uses following libs/resources:</p>"
-                                                              "QT: <a href='https://www.qt.io'>https://www.qt.io</a> <br>"
+                                                              "GCC %2: <a href='https://gcc.gnu.org/'>https://gcc.gnu.org</a> <br>"
+                                                              "QT %3: <a href='https://www.qt.io'>https://www.qt.io</a> <br>"
                                                               "openfortivpn: <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a> <br>"
                                                               "QTinyAes: <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a> <br>"
                                                               "tiny-AES128-C: <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a> <br>"
-                                                                  "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version));
+                                                              "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
 }
 
 void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    qInfo() << "trayiconreason::" << reason;
     if(reason == QSystemTrayIcon::Trigger)
     {
         if(isHidden())
@@ -922,7 +921,6 @@ void MainWindow::onVPNSettings()
     prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Settings"));
 
-    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
     prefWindow->show();
 }
 

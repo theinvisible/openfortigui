@@ -20,7 +20,6 @@ void vpnProcess::run(const QString &vpnname)
     name = vpnname;
 
     apiServer = new QLocalSocket(this);
-    //connect(apiClient, SIGNAL(disconnected()), this, SLOT(onManualBackupFinished()));
     connect(apiServer, SIGNAL(readyRead()), this, SLOT(onServerReadyRead()));
     apiServer->connectToServer(openfortigui_config::name);
     if(apiServer->waitForConnected(1000))
@@ -44,15 +43,12 @@ void vpnProcess::run(const QString &vpnname)
     }
 
     startVPN();
-
-    //apiClient->close();
-    //apiClient->disconnect();
 }
 
 void vpnProcess::closeProcess()
 {
-    qInfo() << "shutting down vpn process::" << name;
-    //QCoreApplication::exit(0);
+    qDebug() << "shutting down vpn process::" << name;
+
     thread_worker->end();
     thread_vpn->quit();
     QThread::sleep(2);
@@ -199,12 +195,12 @@ void vpnProcess::submitStats()
 
 void vpnProcess::onServerReadyRead()
 {
-    qInfo() << "server sent something::";
+    qDebug() << "server sent something::";
     vpnApi cmd;
     QDataStream in(apiServer);
     in.setVersion(QDataStream::Qt_5_2);
     in >> cmd;
-    qInfo() << "server api command2::" << cmd.action << "::name::" << cmd.objName;
+    qDebug() << "server api command2::" << cmd.action << "::name::" << cmd.objName;
 
     QJsonDocument json = QJsonDocument::fromJson(cmd.data);
     QJsonObject jobj = json.object();
@@ -229,7 +225,7 @@ void vpnProcess::onServerReadyRead()
 
 void vpnProcess::onServerDisconnected()
 {
-    qInfo() << "server socket disconnected, exiting";
+    qDebug() << "server socket disconnected, exiting";
 
     closeProcess();
 }

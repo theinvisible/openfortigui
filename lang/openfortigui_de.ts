@@ -100,8 +100,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="182"/>
-        <location filename="../mainwindow.cpp" line="685"/>
-        <location filename="../mainwindow.cpp" line="779"/>
+        <location filename="../mainwindow.cpp" line="684"/>
+        <location filename="../mainwindow.cpp" line="778"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
@@ -256,42 +256,46 @@
         <translation>Logs ansehen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="684"/>
-        <location filename="../mainwindow.cpp" line="780"/>
+        <location filename="../mainwindow.cpp" line="683"/>
+        <location filename="../mainwindow.cpp" line="779"/>
         <source>Quit app</source>
         <translation>App beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="686"/>
-        <location filename="../mainwindow.cpp" line="778"/>
+        <location filename="../mainwindow.cpp" line="685"/>
+        <location filename="../mainwindow.cpp" line="777"/>
         <source>Show mainwindow</source>
         <translation>Zeige Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="709"/>
+        <location filename="../mainwindow.cpp" line="708"/>
         <source>Connected</source>
         <translation>Verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="713"/>
+        <location filename="../mainwindow.cpp" line="712"/>
         <source>Connecting</source>
         <translation>Verbinden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="718"/>
-        <location filename="../mainwindow.cpp" line="724"/>
+        <location filename="../mainwindow.cpp" line="717"/>
+        <location filename="../mainwindow.cpp" line="723"/>
         <source>Disconnected</source>
         <translation>Getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="890"/>
+        <location filename="../mainwindow.cpp" line="889"/>
         <source>About openFortiGUI</source>
         <translation>Über openFortiGUI</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="890"/>
+        <location filename="../mainwindow.cpp" line="889"/>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
+        <translation>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Dieses Programm verwendet die folgenden Ressourcen:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
-        <translation>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Diesess Programm verwendet folgende weitere Ressourcen/Bibliotheken:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
+        <translation type="vanished">&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Diesess Programm verwendet folgende weitere Ressourcen/Bibliotheken:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
@@ -337,12 +341,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="598"/>
         <source> - Login</source>
-        <translation>- Anmelden</translation>
+        <translation> - Anmelden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="923"/>
+        <location filename="../mainwindow.cpp" line="922"/>
         <source> - Settings</source>
-        <translation>- Einstellungen</translation>
+        <translation> - Einstellungen</translation>
     </message>
 </context>
 <context>

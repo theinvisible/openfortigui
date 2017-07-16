@@ -137,12 +137,12 @@ int main(int argc, char *argv[])
 
         if(arg_startvpn && !arg_vpnname.isEmpty())
         {
-            qInfo() << QString("start-vpn process::") << arg_vpnname;
+            qDebug() << QString("start-vpn process::") << arg_vpnname;
 
             if(!arg_mainconfig.isEmpty())
                 tiConfMain::setMainConfig(arg_mainconfig);
 
-            qInfo() << QString("start-vpn process::config_file::") << tiConfMain::main_config;
+            qDebug() << QString("start-vpn process::config_file::") << tiConfMain::main_config;
 
             vpnProcess proc;
             proc.run(arg_vpnname);
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         }
         else if(arg_killvpnprocesses)
         {
-            qInfo() << QString("kill-vpn-processes executed::");
+            qDebug() << QString("kill-vpn-processes executed::");
 
             QStringList arguments;
             arguments << QFileInfo(QCoreApplication::applicationFilePath()).fileName();
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        qInfo() << QString("start-main::");
+        qDebug() << QString("start-main::");
 
         QApplication a(argc, argv);
         QApplication::setApplicationName(openfortigui_config::name);
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 
         if(isRunningAlready())
         {
-            qInfo() << "This application is already running, exiting now.";
+            qDebug() << "This application is already running, exiting now.";
             QMessageBox::critical(0, QApplication::tr("Application error"),
                                             QApplication::tr("This application is already running, exiting now."),
                                             QMessageBox::Ok);
