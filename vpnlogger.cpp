@@ -30,7 +30,13 @@ void vpnLogger::log(const QString &name)
     logfile.open(QIODevice::Append | QIODevice::Text);
     QTextStream out(&logfile);
 
-    out << QString::fromUtf8(proc->readAll());
+    QString toLog = QString::fromUtf8(proc->readAll());
+    if(toLog.contains("Please") || toLog.contains("2factor authentication token:"))
+    {
+        emit OTPRequest(proc);
+    }
+
+    out << toLog;
     logfile.flush();
     logfile.close();
 }

@@ -27,6 +27,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     connect(logger_thread, SIGNAL(started()), logger, SLOT(process()));
     connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
     connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
+    connect(logger, SIGNAL(OTPRequest(QProcess*)), this, SLOT(onOTPRequest(QProcess*)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(finished()), logger_thread, SLOT(deleteLater()));
     logger_thread->start();
 }
@@ -185,6 +186,12 @@ void vpnManager::onClientVPNCredRequest(QString vpnname)
 void vpnManager::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 {
     emit VPNStatsUpdate(vpnname, stats);
+}
+
+void vpnManager::onOTPRequest(QProcess *proc)
+{
+    qDebug() << "otprequest from vpnmanager";
+    emit VPNOTPRequest(proc);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)

@@ -24,6 +24,7 @@ private slots:
     void log(const QString &name);
 
 signals:
+    void OTPRequest(QProcess *proc);
 
 public slots:
     void process();

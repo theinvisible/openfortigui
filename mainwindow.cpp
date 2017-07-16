@@ -19,6 +19,7 @@
 #include "vpngroupeditor.h"
 #include "vpnsetting.h"
 #include "vpnlogin.h"
+#include "vpnotplogin.h"
 #include "vpnhelper.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(vpnmanager, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)));
     connect(vpnmanager, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)));
+    connect(vpnmanager, SIGNAL(VPNOTPRequest(QProcess*)), this, SLOT(onClientVPNOTPRequest(QProcess*)));
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
@@ -598,7 +600,22 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Login"));
     f->initAfter();
 
-    //connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
+    prefWindow->show();
+}
+
+void MainWindow::onClientVPNOTPRequest(QProcess *proc)
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnOTPLogin *f = new vpnOTPLogin(prefWindow);
+    f->setData(proc);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - OTP-Login"));
+    f->initAfter();
+
     prefWindow->show();
 }
 
@@ -886,17 +903,17 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 
 void MainWindow::onActionAbout()
 {
-    QMessageBox::about(this, trUtf8("About openFortiGUI"), trUtf8("<b>openFortiGUI %1</b> <br><br>"
-                                                             "Developer: <b>Rene Hadler</b> <br>"
-                                                             "eMail: <a href=mailto:'rene@hadler.me'>rene@hadler.me</a> <br>"
-                                                             "Website: <a href=https://hadler.me>https://hadler.me</a></p>"
+    QMessageBox::about(this, trUtf8("About openFortiGUI"), trUtf8("<b>openFortiGUI %1</b><br>"
+                                                             "<table><tr><td width='150'>Developer:</td> <td><b>Rene Hadler</b></td></tr>"
+                                                             "<tr><td>eMail:</td> <td> <a href=mailto:'rene@hadler.me'>rene@hadler.me</a></td></tr>"
+                                                             "<tr><td>Website:</td> <td> <a href=https://hadler.me>https://hadler.me</a></td></tr></table>"
                                                              "<p>This program uses following libs/resources:</p>"
-                                                              "GCC %2: <a href='https://gcc.gnu.org/'>https://gcc.gnu.org</a> <br>"
-                                                              "QT %3: <a href='https://www.qt.io'>https://www.qt.io</a> <br>"
-                                                              "openfortivpn: <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a> <br>"
-                                                              "QTinyAes: <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a> <br>"
-                                                              "tiny-AES128-C: <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a> <br>"
-                                                              "Icons8: <a href='https://icons8.com/'>https://icons8.com</a>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
+                                                              "<table><tr><td width='150'>GCC %2:</td> <td> <a href='https://gcc.gnu.org/'>https://gcc.gnu.org</a></td></tr>"
+                                                              "<tr><td>QT %3:</td> <td> <a href='https://www.qt.io'>https://www.qt.io</a></td></tr>"
+                                                              "<tr><td>openfortivpn:</td> <td> <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a></td></tr>"
+                                                              "<tr><td>QTinyAes:</td> <td> <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a></td></tr>"
+                                                              "<tr><td>tiny-AES128-C:</td> <td> <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a></td></tr>"
+                                                              "<tr><td>Icons8:</td> <td> <a href='https://icons8.com/'>https://icons8.com</a></td></tr></table>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
 }
 
 void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)

@@ -73,12 +73,14 @@ signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
+    void VPNOTPRequest(QProcess *proc);
 
 public slots:
     void onClientConnected();
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
+    void onOTPRequest(QProcess *proc);
 };
 
 #endif // VPNMANAGER_H
