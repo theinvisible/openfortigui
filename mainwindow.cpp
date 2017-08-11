@@ -709,6 +709,7 @@ void MainWindow::refreshVpnProfileList()
 
     QMap<QString, QAction*> trayItems;
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
+    bool isVPNConnected = false;
     for(int i=0; i < vpns.count(); i++)
     {
         vpnProfile *vpn = vpns.at(i);
@@ -723,6 +724,7 @@ void MainWindow::refreshVpnProfileList()
             case vpnClientConnection::STATUS_CONNECTED:
                 status = QIcon(":/img/connected.png");
                 item4 = new QStandardItem(status, tr("Connected"));
+                isVPNConnected = true;
                 break;
             case vpnClientConnection::STATUS_CONNECTING:
                 status = QIcon(":/img/connecting.png");
@@ -771,6 +773,11 @@ void MainWindow::refreshVpnProfileList()
                 break;
             }
         }
+        // Update tray
+        if(isVPNConnected)
+            tray->setIcon(QIcon(":/img/app-enc.png"));
+        else
+            tray->setIcon(QIcon(":/img/app.png"));
 
         // Menu
         QAction *action = new QAction(status, vpn->name, tray_menu);
