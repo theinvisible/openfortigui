@@ -614,10 +614,10 @@ int parse_config(struct tunnel *tunnel, const char *buffer)
 {
     char *c, *end;
 
-    buffer = strcasestr(buffer, "NAME=\"text6\"");
+    buffer = strstr(buffer, "NAME=\"text6\"");
     if (!buffer)
         return 1;
-    buffer = strcasestr(buffer, "VALUE=\"");
+    buffer = strstr(buffer, "VALUE=\"");
     if (!buffer)
         return 1;
     buffer += 7;

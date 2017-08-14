@@ -1,3 +1,9 @@
+openfortigui (0.3.2-1) precise; urgency=low
+
+  * Fix for connect to older VPNs
+
+ -- Rene Hadler <rene@hadler.me>  Fri, 14 Aug 2017 9:08:00 +0100
+
 openfortigui (0.3.1-1) precise; urgency=low
 
   * Updated Icons, updated to latest openfortivpn upstream
