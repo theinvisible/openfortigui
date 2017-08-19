@@ -1,3 +1,9 @@
+openfortigui (0.3.3-1) precise; urgency=low
+
+  * Set remote VPN-DNS fixed, added realm field to VPN-Profiles
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 19 Aug 2017 19:41:00 +0100
+
 openfortigui (0.3.2-2) precise; urgency=low
 
   * Fix icon format

@@ -9,10 +9,11 @@ vpnProfile::vpnProfile()
     username = "";
     password = "";
     otp = "";
+    realm = "";
 
     set_routes = true;
     set_dns = false;
-    pppd_use_peerdns = false;
+    pppd_no_peerdns = false;
 
     ca_file = "";
     user_cert = "";

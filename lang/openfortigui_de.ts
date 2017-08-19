@@ -101,7 +101,7 @@
     <message>
         <location filename="../mainwindow.ui" line="182"/>
         <location filename="../mainwindow.cpp" line="701"/>
-        <location filename="../mainwindow.cpp" line="795"/>
+        <location filename="../mainwindow.cpp" line="802"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
@@ -257,41 +257,45 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="700"/>
-        <location filename="../mainwindow.cpp" line="796"/>
+        <location filename="../mainwindow.cpp" line="803"/>
         <source>Quit app</source>
         <translation>App beenden</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="702"/>
-        <location filename="../mainwindow.cpp" line="794"/>
+        <location filename="../mainwindow.cpp" line="801"/>
         <source>Show mainwindow</source>
         <translation>Zeige Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="725"/>
+        <location filename="../mainwindow.cpp" line="726"/>
         <source>Connected</source>
         <translation>Verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="729"/>
+        <location filename="../mainwindow.cpp" line="731"/>
         <source>Connecting</source>
         <translation>Verbinden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="734"/>
-        <location filename="../mainwindow.cpp" line="740"/>
+        <location filename="../mainwindow.cpp" line="736"/>
+        <location filename="../mainwindow.cpp" line="742"/>
         <source>Disconnected</source>
         <translation>Getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="906"/>
+        <location filename="../mainwindow.cpp" line="913"/>
         <source>About openFortiGUI</source>
         <translation>Über openFortiGUI</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="906"/>
+        <location filename="../mainwindow.cpp" line="913"/>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;Developer:&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;eMail:&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Website:&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QTinyAes:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;tiny-AES128-C:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
-        <translation>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Dieses Programm verwendet die folgenden Ressourcen:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
+        <translation type="vanished">&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Entwickler: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Dieses Programm verwendet die folgenden Ressourcen:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
@@ -349,7 +353,7 @@
         <translation> - OTP-Anmeldung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="939"/>
+        <location filename="../mainwindow.cpp" line="946"/>
         <source> - Settings</source>
         <translation> - Einstellungen</translation>
     </message>
@@ -522,7 +526,6 @@
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="30"/>
-        <location filename="../vpnprofileeditor.ui" line="284"/>
         <source>Common</source>
         <translation>Allgemein</translation>
     </message>
@@ -594,6 +597,11 @@
         <translation>Optionen</translation>
     </message>
     <message>
+        <location filename="../vpnprofileeditor.ui" line="284"/>
+        <source>Advanced</source>
+        <translation>Erweitert</translation>
+    </message>
+    <message>
         <location filename="../vpnprofileeditor.ui" line="296"/>
         <source>Set routes</source>
         <translation>Setze Routen</translation>
@@ -605,63 +613,68 @@
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="342"/>
-        <source>PPPD use peerdns</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../vpnprofileeditor.ui" line="365"/>
         <source>Insecure SSL</source>
         <translation>Unsicheres SSL</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="388"/>
+        <location filename="../vpnprofileeditor.ui" line="365"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="440"/>
+        <location filename="../vpnprofileeditor.ui" line="385"/>
+        <source>PPPD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="397"/>
+        <source>PPPD no peerdns</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="449"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="460"/>
+        <location filename="../vpnprofileeditor.ui" line="469"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="79"/>
+        <location filename="../vpnprofileeditor.cpp" line="83"/>
         <source>Select the user-cert</source>
         <translation>Wähle das Benutzer-Zertifikat</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="89"/>
+        <location filename="../vpnprofileeditor.cpp" line="93"/>
         <source>Select the user-key</source>
         <translation>Wähle den Benutzer-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="99"/>
+        <location filename="../vpnprofileeditor.cpp" line="103"/>
         <source>Select the CA-file</source>
         <translation>Wähle die CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="114"/>
-        <location filename="../vpnprofileeditor.cpp" line="120"/>
-        <location filename="../vpnprofileeditor.cpp" line="126"/>
+        <location filename="../vpnprofileeditor.cpp" line="118"/>
+        <location filename="../vpnprofileeditor.cpp" line="124"/>
+        <location filename="../vpnprofileeditor.cpp" line="130"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="114"/>
+        <location filename="../vpnprofileeditor.cpp" line="118"/>
         <source>You must set a name for the VPN.</source>
         <translation>Es muss ein Name für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="120"/>
+        <location filename="../vpnprofileeditor.cpp" line="124"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>Es muss ein Gateway für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="126"/>
+        <location filename="../vpnprofileeditor.cpp" line="130"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Es muss ein Gateway-Port für die VPN gesetzt sein.</translation>
     </message>

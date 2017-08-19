@@ -13,6 +13,10 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     config(0)
 {
     ui->setupUi(this);
+
+    // Default settings
+    ui->cbSetRoutes->setChecked(true);
+    ui->cbSetDNS->setChecked(true);
 }
 
 vpnProfileEditor::~vpnProfileEditor()
@@ -44,9 +48,10 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
 
     ui->cbSetRoutes->setChecked(config->set_routes);
     ui->cbSetDNS->setChecked(config->set_dns);
-    ui->cbPPPDUsePeerDNS->setChecked(config->pppd_use_peerdns);
+    ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
     ui->cbInsecureSSL->setChecked(config->insecure_ssl);
     ui->cbDebug->setChecked(config->debug);
+    ui->leRealm->setText(config->realm);
 
     if(config->origin_location == vpnProfile::Origin_GLOBAL)
     {
@@ -63,7 +68,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbVerifyCert->setDisabled(true);
         ui->cbSetRoutes->setDisabled(true);
         ui->cbSetDNS->setDisabled(true);
-        ui->cbPPPDUsePeerDNS->setDisabled(true);
+        ui->cbPPPDNoPeerDNS->setDisabled(true);
         ui->cbInsecureSSL->setDisabled(true);
         ui->btnSave->setDisabled(true);
         ui->btnChooseCAFile->setDisabled(true);
@@ -127,14 +132,6 @@ void vpnProfileEditor::on_btnSave_clicked()
         return;
     }
 
-    /*
-    if(ui->leUsername->text().isEmpty() || ui->lePassword->text().isEmpty())
-    {
-        QMessageBox::information(this, QString::fromUtf8("Add VPN"), QString::fromUtf8("You must set a username and password for the VPN."));
-        return;
-    }
-    */
-
     tiConfVpnProfiles vpns;
     vpnProfile vpn;
 
@@ -170,9 +167,10 @@ void vpnProfileEditor::on_btnSave_clicked()
 
     vpn.set_routes = ui->cbSetRoutes->isChecked();
     vpn.set_dns = ui->cbSetDNS->isChecked();
-    vpn.pppd_use_peerdns = ui->cbPPPDUsePeerDNS->isChecked();
+    vpn.pppd_no_peerdns = ui->cbPPPDNoPeerDNS->isChecked();
     vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
     vpn.debug = ui->cbDebug->isChecked();
+    vpn.realm = ui->leRealm->text();
 
     vpns.saveVpnProfile(vpn);
 

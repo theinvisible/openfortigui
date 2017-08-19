@@ -23,10 +23,11 @@ public:
     QString username;
     QString password;
     QString otp;
+    QString realm;
 
     bool set_routes;
     bool set_dns;
-    bool pppd_use_peerdns;
+    bool pppd_no_peerdns;
 
     QString ca_file;
     QString user_cert;

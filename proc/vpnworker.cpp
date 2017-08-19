@@ -211,10 +211,13 @@ void vpnWorker::process()
             add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
     }
 
+    if(!vpnConfig.realm.isEmpty())
+        strncpy(config.realm, vpnConfig.user_key.toStdString().c_str(), FIELD_SIZE);
+
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
-    config.pppd_use_peerdns = (vpnConfig.insecure_ssl) ? 1 : 0;
+    config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
 
     if(vpnConfig.debug)
         increase_verbosity();
