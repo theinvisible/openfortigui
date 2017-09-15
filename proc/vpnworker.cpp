@@ -73,21 +73,6 @@ static int on_ppp_if_down(struct tunnel *tunnel)
     return 0;
 }
 
-static int get_gateway_host_ip(struct tunnel *tunnel)
-{
-    struct hostent *host = gethostbyname(tunnel->config->gateway_host);
-    if (host == NULL) {
-        log_error("gethostbyname: %s\n", hstrerror(h_errno));
-        return 1;
-    }
-
-    tunnel->config->gateway_ip = *((struct in_addr *)
-                                   host->h_addr_list[0]);
-    setenv("VPN_GATEWAY", inet_ntoa(tunnel->config->gateway_ip), 0);
-
-    return 0;
-}
-
 static int pppd_run(struct tunnel *tunnel)
 {
     pid_t pid;
@@ -114,7 +99,8 @@ static int pppd_run(struct tunnel *tunnel)
             "nodefaultroute", ":1.1.1.1", "nodetach",
             "lcp-max-configure", "40", "mru", "1354",
             NULL, NULL, NULL, NULL,
-            NULL, NULL, NULL
+            NULL, NULL, NULL, NULL,
+            NULL
         };
         // Dynamically get first NULL pointer so that changes of
         // args above don't need code changes here
@@ -135,14 +121,17 @@ static int pppd_run(struct tunnel *tunnel)
             args[i++] = "plugin";
             args[i++] = tunnel->config->pppd_plugin;
         }
+        if (tunnel->config->pppd_ipparam) {
+            args[i++] = "ipparam";
+            args[i++] = tunnel->config->pppd_ipparam;
+        }
         // Assert that we didn't use up all NULL pointers above
         assert (i < sizeof (args) / sizeof (*args));
 
         close(tunnel->ssl_socket);
-        if (execvp(args[0], args) == -1) {
-            log_error("execvp: %s\n", strerror(errno));
-            return 1;
-        }
+        execvp(args[0], args);
+        fprintf(stderr, "execvp: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
     // Set non-blocking
@@ -165,7 +154,29 @@ static int pppd_terminate(struct tunnel *tunnel)
     close(tunnel->pppd_pty);
 
     log_debug("Waiting for pppd to exit...\n");
-    waitpid(tunnel->pppd_pid, NULL, 0);
+    int status;
+    if (waitpid(tunnel->pppd_pid, &status, 0) == -1) {
+        log_error("waitpid: %s\n", strerror(errno));
+        return 1;
+    }
+    if (WIFEXITED(status)) {
+        log_debug("waitpid: exit status code %d", WEXITSTATUS(status));
+    }
+
+    return 0;
+}
+
+static int get_gateway_host_ip(struct tunnel *tunnel)
+{
+    struct hostent *host = gethostbyname(tunnel->config->gateway_host);
+    if (host == NULL) {
+        log_error("gethostbyname: %s\n", hstrerror(h_errno));
+        return 1;
+    }
+
+    tunnel->config->gateway_ip = *((struct in_addr *)
+                                   host->h_addr_list[0]);
+    setenv("VPN_GATEWAY", inet_ntoa(tunnel->config->gateway_ip), 0);
 
     return 0;
 }
