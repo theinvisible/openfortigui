@@ -135,7 +135,7 @@ void MainWindow::on_btnAddVPN_clicked()
     vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeNew);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN"));
 
     connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
@@ -237,7 +237,7 @@ void MainWindow::on_btnEditVPN_clicked()
     f->loadVpnProfile(vpnName);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Edit VPN"));
 
     connect(f, SIGNAL(vpnEdited(vpnProfile)), this, SLOT(onvpnEdited(vpnProfile)));
@@ -285,7 +285,7 @@ void MainWindow::on_btnAddGroup_clicked()
     vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeNew);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Add VPN-Group"));
 
     connect(f, SIGNAL(vpnGroupAdded(vpnGroup)), this, SLOT(onvpnGroupAdded(vpnGroup)));
@@ -351,7 +351,7 @@ void MainWindow::on_btnEditGroup_clicked()
     f->loadVpnGroup(vpnGroup);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Edit VPN-Group"));
 
     connect(f, SIGNAL(vpnGroupEdited(vpnGroup)), this, SLOT(onvpnGroupEdited(vpnGroup)));
@@ -596,7 +596,7 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
     f->setData(vpnmanager, vpnname);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Login"));
     f->initAfter();
 
@@ -612,7 +612,7 @@ void MainWindow::onClientVPNOTPRequest(QProcess *proc)
     f->setData(proc);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - OTP-Login"));
     f->initAfter();
 
@@ -942,7 +942,7 @@ void MainWindow::onVPNSettings()
     vpnSetting *f = new vpnSetting(prefWindow);
     prefWindow->setCentralWidget(f);
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Settings"));
 
     prefWindow->show();
