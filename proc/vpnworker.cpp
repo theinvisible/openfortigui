@@ -344,6 +344,13 @@ err_tunnel:
         auth_log_out(&tunnel);
         log_info("Logged out.\n");
     }
+
+    // explicitly free the buffer allocated for split routes of the ipv4 config
+    if (tunnel.ipv4.split_rt != NULL) {
+        free(tunnel.ipv4.split_rt);
+        tunnel.ipv4.split_rt = NULL;
+    }
+
     emit finished();
 }
 
