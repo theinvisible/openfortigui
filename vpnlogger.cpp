@@ -48,6 +48,7 @@ void vpnLogger::log(const QString &name)
     QByteArray blog = proc->readAll();
     if(blog.length() == 0)
     {
+        loglocker[name] = false;
         return;
     }
 
