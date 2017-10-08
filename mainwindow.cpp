@@ -448,23 +448,32 @@ void MainWindow::onStartVPN()
         return;
     }
 
-    QString itemName = model->itemFromIndex(sellist.at(0))->text();
+    QStandardItem *item = model->itemFromIndex(sellist.at(0));
+    QString itemName = item->text();
 
     if(ui->tabMain->currentIndex() == 1)
     {
         tiConfVpnGroups groups;
         vpnGroup *group = groups.getVpnGroupByName(itemName);
-        QStringListIterator it(group->members);
+        QStringListIterator it(group->localMembers);
         while(it.hasNext())
         {
-            vpnmanager->startVPN(it.next());
+            onStartVPN(it.next(), vpnProfile::Origin_LOCAL);
+        }
+        QStringListIterator git(group->globalMembers);
+        while(git.hasNext())
+        {
+            onStartVPN(git.next(), vpnProfile::Origin_GLOBAL);
         }
     }
     else
-        vpnmanager->startVPN(itemName);
+    {
+        vpnProfile::Origin itemOrigin = static_cast<vpnProfile::Origin>(item->data().toInt());
+        onStartVPN(itemName, itemOrigin);
+    }
 }
 
-void MainWindow::onStartVPN(const QString &vpnname)
+void MainWindow::onStartVPN(const QString &vpnname, vpnProfile::Origin origin)
 {
     qDebug() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
 
@@ -494,7 +503,7 @@ void MainWindow::onActionStartVPNGroup(const QString &vpnname)
     tiConfVpnGroups groups;
     vpnClientConnection *conn;
     vpnGroup *vpngroup = groups.getVpnGroupByName(vpnname);
-    QStringListIterator it(vpngroup->members);
+    QStringListIterator it(vpngroup->localMembers);
     vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
     int connCount = 0;
     while(it.hasNext())
@@ -507,14 +516,14 @@ void MainWindow::onActionStartVPNGroup(const QString &vpnname)
         }
     }
 
-    if(connCount == vpngroup->members.count())
+    if(connCount == vpngroup->localMembers.count())
         vpnGroupStatus = vpnClientConnection::STATUS_CONNECTED;
-    else if(connCount < vpngroup->members.count() && connCount > 0)
+    else if(connCount < vpngroup->localMembers.count() && connCount > 0)
         vpnGroupStatus = vpnClientConnection::STATUS_CONNECTING;
     else
         vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
 
-    QStringListIterator it2(vpngroup->members);
+    QStringListIterator it2(vpngroup->localMembers);
     while(it2.hasNext())
     {
         if(vpnGroupStatus == vpnClientConnection::STATUS_DISCONNECTED)
@@ -546,7 +555,7 @@ void MainWindow::onStopVPN()
     {
         tiConfVpnGroups groups;
         vpnGroup *group = groups.getVpnGroupByName(itemName);
-        QStringListIterator it(group->members);
+        QStringListIterator it(group->localMembers);
         while(it.hasNext())
         {
             vpnmanager->stopVPN(it.next());
@@ -570,7 +579,33 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 {
     qDebug() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
 
-    refreshVpnProfileList();
+    vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
+
+    if(conn != 0 && conn->item_stats == 0)
+        conn->item_stats = getVpnProfileItem(vpnname, 4);
+
+    //refreshVpnProfileList();
+    QIcon statusicon;
+    QStandardItem *statusitem = getVpnProfileItem(vpnname, 0);
+    if(statusitem != 0)
+    {
+        switch(status)
+        {
+        case vpnClientConnection::STATUS_CONNECTED:
+            statusicon = QIcon(":/img/connected.png");
+            statusitem->setIcon(statusicon);
+            break;
+        case vpnClientConnection::STATUS_CONNECTING:
+            statusicon = QIcon(":/img/connecting.png");
+            statusitem->setIcon(statusicon);
+            break;
+        case vpnClientConnection::STATUS_DISCONNECTED:
+        default:
+            statusicon = QIcon(":/img/disconnected.png");
+            statusitem->setIcon(statusicon);
+        }
+    }
+
     refreshVpnGroupList();
 
     if(isHidden())
@@ -623,7 +658,7 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 {
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
 
-    if(conn != 0)
+    if(conn != 0 && conn->item_stats != 0)
     {
         QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
         conn->item_stats->setText(disp);
@@ -747,7 +782,9 @@ void MainWindow::refreshVpnProfileList()
         item3 = new QStandardItem(vpn->username);
         item5 = new QStandardItem();
         if(conn != 0)
+        {
             conn->item_stats = item5;
+        }
 
 
         switch(vpn->origin_location)
@@ -760,6 +797,7 @@ void MainWindow::refreshVpnProfileList()
                 root_local_vpn->setChild(localRow, 2, item2);
                 root_local_vpn->setChild(localRow, 3, item3);
                 root_local_vpn->setChild(localRow, 4, item5);
+                item->setData(vpnProfile::Origin_LOCAL);
                 break;
             }
             case vpnProfile::Origin_GLOBAL:
@@ -770,6 +808,7 @@ void MainWindow::refreshVpnProfileList()
                 root_global_vpn->setChild(globalRow, 2, item2);
                 root_global_vpn->setChild(globalRow, 3, item3);
                 root_global_vpn->setChild(globalRow, 4, item5);
+                item->setData(vpnProfile::Origin_GLOBAL);
                 break;
             }
         }
@@ -833,7 +872,7 @@ void MainWindow::refreshVpnGroupList()
         qDebug() << "MainWindow::refreshVpnGroupList() -> vpngroups found::" << vpngroup->name;
 
         QIcon status;
-        QStringListIterator it(vpngroup->members);
+        QStringListIterator it(vpngroup->localMembers);
         vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
         int connCount = 0;
         while(it.hasNext())
@@ -846,9 +885,9 @@ void MainWindow::refreshVpnGroupList()
             }
         }
 
-        if(connCount == vpngroup->members.count())
+        if(connCount == vpngroup->localMembers.count())
             vpnGroupStatus = vpnClientConnection::STATUS_CONNECTED;
-        else if(connCount < vpngroup->members.count() && connCount > 0)
+        else if(connCount < vpngroup->localMembers.count() && connCount > 0)
             vpnGroupStatus = vpnClientConnection::STATUS_CONNECTING;
         else
             vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
@@ -867,7 +906,7 @@ void MainWindow::refreshVpnGroupList()
         }
 
         item = new QStandardItem(vpngroup->name);
-        item2 = new QStandardItem(vpngroup->members.join(", "));
+        item2 = new QStandardItem(vpngroup->localMembers.join(", ") + ", " + vpngroup->globalMembers.join(", "));
         item3 = new QStandardItem(status, "");
 
         row = model->rowCount();
@@ -893,6 +932,21 @@ void MainWindow::refreshVpnGroupList()
     ui->tvVPNGroups->header()->resizeSection(1, 150);
     ui->tvVPNGroups->setSortingEnabled(true);
     ui->tvVPNGroups->sortByColumn(1, Qt::AscendingOrder);
+}
+
+QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)
+{
+    QStandardItem *retitem = 0;
+
+    for(int i=0; i < root_local_vpn->rowCount(); i++)
+    {
+        if(root_local_vpn->child(i, 1)->text() == vpnname)
+        {
+            return root_local_vpn->child(i, colum);
+        }
+    }
+
+    return retitem;
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event)

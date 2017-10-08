@@ -58,7 +58,7 @@ private slots:
     void onvpnGroupEdited(const vpnGroup &vpngroup);
 
     void onStartVPN();
-    void onStartVPN(const QString &vpnname);
+    void onStartVPN(const QString &vpnname, vpnProfile::Origin origin = vpnProfile::Origin_LOCAL);
     void onActionStartVPN(const QString &vpnname);
     void onActionStartVPNGroup(const QString &vpnname);
     void onStopVPN();
@@ -88,6 +88,8 @@ private:
 
     void refreshVpnProfileList();
     void refreshVpnGroupList();
+
+    QStandardItem *getVpnProfileItem(const QString &vpnname, int column);
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);

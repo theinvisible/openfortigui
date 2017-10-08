@@ -11,7 +11,8 @@ public:
 
     QString name;
 
-    QStringList members;
+    QStringList localMembers;
+    QStringList globalMembers;
 };
 
 #endif // VPNGROUP_H

@@ -16,7 +16,7 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
 
     // Treeview VPN-Groups
     QStringList headers;
-    headers << trUtf8("Status") << trUtf8("Name");
+    headers << tr("Status") << tr("Name") << tr("Origin");
     QStandardItemModel *model = new QStandardItemModel(ui->tvMembers);
     model->setHorizontalHeaderLabels(headers);
     ui->tvMembers->setModel(model);
@@ -29,24 +29,39 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
 
     QStandardItem *item = 0;
     QStandardItem *item2 = 0;
+    QStandardItem *item3 = 0;
     int row = model->rowCount();
 
     QList<vpnProfile*> vpnss = vpns.getVpnProfiles();
+    QString originText = "";
     for(int i=0; i < vpnss.count(); i++)
     {
         vpnProfile *vpn = vpnss.at(i);
 
         item = new QStandardItem("");
         item2 = new QStandardItem(vpn->name);
+        switch(vpn->origin_location)
+        {
+        case vpnProfile::Origin_LOCAL:
+            originText = tr("Local");
+            break;
+        case vpnProfile::Origin_GLOBAL:
+            originText = tr("Global");
+            break;
+        }
+        item3 = new QStandardItem(originText);
+        item3->setData(vpn->origin_location);
 
         item->setCheckable(true);
 
         row = model->rowCount();
         model->setItem(row, 0, item);
         model->setItem(row, 1, item2);
+        model->setItem(row, 2, item3);
     }
 
     ui->tvMembers->header()->resizeSection(0, 50);
+    ui->tvMembers->header()->resizeSection(1, 250);
     ui->tvMembers->setSortingEnabled(true);
     ui->tvMembers->sortByColumn(1, Qt::AscendingOrder);
 }
@@ -64,16 +79,25 @@ void vpnGroupEditor::loadVpnGroup(const QString &groupname)
 
     ui->leName->setText(config->name);
 
-    QStandardItem *item = 0, *item2 = 0;
+    QStandardItem *item = 0, *item2 = 0, *item3 = 0;
     for(int i=0; i<model->rowCount(); i++)
     {
         item = model->item(i, 0);
         item2 = model->item(i, 1);
+        item3 = model->item(i, 2);
+        vpnProfile::Origin origin = static_cast<vpnProfile::Origin>(item3->data().toInt());
 
-        QStringListIterator it(config->members);
+        QStringListIterator it(config->localMembers);
         while(it.hasNext())
         {
-            if(item2->text() == it.next())
+            if(item2->text() == it.next() & origin == vpnProfile::Origin_LOCAL)
+                item->setCheckState(Qt::Checked);
+        }
+
+        QStringListIterator git(config->globalMembers);
+        while(git.hasNext())
+        {
+            if(item2->text() == git.next() & origin == vpnProfile::Origin_GLOBAL)
                 item->setCheckState(Qt::Checked);
         }
     }
@@ -105,8 +129,8 @@ void vpnGroupEditor::on_btnSave_clicked()
 
     vpngroup.name = ui->leName->text();
 
-    QStandardItem *item = 0, *item2 = 0;
-    QList<QString> members;
+    QStandardItem *item = 0, *item2 = 0, *item3 = 0;
+    QList<QString> lMembers, gMembers;
     tiConfVpnProfiles vpns;
     vpns.readVpnProfiles();
     vpnProfile *vpnprofile;
@@ -114,10 +138,12 @@ void vpnGroupEditor::on_btnSave_clicked()
     {
         item = model->item(i, 0);
         item2 = model->item(i, 1);
+        item3 = model->item(i, 2);
+        vpnProfile::Origin origin = static_cast<vpnProfile::Origin>(item3->data().toInt());
 
         if(item->checkState() == Qt::Checked)
         {
-            vpnprofile = vpns.getVpnProfileByName(item2->text());
+            vpnprofile = vpns.getVpnProfileByName(item2->text(), origin);
             if(vpnprofile != 0 && (vpnprofile->name.isEmpty() || vpnprofile->password.isEmpty()))
             {
                 QMessageBox::warning(this, trUtf8("VPN-Group"), trUtf8("You must set username and password for each group you want to include in a group. "
@@ -126,10 +152,14 @@ void vpnGroupEditor::on_btnSave_clicked()
                 return;
             }
 
-            members.append(item2->text());
+            if(origin == vpnProfile::Origin_LOCAL)
+                lMembers.append(item2->text());
+            else if(origin == vpnProfile::Origin_GLOBAL)
+                gMembers.append(item2->text());
         }
     }
-    vpngroup.members = members;
+    vpngroup.localMembers = lMembers;
+    vpngroup.globalMembers = gMembers;
 
     vpngroups.saveVpnGroup(vpngroup);
 

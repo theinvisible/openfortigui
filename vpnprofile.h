@@ -12,7 +12,8 @@ public:
     enum Origin
     {
         Origin_LOCAL = 0,
-        Origin_GLOBAL
+        Origin_GLOBAL,
+        Origin_BOTH
     };
 
     QString name;

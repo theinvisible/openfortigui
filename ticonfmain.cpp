@@ -338,14 +338,25 @@ void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
     f->beginGroup("group");
     f->setValue("name", group.name);
 
-    f->beginWriteArray("members");
-    QListIterator<QString> it(group.members);
+    f->beginWriteArray("localMembers");
+    QListIterator<QString> it(group.localMembers);
     int i = 0;
     while(it.hasNext())
     {
         f->setArrayIndex(i);
-        f->setValue("member", it.next());
+        f->setValue("name", it.next());
         i++;
+    }
+    f->endArray();
+
+    f->beginWriteArray("globalMembers");
+    QListIterator<QString> git(group.globalMembers);
+    int j = 0;
+    while(git.hasNext())
+    {
+        f->setArrayIndex(j);
+        f->setValue("name", git.next());
+        j++;
     }
     f->endArray();
     f->endGroup();
@@ -374,11 +385,18 @@ void tiConfVpnGroups::readVpnGroups()
 
             f->beginGroup("group");
             vpngroup->name = f->value("name").toString();
-            int size = f->beginReadArray("members");
+            int size = f->beginReadArray("localMembers");
             for (int i = 0; i < size; ++i)
             {
                 f->setArrayIndex(i);
-                vpngroup->members.append(f->value("member").toString());
+                vpngroup->localMembers.append(f->value("name").toString());
+            }
+            f->endArray();
+            int gsize = f->beginReadArray("globalMembers");
+            for (int j = 0; j < gsize; ++j)
+            {
+                f->setArrayIndex(j);
+                vpngroup->globalMembers.append(f->value("name").toString());
             }
             f->endArray();
             f->endGroup();
