@@ -10,12 +10,13 @@ stages:
 build-ubuntu-1604-64:  
   stage: build
   script:
+    - cd openfortigui
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
     - debuild clean
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - mkdir build
-    - mv ../openforti*.deb build/
+    - cd .. && mkdir build
+    - mv openforti*.deb build/
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -29,12 +30,13 @@ build-ubuntu-1604-64:
 build-ubuntu-1604-32:  
   stage: build
   script:
+    - cd openfortigui
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
     - debuild clean
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - mkdir build
-    - mv ../openforti*.deb build/
+    - cd .. && mkdir build
+    - mv openforti*.deb build/
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -48,10 +50,11 @@ build-ubuntu-1604-32:
 build-debian-9-64:  
   stage: build
   script:
+    - cd openfortigui
     - git submodule init && git submodule update
     - cd qtinyaes && git submodule init && git submodule update && cd ..
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - mkdir build
+    - cd .. && mkdir build
     - mv ../openforti*.deb build/
 
   # The files which are to be made available in GitLab
