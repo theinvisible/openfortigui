@@ -15,6 +15,7 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
     ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
+    ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
 
     ui->leLocalVPNProfiles->setText(confMain.getValue("paths/localvpnprofiles").toString());
     ui->leLocalVPNGroups->setText(confMain.getValue("paths/localvpngroups").toString());
@@ -38,6 +39,7 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
     confMain.setValue("main/aeskey", ui->leAESKey->text());
+    confMain.setValue("main/aesiv", ui->leAESIV->text());
 
     confMain.setValue("paths/localvpnprofiles", tiConfMain::formatPathReverse(ui->leLocalVPNProfiles->text()));
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));

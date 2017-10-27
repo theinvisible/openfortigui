@@ -21,6 +21,7 @@
 #include "vpnlogin.h"
 #include "vpnotplogin.h"
 #include "vpnhelper.h"
+#include "setupwizard.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -120,6 +121,20 @@ MainWindow::MainWindow(QWidget *parent) :
     watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpnprofiles").toString()));
     watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpngroups").toString()));
     connect(watcherVpnProfiles, SIGNAL(directoryChanged(QString)), this, SLOT(onWatcherVpnProfilesChanged(QString)));
+
+    if(!main_settings.getValue("main/setupwizard").toBool())
+    {
+        QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+        prefWindow->setWindowModality(Qt::WindowModal);
+
+        setupWizard *f = new setupWizard(prefWindow);
+        prefWindow->setCentralWidget(f);
+        prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+        //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+        prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Setup wizard"));
+
+        prefWindow->show();
+    }
 }
 
 MainWindow::~MainWindow()

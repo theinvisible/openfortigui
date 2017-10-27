@@ -1,3 +1,9 @@
+openfortigui (0.4.0-1) precise; urgency=low
+
+  * Setup wizard
+
+ -- Rene Hadler <rene@hadler.me>  Fri, 27 Oct 2017 14:22:00 +0100
+
 openfortigui (0.3.4-1) precise; urgency=low
 
   * Fix segfault on heavy log load, dialogs are resizeable, update openfortivpn core, possible OTP fix

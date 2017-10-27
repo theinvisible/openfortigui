@@ -77,7 +77,9 @@ void tiConfMain::initMainConf()
         QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
         conf.setValue("main/debug", true);
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
+        conf.setValue("main/aesiv", openfortigui_config::aesiv);
         conf.setValue("main/start_minimized", false);
+        conf.setValue("main/setupwizard", false);
         conf.setValue("paths/globalvpnprofiles", openfortigui_config::vpnprofiles_global);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
@@ -103,6 +105,18 @@ void tiConfMain::initMainConf()
         logsdir_path.mkpath(logs_dir);
         QDir logsdir_vpn_path(logs_vpn_dir);
         logsdir_vpn_path.mkpath(logs_vpn_dir);
+
+        QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
+        if(conf.value("main/aesiv", "").toString().isEmpty())
+        {
+            conf.setValue("main/aesiv", openfortigui_config::aesiv);
+            conf.sync();
+        }
+        if(!conf.contains("main/setupwizard"))
+        {
+            conf.setValue("main/setupwizard", false);
+            conf.sync();
+        }
     }
 }
 
@@ -170,7 +184,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
         QFile::remove(filename);
 
     QSettings *f = new QSettings(filename, QSettings::IniFormat);
-    QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
+    QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), main_settings->getValue("main/aesiv").toByteArray());
 
     f->beginGroup("vpn");
     f->setValue("name", profile.name);
@@ -226,7 +240,7 @@ void tiConfVpnProfiles::readVpnProfiles()
 
                 QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
                 vpnProfile *vpnprofile = new vpnProfile;
-                QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), openfortigui_config::aesiv);
+                QTinyAes aes(QTinyAes::CBC, main_settings->getValue("main/aeskey").toByteArray(), main_settings->getValue("main/aesiv").toByteArray());
 
                 f->beginGroup("vpn");
                 vpnprofile->name = f->value("name").toString();

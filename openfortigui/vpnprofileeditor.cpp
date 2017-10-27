@@ -74,6 +74,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->btnChooseCAFile->setDisabled(true);
         ui->btnChooseUserCert->setDisabled(true);
         ui->btnChooseUserKey->setDisabled(true);
+        ui->cbDebug->setDisabled(true);
+        ui->leRealm->setDisabled(true);
     }
 }
 
