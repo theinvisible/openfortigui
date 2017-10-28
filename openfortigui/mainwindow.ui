@@ -193,6 +193,10 @@
    </property>
   </action>
   <action name="actionMenuWizard">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/sorceress.png</normaloff>:/img/sorceress.png</iconset>
+   </property>
    <property name="text">
     <string>Setup wizard</string>
    </property>

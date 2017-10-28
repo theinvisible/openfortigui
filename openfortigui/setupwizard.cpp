@@ -73,11 +73,27 @@ QString setupWizard::randString(int len)
     QThread::msleep(15);
 
     QString str;
+    int type;
     str.resize(len);
     qsrand(QTime::currentTime().msec());
 
     for(int s = 0; s < len ; ++s)
-        str[s] = QChar('a' + char(qrand() % ('z' - 'a')));
+    {
+        type = qrand() % 3;
+
+        switch(type)
+        {
+        case 0:
+            str[s] = QChar('a' + char(qrand() % ('z' - 'a')));
+            break;
+        case 1:
+            str[s] = QChar('A' + char(qrand() % ('Z' - 'A')));
+            break;
+        case 2:
+            str[s] = QChar('0' + char(qrand() % ('9' - '0')));
+            break;
+        }
+    }
 
     return str;
 }
@@ -111,7 +127,12 @@ void setupWizard::on_btnNext_clicked()
         break;
     case 1:
         if(saveAESData())
+        {
+            tiConfMain main_settings;
+            main_settings.setValue("main/setupwizard", true);
+            main_settings.sync();
             parentWidget()->close();
+        }
         break;
     }
 
@@ -120,6 +141,23 @@ void setupWizard::on_btnNext_clicked()
 
 void setupWizard::on_btnCancel_clicked()
 {
+    tiConfMain main_settings;
+
+    if(!main_settings.getValue("main/setupwizard").toBool())
+    {
+        int result = QMessageBox::question(this, tr("Abort setup wizard"), "You are about to abort the setup wizard. Show again on next program start?", QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel | QMessageBox::Escape);
+        qInfo() << "result::" << result;
+        switch(result)
+        {
+        case QMessageBox::No:
+            main_settings.setValue("main/setupwizard", true);
+            main_settings.sync();
+            break;
+        case QMessageBox::Cancel:
+            return;
+        }
+    }
+
     parentWidget()->close();
 }
 

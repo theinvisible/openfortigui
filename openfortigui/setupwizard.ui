@@ -32,15 +32,15 @@
         <widget class="QLabel" name="label_4">
          <property name="maximumSize">
           <size>
-           <width>128</width>
-           <height>128</height>
+           <width>96</width>
+           <height>96</height>
           </size>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="res.qrc">:/img/app.png</pixmap>
+          <pixmap resource="res.qrc">:/img/sorceress.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -50,7 +50,7 @@
        <item row="0" column="1">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This wizard will guide you trough some basic settings. To start just click &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt;If you dont need the wizard you can also abort it. You can always start it again from the main window.&lt;/p&gt;&lt;p&gt;Have fun.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This wizard will guide you trough some basic setup. To start just click &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt;If you dont need the wizard you can also abort it. You can always start it again from the main window.&lt;/p&gt;&lt;p&gt;Have fun.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -73,7 +73,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="res.qrc">:/img/app.png</pixmap>
+          <pixmap resource="res.qrc">:/img/app-enc.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -83,7 +83,7 @@
        <item row="1" column="1">
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your VPN-profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
