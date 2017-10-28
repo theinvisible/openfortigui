@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
     connect(ui->actionMenuSettings, SIGNAL(triggered(bool)), this, SLOT(onVPNSettings()));
+    connect(ui->actionMenuWizard, SIGNAL(triggered(bool)), this, SLOT(onSetupWizard()));
     connect(ui->actionMenuLogs, SIGNAL(triggered(bool)), this, SLOT(onActionLogs()));
     connect(ui->actionMenuConnect, SIGNAL(triggered(bool)), this, SLOT(onStartVPN()));
     connect(ui->actionMenuDisconnect, SIGNAL(triggered(bool)), this, SLOT(onStopVPN()));
@@ -124,16 +125,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(!main_settings.getValue("main/setupwizard").toBool())
     {
-        QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
-        prefWindow->setWindowModality(Qt::WindowModal);
-
-        setupWizard *f = new setupWizard(prefWindow);
-        prefWindow->setCentralWidget(f);
-        prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-        //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-        prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Setup wizard"));
-
-        prefWindow->show();
+        onSetupWizard();
     }
 }
 
@@ -1013,6 +1005,20 @@ void MainWindow::onVPNSettings()
     prefWindow->setMinimumSize(QSize(f->width(),f->height()));
     //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Settings"));
+
+    prefWindow->show();
+}
+
+void MainWindow::onSetupWizard()
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    setupWizard *f = new setupWizard(prefWindow);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Setup wizard"));
 
     prefWindow->show();
 }

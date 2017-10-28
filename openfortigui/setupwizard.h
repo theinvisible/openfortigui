@@ -17,6 +17,20 @@ public:
 
 private:
     Ui::setupWizard *ui;
+
+    void updateButtons();
+
+    void loadAESData();
+    bool saveAESData();
+
+    QString randString(int len);
+
+private slots:
+    void on_btnBack_clicked();
+    void on_btnNext_clicked();
+    void on_btnCancel_clicked();
+
+    void on_btnGenKeys_clicked();
 };
 
 #endif // SETUPWIZARD_H

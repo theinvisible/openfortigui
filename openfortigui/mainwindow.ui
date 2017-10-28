@@ -90,6 +90,7 @@
      <string>File</string>
     </property>
     <addaction name="actionMenuSettings"/>
+    <addaction name="actionMenuWizard"/>
     <addaction name="actionMenuLogs"/>
     <addaction name="separator"/>
     <addaction name="actionMenuHide"/>
@@ -189,6 +190,11 @@
    </property>
    <property name="text">
     <string>Logs</string>
+   </property>
+  </action>
+  <action name="actionMenuWizard">
+   <property name="text">
+    <string>Setup wizard</string>
    </property>
   </action>
  </widget>
