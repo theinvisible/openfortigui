@@ -22,32 +22,31 @@
 
 void read_password(const char *prompt, char *pass, size_t len)
 {
-	int masked = 0;
-	struct termios oldt, newt;
-	int i;
+    int masked = 0;
+    struct termios oldt, newt;
+    int i;
 
-	printf("%s", prompt);
+    printf("%s", prompt);
     fflush(stdout);
 
-	// Try to hide user input
-	if (tcgetattr(STDIN_FILENO, &oldt) == 0) {
-		newt = oldt;
-		newt.c_lflag &= ~(ICANON | ECHO);
-		tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-		masked = 1;
-	}
+    // Try to hide user input
+    if (tcgetattr(STDIN_FILENO, &oldt) == 0) {
+        newt = oldt;
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        masked = 1;
+    }
 
-	for (i = 0; i < len; i++) {
-		int c = getchar();
-		if (c == '\n' || c == EOF)
-			break;
-		pass[i] = (char) c;
-	}
-	pass[i] = '\0';
+    for (i = 0; i < len; i++) {
+        int c = getchar();
+        if (c == '\n' || c == EOF)
+            break;
+        pass[i] = (char) c;
+    }
+    pass[i] = '\0';
 
-	if (masked) {
-		tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	}
+    if (masked)
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
-	printf("\n");
+    printf("\n");
 }

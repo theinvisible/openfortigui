@@ -4,9 +4,14 @@ extern "C"  {
 #include "openfortivpn/src/config.h"
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
+#include "openfortivpn/src/http.h"
+
+#include <unistd.h>
 #include <fcntl.h>
 #include <ifaddrs.h>
 #include <netdb.h>
+#include <errno.h>
+#include <string.h>
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <openssl/err.h>
@@ -15,11 +20,9 @@ extern "C"  {
 #else
 #include <util.h>
 #endif
+#include <signal.h>
 #include <sys/wait.h>
 #include <assert.h>
-
-#include "openfortivpn/src/http.h"
-#include "openfortivpn/src/log.h"
 }
 
 #include <QDebug>
@@ -79,7 +82,16 @@ static int pppd_run(struct tunnel *tunnel)
     int amaster;
 #ifndef __APPLE__
     struct termios termp;
+#endif
 
+    static const char pppd_path[] = "/usr/sbin/pppd";
+
+    if (access(pppd_path, F_OK) != 0) {
+        log_error("%s: %s.\n", pppd_path, strerror(errno));
+        return 1;
+    }
+
+#ifndef __APPLE__
     termp.c_cflag = B9600;
     termp.c_cc[VTIME] = 0;
     termp.c_cc[VMIN] = 1;
@@ -92,26 +104,46 @@ static int pppd_run(struct tunnel *tunnel)
     if (pid == -1) {
         log_error("forkpty: %s\n", strerror(errno));
         return 1;
-    } else if (pid == 0) {
-        char *args[] = {
-            "/usr/sbin/pppd", "38400", "noipdefault", "noaccomp",
-            "noauth", "default-asyncmap", "nopcomp", "receive-all",
-            "nodefaultroute", ":1.1.1.1", "nodetach",
-            "lcp-max-configure", "40", "mru", "1354",
-            NULL, NULL, NULL, NULL,
-            NULL, NULL, NULL, NULL,
-            NULL
+    } else if (pid == 0) { // child process
+        static const char *args[] = {
+            pppd_path,
+            "38400", // speed
+            ":1.1.1.1", // <local_IP_address>:<remote_IP_address>
+            "noipdefault",
+            "noaccomp",
+            "noauth",
+            "default-asyncmap",
+            "nopcomp",
+            "receive-all",
+            "nodefaultroute",
+            "nodetach",
+            "lcp-max-configure", "40",
+            "mru", "1354",
+            NULL, // "usepeerdns"
+            NULL, NULL, NULL, // "debug", "logfile", pppd_log
+            NULL, NULL, // "plugin", pppd_plugin
+            NULL, NULL, // "ipparam", pppd_ipparam
+            NULL, NULL, // "ifname", pppd_ifname
+            NULL // terminal null pointer required by execvp()
         };
+
         // Dynamically get first NULL pointer so that changes of
         // args above don't need code changes here
-        int i = sizeof (args) / sizeof (*args) - 1;
-        for (; args [i] == NULL; i--)
-            ;
+        int i = ARRAY_SIZE(args) - 1;
+        while (args[i] == NULL)
+            i--;
         i++;
 
-        if (tunnel->config->pppd_use_peerdns) {
+        /*
+         * Coverity detected a defect:
+         *  CID 196857: Out-of-bounds write (OVERRUN)
+         * It is actually a false positive. Because 'args' is not
+         * constant, Coverity is unable to infer that the NULL
+         * elements 'args' has been initialized with shall still
+         * be present when initializing 'i' in the above loop.
+         */
+        if (tunnel->config->pppd_use_peerdns)
             args[i++] = "usepeerdns";
-        }
         if (tunnel->config->pppd_log) {
             args[i++] = "debug";
             args[i++] = "logfile";
@@ -125,18 +157,27 @@ static int pppd_run(struct tunnel *tunnel)
             args[i++] = "ipparam";
             args[i++] = tunnel->config->pppd_ipparam;
         }
+        if (tunnel->config->pppd_ifname) {
+            args[i++] = "ifname";
+            args[i++] = tunnel->config->pppd_ifname;
+        }
         // Assert that we didn't use up all NULL pointers above
-        assert (i < sizeof (args) / sizeof (*args));
+        assert(i < ARRAY_SIZE(args));
 
         close(tunnel->ssl_socket);
-        execvp(args[0], args);
+        execv(args[0], (char *const *)args);
+        /*
+         * The following call to fprintf() doesn't work, probably
+         * because of the prior call to forkpty().
+         * TODO: print a meaningful message using strerror(errno)
+         */
         fprintf(stderr, "execvp: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        _exit(EXIT_FAILURE);
     }
 
     // Set non-blocking
-    int flags;
-    if ((flags = fcntl(amaster, F_GETFL, 0)) == -1)
+    int flags = fcntl(amaster, F_GETFL, 0);
+    if (flags == -1)
         flags = 0;
     if (fcntl(amaster, F_SETFL, flags | O_NONBLOCK) == -1) {
         log_error("fcntl: %s\n", strerror(errno));
@@ -149,6 +190,39 @@ static int pppd_run(struct tunnel *tunnel)
     return 0;
 }
 
+static const char * const pppd_message[] = {
+    "Returned an unknown exit status", // fall back
+    "Has detached, or otherwise the connection was successfully"
+    " established and terminated at the peer's request.",
+    "An immediately fatal error of some kind occurred, such as an"
+    " essential system call failing, or running out of virtual memory.",
+    "An error was detected in processing the options given, such as two"
+    " mutually exclusive options being used.",
+    "Is not setuid-root and the invoking user is not root.",
+    "The kernel does not support PPP, for example, the PPP kernel driver"
+    " is not included or cannot be loaded.",
+    "Terminated because it was sent a SIGINT, SIGTERM or SIGHUP signal.",
+    "The serial port could not be locked.",
+    "The serial port could not be opened.",
+    "The connect script failed (returned a non-zero exit status).",
+    "The command specified as the argument to the pty option"
+    " could not be run.",
+    "The PPP negotiation failed, that is, it didn't reach the point"
+    " where at least one network protocol (e.g. IP) was running.",
+    "The peer system failed (or refused) to authenticate itself.",
+    "The link was established successfully and terminated because"
+    " it was idle.",
+    "The link was established successfully and terminated because the"
+    " connect time limit was reached.",
+    "Callback was negotiated and an incoming call should arrive shortly.",
+    "The link was terminated because the peer is not responding to echo"
+    " requests.", // emitted when exiting normally
+    "The link was terminated by the modem hanging up.",
+    "The PPP negotiation failed because serial loopback was detected.",
+    "The init script failed (returned a non-zero exit status).",
+    "We failed to authenticate ourselves to the peer."
+};
+
 static int pppd_terminate(struct tunnel *tunnel)
 {
     close(tunnel->pppd_pty);
@@ -160,7 +234,21 @@ static int pppd_terminate(struct tunnel *tunnel)
         return 1;
     }
     if (WIFEXITED(status)) {
-        log_debug("waitpid: exit status code %d", WEXITSTATUS(status));
+        int exit_status = WEXITSTATUS(status);
+        log_debug("waitpid: pppd exit status code %d\n", exit_status);
+        if (exit_status) {
+            size_t len_pppd_message = ARRAY_SIZE(pppd_message);
+            if (exit_status >= len_pppd_message)
+                exit_status = 0;
+            if (exit_status != 16) // emitted when exiting normally
+                log_error("pppd: %s\n", pppd_message[exit_status]);
+        }
+    } else if (WIFSIGNALED(status)) {
+        int signal_number = WTERMSIG(status);
+        log_debug("waitpid: pppd terminated by signal %d\n",
+                  signal_number);
+        log_error("pppd: terminated by signal: %s\n",
+                  strsignal(signal_number));
     }
 
     return 0;
@@ -168,14 +256,24 @@ static int pppd_terminate(struct tunnel *tunnel)
 
 static int get_gateway_host_ip(struct tunnel *tunnel)
 {
-    struct hostent *host = gethostbyname(tunnel->config->gateway_host);
-    if (host == NULL) {
-        log_error("gethostbyname: %s\n", hstrerror(h_errno));
+    struct addrinfo hints;
+    hints.ai_family = AF_INET;
+    struct addrinfo *result = NULL;
+
+    int ret = getaddrinfo(tunnel->config->gateway_host, NULL, &hints, &result);
+
+    if (ret) {
+        if (ret == EAI_SYSTEM)
+            log_error("getaddrinfo: %s\n", strerror(errno));
+        else
+            log_error("getaddrinfo: %s\n", gai_strerror(ret));
         return 1;
     }
 
-    tunnel->config->gateway_ip = *((struct in_addr *)
-                                   host->h_addr_list[0]);
+    tunnel->config->gateway_ip = ((struct sockaddr_in *)
+                                  result->ai_addr)->sin_addr;
+    freeaddrinfo(result);
+
     setenv("VPN_GATEWAY", inet_ntoa(tunnel->config->gateway_ip), 0);
 
     return 0;
@@ -201,10 +299,11 @@ void vpnWorker::process()
 {
     qDebug() << "vpnWorker::process::slot";
 
-    struct vpn_config config;
-    memset(&config, 0, sizeof (config));
+    struct vpn_config config = {};
+
+    //memset(&config, 0, sizeof (config));
     init_logging();
-    init_vpn_config(&config);
+    //init_vpn_config(&config);
     strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), FIELD_SIZE);
     config.gateway_host[FIELD_SIZE] = '\0';
     config.gateway_port = vpnConfig.gateway_port;

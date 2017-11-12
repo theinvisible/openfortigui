@@ -56,7 +56,9 @@ void vpnLogger::log(const QString &name)
     QTextStream out(logfile);
 
     QString toLog = QString::fromUtf8(blog);
-    if(toLog.contains("Please") || toLog.contains("2factor authentication token:"))
+    if(toLog.contains("Please") ||
+       toLog.contains("2factor authentication token:") ||
+       toLog.contains("Two-factor authentication"))
     {
         emit OTPRequest(proc);
     }

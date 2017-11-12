@@ -129,8 +129,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(watcherVpnProfiles, SIGNAL(directoryChanged(QString)), this, SLOT(onWatcherVpnProfilesChanged(QString)));
 
     if(!main_settings.getValue("main/setupwizard").toBool())
-    {
         onSetupWizard();
+
+    if(main_settings.getValue("main/show_search").toBool())
+    {
+        actionSearch->setChecked(true);
+        ui->leSearch->show();
     }
 }
 
@@ -426,6 +430,10 @@ void MainWindow::onTbActionDelete()
 
 void MainWindow::onTbActionSearch()
 {
+    tiConfMain main_settings;
+    main_settings.setValue("main/show_search", ui->leSearch->isHidden());
+    main_settings.sync();
+
     if(ui->leSearch->isHidden())
         ui->leSearch->show();
     else
