@@ -26,6 +26,16 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
+         <widget class="QLineEdit" name="leSearch">
+          <property name="placeholderText">
+           <string>Search</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QTreeView" name="tvVpnProfiles">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>

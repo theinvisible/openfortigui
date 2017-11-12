@@ -26,7 +26,6 @@ public:
     };
 
     connectionStatus status;
-    QStandardItem *item_stats;
     QProcess *proc;
 
     void setSocket(QLocalSocket *sock);
@@ -61,6 +60,7 @@ public:
     void submitVPNCred(const QString &vpnname, const QString &username, const QString &password);
 
     void requestStats(const QString &vpnname);
+    bool isSomeClientConnected();
 
 private:
 

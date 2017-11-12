@@ -51,11 +51,13 @@ private slots:
     void onTbActionEdit();
     void onTbActionCopy();
     void onTbActionDelete();
+    void onTbActionSearch();
 
     void onvpnAdded(const vpnProfile &vpn);
     void onvpnEdited(const vpnProfile &vpn);
     void onvpnGroupAdded(const vpnGroup &vpngroup);
     void onvpnGroupEdited(const vpnGroup &vpngroup);
+    void onvpnSearch(const QString &searchtext);
 
     void onStartVPN();
     void onStartVPN(const QString &vpnname, vpnProfile::Origin origin = vpnProfile::Origin_LOCAL);

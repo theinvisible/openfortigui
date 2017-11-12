@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVpnProfiles->header()->resizeSection(2, 300);
 
     connect(ui->tvVpnProfiles, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ontvVpnProfilesCustomContextMenu(const QPoint &)));
+    connect(ui->leSearch, SIGNAL(textChanged(QString)), this, SLOT(onvpnSearch(QString)));
 
     // Treeview VPN-Groups
     QStringList headers2;
@@ -99,10 +100,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tbActions->addWidget(tbtnAdd);
     ui->tbActions->addAction(QIcon(":/img/edit.png"), trUtf8("Edit"), this, SLOT(onTbActionEdit()));
     ui->tbActions->addAction(QIcon(":/img/copy.png"), trUtf8("Copy"), this, SLOT(onTbActionCopy()));
+    QAction *actionSearch = ui->tbActions->addAction(QIcon(":/img/search.png"), trUtf8("Search"), this, SLOT(onTbActionSearch()));
+    actionSearch->setCheckable(true);
     ui->tbActions->addSeparator();
     ui->tbActions->addAction(QIcon(":/img/delete.png"), trUtf8("Delete"), this, SLOT(onTbActionDelete()));
     ui->tbActions->addSeparator();
     ui->tbActions->addAction(QIcon(":/img/about.png"), trUtf8("About"), this, SLOT(onActionAbout()));
+
+    ui->leSearch->hide();
 
     connect(ui->actionMenuExit, SIGNAL(triggered(bool)), this, SLOT(onQuit()));
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
@@ -419,6 +424,14 @@ void MainWindow::onTbActionDelete()
         on_btnDeleteGroup_clicked();
 }
 
+void MainWindow::onTbActionSearch()
+{
+    if(ui->leSearch->isHidden())
+        ui->leSearch->show();
+    else
+        ui->leSearch->hide();
+}
+
 void MainWindow::onvpnAdded(const vpnProfile &vpn)
 {
     refreshVpnProfileList();
@@ -437,6 +450,11 @@ void MainWindow::onvpnGroupAdded(const vpnGroup &vpngroup)
 void MainWindow::onvpnGroupEdited(const vpnGroup &vpngroup)
 {
     refreshVpnGroupList();
+}
+
+void MainWindow::onvpnSearch(const QString &searchtext)
+{
+    refreshVpnProfileList();
 }
 
 void MainWindow::onStartVPN()
@@ -588,9 +606,6 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
 
-    if(conn != 0 && conn->item_stats == 0)
-        conn->item_stats = getVpnProfileItem(vpnname, 4);
-
     //refreshVpnProfileList();
     QIcon statusicon;
     QStandardItem *statusitem = getVpnProfileItem(vpnname, 0);
@@ -601,19 +616,27 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
         case vpnClientConnection::STATUS_CONNECTED:
             statusicon = QIcon(":/img/connected.png");
             statusitem->setIcon(statusicon);
+            statusitem->setText(tr("Connected"));
             break;
         case vpnClientConnection::STATUS_CONNECTING:
             statusicon = QIcon(":/img/connecting.png");
             statusitem->setIcon(statusicon);
+            statusitem->setText(tr("Connecting"));
             break;
         case vpnClientConnection::STATUS_DISCONNECTED:
         default:
             statusicon = QIcon(":/img/disconnected.png");
             statusitem->setIcon(statusicon);
+            statusitem->setText(tr("Disconnected"));
         }
     }
 
     refreshVpnGroupList();
+
+    if(vpnmanager->isSomeClientConnected())
+        tray->setIcon(QIcon(":/img/app-enc.png"));
+    else
+        tray->setIcon(QIcon(":/img/app.png"));
 
     if(isHidden())
     {
@@ -664,11 +687,12 @@ void MainWindow::onClientVPNOTPRequest(QProcess *proc)
 void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 {
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
+    QStandardItem *item_stats = getVpnProfileItem(vpnname, 4);
 
-    if(conn != 0 && conn->item_stats != 0)
+    if(conn != 0 && item_stats != 0)
     {
         QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
-        conn->item_stats->setText(disp);
+        item_stats->setText(disp);
     }
 }
 
@@ -749,6 +773,7 @@ void MainWindow::refreshVpnProfileList()
 
     ui->tvVpnProfiles->setSortingEnabled(false);
 
+    QString filter = ui->leSearch->text();
     QMap<QString, QAction*> trayItems;
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
     bool isVPNConnected = false;
@@ -756,6 +781,12 @@ void MainWindow::refreshVpnProfileList()
     {
         vpnProfile *vpn = vpns.at(i);
         qDebug() << "MainWindow::refreshVpnProfileList() -> vpnprofiles found::" << vpn->name;
+
+        if(!filter.isEmpty())
+        {
+            if(!vpn->name.contains(filter, Qt::CaseInsensitive) && !vpn->gateway_host.contains(filter, Qt::CaseInsensitive))
+                continue;
+        }
 
         QIcon status;
         vpnClientConnection *conn = vpnmanager->getClientConnection(vpn->name);
@@ -788,11 +819,6 @@ void MainWindow::refreshVpnProfileList()
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
         item5 = new QStandardItem();
-        if(conn != 0)
-        {
-            conn->item_stats = item5;
-        }
-
 
         switch(vpn->origin_location)
         {

@@ -19,6 +19,7 @@
         <file alias="show.png">img/show.png</file>
         <file alias="app-enc.png">app-entry/openfortigui-enc.png</file>
         <file alias="sorceress.png">img/sorceress.png</file>
+        <file alias="search.png">img/search.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>

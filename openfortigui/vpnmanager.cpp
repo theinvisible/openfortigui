@@ -146,6 +146,20 @@ void vpnManager::requestStats(const QString &vpnname)
     }
 }
 
+bool vpnManager::isSomeClientConnected()
+{
+    QMapIterator<QString, vpnClientConnection*> i(connections);
+    while(i.hasNext())
+    {
+        i.next();
+
+        if(i.value()->status == vpnClientConnection::STATUS_CONNECTED)
+            return true;
+    }
+
+    return false;
+}
+
 void vpnManager::onClientConnected()
 {
     qDebug() << "vpnManager::onClientConnected()";
@@ -198,7 +212,6 @@ vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QO
 {
     name = n;
     status = STATUS_DISCONNECTED;
-    item_stats = 0;
 }
 
 void vpnClientConnection::setSocket(QLocalSocket *sock)
