@@ -629,6 +629,9 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
             statusitem->setIcon(statusicon);
             statusitem->setText(tr("Disconnected"));
         }
+
+        if(trayItems.contains(vpnname))
+            trayItems[vpnname]->setIcon(statusicon);
     }
 
     refreshVpnGroupList();
@@ -774,7 +777,7 @@ void MainWindow::refreshVpnProfileList()
     ui->tvVpnProfiles->setSortingEnabled(false);
 
     QString filter = ui->leSearch->text();
-    QMap<QString, QAction*> trayItems;
+    trayItems.clear();
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
     bool isVPNConnected = false;
     for(int i=0; i < vpns.count(); i++)

@@ -88,6 +88,7 @@ private:
     QMenu *tray_group_menu;
     QStandardItem *root_local_vpn, *root_global_vpn;
     QFileSystemWatcher *watcherVpnProfiles;
+    QMap<QString, QAction*> trayItems;
 
     void refreshVpnProfileList();
     void refreshVpnGroupList();
