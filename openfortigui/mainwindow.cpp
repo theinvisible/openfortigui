@@ -593,6 +593,11 @@ void MainWindow::onStopVPN()
         {
             vpnmanager->stopVPN(it.next());
         }
+        QStringListIterator it2(group->globalMembers);
+        while(it2.hasNext())
+        {
+            vpnmanager->stopVPN(it2.next());
+        }
     }
     else
         vpnmanager->stopVPN(itemName);
@@ -917,6 +922,7 @@ void MainWindow::refreshVpnGroupList()
 
         QIcon status;
         QStringListIterator it(vpngroup->localMembers);
+        QStringListIterator it2(vpngroup->globalMembers);
         vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
         int connCount = 0;
         while(it.hasNext())
@@ -928,10 +934,21 @@ void MainWindow::refreshVpnGroupList()
                     connCount+=1;
             }
         }
+        while(it2.hasNext())
+        {
+            conn = vpnmanager->getClientConnection(it2.next());
+            if(conn != 0)
+            {
+                if(conn->status == vpnClientConnection::STATUS_CONNECTED)
+                    connCount+=1;
+            }
+        }
 
-        if(connCount == vpngroup->localMembers.count())
+        int totalCount = vpngroup->localMembers.count() + vpngroup->globalMembers.count();
+
+        if(connCount == totalCount)
             vpnGroupStatus = vpnClientConnection::STATUS_CONNECTED;
-        else if(connCount < vpngroup->localMembers.count() && connCount > 0)
+        else if(connCount < totalCount && connCount > 0)
             vpnGroupStatus = vpnClientConnection::STATUS_CONNECTING;
         else
             vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
@@ -987,6 +1004,17 @@ QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)
         if(root_local_vpn->child(i, 1)->text() == vpnname)
         {
             return root_local_vpn->child(i, colum);
+        }
+    }
+
+    if(retitem == 0)
+    {
+        for(int i=0; i < root_global_vpn->rowCount(); i++)
+        {
+            if(root_global_vpn->child(i, 1)->text() == vpnname)
+            {
+                return root_global_vpn->child(i, colum);
+            }
         }
     }
 
