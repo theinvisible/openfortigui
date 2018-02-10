@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "config.h"
 #include "ticonfmain.h"
 
 vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) :
@@ -13,6 +14,11 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     config(0)
 {
     ui->setupUi(this);
+
+    // Validators
+    QRegExp rx(openfortigui_config::validatorName);
+    QValidator *validatorName = new QRegExpValidator(rx, this);
+    ui->leName->setValidator(validatorName);
 
     // Default settings
     ui->cbSetRoutes->setChecked(true);

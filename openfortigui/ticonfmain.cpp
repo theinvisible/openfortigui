@@ -26,6 +26,7 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 #include <QDebug>
 #include <QFile>
 #include <QDirIterator>
+#include <QValidator>
 
 #include "config.h"
 #include "qtinyaes/qtinyaes.h"
@@ -61,6 +62,7 @@ void tiConfMain::initMainConf()
         QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
+        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner | QFileDevice::ReadGroup | QFileDevice::ExeGroup);
 
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
         QString logs_vpn_dir = QString("%1/logs/vpn").arg(conf_main_dir.absolutePath());
@@ -92,6 +94,7 @@ void tiConfMain::initMainConf()
         QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
+        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner | QFileDevice::ReadGroup | QFileDevice::ExeGroup);
 
         QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
@@ -175,6 +178,13 @@ tiConfVpnProfiles::~tiConfVpnProfiles()
 
 void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 {
+    QRegExp rexpName(openfortigui_config::validatorName);
+    if(!rexpName.exactMatch(profile.name))
+    {
+        qDebug() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name: " << profile.name;
+        return;
+    }
+
     QString filename = QString(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString())).append("/%1.conf").arg(profile.name);
     QDir localvpndir(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString()));
     if(!localvpndir.exists())
@@ -218,7 +228,12 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 
 void tiConfVpnProfiles::readVpnProfiles()
 {
-    // TODO if job objects exist we must *delete* them first
+    QList<vpnProfile*> vpns = getVpnProfiles();
+    for(int i=0; i < vpns.count(); i++)
+    {
+        vpnProfile *vpn = vpns.at(i);
+        delete vpn;
+    }
     vpnprofiles.clear();
 
     QMap<vpnProfile::Origin, QString> profileDirs;
@@ -226,6 +241,7 @@ void tiConfVpnProfiles::readVpnProfiles()
     profileDirs[vpnProfile::Origin_GLOBAL] = tiConfMain::formatPath(main_settings->getValue("paths/globalvpnprofiles").toString());
 
     QMapIterator<vpnProfile::Origin, QString> it_profileDirs(profileDirs);
+    QRegExp rexpName(openfortigui_config::validatorName);
     while(it_profileDirs.hasNext())
     {
         it_profileDirs.next();
@@ -238,6 +254,13 @@ void tiConfVpnProfiles::readVpnProfiles()
             if(vpnprofilefilepath.endsWith(".conf"))
             {
                 qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
+
+                if(!rexpName.exactMatch(QDir(vpnprofilefilepath).dirName()))
+                {
+                    qDebug() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
+                    continue;
+                }
+
 
                 QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
                 vpnProfile *vpnprofile = new vpnProfile;
@@ -383,7 +406,12 @@ void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
 
 void tiConfVpnGroups::readVpnGroups()
 {
-    // TODO if job objects exist we must *delete* them first
+    QList<vpnGroup*> groups = getVpnGroups();
+    for(int i=0; i < groups.count(); i++)
+    {
+        vpnGroup *group = groups.at(i);
+        delete group;
+    }
     vpngroups.clear();
 
     QString vpngroupsdir = tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString());
