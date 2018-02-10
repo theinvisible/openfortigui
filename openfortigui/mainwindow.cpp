@@ -1062,7 +1062,8 @@ void MainWindow::onActionAbout()
                                                               "<tr><td>openfortivpn:</td> <td> <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a></td></tr>"
                                                               "<tr><td>QTinyAes:</td> <td> <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a></td></tr>"
                                                               "<tr><td>tiny-AES128-C:</td> <td> <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a></td></tr>"
-                                                              "<tr><td>Icons8:</td> <td> <a href='https://icons8.com/'>https://icons8.com</a></td></tr></table>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
+                                                              "<tr><td>Icons8:</td> <td> <a href='https://icons8.com/'>https://icons8.com</a></td></tr>"
+                                                              "<tr><td>App-Icon:</td> <td> <a href='https://deepdoc.at/'>https://deepdoc.at</a></td></tr></table>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
 }
 
 void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
