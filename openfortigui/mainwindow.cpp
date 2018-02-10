@@ -128,6 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
     watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpngroups").toString()));
     connect(watcherVpnProfiles, SIGNAL(directoryChanged(QString)), this, SLOT(onWatcherVpnProfilesChanged(QString)));
 
+    autostartVPNs();
+
     if(!main_settings.getValue("main/setupwizard").toBool())
         onSetupWizard();
 
@@ -993,6 +995,20 @@ void MainWindow::refreshVpnGroupList()
     ui->tvVPNGroups->header()->resizeSection(1, 150);
     ui->tvVPNGroups->setSortingEnabled(true);
     ui->tvVPNGroups->sortByColumn(1, Qt::AscendingOrder);
+}
+
+void MainWindow::autostartVPNs()
+{
+    tiConfVpnProfiles vpnss;
+    vpnss.readVpnProfiles();
+    QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
+    for(int i=0; i < vpns.count(); i++)
+    {
+        vpnProfile *vpn = vpns.at(i);
+
+        if(vpn->autostart)
+            vpnmanager->startVPN(vpn->name);
+    }
 }
 
 QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)

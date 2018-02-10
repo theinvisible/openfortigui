@@ -37,6 +37,7 @@ public:
     bool verify_cert;
     bool insecure_ssl;
     bool debug;
+    bool autostart;
 };
 
 #endif // VPNPROFILE_H

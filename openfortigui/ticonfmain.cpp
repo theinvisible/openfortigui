@@ -209,6 +209,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("insecure_ssl", profile.insecure_ssl);
     f->setValue("debug", profile.debug);
     f->setValue("realm", profile.realm);
+    f->setValue("autostart", profile.autostart);
     f->endGroup();
 
     f->sync();
@@ -265,6 +266,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->insecure_ssl = f->value("insecure_ssl").toBool();
                 vpnprofile->debug = f->value("debug").toBool();
                 vpnprofile->realm = f->value("realm").toString();
+                vpnprofile->autostart = f->value("autostart").toBool();
                 f->endGroup();
 
                 switch(it_profileDirs.key())

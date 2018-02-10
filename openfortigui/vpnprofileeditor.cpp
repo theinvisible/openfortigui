@@ -52,6 +52,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->cbInsecureSSL->setChecked(config->insecure_ssl);
     ui->cbDebug->setChecked(config->debug);
     ui->leRealm->setText(config->realm);
+    ui->cbAutostart->setChecked(config->autostart);
 
     if(config->origin_location == vpnProfile::Origin_GLOBAL)
     {
@@ -76,6 +77,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->btnChooseUserKey->setDisabled(true);
         ui->cbDebug->setDisabled(true);
         ui->leRealm->setDisabled(true);
+        ui->cbAutostart->setDisabled(true);
     }
 }
 
@@ -173,6 +175,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
     vpn.debug = ui->cbDebug->isChecked();
     vpn.realm = ui->leRealm->text();
+    vpn.autostart = ui->cbAutostart->isChecked();
 
     vpns.saveVpnProfile(vpn);
 

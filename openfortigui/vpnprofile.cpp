@@ -20,4 +20,5 @@ vpnProfile::vpnProfile()
     user_key = "";
     verify_cert = false;
     insecure_ssl = false;
+    autostart = false;
 }

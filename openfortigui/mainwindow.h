@@ -92,6 +92,7 @@ private:
 
     void refreshVpnProfileList();
     void refreshVpnGroupList();
+    void autostartVPNs();
 
     QStandardItem *getVpnProfileItem(const QString &vpnname, int column);
 
