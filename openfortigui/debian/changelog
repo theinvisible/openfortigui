@@ -1,3 +1,9 @@
+openfortigui (0.4.2-1) precise; urgency=low
+
+  * VPN-Autostart added, stricter checks for Profile/Group-names
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 17 Feb 2018 17:11:00 +0100
+
 openfortigui (0.4.1-1) precise; urgency=low
 
   * Fix for display status of group/global VPN, Fix for stopping group vpn

@@ -181,7 +181,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     QRegExp rexpName(openfortigui_config::validatorName);
     if(!rexpName.exactMatch(profile.name))
     {
-        qDebug() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name: " << profile.name;
+        qWarning() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name: " << profile.name;
         return;
     }
 
@@ -257,10 +257,9 @@ void tiConfVpnProfiles::readVpnProfiles()
 
                 if(!rexpName.exactMatch(QDir(vpnprofilefilepath).dirName()))
                 {
-                    qDebug() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
+                    qWarning() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
                     continue;
                 }
-
 
                 QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
                 vpnProfile *vpnprofile = new vpnProfile;
@@ -364,6 +363,13 @@ tiConfVpnGroups::~tiConfVpnGroups()
 
 void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
 {
+    QRegExp rexpName(openfortigui_config::validatorName);
+    if(!rexpName.exactMatch(group.name))
+    {
+        qWarning() << "tiConfVpnProfile::saveVpnGroup() -> vpngroup has not a valid name: " << group.name;
+        return;
+    }
+
     QString filename = QString(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString())).append("/%1.conf").arg(group.name);
     QDir localvpndir(tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString()));
     if(!localvpndir.exists())
@@ -417,12 +423,19 @@ void tiConfVpnGroups::readVpnGroups()
     QString vpngroupsdir = tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString());
     QDirIterator it_localgroupdir(vpngroupsdir);
     QString vpngroupfilepath;
+    QRegExp rexpName(openfortigui_config::validatorName);
     while (it_localgroupdir.hasNext())
     {
         vpngroupfilepath = it_localgroupdir.next();
         if(vpngroupfilepath.endsWith(".conf"))
         {
             qDebug() << "tiConfVpnGroups::readVpnGroups() -> vpngroup found:" << vpngroupfilepath;
+
+            if(!rexpName.exactMatch(QDir(vpngroupfilepath).dirName()))
+            {
+                qWarning() << "tiConfVpnProfile::readVpnGroups() -> vpngroup has not a valid name, skip loading: " << vpngroupfilepath;
+                continue;
+            }
 
             QSettings *f = new QSettings(vpngroupfilepath, QSettings::IniFormat);
             vpnGroup *vpngroup = new vpnGroup;

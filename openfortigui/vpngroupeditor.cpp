@@ -1,6 +1,7 @@
 #include "vpngroupeditor.h"
 #include "ui_vpngroupeditor.h"
 
+#include "config.h"
 #include "ticonfmain.h"
 
 #include <QStandardItemModel>
@@ -13,6 +14,11 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     config(0)
 {
     ui->setupUi(this);
+
+    // Validators
+    QRegExp rx(openfortigui_config::validatorName);
+    QValidator *validatorName = new QRegExpValidator(rx, this);
+    ui->leName->setValidator(validatorName);
 
     // Treeview VPN-Groups
     QStringList headers;
