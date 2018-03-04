@@ -72,6 +72,7 @@ public:
 
 private:
     tiConfMain *main_settings;
+    bool read_profile_passwords;
 
     QList<vpnProfile*> vpnprofiles;
 };

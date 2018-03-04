@@ -87,4 +87,4 @@ RESOURCES += \
 
 INCLUDEPATH += qtinyaes/tiny-AES128-C
 
-unix:!macx:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil
+unix:!macx:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil -lqt5keychain

@@ -24,6 +24,7 @@ public slots:
     void on_btnChooseLocalVPNGroups_clicked();
     void on_btnChooseGlobalVPNProfiles_clicked();
     void on_btnChooseLogs_clicked();
+    void on_cbUseSystemPasswordStore_toggled(bool checked);
 
 private:
     Ui::vpnSetting *ui;

@@ -27,7 +27,7 @@ Copyright (C) 2014 Rene Hadler, rene@hadler.me, https://hadler.me
 namespace openfortigui_config
 {
     static const char __attribute__ ((unused)) *name = "openfortiGUI";
-    static const char __attribute__ ((unused)) *version = "0.4.2";
+    static const char __attribute__ ((unused)) *version = "0.5.0-dev";
     static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
     static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
     static const char __attribute__ ((unused)) *api_vpn_base_name = "openfortiguivpn";
@@ -35,6 +35,7 @@ namespace openfortigui_config
     static const char __attribute__ ((unused)) *vpnprofiles_global = "/etc/openfortigui/vpnprofiles";
     static const char __attribute__ ((unused)) *vpngroups_local = "~/.openfortigui/vpngroups";
 
+    static const char __attribute__ ((unused)) *password_manager_namespace = "openfortigui";
     static const char __attribute__ ((unused)) *aeskey = "yowp2IwTTRodgdWp";
     static const char __attribute__ ((unused)) *aesiv = "VoUT5n5ToogkmQU3";
 

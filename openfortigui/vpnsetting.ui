@@ -26,25 +26,12 @@
          <widget class="QLabel" name="label">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
           <property name="text">
            <string>Debug</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>AES-Key</string>
           </property>
          </widget>
         </item>
@@ -55,14 +42,11 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="leAESKey"/>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_7">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -78,11 +62,40 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Use system password store</string>
+          </property>
+         </widget>
+        </item>
         <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>AES-Key</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="leAESKey"/>
+        </item>
+        <item row="4" column="0">
          <widget class="QLabel" name="label_8">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -91,8 +104,15 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QLineEdit" name="leAESIV"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="cbUseSystemPasswordStore">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -111,7 +131,7 @@
          <widget class="QLabel" name="label_3">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -124,7 +144,7 @@
          <widget class="QLabel" name="label_4">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -137,7 +157,7 @@
          <widget class="QLabel" name="label_5">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -150,7 +170,7 @@
          <widget class="QLabel" name="label_6">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>

@@ -2,8 +2,10 @@
 #include "ui_vpnsetting.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "ticonfmain.h"
+#include "vpnhelper.h"
 
 vpnSetting::vpnSetting(QWidget *parent) :
     QWidget(parent),
@@ -14,6 +16,7 @@ vpnSetting::vpnSetting(QWidget *parent) :
     tiConfMain confMain;
     ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
+    ui->cbUseSystemPasswordStore->setChecked(confMain.getValue("main/use_system_password_store").toBool());
     ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
     ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
 
@@ -38,8 +41,17 @@ void vpnSetting::on_btnSave_clicked()
     tiConfMain confMain;
     confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
+    confMain.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
     confMain.setValue("main/aeskey", ui->leAESKey->text());
     confMain.setValue("main/aesiv", ui->leAESIV->text());
+
+    if(ui->cbUseSystemPasswordStore->isChecked()) {
+        vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
+        vpnHelper::systemPasswordStoreWrite("aesiv", ui->leAESIV->text());
+    } else {
+        vpnHelper::systemPasswordStoreDelete("aeskey");
+        vpnHelper::systemPasswordStoreDelete("aesiv");
+    }
 
     confMain.setValue("paths/localvpnprofiles", tiConfMain::formatPathReverse(ui->leLocalVPNProfiles->text()));
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));
@@ -69,6 +81,19 @@ void vpnSetting::on_btnChooseGlobalVPNProfiles_clicked()
 void vpnSetting::on_btnChooseLogs_clicked()
 {
     pathChooser(ui->leLogs);
+}
+
+void vpnSetting::on_cbUseSystemPasswordStore_toggled(bool checked)
+{
+    if(checked == true)
+    {
+        vpnHelperResult result = vpnHelper::checkSystemPasswordStoreAvailable();
+        if(result.status == false)
+        {
+            QMessageBox::critical(this, tr("System password manager error"), tr("Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1").arg(result.msg), QMessageBox::Ok);
+            ui->cbUseSystemPasswordStore->setChecked(false);
+        }
+    }
 }
 
 void vpnSetting::pathChooser(QLineEdit *widget)
