@@ -241,6 +241,24 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
     socket->flush();
 }
 
+void vpnClientConnection::submitPassStoreCred()
+{
+    QJsonDocument json;
+    QJsonObject jsTop;
+    vpnApi data;
+    data.action = vpnApi::ACTION_STOREPASS_SUBMIT;
+    data.objName = name;
+
+    tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(name);
+    jsTop["password"] = profile->password;
+
+    json.setObject(jsTop);
+    data.data = json.toJson();
+
+    sendCMD(data);
+}
+
 void vpnClientConnection::onClientReadyRead()
 {
     vpnApi cmd;
@@ -259,6 +277,10 @@ void vpnClientConnection::onClientReadyRead()
         break;
     case vpnApi::ACTION_CRED_REQUEST:
         emit VPNCredRequest(name);
+        break;
+    case vpnApi::ACTION_STOREPASS_REQUEST:
+        socket->flush();
+        submitPassStoreCred();
         break;
     case vpnApi::ACTION_VPNSTATS_SUBMIT:
         vpnStats stats;

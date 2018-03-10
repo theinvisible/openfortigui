@@ -335,6 +335,11 @@ void tiConfVpnProfiles::readVpnProfiles()
     }
 }
 
+void tiConfVpnProfiles::setReadProfilePasswords(bool read)
+{
+    read_profile_passwords = read;
+}
+
 QList<vpnProfile *> tiConfVpnProfiles::getVpnProfiles()
 {
     return vpnprofiles;

@@ -71,7 +71,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Use system password store</string>
+           <string>Use system password store (Beta)</string>
           </property>
          </widget>
         </item>

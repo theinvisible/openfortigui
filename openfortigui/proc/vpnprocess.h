@@ -25,7 +25,7 @@ private:
     struct tunnel last_tunnel;
     bool init_last_tunnel;
 
-    bool cred_received;
+    bool cred_received, passstore_received;
     struct struct_cred_data
     {
         QString username;
@@ -41,6 +41,7 @@ private:
     void updateStats();
 
     void requestCred();
+    void requestPassStore();
     void submitStats();
 
 signals:

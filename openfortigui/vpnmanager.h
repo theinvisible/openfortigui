@@ -35,6 +35,8 @@ private:
     QString name;
     QLocalSocket *socket;
 
+    void submitPassStoreCred();
+
 signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);

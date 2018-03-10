@@ -61,6 +61,7 @@ public:
 
     void saveVpnProfile(const vpnProfile &profile);
     void readVpnProfiles();
+    void setReadProfilePasswords(bool read);
 
     QList<vpnProfile*> getVpnProfiles();
     vpnProfile* getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);

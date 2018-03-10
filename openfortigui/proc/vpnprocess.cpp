@@ -61,7 +61,37 @@ void vpnProcess::startVPN()
     qDebug() << "vpnProcess::startVPN::slot";
 
     tiConfVpnProfiles profiles;
+    tiConfMain main_settings;
+    bool usePasswordStore = main_settings.getValue("main/use_system_password_store").toBool();
+    if(usePasswordStore)
+        profiles.setReadProfilePasswords(false);
     vpnProfile *profile = profiles.getVpnProfileByName(name);
+
+    // Try to fetch password from current user password store
+    if(usePasswordStore)
+    {
+        qDebug() << "passstore requested from vpn";
+        passstore_received = false;
+        requestPassStore();
+
+        // Wait for pass received
+        int wmax = 0;
+        while(!passstore_received && wmax < 30)
+        {
+            QThread::sleep(1);
+            QCoreApplication::processEvents();
+            wmax++;
+        }
+
+        if(wmax == 30)
+        {
+            closeProcess();
+            return;
+        }
+
+        profile->password = cred_data.password;
+        cred_data.password = "";
+    }
 
     // Reset stats
     stats.bytes_read = 0;
@@ -90,6 +120,8 @@ void vpnProcess::startVPN()
 
         profile->username = cred_data.username;
         profile->password = cred_data.password;
+        cred_data.username = "";
+        cred_data.password = "";
     }
 
     thread_vpn = new QThread;
@@ -174,6 +206,21 @@ void vpnProcess::requestCred()
     sendCMD(cmd);
 }
 
+void vpnProcess::requestPassStore()
+{
+    QJsonDocument json;
+    QJsonObject jsTop;
+
+    json.setObject(jsTop);
+
+    vpnApi cmd;
+    cmd.objName = name;
+    cmd.action = vpnApi::ACTION_STOREPASS_REQUEST;
+    cmd.data = json.toJson();
+
+    sendCMD(cmd);
+}
+
 void vpnProcess::submitStats()
 {
     QJsonDocument json;
@@ -214,6 +261,10 @@ void vpnProcess::onServerReadyRead()
         cred_data.username = jobj["username"].toString();
         cred_data.password = jobj["password"].toString();
         cred_received = true;
+        break;
+    case vpnApi::ACTION_STOREPASS_SUBMIT:
+        cred_data.password = jobj["password"].toString();
+        passstore_received = true;
         break;
     case vpnApi::ACTION_VPNSTATS_REQUEST:
         submitStats();
