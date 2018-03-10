@@ -61,6 +61,46 @@
      </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QGridLayout" name="gridLayout">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>AES-Key</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="leAESIV"/>
+       </item>
+       <item row="6" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>AES-IV</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="maximumSize">
@@ -80,50 +120,17 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>AES-Key</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QLineEdit" name="leAESKey"/>
        </item>
-       <item row="5" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_7">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>AES-IV</string>
+          <string>Password Manager</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="leAESIV"/>
-       </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QPushButton" name="btnGenKeys">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -133,6 +140,13 @@
          </property>
          <property name="text">
           <string>Autogenerate keys</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="cbUseSystemPasswordStore">
+         <property name="text">
+          <string>Uses system password manager (KWallet, GNOME-Keyring)</string>
          </property>
         </widget>
        </item>

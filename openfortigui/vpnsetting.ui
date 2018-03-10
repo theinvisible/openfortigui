@@ -71,7 +71,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Use system password store (Beta)</string>
+           <string>Password Manager (Beta)</string>
           </property>
          </widget>
         </item>
@@ -110,7 +110,7 @@
         <item row="2" column="1">
          <widget class="QCheckBox" name="cbUseSystemPasswordStore">
           <property name="text">
-           <string/>
+           <string>Uses system password manager (KWallet, GNOME-Keyring)</string>
           </property>
          </widget>
         </item>

@@ -3,6 +3,7 @@
 
 #include "qdebug.h"
 #include "ticonfmain.h"
+#include "vpnhelper.h"
 
 #include <QDateTime>
 #include <QMessageBox>
@@ -40,8 +41,18 @@ void setupWizard::loadAESData()
 {
     tiConfMain main_settings;
 
-    ui->leAESKey->setText(main_settings.getValue("main/aeskey").toString());
-    ui->leAESIV->setText(main_settings.getValue("main/aesiv").toString());
+    if(main_settings.getValue("main/use_system_password_store").toBool())
+    {
+        ui->cbUseSystemPasswordStore->setChecked(true);
+        ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
+        ui->leAESIV->setText(vpnHelper::systemPasswordStoreRead("aesiv").data);
+    }
+    else
+    {
+        ui->cbUseSystemPasswordStore->setChecked(false);
+        ui->leAESKey->setText(main_settings.getValue("main/aeskey").toString());
+        ui->leAESIV->setText(main_settings.getValue("main/aesiv").toString());
+    }
 }
 
 bool setupWizard::saveAESData()
@@ -58,6 +69,16 @@ bool setupWizard::saveAESData()
                                         QMessageBox::Ok);
 
         return false;
+    }
+
+    if(main_settings.getValue("main/use_system_password_store").toBool()) {
+        vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
+        vpnHelper::systemPasswordStoreWrite("aesiv", ui->leAESIV->text());
+        ui->leAESKey->setText("");
+        ui->leAESIV->setText("");
+    } else {
+        vpnHelper::systemPasswordStoreDelete("aeskey");
+        vpnHelper::systemPasswordStoreDelete("aesiv");
     }
 
     main_settings.setValue("main/aeskey", ui->leAESKey->text());
@@ -165,4 +186,27 @@ void setupWizard::on_btnGenKeys_clicked()
 {
     ui->leAESKey->setText(randString(16));
     ui->leAESIV->setText(randString(16));
+}
+
+void setupWizard::on_cbUseSystemPasswordStore_toggled(bool checked)
+{
+    tiConfMain main_settings;
+
+    if(checked == true)
+    {
+        vpnHelperResult result = vpnHelper::checkSystemPasswordStoreAvailable();
+        if(result.status == false)
+        {
+            QMessageBox::critical(this, tr("System password manager error"), tr("Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1").arg(result.msg), QMessageBox::Ok);
+            ui->cbUseSystemPasswordStore->setChecked(false);
+        }
+        else
+        {
+            main_settings.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
+        }
+    }
+    else
+    {
+        main_settings.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
+    }
 }

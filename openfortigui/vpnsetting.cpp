@@ -17,8 +17,16 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
     ui->cbUseSystemPasswordStore->setChecked(confMain.getValue("main/use_system_password_store").toBool());
-    ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
-    ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
+    if(confMain.getValue("main/use_system_password_store").toBool())
+    {
+        ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
+        ui->leAESIV->setText(vpnHelper::systemPasswordStoreRead("aesiv").data);
+    }
+    else
+    {
+        ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
+        ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
+    }
 
     ui->leLocalVPNProfiles->setText(confMain.getValue("paths/localvpnprofiles").toString());
     ui->leLocalVPNGroups->setText(confMain.getValue("paths/localvpngroups").toString());
@@ -42,16 +50,19 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
     confMain.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
-    confMain.setValue("main/aeskey", ui->leAESKey->text());
-    confMain.setValue("main/aesiv", ui->leAESIV->text());
 
     if(ui->cbUseSystemPasswordStore->isChecked()) {
         vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
         vpnHelper::systemPasswordStoreWrite("aesiv", ui->leAESIV->text());
+        ui->leAESKey->setText("");
+        ui->leAESIV->setText("");
     } else {
         vpnHelper::systemPasswordStoreDelete("aeskey");
         vpnHelper::systemPasswordStoreDelete("aesiv");
     }
+
+    confMain.setValue("main/aeskey", ui->leAESKey->text());
+    confMain.setValue("main/aesiv", ui->leAESIV->text());
 
     confMain.setValue("paths/localvpnprofiles", tiConfMain::formatPathReverse(ui->leLocalVPNProfiles->text()));
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));

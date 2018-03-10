@@ -113,11 +113,6 @@ void tiConfMain::initMainConf()
         logsdir_vpn_path.mkpath(logs_vpn_dir);
 
         QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
-        if(conf.value("main/aesiv", "").toString().isEmpty())
-        {
-            conf.setValue("main/aesiv", openfortigui_config::aesiv);
-            conf.sync();
-        }
         if(!conf.contains("main/setupwizard"))
         {
             conf.setValue("main/setupwizard", false);
@@ -245,6 +240,7 @@ void tiConfVpnProfiles::readVpnProfiles()
     for(int i=0; i < vpns.count(); i++)
     {
         vpnProfile *vpn = vpns.at(i);
+        vpn->password = "";
         delete vpn;
     }
     vpnprofiles.clear();

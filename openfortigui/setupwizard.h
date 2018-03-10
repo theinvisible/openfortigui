@@ -31,6 +31,7 @@ private slots:
     void on_btnCancel_clicked();
 
     void on_btnGenKeys_clicked();
+    void on_cbUseSystemPasswordStore_toggled(bool checked);
 };
 
 #endif // SETUPWIZARD_H
