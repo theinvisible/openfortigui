@@ -279,6 +279,11 @@
         <translation>Zeige Hauptfenster</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="1055"/>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;Developer:&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;eMail:&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Website:&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QTinyAes:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;tiny-AES128-C:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;App-Icon:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://deepdoc.at/&apos;&gt;https://deepdoc.at&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="634"/>
         <location filename="../mainwindow.cpp" line="817"/>
         <source>Connected</source>
@@ -301,11 +306,6 @@
         <location filename="../mainwindow.cpp" line="1055"/>
         <source>About openFortiGUI</source>
         <translation>Über openFortiGUI</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1055"/>
-        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;Developer:&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;eMail:&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Website:&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QTinyAes:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;tiny-AES128-C:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
-        <translation></translation>
     </message>
     <message>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
@@ -367,12 +367,12 @@
         <translation> - OTP-Anmeldung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1088"/>
+        <location filename="../mainwindow.cpp" line="1089"/>
         <source> - Settings</source>
         <translation> - Einstellungen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1102"/>
+        <location filename="../mainwindow.cpp" line="1103"/>
         <source> - Setup wizard</source>
         <translation> - Installations-Assistent</translation>
     </message>
@@ -428,60 +428,88 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Willkommen zu OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Dieser Installations-Assistent führt sie durch grundlegende Einstellungen. Um zu starten klicken sie einfach auf &amp;quot;Weiter&amp;quot;.&lt;/p&gt;&lt;p&gt;Wenn sie diesen Assistenten jetzt nicht benötigen klicken sie einfach auf &amp;quot;Abbrechen&amp;quot;. Sie können den Assistenten jederzeit erneut vom Hauptmenü aus starten.&lt;/p&gt;&lt;p&gt;Viel Spaß.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="86"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Legen sie ihre AES-Schlüssel für die Verschlüsselung ihrer Passwörter fest.&lt;/p&gt;&lt;p&gt;Sie können diese manuell festlegen oder generieren lassen. Bitte beachten sie, dass neue AES-Schlüssel dazu führen, dass die Passwörter ihrer alten VPN-Profile nicht mehr lesbar sind. Diese müssen erneut gesetzt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Legen sie ihre AES-Schlüssel für die Verschlüsselung ihrer Passwörter fest.&lt;/p&gt;&lt;p&gt;Sie können diese manuell festlegen oder generieren lassen. Bitte beachten sie, dass neue AES-Schlüssel dazu führen, dass die Passwörter ihrer alten VPN-Profile nicht mehr lesbar sind. Diese müssen erneut gesetzt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="96"/>
+        <location filename="../setupwizard.ui" line="67"/>
         <source>AES-Key</source>
         <translation>AES-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="119"/>
+        <location filename="../setupwizard.ui" line="90"/>
         <source>AES-IV</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="135"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Legen sie ihre AES-Schlüssel für die Verschlüsselung ihrer Passwörter fest.&lt;/p&gt;&lt;p&gt;Sie können diese manuell festlegen oder generieren lassen. Bitte beachten sie, dass neue AES-Schlüssel dazu führen, dass die Passwörter ihrer alten VPN-Profile nicht mehr lesbar sind. Diese müssen erneut gesetzt werden.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warnung: &lt;/span&gt;Ihre AES-Schlüssel werden unverschlüsselt auf ihrem Benutzerlaufwerk gespeichert. Möchten sie diese verschlüsselt speichern schalten sie die &amp;quot;Passwort Manager&amp;quot; Checkbox ein. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.ui" line="97"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted, please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Legen sie ihre AES-Schlüssel für die Verschlüsselung ihrer Passwörter fest.&lt;/p&gt;&lt;p&gt;Sie können diese manuell festlegen oder generieren lassen. Bitte beachten sie, dass neue AES-Schlüssel dazu führen, dass die Passwörter ihrer alten VPN-Profile nicht mehr lesbar sind. Diese müssen erneut gesetzt werden.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warnung: &lt;/span&gt;Ihre AES-Schlüssel werden unverschlüsselt auf ihrem Benutzerlaufwerk gespeichert. Möchten sie diese verschlüsselt speichern, schalten sie die &amp;quot;Passwort Manager&amp;quot; Checkbox ein. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.ui" line="129"/>
+        <source>Password Manager</source>
+        <translation>Passwort Manager</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.ui" line="142"/>
         <source>Autogenerate keys</source>
         <translation>Schlüssel generieren</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="161"/>
+        <location filename="../setupwizard.ui" line="149"/>
+        <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
+        <translation>System Passwort-Manager benutzen (KWallet, GNOME-Keyring)</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.ui" line="175"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="184"/>
+        <location filename="../setupwizard.ui" line="198"/>
         <source>Back</source>
         <translation>Zurück</translation>
     </message>
     <message>
-        <location filename="../setupwizard.ui" line="191"/>
-        <location filename="../setupwizard.cpp" line="110"/>
+        <location filename="../setupwizard.ui" line="205"/>
+        <location filename="../setupwizard.cpp" line="131"/>
         <source>Next</source>
         <translation>Weiter</translation>
     </message>
     <message>
-        <location filename="../setupwizard.cpp" line="56"/>
+        <location filename="../setupwizard.cpp" line="67"/>
         <source>AES-Key error</source>
         <translation>AES-Schlüssel Fehler</translation>
     </message>
     <message>
-        <location filename="../setupwizard.cpp" line="57"/>
+        <location filename="../setupwizard.cpp" line="68"/>
         <source>Both AES-Key and AES-IV must be 128bit (16 chars) long.</source>
         <translation>AES-Schlüssel und AES-IV müssen beide jeweils 128bit (16 Zeichen) lang sein.</translation>
     </message>
     <message>
-        <location filename="../setupwizard.cpp" line="126"/>
+        <location filename="../setupwizard.cpp" line="147"/>
         <source>Finish</source>
         <translation>Abschließen</translation>
     </message>
     <message>
-        <location filename="../setupwizard.cpp" line="148"/>
+        <location filename="../setupwizard.cpp" line="169"/>
         <source>Abort setup wizard</source>
         <translation>Installations-Assistent abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.cpp" line="200"/>
+        <source>System password manager error</source>
+        <translation>Fehler im System Passwort-Manager</translation>
+    </message>
+    <message>
+        <location filename="../setupwizard.cpp" line="200"/>
+        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <translation>Der Passwort Manager funktioniert nicht, bitte überprüfen sie ihr System ob der Passwort-Manager (GNOME-Keyring oder KWallet) läuft. Fehlermeldung: %1</translation>
     </message>
 </context>
 <context>
@@ -493,8 +521,8 @@
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="24"/>
-        <location filename="../vpngroupeditor.cpp" line="115"/>
-        <location filename="../vpngroupeditor.cpp" line="149"/>
+        <location filename="../vpngroupeditor.cpp" line="121"/>
+        <location filename="../vpngroupeditor.cpp" line="155"/>
         <source>VPN-Group</source>
         <translation>VPN-Gruppe</translation>
     </message>
@@ -505,7 +533,7 @@
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="44"/>
-        <location filename="../vpngroupeditor.cpp" line="19"/>
+        <location filename="../vpngroupeditor.cpp" line="25"/>
         <source>Name</source>
         <translation></translation>
     </message>
@@ -525,32 +553,32 @@
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="19"/>
+        <location filename="../vpngroupeditor.cpp" line="25"/>
         <source>Status</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="19"/>
+        <location filename="../vpngroupeditor.cpp" line="25"/>
         <source>Origin</source>
         <translation>Ursprung</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="46"/>
+        <location filename="../vpngroupeditor.cpp" line="52"/>
         <source>Local</source>
         <translation>Lokal</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="49"/>
+        <location filename="../vpngroupeditor.cpp" line="55"/>
         <source>Global</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="115"/>
+        <location filename="../vpngroupeditor.cpp" line="121"/>
         <source>You must set a name for the VPN-group.</source>
         <translation>Es muss ein Name für die VPN-Gruppe angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="149"/>
+        <location filename="../vpngroupeditor.cpp" line="155"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
         <translation>Es muss für jedes VPN-Profil Benutzername und Passwort gesetzt sein das in eine Gruppe inkludiert werden soll. Erste VPN mit fehlenden Infos: %1</translation>
     </message>
@@ -760,39 +788,39 @@
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="88"/>
+        <location filename="../vpnprofileeditor.cpp" line="94"/>
         <source>Select the user-cert</source>
         <translation>Wähle das Benutzer-Zertifikat</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="98"/>
+        <location filename="../vpnprofileeditor.cpp" line="104"/>
         <source>Select the user-key</source>
         <translation>Wähle den Benutzer-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="108"/>
+        <location filename="../vpnprofileeditor.cpp" line="114"/>
         <source>Select the CA-file</source>
         <translation>Wähle die CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="123"/>
         <location filename="../vpnprofileeditor.cpp" line="129"/>
         <location filename="../vpnprofileeditor.cpp" line="135"/>
+        <location filename="../vpnprofileeditor.cpp" line="141"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="123"/>
+        <location filename="../vpnprofileeditor.cpp" line="129"/>
         <source>You must set a name for the VPN.</source>
         <translation>Es muss ein Name für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="129"/>
+        <location filename="../vpnprofileeditor.cpp" line="135"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>Es muss ein Gateway für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="135"/>
+        <location filename="../vpnprofileeditor.cpp" line="141"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Es muss ein Gateway-Port für die VPN gesetzt sein.</translation>
     </message>
@@ -815,65 +843,85 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="47"/>
+        <location filename="../vpnsetting.ui" line="87"/>
         <source>AES-Key</source>
         <translation>AES-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="70"/>
+        <location filename="../vpnsetting.ui" line="54"/>
         <source>Start minimized</source>
         <translation>Minimiert starten</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="90"/>
+        <location filename="../vpnsetting.ui" line="74"/>
+        <source>Password Manager (Beta)</source>
+        <translation>Passwort-Manager (Beta)</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="103"/>
         <source>AES-IV</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="105"/>
+        <location filename="../vpnsetting.ui" line="113"/>
+        <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
+        <translation>System Passwort-Manager benutzen (KWallet, GNOME-Keyring)</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="125"/>
         <source>Paths</source>
         <translation>Pfade</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="119"/>
+        <location filename="../vpnsetting.ui" line="139"/>
         <source>Local VPN-Profiles</source>
         <translation>Lokale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="132"/>
+        <location filename="../vpnsetting.ui" line="152"/>
         <source>Local VPN-Groups</source>
         <translation>Lokale VPN-Gruppen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="145"/>
+        <location filename="../vpnsetting.ui" line="165"/>
         <source>Global VPN-Profiles</source>
         <translation>Globale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="158"/>
+        <location filename="../vpnsetting.ui" line="178"/>
         <source>Logs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="170"/>
-        <location filename="../vpnsetting.ui" line="184"/>
-        <location filename="../vpnsetting.ui" line="198"/>
-        <location filename="../vpnsetting.ui" line="212"/>
+        <location filename="../vpnsetting.ui" line="190"/>
+        <location filename="../vpnsetting.ui" line="204"/>
+        <location filename="../vpnsetting.ui" line="218"/>
+        <location filename="../vpnsetting.ui" line="232"/>
         <source>Choose</source>
         <translation>Wählen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="241"/>
+        <location filename="../vpnsetting.ui" line="261"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="261"/>
+        <location filename="../vpnsetting.ui" line="281"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.cpp" line="78"/>
+        <location filename="../vpnsetting.cpp" line="104"/>
+        <source>System password manager error</source>
+        <translation>Fehler im System Passwort-Manager</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.cpp" line="104"/>
+        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <translation>Der Passwort Manager funktioniert nicht, bitte überprüfen sie ihr System ob der Passwort-Manager (GNOME-Keyring oder KWallet) läuft. Fehlermeldung: %1</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.cpp" line="114"/>
         <source>Choose a directory</source>
         <translation>Wähle ein Verzeichnis</translation>
     </message>

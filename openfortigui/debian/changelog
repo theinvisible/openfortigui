@@ -1,3 +1,9 @@
+openfortigui (0.5.0-1) precise; urgency=low
+
+  * You can enable to use system password manager to store your aes-keys encrypted (beta)
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 10 Mar 2018 11:03:00 +0100
+
 openfortigui (0.4.2-1) precise; urgency=low
 
   * VPN-Autostart added, stricter checks for Profile/Group-names
