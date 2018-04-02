@@ -18,14 +18,16 @@ public:
     void addVPN(const QString &name, QProcess *proc);
 
 private:
-    QSignalMapper *logMapper;
+    QSignalMapper *logMapperStdout, *logMapperStderr;
     QMap<QString, QProcess*> loggers;
     QMap<QString, QFile*> logfiles;
     QMap<QString, bool> loglocker;
+    QMap<QString, QByteArray*> logBuffer;
     tiConfMain main_settings;
 
 private slots:
-    void log(const QString &name);
+    void logStdout(const QString &name);
+    void logStderr(const QString &name);
 
 signals:
     void OTPRequest(QProcess *proc);
