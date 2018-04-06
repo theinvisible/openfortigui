@@ -24,6 +24,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     logger = new vpnLogger();
     logger->moveToThread(logger_thread);
     //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+    connect(this, SIGNAL(addVPNLogger(QString,QProcess*)), logger, SLOT(addVPN(QString,QProcess*)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(started()), logger, SLOT(process()));
     connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
     connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
@@ -63,6 +64,8 @@ void vpnManager::startVPN(const QString &name)
     arguments << QString("'%1'").arg(tiConfMain::main_config);
 
     QProcess *vpnProc = new QProcess(this);
+    vpnProc->setProcessChannelMode(QProcess::MergedChannels);
+    emit addVPNLogger(name, vpnProc);
     qDebug() << "Start vpn::" << name;
     vpnProc->start("sudo", arguments);
     // Close read channel to avoid memory leak
@@ -78,7 +81,8 @@ void vpnManager::startVPN(const QString &name)
     connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
     connections[name] = clientConn;
 
-    logger->addVPN(name, vpnProc);
+    //logger->addVPN(name, vpnProc);
+
 }
 
 void vpnManager::stopVPN(const QString &name)

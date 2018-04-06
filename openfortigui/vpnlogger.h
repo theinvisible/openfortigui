@@ -15,19 +15,19 @@ class vpnLogger : public QObject
 public:
     explicit vpnLogger(QObject *parent = nullptr);
     ~vpnLogger();
+
+public slots:
     void addVPN(const QString &name, QProcess *proc);
 
 private:
-    QSignalMapper *logMapperStdout, *logMapperStderr;
+    QSignalMapper *logMapperStdout;
     QMap<QString, QProcess*> loggers;
     QMap<QString, QFile*> logfiles;
     QMap<QString, bool> loglocker;
-    QMap<QString, QByteArray*> logBuffer;
     tiConfMain main_settings;
 
 private slots:
-    void logStdout(const QString &name);
-    void logStderr(const QString &name);
+    void logVPNOutput(const QString &name);
 
 signals:
     void OTPRequest(QProcess *proc);

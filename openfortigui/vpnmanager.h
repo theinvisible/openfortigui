@@ -77,6 +77,8 @@ signals:
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
     void VPNOTPRequest(QProcess *proc);
 
+    void addVPNLogger(const QString &name, QProcess *proc);
+
 public slots:
     void onClientConnected();
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
