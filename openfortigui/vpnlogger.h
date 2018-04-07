@@ -20,7 +20,7 @@ public slots:
     void addVPN(const QString &name, QProcess *proc);
 
 private:
-    QSignalMapper *logMapperStdout;
+    QSignalMapper *logMapperStdout, *logMapperFinished;
     QMap<QString, QProcess*> loggers;
     QMap<QString, QFile*> logfiles;
     QMap<QString, bool> loglocker;
@@ -28,6 +28,7 @@ private:
 
 private slots:
     void logVPNOutput(const QString &name);
+    void procFinished(const QString &name);
 
 signals:
     void OTPRequest(QProcess *proc);

@@ -27,6 +27,7 @@ void read_password(const char *prompt, char *pass, size_t len)
     int i;
 
     printf("%s", prompt);
+    // RH: Flush to safely get OTP prompt
     fflush(stdout);
 
     // Try to hide user input

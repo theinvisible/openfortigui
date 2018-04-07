@@ -730,6 +730,11 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     QMenu menu;
     QAction *a_connect = menu.addAction(QIcon(":/img/connected.png"), tr("Connect"));
     QAction *a_disconnect = menu.addAction(QIcon(":/img/disconnected.png"), tr("Disconnect"));
+    menu.addSeparator();
+    QAction *a_edit = menu.addAction(QIcon(":/img/edit.png"), tr("Edit"));
+    QAction *a_copy = menu.addAction(QIcon(":/img/copy.png"), tr("Copy"));
+    QAction *a_delete = menu.addAction(QIcon(":/img/delete.png"), tr("Delete"));
+    menu.addSeparator();
     QAction *a_viewlogs = menu.addAction(QIcon(":/img/log.png"), tr("View logs"));
     QAction *choosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
 
@@ -748,6 +753,24 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     if(choosen == a_disconnect)
     {
         onStopVPN(vpnname);
+        return;
+    }
+
+    if(choosen == a_edit)
+    {
+        on_btnEditVPN_clicked();
+        return;
+    }
+
+    if(choosen == a_copy)
+    {
+        on_btnCopyVPN_clicked();
+        return;
+    }
+
+    if(choosen == a_delete)
+    {
+        on_btnDeleteVPN_clicked();
         return;
     }
 }

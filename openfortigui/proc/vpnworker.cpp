@@ -15,10 +15,11 @@ extern "C"  {
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <openssl/err.h>
-#ifndef __APPLE__
-#include <pty.h>
-#else
+#include <openssl/x509v3.h>
+#ifdef __APPLE__
 #include <util.h>
+#else
+#include <pty.h>
 #endif
 #include <signal.h>
 #include <sys/wait.h>
@@ -44,8 +45,7 @@ static int on_ppp_if_up(struct tunnel *tunnel)
         ret = ipv4_set_tunnel_routes(tunnel);
 
         if (ret != 0) {
-            log_warn("Adding route table is incomplete. "
-                     "Please check route table.\n");
+            log_warn("Adding route table is incomplete. Please check route table.\n");
         }
     }
 
@@ -82,6 +82,9 @@ static int pppd_run(struct tunnel *tunnel)
     int amaster;
 #ifndef __APPLE__
     struct termios termp;
+    termp.c_cflag = B9600;
+    termp.c_cc[VTIME] = 0;
+    termp.c_cc[VMIN] = 1;
 #endif
 
     static const char pppd_path[] = "/usr/sbin/pppd";
@@ -91,14 +94,10 @@ static int pppd_run(struct tunnel *tunnel)
         return 1;
     }
 
-#ifndef __APPLE__
-    termp.c_cflag = B9600;
-    termp.c_cc[VTIME] = 0;
-    termp.c_cc[VMIN] = 1;
-
-    pid = forkpty(&amaster, NULL, &termp, NULL);
-#else
+#ifdef __APPLE__
     pid = forkpty(&amaster, NULL, NULL, NULL);
+#else
+    pid = forkpty(&amaster, NULL, &termp, NULL);
 #endif
 
     if (pid == -1) {
@@ -108,7 +107,7 @@ static int pppd_run(struct tunnel *tunnel)
         static const char *args[] = {
             pppd_path,
             "38400", // speed
-            ":1.1.1.1", // <local_IP_address>:<remote_IP_address>
+            ":192.0.2.1", // <local_IP_address>:<remote_IP_address>
             "noipdefault",
             "noaccomp",
             "noauth",
@@ -127,6 +126,16 @@ static int pppd_run(struct tunnel *tunnel)
             NULL // terminal null pointer required by execvp()
         };
 
+        if (tunnel->config->pppd_call) {
+            /* overwrite args[]: keep pppd_path, replace all
+             * options with "call <name>" */
+            int j = 1;
+            args[j++] = "call";
+            args[j++] = tunnel->config->pppd_call;
+            while (j < ARRAY_SIZE(args))
+                args[j++] = NULL;
+        }
+
         // Dynamically get first NULL pointer so that changes of
         // args above don't need code changes here
         int i = ARRAY_SIZE(args) - 1;
@@ -136,11 +145,12 @@ static int pppd_run(struct tunnel *tunnel)
 
         /*
          * Coverity detected a defect:
-         *  CID 196857: Out-of-bounds write (OVERRUN)
-         * It is actually a false positive. Because 'args' is not
-         * constant, Coverity is unable to infer that the NULL
-         * elements 'args' has been initialized with shall still
-         * be present when initializing 'i' in the above loop.
+         * 	CID 196857: Out-of-bounds write (OVERRUN)
+         *
+         * It is actually a false positive:
+         * Although 'args' is  constant, Coverity is unable
+         * to infer there are enough NULL elements in 'args'
+         * to add the following options.
          */
         if (tunnel->config->pppd_use_peerdns)
             args[i++] = "usepeerdns";
@@ -191,32 +201,22 @@ static int pppd_run(struct tunnel *tunnel)
 }
 
 static const char * const pppd_message[] = {
-    "Returned an unknown exit status", // fall back
-    "Has detached, or otherwise the connection was successfully"
-    " established and terminated at the peer's request.",
-    "An immediately fatal error of some kind occurred, such as an"
-    " essential system call failing, or running out of virtual memory.",
-    "An error was detected in processing the options given, such as two"
-    " mutually exclusive options being used.",
+    "Has detached, or otherwise the connection was successfully established and terminated at the peer's request.",
+    "An immediately fatal error of some kind occurred, such as an essential system call failing, or running out of virtual memory.",
+    "An error was detected in processing the options given, such as two mutually exclusive options being used.",
     "Is not setuid-root and the invoking user is not root.",
-    "The kernel does not support PPP, for example, the PPP kernel driver"
-    " is not included or cannot be loaded.",
+    "The kernel does not support PPP, for example, the PPP kernel driver is not included or cannot be loaded.",
     "Terminated because it was sent a SIGINT, SIGTERM or SIGHUP signal.",
     "The serial port could not be locked.",
     "The serial port could not be opened.",
     "The connect script failed (returned a non-zero exit status).",
-    "The command specified as the argument to the pty option"
-    " could not be run.",
-    "The PPP negotiation failed, that is, it didn't reach the point"
-    " where at least one network protocol (e.g. IP) was running.",
+    "The command specified as the argument to the pty option could not be run.",
+    "The PPP negotiation failed, that is, it didn't reach the point where at least one network protocol (e.g. IP) was running.",
     "The peer system failed (or refused) to authenticate itself.",
-    "The link was established successfully and terminated because"
-    " it was idle.",
-    "The link was established successfully and terminated because the"
-    " connect time limit was reached.",
+    "The link was established successfully and terminated because it was idle.",
+    "The link was established successfully and terminated because the connect time limit was reached.",
     "Callback was negotiated and an incoming call should arrive shortly.",
-    "The link was terminated because the peer is not responding to echo"
-    " requests.", // emitted when exiting normally
+    "The link was terminated because the peer is not responding to echo requests.",
     "The link was terminated by the modem hanging up.",
     "The PPP negotiation failed because serial loopback was detected.",
     "The init script failed (returned a non-zero exit status).",
@@ -236,13 +236,21 @@ static int pppd_terminate(struct tunnel *tunnel)
     if (WIFEXITED(status)) {
         int exit_status = WEXITSTATUS(status);
         log_debug("waitpid: pppd exit status code %d\n", exit_status);
-        if (exit_status) {
-            size_t len_pppd_message = ARRAY_SIZE(pppd_message);
-            if (exit_status >= len_pppd_message)
-                exit_status = 0;
-            if (exit_status != 16) // emitted when exiting normally
+        if (exit_status >= ARRAY_SIZE(pppd_message) || exit_status < 0)
+            log_error("pppd: Returned an unknown exit status: %d\n",
+                      exit_status);
+        else
+            switch (exit_status) {
+            case 0: // success
+                log_debug("pppd: %s\n", pppd_message[exit_status]);
+                break;
+            case 16: // emitted when exiting normally
+                log_info("pppd: %s\n", pppd_message[exit_status]);
+                break;
+            default:
                 log_error("pppd: %s\n", pppd_message[exit_status]);
-        }
+                break;
+            }
     } else if (WIFSIGNALED(status)) {
         int signal_number = WTERMSIG(status);
         log_debug("waitpid: pppd terminated by signal %d\n",

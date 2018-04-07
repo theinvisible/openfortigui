@@ -155,8 +155,8 @@ int http_receive(struct tunnel *tunnel, char **response)
             }
 
             if (header_size) {
-                /* We saw the whole header, let's check if the
-                 * body is done as well */
+                /* We saw the whole header, */
+                /* let's check if the body is done as well */
                 if (chunked) {
                     /* Last chunk terminator. Done naively. */
                     if (bytes_read >= 7 &&
@@ -320,8 +320,7 @@ static int get_auth_cookie(struct tunnel *tunnel, char *buf)
                 strncpy(tunnel->config->cookie, line, COOKIE_SIZE);
                 tunnel->config->cookie[COOKIE_SIZE] = '\0';
                 if (strlen(line) > COOKIE_SIZE) {
-                    log_error("Cookie larger than expected:"
-                              " %zu > %d\n",
+                    log_error("Cookie larger than expected: %zu > %d\n",
                               strlen(line), COOKIE_SIZE);
                 } else {
                     ret = 1; // success
@@ -511,6 +510,8 @@ int auth_log_in(struct tunnel *tunnel)
     }
     ret = get_auth_cookie(tunnel, res);
     if (ret == ERR_HTTP_NO_COOKIE) {
+        struct vpn_config *cfg = tunnel->config;
+
         /* If the response body includes a tokeninfo= parameter,
          * it means the VPN gateway expects two-factor authentication.
          * It sends a one-time authentication credential for example
@@ -534,8 +535,16 @@ int auth_log_in(struct tunnel *tunnel)
         get_value_from_response(res, "reqid=", reqid, 32);
         get_value_from_response(res, "polid=", polid, 32);
 
-        read_password("Two-factor authentication token: ", tokenresponse, 255);
+        if (cfg->otp[0] == '\0') {
+            read_password("Two-factor authentication token: ",
+                          cfg->otp, FIELD_SIZE);
+            if (cfg->otp[0] == '\0') {
+                log_error("No token specified\n");
+                return 0;
+            }
+        }
 
+        url_encode(tokenresponse, cfg->otp);
         snprintf(data, 256, "username=%s&realm=%s&reqid=%s&polid=%s&grp=%s"
                  "&code=%s&code2=&redir=%%2Fremote%%2Findex&just_logged_in=1",
                  username, realm, reqid, polid, group, tokenresponse);
@@ -620,10 +629,11 @@ static
 int parse_config(struct tunnel *tunnel, const char *buffer)
 {
     char *c, *end;
-
+    // RH: Change to strstr to work under C++
     buffer = strstr(buffer, "NAME=\"text6\"");
     if (!buffer)
         return 1;
+    // RH: Change to strstr to work under C++
     buffer = strstr(buffer, "VALUE=\"");
     if (!buffer)
         return 1;
@@ -640,8 +650,7 @@ int parse_config(struct tunnel *tunnel, const char *buffer)
 
         c = strchr(buffer, '/');
         if (c == NULL || c >= end || c - buffer > 15) {
-            log_warn("Wrong addresses in split VPN route: "
-                     "expected <dest>/<mask>\n");
+            log_warn("Wrong addresses in split VPN route: expected <dest>/<mask>\n");
             return 1;
         }
         memcpy(dest, buffer, c - buffer);
@@ -653,8 +662,7 @@ int parse_config(struct tunnel *tunnel, const char *buffer)
             c = end;
 
         if (c - buffer > 15) {
-            log_warn("Wrong addresses in split VPN route: "
-                     "expected <dest>/<mask>\n");
+            log_warn("Wrong addresses in split VPN route: expected <dest>/<mask>\n");
             return 1;
         }
         memcpy(mask, buffer, c - buffer);

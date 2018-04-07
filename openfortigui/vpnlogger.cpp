@@ -9,11 +9,13 @@
 vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
 {
     logMapperStdout = new QSignalMapper(this);
+    logMapperFinished = new QSignalMapper(this);
     loggers = QMap<QString, QProcess*>();
     logfiles = QMap<QString, QFile*>();
     loglocker = QMap<QString, bool>();
 
     connect(logMapperStdout, SIGNAL(mapped(QString)), this, SLOT(logVPNOutput(QString)));
+    connect(logMapperFinished, SIGNAL(mapped(QString)), this, SLOT(procFinished(QString)));
 }
 
 vpnLogger::~vpnLogger()
@@ -34,7 +36,9 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
     }
 
     connect(proc, SIGNAL(readyReadStandardOutput()), logMapperStdout, SLOT(map()));
+    connect(proc, SIGNAL(finished(int)), logMapperFinished, SLOT(map()));
     logMapperStdout->setMapping(proc, name);
+    logMapperFinished->setMapping(proc, name);
 }
 
 void vpnLogger::logVPNOutput(const QString &name)
@@ -42,6 +46,9 @@ void vpnLogger::logVPNOutput(const QString &name)
     QThread::msleep(200);
 
     QProcess *proc = loggers[name];
+
+    if(proc == 0)
+        return;
 
     if(proc->bytesAvailable() == 0 && proc->isReadable())
         return;
@@ -64,6 +71,11 @@ void vpnLogger::logVPNOutput(const QString &name)
 
     out << toLog;
     logfile->flush();
+}
+
+void vpnLogger::procFinished(const QString &name)
+{
+    loggers[name] = 0;
 }
 
 void vpnLogger::process()
