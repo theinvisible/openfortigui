@@ -31,7 +31,6 @@ Copyright (C) 2017 Rene Hadler, rene@hadler.me, https://hadler.me
 
 #include "config.h"
 #include "vpnhelper.h"
-#include "qtinyaes/qtinyaes.h"
 #include <qt5keychain/keychain.h>
 
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
@@ -209,14 +208,13 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     }
 
     QSettings *f = new QSettings(filename, QSettings::IniFormat);
-    QTinyAes aes(QTinyAes::CBC, aeskey.toUtf8(), aesiv.toUtf8());
 
     f->beginGroup("vpn");
     f->setValue("name", profile.name);
     f->setValue("gateway_host", profile.gateway_host);
     f->setValue("gateway_port", profile.gateway_port);
     f->setValue("username", profile.username);
-    f->setValue("password", QString::fromUtf8(aes.encrypt(profile.password.toUtf8()).toBase64()));
+    f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password, aeskey, aesiv));
     f->endGroup();
 
     f->beginGroup("cert");
@@ -298,8 +296,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->gateway_port = f->value("gateway_port").toInt();
                 vpnprofile->username = f->value("username").toString();
                 if(read_profile_passwords) {
-                    QTinyAes aes(QTinyAes::CBC, aeskey.toUtf8(), aesiv.toUtf8());
-                    vpnprofile->password = QString::fromUtf8(aes.decrypt(QByteArray::fromBase64(f->value("password").toString().toUtf8())));
+                    vpnprofile->password = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
                 }
                 f->endGroup();
 
