@@ -1,3 +1,10 @@
+openfortigui (0.5.99-1) precise; urgency=low
+
+  * Switch to OpenSSL as AES library
+  * Added changelog to inform users about important program changes
+
+ -- Rene Hadler <rene@hadler.me>  Sun, 8 Apr 2018 17:03:00 +0100
+
 openfortigui (0.5.0-1) precise; urgency=low
 
   * You can enable to use system password manager to store your aes-keys encrypted (beta)
