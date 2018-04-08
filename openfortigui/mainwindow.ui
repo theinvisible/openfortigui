@@ -102,6 +102,7 @@
     <addaction name="actionMenuSettings"/>
     <addaction name="actionMenuWizard"/>
     <addaction name="actionMenuLogs"/>
+    <addaction name="actionChangelog"/>
     <addaction name="separator"/>
     <addaction name="actionMenuHide"/>
     <addaction name="actionMenuExit"/>
@@ -209,6 +210,15 @@
    </property>
    <property name="text">
     <string>Setup wizard</string>
+   </property>
+  </action>
+  <action name="actionChangelog">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/img/changelog.png</normaloff>:/img/changelog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Changelog</string>
    </property>
   </action>
  </widget>

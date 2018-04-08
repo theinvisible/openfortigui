@@ -22,6 +22,7 @@
 #include "vpnotplogin.h"
 #include "vpnhelper.h"
 #include "setupwizard.h"
+#include "vpnchangelog.h"
 
 vpnManager *MainWindow::vpnmanager = 0;
 
@@ -113,6 +114,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMenuHide, SIGNAL(triggered(bool)), this, SLOT(hide()));
     connect(ui->actionMenuSettings, SIGNAL(triggered(bool)), this, SLOT(onVPNSettings()));
     connect(ui->actionMenuWizard, SIGNAL(triggered(bool)), this, SLOT(onSetupWizard()));
+    connect(ui->actionChangelog, SIGNAL(triggered(bool)), this, SLOT(onChangelog()));
     connect(ui->actionMenuLogs, SIGNAL(triggered(bool)), this, SLOT(onActionLogs()));
     connect(ui->actionMenuConnect, SIGNAL(triggered(bool)), this, SLOT(onStartVPN()));
     connect(ui->actionMenuDisconnect, SIGNAL(triggered(bool)), this, SLOT(onStopVPN()));
@@ -132,6 +134,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(!main_settings.getValue("main/setupwizard").toBool())
         onSetupWizard();
+
+    if(main_settings.getValue("main/changelogrev_read", 0).toInt() == 0 || main_settings.getValue("main/changelogrev_read", 0).toInt() > openfortigui_config::changelogRev)
+        onChangelog();
 
     if(main_settings.getValue("main/show_search").toBool())
     {
@@ -1131,6 +1136,21 @@ void MainWindow::onSetupWizard()
 void MainWindow::onActionLogs()
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/").arg(tiConfMain::getAppDir())));
+}
+
+void MainWindow::onChangelog()
+{
+    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    prefWindow->setWindowModality(Qt::WindowModal);
+
+    vpnChangelog *f = new vpnChangelog(prefWindow);
+    prefWindow->setCentralWidget(f);
+    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
+    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Changelog"));
+    f->initAfter();
+
+    prefWindow->show();
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)

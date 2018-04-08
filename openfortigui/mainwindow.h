@@ -71,6 +71,7 @@ private slots:
     void onVPNSettings();
     void onSetupWizard();
     void onActionLogs();
+    void onChangelog();
 
     void onWatcherVpnProfilesChanged(const QString &path);
 

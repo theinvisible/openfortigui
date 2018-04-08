@@ -39,7 +39,7 @@ public:
 
     void initMainConf();
 
-    QVariant getValue(const QString &iniPath);
+    QVariant getValue(const QString &iniPath, const QVariant &defaultValue = QVariant());
     void setValue(const QString &iniPath, const QVariant &val);
     void sync();
 

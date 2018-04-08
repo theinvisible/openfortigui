@@ -85,6 +85,7 @@ void tiConfMain::initMainConf()
         conf.setValue("main/aesiv", openfortigui_config::aesiv);
         conf.setValue("main/start_minimized", false);
         conf.setValue("main/setupwizard", false);
+        conf.setValue("main/changelogrev_read", 0);
         conf.setValue("paths/globalvpnprofiles", openfortigui_config::vpnprofiles_global);
         conf.setValue("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local);
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
@@ -118,12 +119,18 @@ void tiConfMain::initMainConf()
             conf.setValue("main/setupwizard", false);
             conf.sync();
         }
+
+        if(!conf.contains("main/changelogrev_read"))
+        {
+            conf.setValue("main/changelogrev_read", 0);
+            conf.sync();
+        }
     }
 }
 
-QVariant tiConfMain::getValue(const QString &iniPath)
+QVariant tiConfMain::getValue(const QString &iniPath, const QVariant &defaultValue)
 {
-    return settings->value(iniPath);
+    return settings->value(iniPath, defaultValue);
 }
 
 void tiConfMain::setValue(const QString &iniPath, const QVariant &val)

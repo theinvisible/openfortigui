@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     vpnhelper.cpp \
     vpnlogger.cpp \
     vpnotplogin.cpp \
-    setupwizard.cpp
+    setupwizard.cpp \
+    vpnchangelog.cpp
 
 HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
@@ -72,7 +73,8 @@ HEADERS  += mainwindow.h \
     vpnhelper.h \
     vpnlogger.h \
     vpnotplogin.h \
-    setupwizard.h
+    setupwizard.h \
+    vpnchangelog.h
 
 FORMS    += mainwindow.ui \
     vpnprofileeditor.ui \
@@ -80,7 +82,8 @@ FORMS    += mainwindow.ui \
     vpnsetting.ui \
     vpnlogin.ui \
     vpnotplogin.ui \
-    setupwizard.ui
+    setupwizard.ui \
+    vpnchangelog.ui
 
 RESOURCES += \
     res.qrc
