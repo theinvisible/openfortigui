@@ -1088,8 +1088,6 @@ void MainWindow::onActionAbout()
                                                               "<table><tr><td width='150'>GCC %2:</td> <td> <a href='https://gcc.gnu.org/'>https://gcc.gnu.org</a></td></tr>"
                                                               "<tr><td>QT %3:</td> <td> <a href='https://www.qt.io'>https://www.qt.io</a></td></tr>"
                                                               "<tr><td>openfortivpn:</td> <td> <a href='https://github.com/adrienverge/openfortivpn'>https://github.com/adrienverge/openfortivpn</a></td></tr>"
-                                                              "<tr><td>QTinyAes:</td> <td> <a href='https://github.com/Skycoder42/QTinyAes'>https://github.com/Skycoder42/QTinyAes</a></td></tr>"
-                                                              "<tr><td>tiny-AES128-C:</td> <td> <a href='https://github.com/kokke/tiny-AES128-C'>https://github.com/kokke/tiny-AES128-C</a></td></tr>"
                                                               "<tr><td>Icons8:</td> <td> <a href='https://icons8.com/'>https://icons8.com</a></td></tr>"
                                                               "<tr><td>App-Icon:</td> <td> <a href='https://deepdoc.at/'>https://deepdoc.at</a></td></tr></table>").arg(openfortigui_config::version, __VERSION__, QT_VERSION_STR));
 }
