@@ -14,6 +14,7 @@ vpnProfile::vpnProfile()
     set_routes = true;
     set_dns = false;
     pppd_no_peerdns = false;
+    half_internet_routers = false;
 
     ca_file = "";
     user_cert = "";

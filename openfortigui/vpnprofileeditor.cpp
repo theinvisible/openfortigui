@@ -59,6 +59,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->cbDebug->setChecked(config->debug);
     ui->leRealm->setText(config->realm);
     ui->cbAutostart->setChecked(config->autostart);
+    ui->cbHalfInternetRoutes->setChecked(config->half_internet_routers);
 
     if(config->origin_location == vpnProfile::Origin_GLOBAL)
     {
@@ -84,6 +85,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbDebug->setDisabled(true);
         ui->leRealm->setDisabled(true);
         ui->cbAutostart->setDisabled(true);
+        ui->cbHalfInternetRoutes->setDisabled(true);
     }
 }
 
@@ -182,6 +184,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.debug = ui->cbDebug->isChecked();
     vpn.realm = ui->leRealm->text();
     vpn.autostart = ui->cbAutostart->isChecked();
+    vpn.half_internet_routers = ui->cbHalfInternetRoutes->isChecked();
 
     vpns.saveVpnProfile(vpn);
 

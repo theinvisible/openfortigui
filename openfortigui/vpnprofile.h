@@ -29,6 +29,7 @@ public:
     bool set_routes;
     bool set_dns;
     bool pppd_no_peerdns;
+    bool half_internet_routers;
 
     QString ca_file;
     QString user_cert;

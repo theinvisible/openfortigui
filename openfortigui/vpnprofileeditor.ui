@@ -281,6 +281,26 @@
           <string>Advanced</string>
          </property>
          <layout class="QFormLayout" name="formLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Connect on program start</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbAutostart">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_11">
             <property name="minimumSize">
@@ -301,7 +321,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_12">
             <property name="minimumSize">
              <size>
@@ -314,14 +334,14 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="cbSetDNS">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_14">
             <property name="minimumSize">
              <size>
@@ -334,14 +354,14 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QCheckBox" name="cbInsecureSSL">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="label_10">
             <property name="minimumSize">
              <size>
@@ -354,14 +374,14 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="6" column="1">
            <widget class="QCheckBox" name="cbDebug">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="label_16">
             <property name="minimumSize">
              <size>
@@ -374,11 +394,11 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="7" column="1">
            <widget class="QLineEdit" name="leRealm"/>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_17">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_18">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -386,12 +406,12 @@
              </size>
             </property>
             <property name="text">
-             <string>Connect on program start</string>
+             <string>Half internet routes</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="cbAutostart">
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbHalfInternetRoutes">
             <property name="text">
              <string/>
             </property>
