@@ -12,7 +12,6 @@ build-ubuntu-1804-64:
   script:
     - cd openfortigui
     - git submodule init && git submodule update
-    - echo "y" | debuild clean
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openforti*.deb build/
