@@ -132,6 +132,7 @@ void vpnProcess::startVPN()
     connect(thread_vpn, SIGNAL(started()), thread_worker, SLOT(process()));
     connect(thread_worker, SIGNAL(finished()), thread_vpn, SLOT(quit()));
     connect(thread_worker, SIGNAL(finished()), thread_worker, SLOT(deleteLater()));
+    connect(thread_worker, SIGNAL(finished()), this, SLOT(closeProcess()));
     connect(thread_vpn, SIGNAL(finished()), thread_vpn, SLOT(deleteLater()));
     connect(thread_worker, SIGNAL(statusChanged(vpnClientConnection::connectionStatus)), this, SLOT(onVPNStatusChanged(vpnClientConnection::connectionStatus)));
     thread_vpn->start();

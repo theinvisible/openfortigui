@@ -35,7 +35,6 @@ private:
 
     vpnStats stats;
 
-    void closeProcess();
     void startVPN();
     void sendCMD(const vpnApi &cmd);
     void updateStats();
@@ -54,6 +53,7 @@ public slots:
 private slots:
     void onObserverUpdate();
     void onStatsUpdate();
+    void closeProcess();
 };
 
 #endif // VPNPROCESS_H

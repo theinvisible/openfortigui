@@ -272,6 +272,8 @@ static int get_gateway_host_ip(struct tunnel *tunnel)
     hints.ai_family = AF_INET;
     struct addrinfo *result = NULL;
 
+    qDebug() << "ai_flags::" << hints.ai_flags;
+
     int ret = getaddrinfo(tunnel->config->gateway_host, NULL, &hints, &result);
 
     if (ret) {
@@ -429,11 +431,8 @@ void vpnWorker::process()
     tunnel.state = STATE_CONNECTING;
     ret = 0;
 
-    log_info("Custom: %s.\n", tunnel.config->gateway_host);
     // Step 6: perform io between pppd and the gateway, while tunnel is up
     io_loop(&tunnel);
-
-    log_info("Custom2: %s.\n", tunnel.ipv4.ip_addr);
 
     if (tunnel.state == STATE_UP)
         if (tunnel.on_ppp_if_down != NULL)

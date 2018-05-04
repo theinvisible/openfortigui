@@ -96,14 +96,14 @@ void vpnGroupEditor::loadVpnGroup(const QString &groupname)
         QStringListIterator it(config->localMembers);
         while(it.hasNext())
         {
-            if(item2->text() == it.next() & origin == vpnProfile::Origin_LOCAL)
+            if(item2->text() == it.next() && origin == vpnProfile::Origin_LOCAL)
                 item->setCheckState(Qt::Checked);
         }
 
         QStringListIterator git(config->globalMembers);
         while(git.hasNext())
         {
-            if(item2->text() == git.next() & origin == vpnProfile::Origin_GLOBAL)
+            if(item2->text() == git.next() && origin == vpnProfile::Origin_GLOBAL)
                 item->setCheckState(Qt::Checked);
         }
     }
