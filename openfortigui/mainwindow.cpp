@@ -1129,6 +1129,8 @@ void MainWindow::onSetupWizard()
     prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Setup wizard"));
 
     prefWindow->show();
+    prefWindow->raise();
+    QApplication::setActiveWindow(prefWindow);
 }
 
 void MainWindow::onActionLogs()
@@ -1138,17 +1140,19 @@ void MainWindow::onActionLogs()
 
 void MainWindow::onChangelog()
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
+    QMainWindow *changeWindow = new QMainWindow(this, Qt::Dialog);
+    changeWindow->setWindowModality(Qt::WindowModal);
 
-    vpnChangelog *f = new vpnChangelog(prefWindow);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
+    vpnChangelog *f = new vpnChangelog(changeWindow);
+    changeWindow->setCentralWidget(f);
+    changeWindow->setMinimumSize(QSize(f->width(),f->height()));
     //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Changelog"));
+    changeWindow->setWindowTitle(windowTitle() + QObject::trUtf8(" - Changelog"));
     f->initAfter();
 
-    prefWindow->show();
+    changeWindow->show();
+    changeWindow->raise();
+    QApplication::setActiveWindow(changeWindow);
 }
 
 void MainWindow::onWatcherVpnProfilesChanged(const QString &path)
