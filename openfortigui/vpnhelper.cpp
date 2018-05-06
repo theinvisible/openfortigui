@@ -220,6 +220,9 @@ int vpnHelper::aes128_decrypt(unsigned char *ciphertext, int ciphertext_len, uns
 
 QString vpnHelper::Qaes128_encrypt(const QString &plain, const QString &key, const QString &iv)
 {
+    if(plain.isEmpty())
+        return "";
+
     QByteArray tmp;
     tmp.resize(plain.length() * 10);
     int ciphertext_len;
@@ -231,6 +234,9 @@ QString vpnHelper::Qaes128_encrypt(const QString &plain, const QString &key, con
 
 QString vpnHelper::Qaes128_decrypt(const QString &cipher, const QString &key, const QString &iv)
 {
+    if(cipher.isEmpty())
+        return "";
+
     QByteArray tmp, ci;
     tmp.resize(cipher.length() * 10);
     int decryptedtext_len;
