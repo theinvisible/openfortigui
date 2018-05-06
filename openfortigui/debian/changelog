@@ -1,3 +1,10 @@
+openfortigui (0.6.1-1) precise; urgency=low
+
+  * Added catalan language
+  * Ubuntu 18.04 builds added, Bugfixes
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 6 May 2018 10:40:00 +0100
+
 openfortigui (0.6.0-1) precise; urgency=low
 
   * Added option Half internet routes

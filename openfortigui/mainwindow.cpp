@@ -135,7 +135,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!main_settings.getValue("main/setupwizard").toBool())
         onSetupWizard();
 
-    if(main_settings.getValue("main/changelogrev_read", 0).toInt() == 0 || main_settings.getValue("main/changelogrev_read", 0).toInt() > openfortigui_config::changelogRev)
+    if(main_settings.getValue("main/changelogrev_read", 0).toInt() == 0 || openfortigui_config::changelogRev > main_settings.getValue("main/changelogrev_read", 0).toInt())
         onChangelog();
 
     if(main_settings.getValue("main/show_search").toBool())
