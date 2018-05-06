@@ -237,8 +237,6 @@ void MainWindow::on_btnEditVPN_clicked()
         return;
     }
 
-
-
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
     if(vpnName.isEmpty())
         return;
@@ -803,6 +801,18 @@ void MainWindow::refreshVpnProfileList()
     tiConfVpnProfiles vpnss;
     vpnss.readVpnProfiles();
 
+    // Get current selected item
+    QString curSelectedItem = "";
+    QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+    QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+    QModelIndexList sellist = selmodel->selectedRows(1);
+
+    if(sellist.count() < 1) {
+        curSelectedItem = "";
+    } else {
+        curSelectedItem = model->itemFromIndex(sellist.at(0))->text();
+    }
+
     root_local_vpn->removeRows(0, root_local_vpn->rowCount());
     root_global_vpn->removeRows(0, root_global_vpn->rowCount());
 
@@ -933,6 +943,13 @@ void MainWindow::refreshVpnProfileList()
     tray->setContextMenu(tray_menu);
     ui->tvVpnProfiles->setSortingEnabled(true);
     ui->tvVpnProfiles->sortByColumn(1, Qt::AscendingOrder);
+
+    if(!curSelectedItem.isEmpty())
+    {
+        QModelIndex qmi = model->indexFromItem(getVpnProfileItem(curSelectedItem, 1));
+        selmodel->clear();
+        selmodel->setCurrentIndex(qmi, QItemSelectionModel::SelectionFlag::Rows | QItemSelectionModel::SelectionFlag::Select);
+    }
 }
 
 void MainWindow::refreshVpnGroupList()
