@@ -454,7 +454,16 @@ void MainWindow::onvpnAdded(const vpnProfile &vpn)
 
 void MainWindow::onvpnEdited(const vpnProfile &vpn)
 {
-    refreshVpnProfileList();
+    QStandardItem *item_name = getVpnProfileItem(vpn.name, 1);
+    QStandardItem *item_gateway = getVpnProfileItem(vpn.name, 2);
+    QStandardItem *item_user = getVpnProfileItem(vpn.name, 3);
+
+    if(item_name != 0 && item_gateway != 0 && item_user != 0)
+    {
+        item_name->setText(vpn.name);
+        item_gateway->setText(vpn.gateway_host);
+        item_user->setText(vpn.username);
+    }
 }
 
 void MainWindow::onvpnGroupAdded(const vpnGroup &vpngroup)
