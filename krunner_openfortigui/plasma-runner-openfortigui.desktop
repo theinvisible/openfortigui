@@ -1,7 +1,8 @@
 [Desktop Entry]
 Name=OpenFortiGUI KRunner
-Comment=Show OpenFortiGUI VPN connections
+Comment=OpenFortiGUI VPN quickstart
 Type=Service
+Icon=/usr/share/pixmaps/openfortigui.png
 X-KDE-ServiceTypes=Plasma/Runner
 
 X-KDE-Library=krunner_openfortigui

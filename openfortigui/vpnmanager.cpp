@@ -178,6 +178,19 @@ void vpnManager::onClientConnected()
         qDebug() << "client api helo command::" << cmd.action << "::name::" << cmd.objName;
         client->flush();
 
+        // If we get ACTION_VPN_START/ACTION_VPN_STOP here we drop the connection after action
+        if(cmd.action == vpnApi::ACTION_VPN_START)
+        {
+            startVPN(cmd.objName);
+            client->close();
+        }
+
+        if(cmd.action == vpnApi::ACTION_VPN_STOP)
+        {
+            stopVPN(cmd.objName);
+            client->close();
+        }
+
         //vpnClientConnection *clientConn = new vpnClientConnection(cmd.objName, client);
         if(connections.contains(cmd.objName))
             connections[cmd.objName]->setSocket(client);
