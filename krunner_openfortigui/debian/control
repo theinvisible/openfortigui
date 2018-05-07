@@ -1,0 +1,13 @@
+Source: openfortigui-runner
+Section: admin
+Priority: optional
+Maintainer: Rene Hadler <rene@hadler.me>
+Build-Depends: debhelper (>= 8.0.0)
+
+Package: openfortigui-runner
+Architecture: amd64 i386
+Depends: ${shlibs:Depends}, openfortigui
+Conflicts:
+Replaces:
+Provides: openfortigui-runner
+Description: KRunner plugin for OpenFortiGUI
