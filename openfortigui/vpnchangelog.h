@@ -21,6 +21,7 @@ private:
     Ui::vpnChangelog *ui;
 
     void updateChangelogReadFlag();
+    void buildChangelog();
 
 private slots:
     void on_btnOK_clicked();
