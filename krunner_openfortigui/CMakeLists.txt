@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(krunner_openfortigui)
 
 find_package(ECM 5.12.0 REQUIRED NO_MODULE)
-set (CMAKE_BUILD_TYPE DEBUG)
+set (CMAKE_BUILD_TYPE RELEASE)
 set (CMAKE_MODULE_PATH
      ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PATH}
 )

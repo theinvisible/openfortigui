@@ -6,6 +6,7 @@
 
 #include <QMessageBox>
 #include <QLocalSocket>
+#include <QThread>
 
 #include "ticonfmain.h"
 #include "vpnhelper.h"
@@ -77,6 +78,7 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
     if(!vpnHelper::isOpenFortiGUIRunning())
     {
         QProcess::startDetached("openfortigui");
+        QThread::sleep(1);
     }
 
     QLocalSocket apiServer(this);
