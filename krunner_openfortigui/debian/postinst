@@ -26,8 +26,8 @@ case "$1" in
     configure)
 	echo "postinst script called with " $*
 
-        kquitapp5 krunner 2> /dev/null || true
-        (kstart5 --windowclass krunner krunner > /dev/null 2>&1 &) || true
+#        kquitapp5 krunner 2> /dev/null || true
+#        (kstart5 --windowclass krunner krunner > /dev/null 2>&1 &) || true
 
 #	_manupdate
    ;;

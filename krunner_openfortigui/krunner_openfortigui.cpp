@@ -78,7 +78,37 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
     if(!vpnHelper::isOpenFortiGUIRunning())
     {
         QProcess::startDetached("openfortigui");
-        QThread::sleep(1);
+
+        bool sockConnected = false;
+        int maxwait = 5000, curwait = 0;
+        while(!sockConnected && curwait < maxwait)
+        {
+            QLocalSocket apiServerTest(this);
+            apiServerTest.connectToServer(openfortigui_config::name);
+            if(apiServerTest.waitForConnected(200))
+            {
+                QByteArray block;
+                QDataStream out(&block, QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_5_2);
+                vpnApi apiData;
+                apiData.objName = "ping";
+                apiData.action = vpnApi::ACTION_PING;
+                out << apiData;
+
+                apiServerTest.write(block);
+                apiServerTest.flush();
+                apiServerTest.close();
+
+                sockConnected = true;
+                continue;
+            }
+            else
+            {
+                curwait += 200;
+                QThread::msleep(200);
+            }
+
+        }
     }
 
     QLocalSocket apiServer(this);

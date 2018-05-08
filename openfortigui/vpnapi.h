@@ -21,7 +21,9 @@ public:
         ACTION_STOREPASS_REQUEST,
         ACTION_STOREPASS_SUBMIT,
         ACTION_VPN_START,
-        ACTION_VPN_STOP
+        ACTION_VPN_STOP,
+        ACTION_PING,
+        ACTION_PONG
     };
 
     QString objName;

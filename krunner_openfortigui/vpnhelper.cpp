@@ -2,6 +2,10 @@
 
 #include <QProcess>
 #include <QDebug>
+#include <QLocalSocket>
+
+#include "../openfortigui/vpnapi.h"
+#include "../openfortigui/config.h"
 
 vpnHelper::vpnHelper()
 {
@@ -22,22 +26,26 @@ QString vpnHelper::formatByteUnits(qint64 num)
 
 bool vpnHelper::isOpenFortiGUIRunning()
 {
-    QStringList arguments;
-    arguments << "-A";
-
-    QProcess *ch = new QProcess();
-    ch->start("ps", arguments);
-    ch->waitForFinished(5000);
-    ch->waitForReadyRead(5000);
-    QString line;
-    int count = 0;
-    while(!ch->atEnd())
+    QLocalSocket apiServerTest;
+    apiServerTest.connectToServer(openfortigui_config::name);
+    if(apiServerTest.waitForConnected(200))
     {
-        line = QString::fromLatin1(ch->readLine());
-        if(line.contains("openfortigui"))
-            count++;
-    }
-    delete ch;
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_5_2);
+        vpnApi apiData;
+        apiData.objName = "ping";
+        apiData.action = vpnApi::ACTION_PING;
+        out << apiData;
 
-    return (count > 0) ? true : false;
+        apiServerTest.write(block);
+        apiServerTest.flush();
+        apiServerTest.close();
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
