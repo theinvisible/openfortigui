@@ -1,3 +1,9 @@
+openfortigui-runner (0.6.2-1) precise; urgency=low
+
+  * First public release for OpenFortiGUI 0.6.2
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 8 May 2018 16:40:00 +0100
+
 openfortigui-runner (0.1.0-2) precise; urgency=low
 
   * Initial release

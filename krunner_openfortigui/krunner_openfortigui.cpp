@@ -51,7 +51,9 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
             match.setType(Plasma::QueryMatch::ExactMatch);
             match.setRelevance(1.0);
             match.setMatchCategory("VPN");
-            match.setIconName("openfortigui");
+            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
+            // Framework >5.24 only
+            // match.setIconName("openfortigui");
 
             ctxt.addMatch(match);
         }
@@ -64,7 +66,9 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
             match.setType(Plasma::QueryMatch::CompletionMatch);
             match.setRelevance(0.5);
             match.setMatchCategory("VPN");
-            match.setIconName("openfortigui");
+            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
+            // Framework >5.24 only
+            // match.setIconName("openfortigui");
 
             ctxt.addMatch(match);
         }
