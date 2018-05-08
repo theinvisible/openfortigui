@@ -181,6 +181,7 @@ void vpnManager::onClientConnected()
         if(cmd.action == vpnApi::ACTION_PING)
         {
             client->close();
+            return;
         }
 
         // If we get ACTION_VPN_START/ACTION_VPN_STOP here we drop the connection after action
@@ -188,12 +189,14 @@ void vpnManager::onClientConnected()
         {
             startVPN(cmd.objName);
             client->close();
+            return;
         }
 
         if(cmd.action == vpnApi::ACTION_VPN_STOP)
         {
             stopVPN(cmd.objName);
             client->close();
+            return;
         }
 
         //vpnClientConnection *clientConn = new vpnClientConnection(cmd.objName, client);
