@@ -1123,7 +1123,11 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
     if(reason == QSystemTrayIcon::Trigger)
     {
         if(isHidden())
+        {
             show();
+            raise();
+            QApplication::setActiveWindow(this);
+        }
         else
             hide();
     }
