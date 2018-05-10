@@ -41,7 +41,7 @@ namespace openfortigui_config
 
     static const char __attribute__ ((unused)) *validatorName = "^[a-zA-z0-9 \-_]{3,}$";
 
-    static const int __attribute__ ((unused)) changelogRev = 2;
+    static const int __attribute__ ((unused)) changelogRev = 3;
 }
 
 #endif // CONFIH_H
