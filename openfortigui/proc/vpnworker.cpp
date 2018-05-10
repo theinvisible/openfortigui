@@ -407,10 +407,10 @@ void vpnWorker::process()
 
     // Step 5: ask gateway to start tunneling
     ret = http_send(&tunnel,
-                    "GET /remote/sslvpn-tunnel HTTP/1.1\n"
-                    "Host: sslvpn\n"
-                    "Cookie: %s\n\n%c",
-                    tunnel.config->cookie, '\0');
+                    "GET /remote/sslvpn-tunnel HTTP/1.1\r\n"
+                    "Host: sslvpn\r\n"
+                    "Cookie: %s\r\n\r\n",
+                    tunnel.config->cookie);
     if (ret != 1) {
         log_error("Could not start tunnel (%s).\n", err_http_str(ret));
         ret = 1;
