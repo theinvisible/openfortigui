@@ -28,6 +28,7 @@ extern "C"  {
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QHostInfo>
 
 // -------------------
 // Included from tunnel.c
@@ -268,26 +269,14 @@ static int pppd_terminate(struct tunnel *tunnel)
 
 static int get_gateway_host_ip(struct tunnel *tunnel)
 {
-    struct addrinfo hints;
-    hints.ai_family = AF_INET;
-    struct addrinfo *result = NULL;
-
-    qDebug() << "ai_flags::" << hints.ai_flags;
-
-    int ret = getaddrinfo(tunnel->config->gateway_host, NULL, &hints, &result);
-
-    if (ret) {
-        if (ret == EAI_SYSTEM)
-            log_error("getaddrinfo: %s\n", strerror(errno));
-        else
-            log_error("getaddrinfo: %s\n", gai_strerror(ret));
+    QHostInfo hInfo = QHostInfo::fromName(tunnel->config->gateway_host);
+    if(hInfo.error() != QHostInfo::NoError || hInfo.addresses().isEmpty())
+    {
+        qWarning() << "DNS lookup error: " << hInfo.errorString();
         return 1;
     }
 
-    tunnel->config->gateway_ip = ((struct sockaddr_in *)
-                                  result->ai_addr)->sin_addr;
-    freeaddrinfo(result);
-
+    inet_aton(hInfo.addresses().first().toString().toStdString().c_str(), &tunnel->config->gateway_ip);
     setenv("VPN_GATEWAY", inet_ntoa(tunnel->config->gateway_ip), 0);
 
     return 0;
