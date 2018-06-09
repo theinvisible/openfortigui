@@ -267,7 +267,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="679"/>
         <source>VPN %1 is disconnected</source>
-        <translation>VPN %1 ist getrennt</translation>
+        <translation>VPN %1 s'ha desconnectat</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="750"/>
