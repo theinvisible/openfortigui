@@ -13,7 +13,7 @@ TEMPLATE = app
 
 CONFIG += c++11
 
-TRANSLATIONS = lang/openfortigui_de.ts lang/openfortigui_ca.ts
+TRANSLATIONS = lang/openfortigui_de.ts lang/openfortigui_ca.ts lang/openfortigui_ja.ts
 
 SOURCES += main.cpp\
         mainwindow.cpp \
