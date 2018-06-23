@@ -310,47 +310,47 @@
     <message>
         <location filename="../mainwindow.cpp" line="179"/>
         <source> - Add VPN</source>
-        <translation>VPNを追加</translation>
+        <translation> - VPNを追加</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="279"/>
         <source> - Edit VPN</source>
-        <translation>VPNを編集</translation>
+        <translation> - VPNを編集</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="327"/>
         <source> - Add VPN-Group</source>
-        <translation>VPN群を追加</translation>
+        <translation> - VPN群を追加</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="393"/>
         <source> - Edit VPN-Group</source>
-        <translation>VPN群を編集</translation>
+        <translation> - VPN群を編集</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="712"/>
         <source> - Login</source>
-        <translation>ログイン</translation>
+        <translation> - ログイン</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="728"/>
         <source> - OTP-Login</source>
-        <translation>OTPログイン</translation>
+        <translation> - OTPログイン</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1162"/>
         <source> - Settings</source>
-        <translation>設定</translation>
+        <translation> - 設定</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1176"/>
         <source> - Setup wizard</source>
-        <translation>セットアップウィザード</translation>
+        <translation> - セットアップウィザード</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1197"/>
         <source> - Changelog</source>
-        <translation>変更履歴</translation>
+        <translation> - 変更履歴</translation>
     </message>
 </context>
 <context>
@@ -477,7 +477,7 @@
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>パスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。エラー野詳細：%1</translation>
+        <translation>パスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。エラー：%1</translation>
     </message>
 </context>
 <context>
@@ -585,7 +585,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpngroupeditor.cpp" line="172"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
-        <translation>全ての所属群にパスワードを設定する必要があります。パスワードが欠落している最初のVPN：</translation>
+        <translation>全ての所属群にパスワードを設定する必要があります。パスワードが欠落している最初のVPN：%1</translation>
     </message>
 </context>
 <context>
@@ -924,7 +924,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.cpp" line="121"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>バスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。</translation>
+        <translation>バスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。エラー： %1</translation>
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="131"/>
