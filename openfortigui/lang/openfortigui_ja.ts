@@ -401,7 +401,7 @@
     <message>
         <location filename="../setupwizard.ui" line="53"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This wizard will guide you trough some basic setup. To start just click &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt;If you dont need the wizard you can also abort it. You can always start it again from the main window.&lt;/p&gt;&lt;p&gt;Have fun.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenFortiGUI へようこそ。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;このウィザードは基本設定を案内します。始めるには「次へ」をクリックして下さい。&lt;/p&gt;&lt;p&gt;ウィザードが必要ない場合、後でメニューから実行できますので終了しても大丈夫です。.&lt;/p&gt;&lt;p&gt;お楽しみに！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenFortiGUI へようこそ。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;このウィザードは基本設定を案内します。始めるには「次へ」をクリックして下さい。&lt;/p&gt;&lt;p&gt;ウィザードが必要ない場合、後でメニューから実行できますので終了しても大丈夫です。&lt;/p&gt;&lt;p&gt;お楽しみに！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="67"/>
