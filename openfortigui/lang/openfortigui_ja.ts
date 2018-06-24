@@ -310,22 +310,22 @@
     <message>
         <location filename="../mainwindow.cpp" line="179"/>
         <source> - Add VPN</source>
-        <translation> - VPNを追加</translation>
+        <translation> - VPN を追加</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="279"/>
         <source> - Edit VPN</source>
-        <translation> - VPNを編集</translation>
+        <translation> - VPN を編集</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="327"/>
         <source> - Add VPN-Group</source>
-        <translation> - VPN群を追加</translation>
+        <translation> - VPN 群を追加</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="393"/>
         <source> - Edit VPN-Group</source>
-        <translation> - VPN群を編集</translation>
+        <translation> - VPN 群を編集</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="712"/>
@@ -335,7 +335,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="728"/>
         <source> - OTP-Login</source>
-        <translation> - OTPログイン</translation>
+        <translation> - OTP ログイン</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1162"/>
@@ -358,12 +358,12 @@
     <message>
         <location filename="../main.cpp" line="132"/>
         <source>Start vpn-process [must be run as root]</source>
-        <translation>VPNプロセスを開始</translation>
+        <translation>VPN プロセスを開始</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="136"/>
         <source>Set vpn name &lt;vpnname&gt;</source>
-        <translation>VPN名 &lt;vpnname&gt; を設定</translation>
+        <translation>VPN 名 &lt;vpnname&gt; を設定</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="137"/>
@@ -401,12 +401,12 @@
     <message>
         <location filename="../setupwizard.ui" line="53"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This wizard will guide you trough some basic setup. To start just click &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt;If you dont need the wizard you can also abort it. You can always start it again from the main window.&lt;/p&gt;&lt;p&gt;Have fun.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenFortiGUIへようこそ。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;このウィザードは基本設定を案内します。始めるには「次へ」をクリックして下さい。&lt;/p&gt;&lt;p&gt;ウィザードが必要ない場合、後でメニューから実行できますので終了しても大丈夫です。.&lt;/p&gt;&lt;p&gt;お楽しみに！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenFortiGUI へようこそ。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;このウィザードは基本設定を案内します。始めるには「次へ」をクリックして下さい。&lt;/p&gt;&lt;p&gt;ウィザードが必要ない場合、後でメニューから実行できますので終了しても大丈夫です。.&lt;/p&gt;&lt;p&gt;お楽しみに！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="67"/>
         <source>AES-Key</source>
-        <translation>AES鍵</translation>
+        <translation>AES 鍵</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="90"/>
@@ -416,7 +416,7 @@
     <message>
         <location filename="../setupwizard.ui" line="97"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted, please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES鍵の設定&lt;/span&gt;&lt;/p&gt;&lt;p&gt;パスワード暗号化に使用されるAES鍵を指定して下さい。&lt;/p&gt;&lt;p&gt;手動指定か自動生成が可能です。AES鍵を変更するには既存のVPN定義のパスワードを再設定する必要がありますのでご注意下さい。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;注意：&lt;/span&gt;AES鍵は非暗号化状態で保存されます。暗号化状態で保存されたい場合は「パスワード管理」を有効にして下さい。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES 鍵の設定&lt;/span&gt;&lt;/p&gt;&lt;p&gt;パスワード暗号化に使用される AES 鍵を指定して下さい。&lt;/p&gt;&lt;p&gt;手動指定か自動生成が可能です。AES 鍵を変更するには既存の VPN 定義のパスワードを再設定する必要がありますのでご注意下さい。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;注意：&lt;/span&gt;AES 鍵は非暗号化状態で保存されます。暗号化状態で保存されたい場合は「パスワード管理」を有効にして下さい。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="129"/>
@@ -431,12 +431,12 @@
     <message>
         <location filename="../setupwizard.ui" line="149"/>
         <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
-        <translation>システムのパスワード管理（KWalletやGNOME Keyring）を使用</translation>
+        <translation>システムのパスワード管理（KWallet や GNOME Keyring）を使用</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="175"/>
         <source>Abort</source>
-        <translation>停止</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="198"/>
@@ -452,12 +452,12 @@
     <message>
         <location filename="../setupwizard.cpp" line="84"/>
         <source>AES-Key error</source>
-        <translation>AES鍵エラー</translation>
+        <translation>AES 鍵エラー</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="85"/>
         <source>Both AES-Key and AES-IV must be 128bit (16 chars) long.</source>
-        <translation>AES鍵とAES-IVの長さはどちらも128ビット（16字）でなければなりません。</translation>
+        <translation>AES 鍵と AES-IV の長さはどちらも 128 ビット（16字）でなければなりません。</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="164"/>
@@ -477,7 +477,7 @@
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>パスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。エラー：%1</translation>
+        <translation>パスワード管理が無効です。KWallet や GNOME Keyring の状態を確認して下さい。エラー：%1</translation>
     </message>
 </context>
 <context>
@@ -663,7 +663,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="24"/>
         <source>VPN-Preferences</source>
-        <translation>VPN設定</translation>
+        <translation>VPN 設定</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="30"/>
@@ -678,12 +678,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="58"/>
         <source>VPN-Server</source>
-        <translation>VPNサーバ</translation>
+        <translation>VPN サーバ</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="74"/>
         <source>Username</source>
-        <translation>ユーザー名</translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="87"/>
@@ -693,7 +693,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="100"/>
         <source>VPN-Port</source>
-        <translation>VPNポート</translation>
+        <translation>VPN ポート</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="136"/>
@@ -713,12 +713,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="180"/>
         <source>CA-File</source>
-        <translation>CAファイル</translation>
+        <translation>CA ファイル</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="193"/>
         <source>Verify Certificate</source>
-        <translation>証明証を確認</translation>
+        <translation>証明証を検証</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="212"/>
@@ -810,7 +810,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.cpp" line="133"/>
         <source>Select the CA-file</source>
-        <translation>CAファイルを選択して下さい</translation>
+        <translation>CA ファイルを選択して下さい</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="148"/>
