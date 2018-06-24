@@ -25,7 +25,7 @@
         <location filename="../mainwindow.ui" line="64"/>
         <location filename="../mainwindow.cpp" line="102"/>
         <source>VPN-Groups</source>
-        <translation>VPN群</translation>
+        <translation>VPN 群</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="100"/>
@@ -46,7 +46,7 @@
         <location filename="../mainwindow.ui" line="158"/>
         <location filename="../mainwindow.cpp" line="126"/>
         <source>About</source>
-        <translation>OpenFortiGUIについて</translation>
+        <translation>情報</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="167"/>
@@ -109,22 +109,22 @@
     <message>
         <location filename="../mainwindow.cpp" line="71"/>
         <source>User</source>
-        <translation>ユーザー名</translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="71"/>
         <source>Traffic RX/TX</source>
-        <translation>送受信</translation>
+        <translation>受送信</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <source>Local VPNs</source>
-        <translation>ローカルVPN</translation>
+        <translation>ローカル VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="78"/>
         <source>Global VPNs</source>
-        <translation>グローバルVPN</translation>
+        <translation>グローバル VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="93"/>
@@ -134,7 +134,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="108"/>
         <source>VPN-Group</source>
-        <translation>VPN群</translation>
+        <translation>VPN 群</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="113"/>
@@ -165,69 +165,69 @@
         <location filename="../mainwindow.cpp" line="222"/>
         <location filename="../mainwindow.cpp" line="242"/>
         <source>Delete VPN</source>
-        <translation>VPNを削除</translation>
+        <translation>VPN を削除</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="200"/>
         <source>Global VPN-Profiles cannot be deleted.</source>
-        <translation>グローバルVPNを削除することができません。</translation>
+        <translation>グローバル VPN 定義を削除することができません。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="214"/>
         <location filename="../mainwindow.cpp" line="265"/>
         <source>The VPN state must be disconnected to perform this action.</source>
-        <translation>この作業を実行するには先ずVPNから切断する必要があります。</translation>
+        <translation>この作業を実行するには先ず VPN から切断する必要があります。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="223"/>
         <source>Warning, the selected vpn will be deleted, continue?</source>
-        <translation>指定されたVPNを削除してもよろしいですか？</translation>
+        <translation>指定された VPN を削除してもよろしいですか？</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="242"/>
         <source>The selected vpn could not be deleted, an error occured.</source>
-        <translation>エラーが発生したため、指定されたVPNを削除することができませんでした。</translation>
+        <translation>エラーが発生したため、指定された VPN を削除することができませんでした。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="264"/>
         <source>Edit VPN</source>
-        <translation>VPNを編集</translation>
+        <translation>VPN を編集</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="301"/>
         <source>Copy VPN-profile</source>
-        <translation>VPN定義をコピー</translation>
+        <translation>VPN 定義をコピー</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="302"/>
         <source>Enter the new VPN-profile name</source>
-        <translation>新しいVPN定義の名前を入力して下さい</translation>
+        <translation>新しい VPN 定義の名前を入力して下さい</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="348"/>
         <location filename="../mainwindow.cpp" line="368"/>
         <source>Delete VPN-Group</source>
-        <translation>VPN群を削除</translation>
+        <translation>VPN 群を削除</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="349"/>
         <source>Warning, the selected vpn-group will be deleted, continue?</source>
-        <translation>指定されたVPN群を削除してもよろしいですか？</translation>
+        <translation>指定された VPN 群を削除してもよろしいですか？</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="368"/>
         <source>The selected vpn-group could not be deleted, an error occured.</source>
-        <translation>エラーが発生したため、指定されたVPN群を削除することができませんでした。</translation>
+        <translation>エラーが発生したため、指定された VPN 群を削除することができませんでした。</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="412"/>
         <source>Copy Group-profile</source>
-        <translation>VPN群定義をコピー</translation>
+        <translation>VPN 群定義をコピー</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="413"/>
         <source>Enter the new Group-profile name</source>
-        <translation>VPN群定義の名前を入力して下さい</translation>
+        <translation>VPN 群定義の名前を入力して下さい</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="663"/>
@@ -252,7 +252,7 @@
         <location filename="../mainwindow.cpp" line="693"/>
         <location filename="../mainwindow.cpp" line="696"/>
         <source>VPN-Status</source>
-        <translation>VPN状態</translation>
+        <translation>VPN 状態</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="693"/>
@@ -302,7 +302,7 @@
     <message>
         <location filename="../main.cpp" line="197"/>
         <source>This application is already running, exiting now.</source>
-        <translation>アプリケーションは実行中なので、終了します。</translation>
+        <translation>アプリケーションは既に実行中なので終了します。</translation>
     </message>
 </context>
 <context>
@@ -383,7 +383,7 @@
     <message>
         <location filename="../main.cpp" line="145"/>
         <source>Kills all vpn-processes</source>
-        <translation>VPNプロセスを全て停止</translation>
+        <translation>VPN プロセスを全て停止</translation>
     </message>
 </context>
 <context>
@@ -503,22 +503,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnchangelog.ui" line="46"/>
         <source>OK</source>
-        <translation></translation>
+        <translation>了解</translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="58"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added API for KRunner support&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS lookup is migrated from C style to Qt style&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added API for KRunner support&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS lookup is migrated from C style to Qt style&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;KRunner 対応の API を追加&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS 参照を C 式から Qt 式へ&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 様々なバグ修正（git 記録を参照）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="69"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added catalan language (thanks wagafo@github), Ubuntu 18.04 builds&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added catalan language (thanks wagafo@github), Ubuntu 18.04 builds&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;カタルーニャ語対応を追加（wagafo@github のお蔭で）、 Ubuntu 18.04 用ビルド&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 様々なバグ修正（git 記録を参照）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="79"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added &amp;quot;half internet routes&amp;quot; Option to VPN profile&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added &amp;quot;half internet routes&amp;quot; Option to VPN profile&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;AES ライブラリを OpenSSLに替えました。以前のライブラリとのパディングの違いのため、VPN 定義のパスワードを全て再設定しなければなりません。&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 変更履歴ダイアログを追加&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - ちょっとしたバグ修正&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 「半インターネット経路」機能を VPN 定義に追加&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -533,7 +533,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../vpngroupeditor.cpp" line="138"/>
         <location filename="../vpngroupeditor.cpp" line="172"/>
         <source>VPN-Group</source>
-        <translation>VPN群</translation>
+        <translation>VPN 群</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="30"/>
@@ -549,7 +549,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpngroupeditor.ui" line="60"/>
         <source>Members</source>
-        <translation>所属VPN</translation>
+        <translation>所属 VPN</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="94"/>
@@ -584,12 +584,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpngroupeditor.cpp" line="138"/>
         <source>You must set a name for the VPN-group.</source>
-        <translation>VPN群の名前を定義する必要があります。</translation>
+        <translation>VPN 群の名前を定義する必要があります。</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="172"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
-        <translation>全ての所属群にパスワードを設定する必要があります。パスワードが欠落している最初のVPN：%1</translation>
+        <translation>全ての所属群にパスワードを設定する必要があります。パスワードが欠落している最初の VPN：%1</translation>
     </message>
 </context>
 <context>
@@ -635,7 +635,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnotplogin.ui" line="20"/>
         <source>Please enter your OTP-login details.</source>
-        <translation>OTPログイン情報を入力して下さい。</translation>
+        <translation>OTP ログイン情報を入力して下さい。</translation>
     </message>
     <message>
         <location filename="../vpnotplogin.ui" line="79"/>
@@ -755,12 +755,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="333"/>
         <source>Set DNS</source>
-        <translation>DNSを設定</translation>
+        <translation>DNS を設定</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="353"/>
         <source>Insecure SSL</source>
-        <translation>安全ではないSSL</translation>
+        <translation>安全ではない SSL</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="373"/>
@@ -785,7 +785,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="438"/>
         <source>PPPD no peerdns</source>
-        <translation>PPPDはpeerdnsなし</translation>
+        <translation>PPPD は peerdns なし</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="487"/>
@@ -822,17 +822,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.cpp" line="148"/>
         <source>You must set a name for the VPN.</source>
-        <translation>VPNの名前を設定する必要があります。</translation>
+        <translation>VPN の名前を設定する必要があります。</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="154"/>
         <source>You must set a gateway for the VPN.</source>
-        <translation>VPNのゲートウェイを設定する必要があります。</translation>
+        <translation>VPN のゲートウェイを設定する必要があります。</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="160"/>
         <source>You must set a gateway-port for the VPN.</source>
-        <translation>VPNのポートを設定する必要があります。</translation>
+        <translation>VPN のポートを設定する必要があります。</translation>
     </message>
 </context>
 <context>
@@ -845,7 +845,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="20"/>
         <source>Main</source>
-        <translation>メイン</translation>
+        <translation>一般</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="34"/>
@@ -865,7 +865,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="87"/>
         <source>AES-Key</source>
-        <translation>AES鍵</translation>
+        <translation>AES 鍵</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="103"/>
@@ -875,7 +875,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="113"/>
         <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
-        <translation>システムのパスワード管理（KWalletやGNOME Keyring）を使用</translation>
+        <translation>システムのパスワード管理（KWallet や GNOME Keyring）を使用</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="125"/>
@@ -885,17 +885,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="139"/>
         <source>Local VPN-Profiles</source>
-        <translation>ローカルVPN定義</translation>
+        <translation>ローカル VPN 定義</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="152"/>
         <source>Local VPN-Groups</source>
-        <translation>ローカルVPN群</translation>
+        <translation>ローカル VPN 群</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="165"/>
         <source>Global VPN-Profiles</source>
-        <translation>グローバルVPN定義</translation>
+        <translation>グローバル VPN 定義</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="178"/>
@@ -928,7 +928,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.cpp" line="121"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>バスワード管理が無効です。KWalletやGNOME Keyringの状態を確認して下さい。エラー： %1</translation>
+        <translation>バスワード管理が無効です。KWallet や GNOME Keyringの状態を確認して下さい。エラー： %1</translation>
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="131"/>
