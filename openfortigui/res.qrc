@@ -25,5 +25,6 @@
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>
         <file alias="openfortigui_ca.qm">lang/openfortigui_ca.qm</file>
+        <file alias="openfortigui_ja.qm">lang/openfortigui_ja.qm</file>
     </qresource>
 </RCC>
