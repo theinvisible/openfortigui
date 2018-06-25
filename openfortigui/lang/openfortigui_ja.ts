@@ -119,12 +119,12 @@
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <source>Local VPNs</source>
-        <translation>ローカル VPN</translation>
+        <translation>ローカル</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="78"/>
         <source>Global VPNs</source>
-        <translation>グローバル VPN</translation>
+        <translation>グローバル</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="93"/>
@@ -151,7 +151,7 @@
         <location filename="../mainwindow.cpp" line="120"/>
         <location filename="../mainwindow.cpp" line="764"/>
         <source>Copy</source>
-        <translation>コピー</translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="124"/>
@@ -196,7 +196,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="301"/>
         <source>Copy VPN-profile</source>
-        <translation>VPN 定義をコピー</translation>
+        <translation>VPN 定義を複製</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="302"/>
@@ -222,7 +222,7 @@
     <message>
         <location filename="../mainwindow.cpp" line="412"/>
         <source>Copy Group-profile</source>
-        <translation>VPN 群定義をコピー</translation>
+        <translation>VPN 群定義を複製</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="413"/>
