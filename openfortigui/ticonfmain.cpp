@@ -167,7 +167,7 @@ tiConfVpnProfiles::tiConfVpnProfiles()
 {
     main_settings = new tiConfMain();
     QList<vpnProfile*> vpnprofiles;
-    read_profile_passwords = true;
+    read_profile_passwords = false;
 }
 
 tiConfVpnProfiles::~tiConfVpnProfiles()

@@ -17,6 +17,12 @@
 
 #include "vpnprofile.h"
 
+#include "ticonfmain.h"
+#include "vpnhelper.h"
+
+#include <QDir>
+#include <QDebug>
+
 vpnProfile::vpnProfile()
 {
     name = "";
@@ -39,4 +45,33 @@ vpnProfile::vpnProfile()
     verify_cert = false;
     insecure_ssl = false;
     autostart = false;
+}
+
+QString vpnProfile::readPassword()
+{
+    tiConfMain *main_settings = new tiConfMain();
+    QString retPass = "";
+
+    QMap<vpnProfile::Origin, QString> profileDirs;
+    profileDirs[vpnProfile::Origin_LOCAL] = tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString());
+    profileDirs[vpnProfile::Origin_GLOBAL] = tiConfMain::formatPath(main_settings->getValue("paths/globalvpnprofiles").toString());
+
+    QString profileDir = profileDirs[origin_location];
+
+    QString aeskey, aesiv;
+    if(main_settings->getValue("main/use_system_password_store").toBool()) {
+        aeskey = vpnHelper::systemPasswordStoreRead("aeskey").data;
+        aesiv = vpnHelper::systemPasswordStoreRead("aesiv").data;
+    } else {
+        aeskey = main_settings->getValue("main/aeskey").toString();
+        aesiv = main_settings->getValue("main/aesiv").toString();
+    }
+
+    QSettings *f = new QSettings(profileDir + QDir::separator() + name + ".conf", QSettings::IniFormat);
+    f->beginGroup("vpn");
+    retPass = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
+    f->endGroup();
+    delete f;
+
+    return retPass;
 }

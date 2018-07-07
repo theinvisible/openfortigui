@@ -108,6 +108,8 @@ void vpnProcess::startVPN()
 
         profile->password = cred_data.password;
         cred_data.password = "";
+    } else {
+        profile->password = profile->readPassword();
     }
 
     // Reset stats

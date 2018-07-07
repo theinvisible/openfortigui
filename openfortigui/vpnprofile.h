@@ -56,6 +56,8 @@ public:
     bool insecure_ssl;
     bool debug;
     bool autostart;
+
+    QString readPassword();
 };
 
 #endif // VPNPROFILE_H

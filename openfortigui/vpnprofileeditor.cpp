@@ -56,7 +56,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leGatewayHost->setText(config->gateway_host);
     ui->sBGatewayPort->setValue(config->gateway_port);
     ui->leUsername->setText(config->username);
-    ui->lePassword->setText(config->password);
+    ui->lePassword->setText(config->readPassword());
 
     if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty() || !config->trusted_cert.isEmpty())
     {

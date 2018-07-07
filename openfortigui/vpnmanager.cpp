@@ -293,7 +293,7 @@ void vpnClientConnection::submitPassStoreCred()
 
     tiConfVpnProfiles profiles;
     vpnProfile *profile = profiles.getVpnProfileByName(name);
-    jsTop["password"] = profile->password;
+    jsTop["password"] = profile->readPassword();
 
     json.setObject(jsTop);
     data.data = json.toJson();
