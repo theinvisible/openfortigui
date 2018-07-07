@@ -818,8 +818,6 @@ void MainWindow::refreshVpnProfileList()
     tiConfVpnProfiles vpnss;
     vpnss.readVpnProfiles();
 
-    qInfo() << "refreshProfiles";
-
     // Get current selected item
     QString curSelectedItem = "";
     QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
