@@ -1,3 +1,9 @@
+openfortigui (0.7.0-1) precise; urgency=low
+
+  * Added japanese language, openfortivpn core update, various bugfixes
+
+ -- Rene Hadler <rene@hadler.me>  Sun, 8 Jul 2018 11:02:00 +0100
+
 openfortigui (0.6.2-1) precise; urgency=low
 
   * Added support API for KRunner
