@@ -38,6 +38,7 @@ extern "C"  {
 #else
 #include <pty.h>
 #endif
+#include <termios.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <assert.h>
@@ -54,16 +55,16 @@ extern "C"  {
 struct ofv_varr {
     unsigned cap;		// current capacity
     unsigned off;		// next slot to write, always < max(cap - 1, 1)
-    const void **data;	// NULL terminated
+    const char **data;	// NULL terminated
 };
 
-static void ofv_append_varr(struct ofv_varr *p, const void *x)
+static void ofv_append_varr(struct ofv_varr *p, const char *x)
 {
     if (p->off + 1 >= p->cap) {
-        const void **ndata;
+        const char **ndata;
         unsigned ncap = (p->off + 1) * 2;
         assert(p->off + 1 < ncap);
-        ndata = (const void**) realloc(p->data, ncap * sizeof(const void *));
+        ndata = (const char**) realloc(p->data, ncap * sizeof(const char *));
         if (ndata) {
             p->data = ndata;
             p->cap = ncap;
@@ -94,7 +95,7 @@ static int on_ppp_if_up(struct tunnel *tunnel)
         }
     }
 
-    if (tunnel->config->set_dns) {
+    if (tunnel->config->set_dns && !tunnel->config->pppd_use_peerdns) {
         log_info("Adding VPN nameservers...\n");
         ipv4_add_nameservers_to_resolv_conf(tunnel);
     }
@@ -113,7 +114,7 @@ static int on_ppp_if_down(struct tunnel *tunnel)
         ipv4_restore_routes(tunnel);
     }
 
-    if (tunnel->config->set_dns) {
+    if (tunnel->config->set_dns && !tunnel->config->pppd_use_peerdns) {
         log_info("Removing VPN nameservers...\n");
         ipv4_del_nameservers_from_resolv_conf(tunnel);
     }
@@ -171,11 +172,11 @@ static int pppd_run(struct tunnel *tunnel)
                 "lcp-max-configure", "40",
                 "mru", "1354"
             };
-            for (unsigned i = 0; i < sizeof v/sizeof v[0]; i++)
+            for (unsigned i = 0; i < ARRAY_SIZE(v); i++)
                 ofv_append_varr(&pppd_args, v[i]);
         }
 
-        if (tunnel->config->pppd_use_peerdns)
+        if (tunnel->config->set_dns && tunnel->config->pppd_use_peerdns)
             ofv_append_varr(&pppd_args, "usepeerdns");
         if (tunnel->config->pppd_log) {
             ofv_append_varr(&pppd_args, "debug");
