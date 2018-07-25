@@ -143,9 +143,9 @@ void vpnProfileEditor::on_btnCancel_clicked()
 
 void vpnProfileEditor::on_btnSave_clicked()
 {
-    if(ui->leName->text().isEmpty())
+    if(ui->leName->text().isEmpty() || !ui->leName->hasAcceptableInput())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a name for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a valid name for the VPN."));
         return;
     }
 
