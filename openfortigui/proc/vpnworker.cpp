@@ -345,7 +345,7 @@ void vpnWorker::process()
         add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
 
     if(!vpnConfig.realm.isEmpty())
-        strncpy(config.realm, vpnConfig.user_key.toStdString().c_str(), FIELD_SIZE);
+        strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
