@@ -160,6 +160,9 @@ MainWindow::MainWindow(QWidget *parent) :
         actionSearch->setChecked(true);
         ui->leSearch->show();
     }
+
+    if(main_settings.getValue("gui/main_toolbar_location", 0).toInt() != 0)
+        addToolBar(static_cast<Qt::ToolBarArea>(main_settings.getValue("gui/main_toolbar_location", 0).toInt()), this->ui->tbActions);
 }
 
 MainWindow::~MainWindow()
@@ -641,6 +644,10 @@ void MainWindow::onStopVPN(const QString &vpnname)
 
 void MainWindow::onQuit()
 {
+    tiConfMain main_settings;
+    main_settings.setValue("gui/main_toolbar_location", this->toolBarArea(this->ui->tbActions));
+    main_settings.sync();
+
     QCoreApplication::quit();
 }
 
