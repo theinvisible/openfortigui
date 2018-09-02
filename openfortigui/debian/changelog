@@ -1,3 +1,9 @@
+openfortigui (0.7.1-1) precise; urgency=low
+
+  * Oopenfortivpn core update, various bugfixes
+
+ -- Rene Hadler <rene@hadler.me>  Sun, 2 Sep 2018 16:04:00 +0100
+
 openfortigui (0.7.0-1) precise; urgency=low
 
   * Added japanese language, openfortivpn core update, various bugfixes
