@@ -48,7 +48,7 @@ vpnHelperResult vpnHelper::checkSystemPasswordStoreAvailable()
     vpnHelperResult result;
     result.status = false;
 
-    QKeychain::WritePasswordJob job(QLatin1String(openfortigui_config::password_manager_namespace));
+    QKeychain::WritePasswordJob job ((QLatin1String(openfortigui_config::password_manager_namespace)));
     job.setAutoDelete(false);
     job.setKey("testkeystore");
     job.setBinaryData("test");
@@ -63,7 +63,7 @@ vpnHelperResult vpnHelper::checkSystemPasswordStoreAvailable()
         return result;
     }
 
-    QKeychain::DeletePasswordJob job2(QLatin1String(openfortigui_config::password_manager_namespace));
+    QKeychain::DeletePasswordJob job2 ((QLatin1String(openfortigui_config::password_manager_namespace)));
     job2.setAutoDelete(false);
     job2.setKey("testkeystore");
     QEventLoop loop2;
@@ -86,7 +86,7 @@ vpnHelperResult vpnHelper::systemPasswordStoreWrite(const QString &key, const QS
     vpnHelperResult result;
     result.status = false;
 
-    QKeychain::WritePasswordJob job(QLatin1String(openfortigui_config::password_manager_namespace));
+    QKeychain::WritePasswordJob job ((QLatin1String(openfortigui_config::password_manager_namespace)));
     job.setAutoDelete(false);
     job.setKey(key);
     job.setBinaryData(data.toUtf8());
@@ -111,7 +111,7 @@ vpnHelperResult vpnHelper::systemPasswordStoreRead(const QString &key)
     result.status = false;
     result.data = "";
 
-    QKeychain::ReadPasswordJob job(QLatin1String(openfortigui_config::password_manager_namespace));
+    QKeychain::ReadPasswordJob job ((QLatin1String(openfortigui_config::password_manager_namespace)));
     job.setAutoDelete(false);
     job.setKey(key);
     QEventLoop loop;
@@ -137,7 +137,7 @@ vpnHelperResult vpnHelper::systemPasswordStoreDelete(const QString &key)
     vpnHelperResult result;
     result.status = false;
 
-    QKeychain::DeletePasswordJob job(QLatin1String(openfortigui_config::password_manager_namespace));
+    QKeychain::DeletePasswordJob job ((QLatin1String(openfortigui_config::password_manager_namespace)));
     job.setAutoDelete(false);
     job.setKey(key);
     QEventLoop loop;
