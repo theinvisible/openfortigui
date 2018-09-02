@@ -24,7 +24,7 @@ SOURCES += main.cpp\
     openfortivpn/src/ipv4.c \
     openfortivpn/src/log.c \
     openfortivpn/src/tunnel.c \
-    openfortivpn_local/src/userinput.c \
+    openfortivpn/src/userinput.c \
     openfortivpn/src/xml.c \
     vpnmanager.cpp \
     ticonfmain.cpp \

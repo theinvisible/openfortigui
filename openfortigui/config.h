@@ -33,7 +33,7 @@ namespace openfortigui_config
     static const char __attribute__ ((unused)) *aeskey = "yowp2IwTTRodgdWp";
     static const char __attribute__ ((unused)) *aesiv = "VoUT5n5ToogkmQU3";
 
-    static const char __attribute__ ((unused)) *validatorName = "^[a-zA-z0-9 \-_]{3,}$";
+    static const char __attribute__ ((unused)) *validatorName = "^[a-zA-zäöü0-9 \-_]{3,}$";
 
     static const int __attribute__ ((unused)) changelogRev = 4;
 }
