@@ -37,7 +37,7 @@ public:
     Origin origin_location;
 
     QString gateway_host;
-    qint16 gateway_port;
+    quint16 gateway_port;
     QString username;
     QString password;
     QString otp;
