@@ -52,7 +52,9 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
 
     QString query = ctxt.query();
     tiConfVpnProfiles vpnProfiles;
+    tiConfVpnGroups vpnGroups;
     vpnProfiles.readVpnProfiles();
+    vpnGroups.readVpnGroups();
 
     QList<vpnProfile*> vpns = vpnProfiles.getVpnProfiles();
     for(int i=0; i < vpns.count(); i++)
@@ -83,6 +85,41 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
             match.setType(Plasma::QueryMatch::CompletionMatch);
             match.setRelevance(0.5);
             match.setMatchCategory("VPN");
+            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
+            // Framework >5.24 only
+            // match.setIconName("openfortigui");
+
+            ctxt.addMatch(match);
+        }
+    }
+
+    QList<vpnGroup*> vpngroups = vpnGroups.getVpnGroups();
+    for(int i=0; i < vpngroups.count(); i++)
+    {
+        vpnGroup *vpngroup = vpngroups.at(i);
+
+        if(query == vpngroup->name.toLower())
+        {
+            Plasma::QueryMatch match(this);
+            match.setText(vpngroup->name);
+            match.setData(vpngroup->name);
+            match.setType(Plasma::QueryMatch::ExactMatch);
+            match.setRelevance(1.0);
+            match.setMatchCategory("VPN Group");
+            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
+            // Framework >5.24 only
+            // match.setIconName("openfortigui");
+
+            ctxt.addMatch(match);
+        }
+        else if(vpngroup->name.contains(query, Qt::CaseInsensitive))
+        {
+            Plasma::QueryMatch match(this);
+            match.setText(vpngroup->name);
+            match.setData(vpngroup->name);
+            match.setType(Plasma::QueryMatch::CompletionMatch);
+            match.setRelevance(0.5);
+            match.setMatchCategory("VPN Group");
             match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
             // Framework >5.24 only
             // match.setIconName("openfortigui");
