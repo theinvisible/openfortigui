@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0)
 
 Package: openfortigui-runner
 Architecture: amd64 i386
-Depends: ${shlibs:Depends}, openfortigui (>= 0.6.2-1)
+Depends: ${shlibs:Depends}, openfortigui (>= 0.7.2-1)
 Conflicts:
 Replaces:
 Provides: openfortigui-runner

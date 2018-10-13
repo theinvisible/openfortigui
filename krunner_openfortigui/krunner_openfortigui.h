@@ -27,6 +27,12 @@ class Krunner_openfortigui : public Plasma::AbstractRunner {
 public:
     Krunner_openfortigui(QObject* parent, const QVariantList& args);
 
+    enum dataRunnerType
+    {
+        DATA_TYPE_VPN = 0,
+        DATA_TYPE_VPNGROUP
+    };
+
     void match(Plasma::RunnerContext&);
     void run(const Plasma::RunnerContext&, const Plasma::QueryMatch&);
 };

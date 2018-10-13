@@ -40,7 +40,9 @@ public:
         ACTION_VPN_START,
         ACTION_VPN_STOP,
         ACTION_PING,
-        ACTION_PONG
+        ACTION_PONG,
+        ACTION_VPNGROUP_START,
+        ACTION_VPNGROUP_STOP
     };
 
     QString objName;

@@ -1,3 +1,9 @@
+openfortigui-runner (0.7.2-1) precise; urgency=low
+
+  * Adding Umlaut support and VPN group search
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 13 Oct 2018 20:40:00 +0100
+
 openfortigui-runner (0.6.2-1) precise; urgency=low
 
   * First public release for OpenFortiGUI 0.6.2

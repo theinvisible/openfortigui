@@ -216,6 +216,28 @@ void vpnManager::onClientConnected()
             return;
         }
 
+        if(cmd.action == vpnApi::ACTION_VPNGROUP_START)
+        {
+            tiConfVpnGroups groups;
+            vpnGroup *vpngroup = groups.getVpnGroupByName(cmd.objName);
+            QStringListIterator it(vpngroup->localMembers);
+            while(it.hasNext())
+            {
+                startVPN(it.next());
+            }
+        }
+
+        if(cmd.action == vpnApi::ACTION_VPNGROUP_STOP)
+        {
+            tiConfVpnGroups groups;
+            vpnGroup *vpngroup = groups.getVpnGroupByName(cmd.objName);
+            QStringListIterator it(vpngroup->localMembers);
+            while(it.hasNext())
+            {
+                stopVPN(it.next());
+            }
+        }
+
         //vpnClientConnection *clientConn = new vpnClientConnection(cmd.objName, client);
         if(connections.contains(cmd.objName))
             connections[cmd.objName]->setSocket(client);

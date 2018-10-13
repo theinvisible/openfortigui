@@ -155,6 +155,7 @@ void vpnGroupEditor::on_btnSave_clicked()
     QStandardItem *item = 0, *item2 = 0, *item3 = 0;
     QList<QString> lMembers, gMembers;
     tiConfVpnProfiles vpns;
+    vpns.setReadProfilePasswords(true);
     vpns.readVpnProfiles();
     vpnProfile *vpnprofile;
     for(int i=0; i<model->rowCount(); i++)
