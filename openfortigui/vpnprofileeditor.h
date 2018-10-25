@@ -40,7 +40,7 @@ public:
     explicit vpnProfileEditor(QWidget *parent = 0, vpnProfileEditorMode smode = vpnProfileEditorModeNew);
     ~vpnProfileEditor();
 
-    void loadVpnProfile(const QString &profile, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);
+    void loadVpnProfile(const QString &profile, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_BOTH);
 
 private:
     Ui::vpnProfileEditor *ui;

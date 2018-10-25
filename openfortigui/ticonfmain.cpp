@@ -349,7 +349,7 @@ vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname, vpnPr
     for(int i=0; i < vpnprofiles.count(); i++)
     {
         vpn = vpnprofiles.at(i);
-        if(vpn->name == vpnname && vpn->origin_location == sourceOrigin)
+        if((vpn->name == vpnname && vpn->origin_location == sourceOrigin) || (vpn->name == vpnname && sourceOrigin == vpnProfile::Origin_BOTH))
             return vpn;
     }
 

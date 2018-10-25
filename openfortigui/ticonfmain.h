@@ -58,12 +58,12 @@ public:
     void setReadProfilePasswords(bool read);
 
     QList<vpnProfile*> getVpnProfiles();
-    vpnProfile* getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);
+    vpnProfile* getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_BOTH);
 
     bool removeVpnProfileByName(const QString &vpnname);
 
     bool renameVpnProfile(const QString &oldname, const QString &newname);
-    bool copyVpnProfile(const QString &origname, const QString &cpname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_LOCAL);
+    bool copyVpnProfile(const QString &origname, const QString &cpname, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_BOTH);
 
 private:
     tiConfMain *main_settings;
