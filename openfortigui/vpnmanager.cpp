@@ -78,7 +78,7 @@ void vpnManager::startVPN(const QString &name)
     arguments << "--vpn-name";
     arguments << name;
     arguments << "--main-config";
-    arguments << tiConfMain::setMainConfig(QString("%1").arg(tiConfMain::main_config));
+    arguments << tiConfMain::formatPath(QString("%1").arg(tiConfMain::main_config));
 
     QProcess *vpnProc = new QProcess(this);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
