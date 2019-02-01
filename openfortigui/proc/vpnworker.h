@@ -23,11 +23,7 @@
 #include "vpnprofile.h"
 #include "vpnmanager.h"
 
-#define HAVE_USR_SBIN_PPPD 1
-#define NETSTAT_PATH /usr/sbin/netstat
-
 extern "C"  {
-#define HAVE_USR_SBIN_PPPD 1
 #include "openfortivpn/src/config.h"
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
