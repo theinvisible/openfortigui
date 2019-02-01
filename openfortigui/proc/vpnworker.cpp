@@ -42,6 +42,9 @@ extern "C"  {
 #include <signal.h>
 #include <sys/wait.h>
 #include <assert.h>
+#if HAVE_SYSTEMD
+#include <systemd/sd-daemon.h>
+#endif
 }
 
 #include <QDebug>
@@ -95,12 +98,16 @@ static int on_ppp_if_up(struct tunnel *tunnel)
         }
     }
 
-    if (tunnel->config->set_dns && !tunnel->config->pppd_use_peerdns) {
+    if (tunnel->config->set_dns) {
         log_info("Adding VPN nameservers...\n");
         ipv4_add_nameservers_to_resolv_conf(tunnel);
     }
 
     log_info("Tunnel is up and running.\n");
+
+#if HAVE_SYSTEMD
+    sd_notify(0, "READY=1");
+#endif
 
     return 0;
 }
@@ -114,7 +121,7 @@ static int on_ppp_if_down(struct tunnel *tunnel)
         ipv4_restore_routes(tunnel);
     }
 
-    if (tunnel->config->set_dns && !tunnel->config->pppd_use_peerdns) {
+    if (tunnel->config->set_dns) {
         log_info("Removing VPN nameservers...\n");
         ipv4_del_nameservers_from_resolv_conf(tunnel);
     }
@@ -126,39 +133,55 @@ static int pppd_run(struct tunnel *tunnel)
 {
     pid_t pid;
     int amaster;
-#ifndef __APPLE__
+#ifdef HAVE_STRUCT_TERMIOS
     struct termios termp;
     termp.c_cflag = B9600;
     termp.c_cc[VTIME] = 0;
     termp.c_cc[VMIN] = 1;
 #endif
 
-    static const char pppd_path[] = "/usr/sbin/pppd";
-
-    if (access(pppd_path, F_OK) != 0) {
-        log_error("%s: %s.\n", pppd_path, strerror(errno));
+    static const char ppp_path[] = PPP_PATH;
+    if (access(ppp_path, F_OK) != 0) {
+        log_error("%s: %s.\n", ppp_path, strerror(errno));
         return 1;
     }
+    log_debug("ppp_path: %s\n", ppp_path);
 
-#ifdef __APPLE__
-    pid = forkpty(&amaster, NULL, NULL, NULL);
-#else
+#ifdef HAVE_STRUCT_TERMIOS
     pid = forkpty(&amaster, NULL, &termp, NULL);
+#else
+    pid = forkpty(&amaster, NULL, NULL, NULL);
 #endif
 
     if (pid == -1) {
         log_error("forkpty: %s\n", strerror(errno));
         return 1;
     } else if (pid == 0) { // child process
+
         struct ofv_varr pppd_args = { 0, 0, NULL };
 
+#if HAVE_USR_SBIN_PPP
+        /*
+        * assume there is a default configuration to start.
+        * Support for taking options from the command line
+        * e.g. the name of the configuration or options
+        * to send interactively to ppp will be added later
+        */
+        const char *v[] = {
+            ppp_path,
+            "-direct"
+        };
+        for (unsigned i = 0; i < sizeof v/sizeof v[0]; i++)
+            ofv_append_varr(&pppd_args, v[i]);
+#endif
+#if HAVE_USR_SBIN_PPPD
         if (tunnel->config->pppd_call) {
-            ofv_append_varr(&pppd_args, pppd_path);
+            ofv_append_varr(&pppd_args, ppp_path);
             ofv_append_varr(&pppd_args, "call");
             ofv_append_varr(&pppd_args, tunnel->config->pppd_call);
         } else {
             const char *v[] = {
-                pppd_path,
+                ppp_path,
                 "38400", // speed
                 ":192.0.2.1", // <local_IP_address>:<remote_IP_address>
                 "noipdefault",
@@ -175,8 +198,7 @@ static int pppd_run(struct tunnel *tunnel)
             for (unsigned i = 0; i < ARRAY_SIZE(v); i++)
                 ofv_append_varr(&pppd_args, v[i]);
         }
-
-        if (tunnel->config->set_dns && tunnel->config->pppd_use_peerdns)
+        if (tunnel->config->pppd_use_peerdns)
             ofv_append_varr(&pppd_args, "usepeerdns");
         if (tunnel->config->pppd_log) {
             ofv_append_varr(&pppd_args, "debug");
@@ -195,10 +217,17 @@ static int pppd_run(struct tunnel *tunnel)
             ofv_append_varr(&pppd_args, "ifname");
             ofv_append_varr(&pppd_args, tunnel->config->pppd_ifname);
         }
+#endif
+#if HAVE_USR_SBIN_PPP
+        if (tunnel->config->ppp_system) {
+            ofv_append_varr(&pppd_args, tunnel->config->ppp_system);
+        }
+#endif
 
         close(tunnel->ssl_socket);
-        execv((const char*) pppd_args.data[0], (char *const *)pppd_args.data);
+        execv(pppd_args.data[0], (char *const *)pppd_args.data);
         free(pppd_args.data);
+
         /*
          * The following call to fprintf() doesn't work, probably
          * because of the prior call to forkpty().
@@ -250,7 +279,8 @@ static int pppd_terminate(struct tunnel *tunnel)
 {
     close(tunnel->pppd_pty);
 
-    log_debug("Waiting for pppd to exit...\n");
+    log_debug("Waiting for %s to exit...\n", PPP_DAEMON);
+
     int status;
     if (waitpid(tunnel->pppd_pid, &status, 0) == -1) {
         log_error("waitpid: %s\n", strerror(errno));
@@ -258,32 +288,57 @@ static int pppd_terminate(struct tunnel *tunnel)
     }
     if (WIFEXITED(status)) {
         int exit_status = WEXITSTATUS(status);
-        log_debug("waitpid: pppd exit status code %d\n", exit_status);
-        if (exit_status >= ARRAY_SIZE(pppd_message) || exit_status < 0)
-            log_error("pppd: Returned an unknown exit status: %d\n",
-                      exit_status);
-        else
+        log_debug("waitpid: %s exit status code %d\n",
+                  PPP_DAEMON, exit_status);
+#if HAVE_USR_SBIN_PPPD
+        if (exit_status >= ARRAY_SIZE(pppd_message) || exit_status < 0) {
+            log_error("%s: Returned an unknown exit status: %d\n",
+                      PPP_DAEMON, exit_status);
+        } else {
             switch (exit_status) {
             case 0: // success
-                log_debug("pppd: %s\n", pppd_message[exit_status]);
+                log_debug("%s: %s\n",
+                          PPP_DAEMON, pppd_message[exit_status]);
                 break;
             case 16: // emitted when exiting normally
-                log_info("pppd: %s\n", pppd_message[exit_status]);
+                log_info("%s: %s\n",
+                         PPP_DAEMON, pppd_message[exit_status]);
                 break;
             default:
-                log_error("pppd: %s\n", pppd_message[exit_status]);
+                log_error("%s: %s\n",
+                          PPP_DAEMON, pppd_message[exit_status]);
                 break;
             }
+        }
+#else
+        // ppp exit codes in the FreeBSD case
+        switch (exit_status) {
+        case 0: // success and EX_NORMAL as defined in ppp source directly
+            log_debug("%s: %s\n", PPP_DAEMON, pppd_message[exit_status]);
+            break;
+        case 1:
+        case 127:
+        case 255: // abnormal exit with hard-coded error codes in ppp
+            log_error("%s: exited with return value of %d\n",
+                      PPP_DAEMON, exit_status);
+            break;
+        default:
+            log_error("%s: %s (%d)\n", PPP_DAEMON, strerror(exit_status),
+                      exit_status);
+            break;
+        }
+#endif
     } else if (WIFSIGNALED(status)) {
         int signal_number = WTERMSIG(status);
-        log_debug("waitpid: pppd terminated by signal %d\n",
-                  signal_number);
-        log_error("pppd: terminated by signal: %s\n",
-                  strsignal(signal_number));
+        log_debug("waitpid: %s terminated by signal %d\n",
+                  PPP_DAEMON, signal_number);
+        log_error("%s: terminated by signal: %s\n",
+                  PPP_DAEMON, strsignal(signal_number));
     }
 
     return 0;
 }
+
 
 static int get_gateway_host_ip(struct tunnel *tunnel)
 {
@@ -324,14 +379,24 @@ void vpnWorker::process()
 
     //memset(&config, 0, sizeof (config));
     init_logging();
+
+    log_info("Start tunnel.\n");
+
     //init_vpn_config(&config);
     strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), FIELD_SIZE);
+    log_info("Start tunnel 33334.\n");
     config.gateway_host[FIELD_SIZE] = '\0';
+    log_info("Start tunnel 333344.\n");
     config.gateway_port = vpnConfig.gateway_port;
+    log_info("Start tunnel 3333444.\n");
     strncpy(config.username, vpnConfig.username.toStdString().c_str(), FIELD_SIZE);
+    log_info("Start tunnel 33334444.\n");
     config.username[FIELD_SIZE] = '\0';
-    strncpy(config.password, vpnConfig.password.toStdString().c_str(), FIELD_SIZE);
+    log_info("Start tunnel 333344445.\n");
+    config.password = strdup(vpnConfig.password.toStdString().c_str());
+    log_info("Start tunnel 3333444455.\n");
     config.password[FIELD_SIZE] = '\0';
+    log_info("Start tunnel 3333.\n");
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
 
@@ -341,14 +406,18 @@ void vpnWorker::process()
         config.user_key = strdup(vpnConfig.user_key.toStdString().c_str());
     }
 
+    log_info("Start tunnel 333.\n");
+
     if(!vpnConfig.trusted_cert.isEmpty())
         add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
 
     if(!vpnConfig.realm.isEmpty())
         strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
 
+    log_info("Start tunnel 33.\n");
+
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
-    config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
+    //config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
 
@@ -374,10 +443,14 @@ void vpnWorker::process()
     tunnel.state = STATE_CONNECTING;
     ptr_tunnel = &tunnel;
 
+    log_info("Start tunnel 3.\n");
+
     // Step 0: get gateway host IP
     ret = get_gateway_host_ip(&tunnel);
     if (ret)
         goto err_tunnel;
+
+    log_info("Start tunnel 2.\n");
 
     // Step 1: open a SSL connection to the gateway
     ret = ssl_connect(&tunnel);
@@ -395,7 +468,7 @@ void vpnWorker::process()
         goto err_tunnel;
     }
     log_info("Authenticated.\n");
-    log_debug("Cookie: %s\n", config.cookie);
+    log_debug("Cookie: %s\n", tunnel.cookie);
 
     ret = auth_request_vpn_allocation(&tunnel);
     if (ret != 1) {
@@ -429,7 +502,7 @@ void vpnWorker::process()
                     "GET /remote/sslvpn-tunnel HTTP/1.1\r\n"
                     "Host: sslvpn\r\n"
                     "Cookie: %s\r\n\r\n",
-                    tunnel.config->cookie);
+                    tunnel.cookie);
     if (ret != 1) {
         log_error("Could not start tunnel (%s).\n", err_http_str(ret));
         ret = 1;
