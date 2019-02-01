@@ -384,19 +384,11 @@ void vpnWorker::process()
 
     //init_vpn_config(&config);
     strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), FIELD_SIZE);
-    log_info("Start tunnel 33334.\n");
     config.gateway_host[FIELD_SIZE] = '\0';
-    log_info("Start tunnel 333344.\n");
     config.gateway_port = vpnConfig.gateway_port;
-    log_info("Start tunnel 3333444.\n");
     strncpy(config.username, vpnConfig.username.toStdString().c_str(), FIELD_SIZE);
-    log_info("Start tunnel 33334444.\n");
     config.username[FIELD_SIZE] = '\0';
-    log_info("Start tunnel 333344445.\n");
     config.password = strdup(vpnConfig.password.toStdString().c_str());
-    log_info("Start tunnel 3333444455.\n");
-    config.password[FIELD_SIZE] = '\0';
-    log_info("Start tunnel 3333.\n");
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
 
@@ -406,15 +398,11 @@ void vpnWorker::process()
         config.user_key = strdup(vpnConfig.user_key.toStdString().c_str());
     }
 
-    log_info("Start tunnel 333.\n");
-
     if(!vpnConfig.trusted_cert.isEmpty())
         add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
 
     if(!vpnConfig.realm.isEmpty())
         strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
-
-    log_info("Start tunnel 33.\n");
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     //config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
@@ -443,14 +431,10 @@ void vpnWorker::process()
     tunnel.state = STATE_CONNECTING;
     ptr_tunnel = &tunnel;
 
-    log_info("Start tunnel 3.\n");
-
     // Step 0: get gateway host IP
     ret = get_gateway_host_ip(&tunnel);
     if (ret)
         goto err_tunnel;
-
-    log_info("Start tunnel 2.\n");
 
     // Step 1: open a SSL connection to the gateway
     ret = ssl_connect(&tunnel);
