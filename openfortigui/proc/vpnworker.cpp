@@ -391,6 +391,7 @@ void vpnWorker::process()
     config.password = strdup(vpnConfig.password.toStdString().c_str());
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
+    config.ca_file = strdup(vpnConfig.ca_file.toStdString().c_str());
 
     if(!vpnConfig.user_cert.isEmpty() && !vpnConfig.user_key.isEmpty())
     {
