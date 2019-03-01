@@ -36,7 +36,6 @@ vpnProfile::vpnProfile()
 
     set_routes = true;
     set_dns = false;
-    pppd_no_peerdns = false;
     half_internet_routers = false;
 
     ca_file = "";
@@ -45,6 +44,13 @@ vpnProfile::vpnProfile()
     verify_cert = false;
     insecure_ssl = false;
     autostart = false;
+
+    pppd_no_peerdns = false;
+    pppd_log_file = "";
+    pppd_plugin_file = "";
+    pppd_ifname = "";
+    pppd_ipparam = "";
+    pppd_call = "";
 }
 
 QString vpnProfile::readPassword()

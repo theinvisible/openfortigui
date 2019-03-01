@@ -406,9 +406,23 @@ void vpnWorker::process()
         strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
-    //config.verify_cert = (vpnConfig.verify_cert) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
+
+    if(!vpnConfig.pppd_log_file.isEmpty())
+        config.pppd_log = strdup(vpnConfig.pppd_log_file.toStdString().c_str());
+
+    if(!vpnConfig.pppd_plugin_file.isEmpty())
+        config.pppd_plugin = strdup(vpnConfig.pppd_plugin_file.toStdString().c_str());
+
+    if(!vpnConfig.pppd_ifname.isEmpty())
+        config.pppd_ifname = strdup(vpnConfig.pppd_ifname.toStdString().c_str());
+
+    if(!vpnConfig.pppd_ipparam.isEmpty())
+        config.pppd_ipparam = strdup(vpnConfig.pppd_ipparam.toStdString().c_str());
+
+    if(!vpnConfig.pppd_call.isEmpty())
+        config.pppd_call = strdup(vpnConfig.pppd_call.toStdString().c_str());
 
     if(vpnConfig.debug)
         increase_verbosity();

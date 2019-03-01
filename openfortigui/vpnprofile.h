@@ -45,7 +45,6 @@ public:
 
     bool set_routes;
     bool set_dns;
-    bool pppd_no_peerdns;
     bool half_internet_routers;
 
     QString ca_file;
@@ -56,6 +55,13 @@ public:
     bool insecure_ssl;
     bool debug;
     bool autostart;
+
+    bool pppd_no_peerdns;
+    QString pppd_log_file;
+    QString pppd_plugin_file;
+    QString pppd_ifname;
+    QString pppd_ipparam;
+    QString pppd_call;
 
     QString readPassword();
 };

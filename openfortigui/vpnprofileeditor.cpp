@@ -66,17 +66,22 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->leUserCert->setText(config->user_cert);
         ui->leUserKey->setText(config->user_key);
         ui->leTrustedCert->setText(config->trusted_cert);
-        ui->cbVerifyCert->setChecked(config->verify_cert);
     }
 
     ui->cbSetRoutes->setChecked(config->set_routes);
     ui->cbSetDNS->setChecked(config->set_dns);
-    ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
     ui->cbInsecureSSL->setChecked(config->insecure_ssl);
     ui->cbDebug->setChecked(config->debug);
     ui->leRealm->setText(config->realm);
     ui->cbAutostart->setChecked(config->autostart);
     ui->cbHalfInternetRoutes->setChecked(config->half_internet_routers);
+
+    ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
+    ui->lePPPDLogFile->setText(config->pppd_log_file);
+    ui->lePPPDPluginFile->setText(config->pppd_plugin_file);
+    ui->lePPPDIfname->setText(config->pppd_ifname);
+    ui->lePPPDIPParam->setText(config->pppd_ipparam);
+    ui->lePPPDCallName->setText(config->pppd_call);
 
     if(config->origin_location == vpnProfile::Origin_GLOBAL)
     {
@@ -90,7 +95,6 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->leUserCert->setDisabled(true);
         ui->leUserKey->setDisabled(true);
         ui->leTrustedCert->setDisabled(true);
-        ui->cbVerifyCert->setDisabled(true);
         ui->cbSetRoutes->setDisabled(true);
         ui->cbSetDNS->setDisabled(true);
         ui->cbPPPDNoPeerDNS->setDisabled(true);
@@ -103,6 +107,11 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->leRealm->setDisabled(true);
         ui->cbAutostart->setDisabled(true);
         ui->cbHalfInternetRoutes->setDisabled(true);
+        ui->lePPPDLogFile->setDisabled(true);
+        ui->lePPPDPluginFile->setDisabled(true);
+        ui->lePPPDIfname->setDisabled(true);
+        ui->lePPPDIPParam->setDisabled(true);
+        ui->lePPPDCallName->setDisabled(true);
     }
 }
 
@@ -191,7 +200,6 @@ void vpnProfileEditor::on_btnSave_clicked()
         vpn.user_cert = ui->leUserCert->text();
         vpn.user_key = ui->leUserKey->text();
         vpn.trusted_cert = ui->leTrustedCert->text();
-        vpn.verify_cert = ui->cbVerifyCert->isChecked();
     }
 
     vpn.set_routes = ui->cbSetRoutes->isChecked();
@@ -202,6 +210,12 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.realm = ui->leRealm->text();
     vpn.autostart = ui->cbAutostart->isChecked();
     vpn.half_internet_routers = ui->cbHalfInternetRoutes->isChecked();
+
+    vpn.pppd_log_file = ui->lePPPDLogFile->text();
+    vpn.pppd_plugin_file = ui->lePPPDPluginFile->text();
+    vpn.pppd_ifname = ui->lePPPDIfname->text();
+    vpn.pppd_ipparam = ui->lePPPDIPParam->text();
+    vpn.pppd_call = ui->lePPPDCallName->text();
 
     vpns.saveVpnProfile(vpn);
 

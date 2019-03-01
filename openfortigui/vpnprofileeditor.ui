@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>513</height>
+    <width>700</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -155,52 +155,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>User-Key</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>CA-File</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Verify Certificate</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="cbVerifyCert">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
@@ -215,6 +169,19 @@
             </item>
            </layout>
           </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>User-Key</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
@@ -228,6 +195,19 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>CA-File</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -426,7 +406,7 @@
           <string>PPPD</string>
          </property>
          <layout class="QFormLayout" name="formLayout_4">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label_13">
             <property name="minimumSize">
              <size>
@@ -435,16 +415,96 @@
              </size>
             </property>
             <property name="text">
-             <string>PPPD no peerdns</string>
+             <string>No peerdns</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QCheckBox" name="cbPPPDNoPeerDNS">
             <property name="text">
              <string/>
             </property>
            </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Log File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lePPPDLogFile"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_19">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Plugin File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lePPPDPluginFile"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_20">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Ifname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Ip-Parameter</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lePPPDIfname"/>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="lePPPDIPParam"/>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_22">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Call name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="lePPPDCallName"/>
           </item>
          </layout>
         </widget>
