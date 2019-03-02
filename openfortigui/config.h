@@ -21,7 +21,7 @@
 namespace openfortigui_config
 {
     static const char __attribute__ ((unused)) *name = "openfortiGUI";
-    static const char __attribute__ ((unused)) *version = "0.7.3-dev";
+    static const char __attribute__ ((unused)) *version = "0.7.3";
     static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
     static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
     static const char __attribute__ ((unused)) *api_vpn_base_name = "openfortiguivpn";
@@ -35,7 +35,7 @@ namespace openfortigui_config
 
     static const char __attribute__ ((unused)) *validatorName = "^[a-zA-zäöüÄÖÜ0-9 \-_]{3,}$";
 
-    static const int __attribute__ ((unused)) changelogRev = 6;
+    static const int __attribute__ ((unused)) changelogRev = 7;
 }
 
 #endif // CONFIH_H

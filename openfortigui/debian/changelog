@@ -1,3 +1,9 @@
+openfortigui (0.7.3-1) precise; urgency=low
+
+  * For changelogs see https://github.com/theinvisible/openfortigui/blob/master/openfortigui/vpnchangelog.cpp
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 2 Feb 2019 17:03:00 +0100
+
 openfortigui (0.7.2-3) precise; urgency=low
 
   * Hotfix to work with Debian non-root user
