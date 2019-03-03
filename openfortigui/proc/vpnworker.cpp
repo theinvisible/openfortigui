@@ -391,7 +391,6 @@ void vpnWorker::process()
     config.password = strdup(vpnConfig.password.toStdString().c_str());
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
-    config.ca_file = strdup(vpnConfig.ca_file.toStdString().c_str());
 
     if(!vpnConfig.user_cert.isEmpty() && !vpnConfig.user_key.isEmpty())
     {
@@ -404,6 +403,9 @@ void vpnWorker::process()
 
     if(!vpnConfig.realm.isEmpty())
         strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
+
+    if(!vpnConfig.ca_file.isEmpty())
+        config.ca_file = strdup(vpnConfig.ca_file.toStdString().c_str());
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
