@@ -506,12 +506,12 @@ p, li { white-space: pre-wrap; }
         <translation>了解</translation>
     </message>
     <message>
-        <location filename="openfortigui/vpnchangelog.cpp" line="58"/>
+        <location filename="../vpnchangelog.cpp" line="58"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.3&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (23.01.19)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Removed &apos;verify-cert&apos; option as no longer provided in upstream&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added various PPPD options from openfortivpn&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Fixes CA validation (using X509_CHECK_HOST by default)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.3&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;最新の openfortivpn（23.01.19）に更新&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;アップストリームが提供終了した &apos;verify-cert&apos; 設定を削除&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - openfortivpn から様々な PPPD 設定を追加&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - CA の検証を修正（初期設定で X509_CHECK_HOST を使用）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="openfortigui/vpnchangelog.cpp" line="70"/>
+        <location filename="../vpnchangelog.cpp" line="70"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Minor changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Extend API to work with KRunner plugin VPN group start&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Adding more Umlaut support (ÄÖÜ) for VPN profile/group names&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - KRunner VPN グループ起動に対応するため API を拡張&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - VPN やグループ名にさらなるトレマ（ÄÖÜ）対応を追加&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
@@ -551,7 +551,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpngroupeditor.ui" line="24"/>
         <location filename="../vpngroupeditor.cpp" line="138"/>
-        <location filename="../vpngroupeditor.cpp" line="172"/>
+        <location filename="../vpngroupeditor.cpp" line="173"/>
         <source>VPN-Group</source>
         <translation>グループ</translation>
     </message>
@@ -607,7 +607,7 @@ p, li { white-space: pre-wrap; }
         <translation>グループの名前を定義する必要があります。</translation>
     </message>
     <message>
-        <location filename="../vpngroupeditor.cpp" line="172"/>
+        <location filename="../vpngroupeditor.cpp" line="173"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
         <translation>全ての所属グループにパスワードを設定する必要があります。パスワードが欠落している最初の VPN：%1</translation>
     </message>
@@ -726,121 +726,149 @@ p, li { white-space: pre-wrap; }
         <translation>ユーザー証明書</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="167"/>
+        <location filename="../vpnprofileeditor.ui" line="181"/>
         <source>User-Key</source>
         <translation>ユーザー鍵</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="180"/>
+        <location filename="../vpnprofileeditor.ui" line="208"/>
         <source>CA-File</source>
         <translation>CA ファイル</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="193"/>
-        <source>Verify Certificate</source>
-        <translation>証明証を検証</translation>
+        <location filename="../vpnprofileeditor.ui" line="418"/>
+        <source>No peerdns</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="212"/>
-        <location filename="../vpnprofileeditor.ui" line="226"/>
-        <location filename="../vpnprofileeditor.ui" line="240"/>
+        <location filename="../vpnprofileeditor.ui" line="438"/>
+        <source>Log File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="454"/>
+        <source>Plugin File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="470"/>
+        <source>Ifname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="483"/>
+        <source>Ip-Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="502"/>
+        <source>Call name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Verify Certificate</source>
+        <translation type="vanished">証明証を検証</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="166"/>
+        <location filename="../vpnprofileeditor.ui" line="193"/>
+        <location filename="../vpnprofileeditor.ui" line="220"/>
         <source>Choose</source>
         <translation>選択</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="261"/>
+        <location filename="../vpnprofileeditor.ui" line="241"/>
         <source>Trusted-Cert (SHA256)</source>
         <translation>信頼される証明書（SHA256）</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="275"/>
+        <location filename="../vpnprofileeditor.ui" line="255"/>
         <source>Options</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="281"/>
+        <location filename="../vpnprofileeditor.ui" line="261"/>
         <source>Advanced</source>
         <translation>詳細設定</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="293"/>
+        <location filename="../vpnprofileeditor.ui" line="273"/>
         <source>Connect on program start</source>
         <translation>起動特に接続</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="313"/>
+        <location filename="../vpnprofileeditor.ui" line="293"/>
         <source>Set routes</source>
         <translation>経路を設定</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="333"/>
+        <location filename="../vpnprofileeditor.ui" line="313"/>
         <source>Set DNS</source>
         <translation>DNS を設定</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="353"/>
+        <location filename="../vpnprofileeditor.ui" line="333"/>
         <source>Insecure SSL</source>
         <translation>安全ではない SSL</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="373"/>
+        <location filename="../vpnprofileeditor.ui" line="353"/>
         <source>Debug</source>
         <translation>デバッグ</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="393"/>
+        <location filename="../vpnprofileeditor.ui" line="373"/>
         <source>Realm</source>
         <translation>領域</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="409"/>
+        <location filename="../vpnprofileeditor.ui" line="389"/>
         <source>Half internet routes</source>
         <translation>半インターネット経路</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="426"/>
+        <location filename="../vpnprofileeditor.ui" line="406"/>
         <source>PPPD</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="438"/>
         <source>PPPD no peerdns</source>
-        <translation>PPPD は peerdns なし</translation>
+        <translation type="vanished">PPPD は peerdns なし</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="487"/>
+        <location filename="../vpnprofileeditor.ui" line="547"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="507"/>
+        <location filename="../vpnprofileeditor.ui" line="567"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="113"/>
+        <location filename="../vpnprofileeditor.cpp" line="122"/>
         <source>Select the user-cert</source>
         <translation>ユーザー証明書を選択して下さい</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="123"/>
+        <location filename="../vpnprofileeditor.cpp" line="132"/>
         <source>Select the user-key</source>
         <translation>ユーザー鍵を選択して下さい</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="133"/>
+        <location filename="../vpnprofileeditor.cpp" line="142"/>
         <source>Select the CA-file</source>
         <translation>CA ファイルを選択して下さい</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="148"/>
-        <location filename="../vpnprofileeditor.cpp" line="154"/>
-        <location filename="../vpnprofileeditor.cpp" line="160"/>
+        <location filename="../vpnprofileeditor.cpp" line="157"/>
+        <location filename="../vpnprofileeditor.cpp" line="163"/>
+        <location filename="../vpnprofileeditor.cpp" line="169"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="148"/>
+        <location filename="../vpnprofileeditor.cpp" line="157"/>
         <source>You must set a valid name for the VPN.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -849,12 +877,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">VPN の名前を設定する必要があります。</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="154"/>
+        <location filename="../vpnprofileeditor.cpp" line="163"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>VPN のゲートウェイを設定する必要があります。</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="160"/>
+        <location filename="../vpnprofileeditor.cpp" line="169"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>VPN のポートを設定する必要があります。</translation>
     </message>

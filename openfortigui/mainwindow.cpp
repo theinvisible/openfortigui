@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Center window on startup
     QRect geom = QApplication::desktop()->availableGeometry();
-    move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
+    setGeometry((geom.width() - width()) / 2, (geom.height() - height()) / 2, geom.width() / 3, geom.height() / 3);
 
     // Treeview VPNs
     QStringList headers;
@@ -82,8 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVpnProfiles->setExpanded(model->indexFromItem(root_local_vpn), true);
     ui->tvVpnProfiles->setExpanded(model->indexFromItem(root_global_vpn), true);
     ui->tvVpnProfiles->header()->resizeSection(0, 150);
-    ui->tvVpnProfiles->header()->resizeSection(1, 150);
-    ui->tvVpnProfiles->header()->resizeSection(2, 300);
+    ui->tvVpnProfiles->header()->resizeSection(1, int(width() * 0.27));
+    ui->tvVpnProfiles->header()->resizeSection(2, int(width() * 0.27));
 
     connect(ui->tvVpnProfiles, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ontvVpnProfilesCustomContextMenu(const QPoint &)));
     connect(ui->leSearch, SIGNAL(textChanged(QString)), this, SLOT(onvpnSearch(QString)));
