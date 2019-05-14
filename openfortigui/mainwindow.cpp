@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)));
     connect(vpnmanager, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)));
     connect(vpnmanager, SIGNAL(VPNOTPRequest(QProcess*)), this, SLOT(onClientVPNOTPRequest(QProcess*)));
+    connect(vpnmanager, SIGNAL(VPNCertificateValidationFailed(QString,QString)), this, SLOT(onClientCertValidationFAiled(QString,QString)));
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
@@ -736,6 +737,38 @@ void MainWindow::onClientVPNOTPRequest(QProcess *proc)
     f->initAfter();
 
     prefWindow->show();
+}
+
+void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
+{
+    QString hash = "", info = "";
+    QRegularExpression reHash("--trusted-cert (.*?)\n");
+    QRegularExpressionMatch matchHash = reHash.match(buffer);
+    if(matchHash.hasMatch())
+        hash = matchHash.captured(1);
+
+    QRegularExpression reInfo("Gateway certificate:\n(.*?)sha256 digest:\n", QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch matchInfo = reInfo.match(buffer);
+    if(matchInfo.hasMatch())
+        info = matchInfo.captured(1).replace("ERROR:", "");
+
+    if(hash.isEmpty())
+        return;
+
+    info.prepend(tr("Gateway certificate validation failed and the certificate digest is not in the local whitelist nor a valid CA is provided. Certificate details:\n\n"));
+    info.append(tr("\n\nAdd certificate to VPN-profile whitelist?"));
+
+    if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
+    {
+        tiConfVpnProfiles profiles;
+        profiles.setReadProfilePasswords(true);
+        vpnProfile *profile = profiles.getVpnProfileByName(vpnname);
+        if(profile != 0)
+        {
+            profile->trusted_cert = hash;
+            profiles.saveVpnProfile(*profile);
+        }
+    }
 }
 
 void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)

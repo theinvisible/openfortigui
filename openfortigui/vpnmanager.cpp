@@ -46,6 +46,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
     connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
     connect(logger, SIGNAL(OTPRequest(QProcess*)), this, SLOT(onOTPRequest(QProcess*)), Qt::QueuedConnection);
+    connect(logger, SIGNAL(CertificateValidationFailed(QString,QString)), this, SLOT(onCertificateValidationFailed(QString,QString)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(finished()), logger_thread, SLOT(deleteLater()));
     logger_thread->start();
 }
@@ -270,6 +271,12 @@ void vpnManager::onOTPRequest(QProcess *proc)
 {
     qDebug() << "otprequest from vpnmanager";
     emit VPNOTPRequest(proc);
+}
+
+void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
+{
+    qDebug() << "certificatefailedrequest from vpnmanager";
+    emit VPNCertificateValidationFailed(vpnname, buffer);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)

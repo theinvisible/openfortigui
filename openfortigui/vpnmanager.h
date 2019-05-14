@@ -93,6 +93,7 @@ signals:
     void VPNCredRequest(QString vpnname);
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
     void VPNOTPRequest(QProcess *proc);
+    void VPNCertificateValidationFailed(QString vpnname, QString buffer);
 
     void addVPNLogger(const QString &name, QProcess *proc);
 
@@ -102,6 +103,7 @@ public slots:
     void onClientVPNCredRequest(QString vpnname);
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
     void onOTPRequest(QProcess *proc);
+    void onCertificateValidationFailed(QString vpnname, QString buffer);
 };
 
 #endif // VPNMANAGER_H

@@ -30,6 +30,8 @@ vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
     loggers = QMap<QString, QProcess*>();
     logfiles = QMap<QString, QFile*>();
     loglocker = QMap<QString, bool>();
+    logCertFailedMode = QMap<QString, bool>();
+    logCertFailedBuffer = QMap<QString, QString>();
 
     connect(logMapperStdout, SIGNAL(mapped(QString)), this, SLOT(logVPNOutput(QString)));
     connect(logMapperFinished, SIGNAL(mapped(QString)), this, SLOT(procFinished(QString)));
@@ -45,6 +47,8 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
     qDebug() << "add logger" << tiConfMain::main_config;
     loggers.insert(name, proc);
     loglocker.insert(name, false);
+    logCertFailedMode.insert(name, false);
+    logCertFailedBuffer.insert(name, "");
     if(!logfiles.contains(name))
     {
         QFile *file = new QFile(QString("%1/vpn/%2.log").arg(tiConfMain::formatPath(main_settings.getValue("paths/logs").toString()), name));
@@ -84,6 +88,19 @@ void vpnLogger::logVPNOutput(const QString &name)
        toLog.contains("Two-factor authentication"))
     {
         emit OTPRequest(proc);
+    }
+
+    if(toLog.contains("Gateway certificate validation failed, and the certificate digest in not in the local whitelist."))
+        logCertFailedMode[name] = true;
+
+    if(logCertFailedMode[name])
+        logCertFailedBuffer[name].append(toLog);
+
+    if((logCertFailedMode[name] && toLog.contains("Closed connection to gateway.")) || logCertFailedBuffer[name].length() > 10000)
+    {
+        emit CertificateValidationFailed(name, logCertFailedBuffer[name]);
+        logCertFailedBuffer[name] = "";
+        logCertFailedMode[name] = false;
     }
 
     out << toLog;
