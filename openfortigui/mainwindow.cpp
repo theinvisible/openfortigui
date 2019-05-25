@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)));
     connect(vpnmanager, SIGNAL(VPNOTPRequest(QProcess*)), this, SLOT(onClientVPNOTPRequest(QProcess*)));
     connect(vpnmanager, SIGNAL(VPNCertificateValidationFailed(QString,QString)), this, SLOT(onClientCertValidationFAiled(QString,QString)));
+    connect(vpnmanager, SIGNAL(VPNShowMainWindowRequest()), this, SLOT(showMainWindow()));
 
     signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
@@ -65,7 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Center window on startup
     QRect geom = QApplication::desktop()->availableGeometry();
-    setGeometry((geom.width() - width()) / 2, (geom.height() - height()) / 2, geom.width() / 3, geom.height() / 3);
+    if(geom.width() > 2560 && geom.height() > 1440)
+        resize(geom.width() / 3, geom.height() / 3);
+    move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
 
     // Treeview VPNs
     QStringList headers;
@@ -844,6 +847,13 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     }
 }
 
+void MainWindow::showMainWindow()
+{
+    show();
+    raise();
+    QApplication::setActiveWindow(this);
+}
+
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
 {
     QScreen *screen = QGuiApplication::primaryScreen();
@@ -1181,9 +1191,7 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
     {
         if(isHidden())
         {
-            show();
-            raise();
-            QApplication::setActiveWindow(this);
+            showMainWindow();
         }
         else
             hide();

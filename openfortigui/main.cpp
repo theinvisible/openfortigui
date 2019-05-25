@@ -34,6 +34,7 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QMessageBox>
+#include <QLocalSocket>
 
 QFile *openfortiguiLog = 0;
 
@@ -192,10 +193,33 @@ int main(int argc, char *argv[])
 
         if(isRunningAlready())
         {
+            /*
             qDebug() << "This application is already running, exiting now.";
             QMessageBox::critical(0, QApplication::tr("Application error"),
                                             QApplication::tr("This application is already running, exiting now."),
                                             QMessageBox::Ok);
+            */
+
+            // Ask the running instance to show the main window instead of error message
+            QLocalSocket apiServer;
+            apiServer.connectToServer(openfortigui_config::name);
+            if(apiServer.waitForConnected(1000))
+            {
+                QByteArray block;
+                QDataStream out(&block, QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_5_2);
+                vpnApi apiData;
+                apiData.action = vpnApi::ACTION_SHOW_MAIN;
+                out << apiData;
+
+                apiServer.write(block);
+                apiServer.flush();
+            }
+            else
+            {
+                qWarning() << apiServer.errorString();
+            }
+
             exit(0);
         }
 

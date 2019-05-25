@@ -94,6 +94,7 @@ signals:
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
     void VPNOTPRequest(QProcess *proc);
     void VPNCertificateValidationFailed(QString vpnname, QString buffer);
+    void VPNShowMainWindowRequest();
 
     void addVPNLogger(const QString &name, QProcess *proc);
 

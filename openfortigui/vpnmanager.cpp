@@ -217,6 +217,13 @@ void vpnManager::onClientConnected()
             return;
         }
 
+        if(cmd.action == vpnApi::ACTION_SHOW_MAIN)
+        {
+            emit VPNShowMainWindowRequest();
+            client->close();
+            return;
+        }
+
         if(cmd.action == vpnApi::ACTION_VPNGROUP_START)
         {
             tiConfVpnGroups groups;

@@ -100,6 +100,8 @@ private slots:
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
     void ontvVpnProfilesCustomContextMenu(const QPoint &point);
 
+    void showMainWindow();
+
 private:
     Ui::MainWindow *ui;
 
