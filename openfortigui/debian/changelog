@@ -1,8 +1,8 @@
-openfortigui (0.7.5-1) precise; urgency=low
+openfortigui (0.8.0-1) precise; urgency=low
 
   * For changelogs see https://github.com/theinvisible/openfortigui/blob/master/openfortigui/vpnchangelog.cpp
 
- -- Rene Hadler <rene@hadler.me>  Tue, 21 Jun 2019 06:01:00 +0100
+ -- Rene Hadler <rene@hadler.me>  Tue, 9 Jul 2019 20:01:00 +0100
 
 openfortigui (0.7.4-1) precise; urgency=low
 

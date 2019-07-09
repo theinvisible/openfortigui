@@ -45,6 +45,11 @@ extern "C"  {
 #if HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
 #endif
+
+// we use this constant in the source, so define a fallback if not defined
+#ifndef OPENSSL_API_COMPAT
+#define OPENSSL_API_COMPAT 0x0908000L
+#endif
 }
 
 #include <QDebug>
@@ -188,7 +193,7 @@ static int pppd_run(struct tunnel *tunnel)
         } else {
             const char *v[] = {
                 ppp_path,
-                "38400", // speed
+                "115200", // speed
                 ":192.0.2.1", // <local_IP_address>:<remote_IP_address>
                 "noipdefault",
                 "noaccomp",
