@@ -902,12 +902,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="163"/>
-        <source>You must set a gateway for the VPN.</source>
+        <source>You must set a host for the VPN.</source>
         <translation>VPN のゲートウェイを設定する必要があります。</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="169"/>
-        <source>You must set a gateway-port for the VPN.</source>
+        <source>You must set a port for the VPN.</source>
         <translation>VPN のポートを設定する必要があります。</translation>
     </message>
 </context>

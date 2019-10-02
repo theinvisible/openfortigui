@@ -160,13 +160,13 @@ void vpnProfileEditor::on_btnSave_clicked()
 
     if(ui->leGatewayHost->text().isEmpty())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a host for the VPN."));
         return;
     }
 
     if(ui->sBGatewayPort->text().isEmpty())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway-port for the VPN."));
+        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a port for the VPN."));
         return;
     }
 
@@ -184,7 +184,6 @@ void vpnProfileEditor::on_btnSave_clicked()
             vpn.ca_file = "";
             vpn.user_cert = "";
             vpn.user_key = "";
-            vpn.verify_cert = false;
         }
     }
 

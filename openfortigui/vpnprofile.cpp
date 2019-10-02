@@ -41,7 +41,6 @@ vpnProfile::vpnProfile()
     ca_file = "";
     user_cert = "";
     user_key = "";
-    verify_cert = false;
     insecure_ssl = false;
     autostart = false;
 

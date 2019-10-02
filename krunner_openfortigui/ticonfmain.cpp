@@ -44,7 +44,6 @@ vpnProfile::vpnProfile()
     ca_file = "";
     user_cert = "";
     user_key = "";
-    verify_cert = false;
     insecure_ssl = false;
     autostart = false;
 }
@@ -157,29 +156,28 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 
     f->beginGroup("vpn");
     f->setValue("name", profile.name);
-    f->setValue("gateway_host", profile.gateway_host);
-    f->setValue("gateway_port", profile.gateway_port);
+    f->setValue("host", profile.gateway_host);
+    f->setValue("port", profile.gateway_port);
     f->setValue("username", profile.username);
     f->setValue("password", "");
     f->endGroup();
 
     f->beginGroup("cert");
-    f->setValue("ca_file", profile.ca_file);
-    f->setValue("user_cert", profile.user_cert);
-    f->setValue("user_key", profile.user_key);
-    f->setValue("verify_cert", profile.verify_cert);
-    f->setValue("trusted_cert", profile.trusted_cert);
+    f->setValue("ca-file", profile.ca_file);
+    f->setValue("user-cert", profile.user_cert);
+    f->setValue("user-key", profile.user_key);
+    f->setValue("trusted-cert", profile.trusted_cert);
     f->endGroup();
 
     f->beginGroup("options");
-    f->setValue("set_routes", profile.set_routes);
-    f->setValue("set_dns", profile.set_dns);
-    f->setValue("pppd_no_peerdns", profile.pppd_no_peerdns);
-    f->setValue("insecure_ssl", profile.insecure_ssl);
+    f->setValue("set-routes", profile.set_routes);
+    f->setValue("set-dns", profile.set_dns);
+    f->setValue("pppd-no-peerdns", profile.pppd_no_peerdns);
+    f->setValue("insecure-ssl", profile.insecure_ssl);
     f->setValue("debug", profile.debug);
     f->setValue("realm", profile.realm);
     f->setValue("autostart", profile.autostart);
-    f->setValue("half_internet_routers", profile.half_internet_routers);
+    f->setValue("half-internet-routers", profile.half_internet_routers);
     f->endGroup();
 
     f->sync();
@@ -225,29 +223,28 @@ void tiConfVpnProfiles::readVpnProfiles()
 
                 f->beginGroup("vpn");
                 vpnprofile->name = f->value("name").toString();
-                vpnprofile->gateway_host = f->value("gateway_host").toString();
-                vpnprofile->gateway_port = f->value("gateway_port").toInt();
+                vpnprofile->gateway_host = f->value("host").toString();
+                vpnprofile->gateway_port = f->value("port").toInt();
                 vpnprofile->username = f->value("username").toString();
                 vpnprofile->password = "";
                 f->endGroup();
 
                 f->beginGroup("cert");
-                vpnprofile->ca_file = f->value("ca_file").toString();
-                vpnprofile->user_cert = f->value("user_cert").toString();
-                vpnprofile->user_key = f->value("user_key").toString();
-                vpnprofile->verify_cert = f->value("verify_cert").toBool();
-                vpnprofile->trusted_cert = f->value("trusted_cert").toString();
+                vpnprofile->ca_file = f->value("ca-file").toString();
+                vpnprofile->user_cert = f->value("user-cert").toString();
+                vpnprofile->user_key = f->value("user-key").toString();
+                vpnprofile->trusted_cert = f->value("trusted-cert").toString();
                 f->endGroup();
 
                 f->beginGroup("options");
-                vpnprofile->set_routes = f->value("set_routes").toBool();
-                vpnprofile->set_dns = f->value("set_dns").toBool();
-                vpnprofile->pppd_no_peerdns = f->value("pppd_no_peerdns").toBool();
-                vpnprofile->insecure_ssl = f->value("insecure_ssl").toBool();
+                vpnprofile->set_routes = f->value("set-routes").toBool();
+                vpnprofile->set_dns = f->value("set-dns").toBool();
+                vpnprofile->pppd_no_peerdns = f->value("pppd-no-peerdns").toBool();
+                vpnprofile->insecure_ssl = f->value("insecure-ssl").toBool();
                 vpnprofile->debug = f->value("debug").toBool();
                 vpnprofile->realm = f->value("realm").toString();
                 vpnprofile->autostart = f->value("autostart").toBool();
-                vpnprofile->half_internet_routers = f->value("half_internet_routers").toBool();
+                vpnprofile->half_internet_routers = f->value("half-internet-routers").toBool();
                 f->endGroup();
 
                 switch(it_profileDirs.key())
