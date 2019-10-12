@@ -74,6 +74,7 @@ void vpnManager::startVPN(const QString &name)
         return;
 
     QStringList arguments;
+    arguments << "-E";
     arguments << QCoreApplication::applicationFilePath();
     arguments << "--start-vpn";
     arguments << "--vpn-name";
