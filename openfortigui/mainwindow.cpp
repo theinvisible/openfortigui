@@ -724,6 +724,8 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
     f->initAfter();
 
     prefWindow->show();
+    prefWindow->raise();
+    QApplication::setActiveWindow(prefWindow);
 }
 
 void MainWindow::onClientVPNOTPRequest(QProcess *proc)
