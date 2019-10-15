@@ -86,6 +86,14 @@ build-debian-9-64:
     - mv openfortigui_*.deb build/
     - mv openfortigui-runner_*.deb build/
     - upload_build build/openforti*.deb || true
+    
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - build-debian-9-64
 
 # Stage "debian"
 build-debian-10-64:  
@@ -107,4 +115,4 @@ build-debian-10-64:
       - build/*
 
   tags:
-    - build-debian-9-64
+    - build-debian-10-64
