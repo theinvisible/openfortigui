@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>718</width>
+    <height>484</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,6 +111,26 @@
          <widget class="QCheckBox" name="cbUseSystemPasswordStore">
           <property name="text">
            <string>Uses system password manager (KWallet, GNOME-Keyring)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>SUDO -E Option</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QCheckBox" name="cbSUDOPreserveEnv">
+          <property name="text">
+           <string>SUDO Preserve Env. (&gt;=Ubuntu 19.10/Debian10 Fix)</string>
           </property>
          </widget>
         </item>

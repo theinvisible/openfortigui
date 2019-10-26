@@ -70,10 +70,14 @@ vpnManager::~vpnManager()
 
 void vpnManager::startVPN(const QString &name)
 {
+    tiConfMain main_settings;
+
     if(connections.contains(name))
         return;
 
     QStringList arguments;
+    if(main_settings.getValue("main/sudo_preserve_env").toBool())
+        arguments << "-E";
     arguments << QCoreApplication::applicationFilePath();
     arguments << "--start-vpn";
     arguments << "--vpn-name";

@@ -34,6 +34,7 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
     ui->cbUseSystemPasswordStore->setChecked(confMain.getValue("main/use_system_password_store").toBool());
+    ui->cbSUDOPreserveEnv->setChecked(confMain.getValue("main/sudo_preserve_env").toBool());
     if(confMain.getValue("main/use_system_password_store").toBool())
     {
         ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
@@ -67,6 +68,7 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
     confMain.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
+    confMain.setValue("main/sudo_preserve_env", ui->cbSUDOPreserveEnv->isChecked());
 
     if(ui->cbUseSystemPasswordStore->isChecked()) {
         vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());

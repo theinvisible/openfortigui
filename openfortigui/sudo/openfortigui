@@ -1,1 +1,1 @@
-%sudo  ALL=NOPASSWD: /usr/bin/openfortigui
+%sudo  ALL=NOPASSWD:SETENV: /usr/bin/openfortigui
