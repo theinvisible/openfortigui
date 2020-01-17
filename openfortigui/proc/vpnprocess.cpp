@@ -55,13 +55,13 @@ void vpnProcess::run(const QString &vpnname)
 
         apiServer->write(block);
         apiServer->flush();
-
-        startVPN();
     }
     else
     {
         qWarning() << apiServer->errorString();
     }
+
+    startVPN();
 }
 
 void vpnProcess::closeProcess()
