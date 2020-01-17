@@ -30,6 +30,8 @@
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
     init_last_tunnel = false;
+    thread_worker = 0;
+    thread_vpn = 0;
 }
 
 void vpnProcess::run(const QString &vpnname)
@@ -53,23 +55,26 @@ void vpnProcess::run(const QString &vpnname)
 
         apiServer->write(block);
         apiServer->flush();
+
+        startVPN();
     }
     else
     {
         qWarning() << apiServer->errorString();
     }
-
-    startVPN();
 }
 
 void vpnProcess::closeProcess()
 {
     qDebug() << "shutting down vpn process::" << name;
 
-    thread_worker->end();
-    thread_vpn->quit();
-    QThread::sleep(2);
-    thread_vpn->terminate();
+    if(thread_worker != 0 && thread_vpn != 0)
+    {
+        thread_worker->end();
+        thread_vpn->quit();
+        QThread::sleep(2);
+        thread_vpn->terminate();
+    }
     QCoreApplication::quit();
 }
 
@@ -83,6 +88,7 @@ void vpnProcess::startVPN()
     if(usePasswordStore)
         profiles.setReadProfilePasswords(false);
     vpnProfile *profile = profiles.getVpnProfileByName(name);
+    checkVPNSettings(profile);
 
     // Try to fetch password from current user password store
     if(usePasswordStore)
@@ -163,6 +169,11 @@ void vpnProcess::startVPN()
     observerStats = new QTimer(this);
     connect(observerStats, SIGNAL(timeout()), this, SLOT(onStatsUpdate()));
     observerStats->start(2000);
+}
+
+void vpnProcess::checkVPNSettings(vpnProfile *profile)
+{
+    // Todo implement check if vpn log path is accessable
 }
 
 void vpnProcess::sendCMD(const vpnApi &cmd)
@@ -255,6 +266,24 @@ void vpnProcess::submitStats()
     vpnApi cmd;
     cmd.objName = name;
     cmd.action = vpnApi::ACTION_VPNSTATS_SUBMIT;
+    cmd.data = json.toJson();
+
+    sendCMD(cmd);
+}
+
+void vpnProcess::submitVPNMessage(const QString &msg, int msg_type)
+{
+    QJsonDocument json;
+    QJsonObject jsTop;
+
+    jsTop["msg"] = msg;
+    jsTop["msg_type"] = msg_type;
+
+    json.setObject(jsTop);
+
+    vpnApi cmd;
+    cmd.objName = name;
+    cmd.action = vpnApi::ACTION_VPN_MSG;
     cmd.data = json.toJson();
 
     sendCMD(cmd);

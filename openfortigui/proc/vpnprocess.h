@@ -53,12 +53,14 @@ private:
     vpnStats stats;
 
     void startVPN();
+    void checkVPNSettings(vpnProfile *profile);
     void sendCMD(const vpnApi &cmd);
     void updateStats();
 
     void requestCred();
     void requestPassStore();
     void submitStats();
+    void submitVPNMessage(const QString &msg, int msg_type);
 
 signals:
 

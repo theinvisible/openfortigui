@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
     qRegisterMetaType<vpnStats>("vpnStats");
+    qRegisterMetaType<vpnMsg>("vpnMsg");
 
     tiConfMain main_settings;
 

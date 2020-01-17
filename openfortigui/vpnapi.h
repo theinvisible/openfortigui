@@ -43,7 +43,8 @@ public:
         ACTION_PONG,
         ACTION_VPNGROUP_START,
         ACTION_VPNGROUP_STOP,
-        ACTION_SHOW_MAIN
+        ACTION_SHOW_MAIN,
+        ACTION_VPN_MSG
     };
 
     QString objName;
@@ -55,6 +56,20 @@ class vpnStats
 {
 public:
     qint64 bytes_read, bytes_written, vpn_start;
+};
+
+class vpnMsg
+{
+public:
+    enum vpnMsgType
+    {
+        TYPE_INFO,
+        TYPE_WARNING,
+        TYPE_ERROR
+    };
+
+    QString msg;
+    int type;
 };
 
 QDataStream &operator<<(QDataStream &ds, const vpnApi &obj);

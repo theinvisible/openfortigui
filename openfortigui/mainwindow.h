@@ -98,6 +98,7 @@ private slots:
     void onClientCertValidationFAiled(QString vpnname, QString buffer);
 
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
+    void onClientVPNMessage(QString vpnname, vpnMsg msg);
     void ontvVpnProfilesCustomContextMenu(const QPoint &point);
 
     void showMainWindow();

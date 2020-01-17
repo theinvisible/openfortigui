@@ -101,6 +101,7 @@ void vpnManager::startVPN(const QString &name)
     connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
     connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
+    connect(clientConn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
     connections[name] = clientConn;
 
     //logger->addVPN(name, vpnProc);
@@ -278,6 +279,11 @@ void vpnManager::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
     emit VPNStatsUpdate(vpnname, stats);
 }
 
+void vpnManager::onClientVPNMessage(QString vpnname, vpnMsg msg)
+{
+    emit VPNMessage(vpnname, msg);
+}
+
 void vpnManager::onOTPRequest(QProcess *proc)
 {
     qDebug() << "otprequest from vpnmanager";
@@ -370,6 +376,12 @@ void vpnClientConnection::onClientReadyRead()
         stats.bytes_written = jobj["bytes_written"].toVariant().toLongLong();
         stats.vpn_start = jobj["vpn_start"].toVariant().toLongLong();
         emit VPNStatsUpdate(name, stats);
+        break;
+    case vpnApi::ACTION_VPN_MSG:
+        vpnMsg msg;
+        msg.msg = jobj["msg"].toVariant().toString();
+        msg.type = jobj["msg_type"].toVariant().toInt();
+        emit VPNMessage(name, msg);
         break;
     }
 

@@ -58,6 +58,7 @@ signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
+    void VPNMessage(QString vpnname, vpnMsg msg);
 
 public slots:
     void onClientReadyRead();
@@ -92,6 +93,7 @@ signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void VPNCredRequest(QString vpnname);
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
+    void VPNMessage(QString vpnname, vpnMsg msg);
     void VPNOTPRequest(QProcess *proc);
     void VPNCertificateValidationFailed(QString vpnname, QString buffer);
     void VPNShowMainWindowRequest();
@@ -103,6 +105,7 @@ public slots:
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
+    void onClientVPNMessage(QString vpnname, vpnMsg msg);
     void onOTPRequest(QProcess *proc);
     void onCertificateValidationFailed(QString vpnname, QString buffer);
 };
