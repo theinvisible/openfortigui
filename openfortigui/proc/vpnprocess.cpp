@@ -24,6 +24,8 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QRegExp>
+#include <QFileInfo>
+#include <QDir>
 
 #include "ticonfmain.h"
 
@@ -88,7 +90,13 @@ void vpnProcess::startVPN()
     if(usePasswordStore)
         profiles.setReadProfilePasswords(false);
     vpnProfile *profile = profiles.getVpnProfileByName(name);
-    checkVPNSettings(profile);
+    if(!checkVPNSettings(profile))
+    {
+        // TODO: Process does not exit here
+        qDebug() << "VPN settings check failed, exiting!";
+        closeProcess();
+        return;
+    }
 
     // Try to fetch password from current user password store
     if(usePasswordStore)
@@ -171,9 +179,19 @@ void vpnProcess::startVPN()
     observerStats->start(2000);
 }
 
-void vpnProcess::checkVPNSettings(vpnProfile *profile)
+bool vpnProcess::checkVPNSettings(vpnProfile *profile)
 {
-    // Todo implement check if vpn log path is accessable
+    bool ret = true;
+
+    QFileInfo ltest(profile->pppd_log_file);
+    QDir ldtest;
+    if(!profile->pppd_log_file.isEmpty() && !ldtest.exists(ltest.absolutePath()))
+    {
+        submitVPNMessage(tr("PPPD log file dir does not exist!"), vpnMsg::TYPE_ERROR);
+        ret = false;
+    }
+
+    return ret;
 }
 
 void vpnProcess::sendCMD(const vpnApi &cmd)

@@ -791,7 +791,19 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 
 void MainWindow::onClientVPNMessage(QString vpnname, vpnMsg msg)
 {
-    QMessageBox::information(this, "test", msg.msg);
+    switch(msg.type)
+    {
+    case vpnMsg::TYPE_ERROR:
+        QMessageBox::critical(this, tr("Error"), msg.msg);
+        break;
+    case vpnMsg::TYPE_WARNING:
+        QMessageBox::warning(this, tr("Warning"), msg.msg);
+        break;
+    case vpnMsg::TYPE_INFO:
+    default:
+        QMessageBox::information(this, tr("Information"), msg.msg);
+        break;
+    }
 }
 
 void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)

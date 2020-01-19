@@ -87,6 +87,8 @@ void vpnManager::startVPN(const QString &name)
 
     QProcess *vpnProc = new QProcess(this);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
+    connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode); }, Qt::QueuedConnection);
+    connect(vpnProc, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error){ onVPNProcessErrorOccurred(name, error); }, Qt::QueuedConnection);
     emit addVPNLogger(name, vpnProc);
     qDebug() << "Start vpn::" << name;
     vpnProc->start("sudo", arguments);
@@ -294,6 +296,24 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
 {
     qDebug() << "certificatefailedrequest from vpnmanager";
     emit VPNCertificateValidationFailed(vpnname, buffer);
+}
+
+void vpnManager::onVPNProcessFinished(QString name, int exitCode)
+{
+    qDebug() << "VPN process " << name << " finished!";
+    if(connections.contains(name))
+    {
+        connections.remove(name);
+    }
+}
+
+void vpnManager::onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error)
+{
+    qDebug() << "VPN process " << name << " error occurred!";
+    if(connections.contains(name))
+    {
+        connections.remove(name);
+    }
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)

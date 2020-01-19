@@ -53,7 +53,7 @@ private:
     vpnStats stats;
 
     void startVPN();
-    void checkVPNSettings(vpnProfile *profile);
+    bool checkVPNSettings(vpnProfile *profile);
     void sendCMD(const vpnApi &cmd);
     void updateStats();
 
