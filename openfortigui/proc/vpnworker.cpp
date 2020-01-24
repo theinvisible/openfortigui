@@ -33,15 +33,15 @@ extern "C"  {
 #include <arpa/inet.h>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
-#ifdef __APPLE__
-#include <util.h>
-#else
+#include <openssl/engine.h>
+#if HAVE_PTY_H
 #include <pty.h>
+#elif HAVE_UTIL_H
+#include <util.h>
 #endif
 #include <termios.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <assert.h>
 #if HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
 #endif
@@ -66,25 +66,35 @@ struct ofv_varr {
     const char **data;	// NULL terminated
 };
 
-static void ofv_append_varr(struct ofv_varr *p, const char *x)
+static int ofv_append_varr(struct ofv_varr *p, const char *x)
 {
     if (p->off + 1 >= p->cap) {
         const char **ndata;
-        unsigned ncap = (p->off + 1) * 2;
-        assert(p->off + 1 < ncap);
+        unsigned int ncap = (p->off + 1) * 2;
+        if (p->off + 1 >= ncap) {
+            log_error("%s: ncap exceeded\n", __func__);
+            return 1;
+        };
         ndata = (const char**) realloc(p->data, ncap * sizeof(const char *));
         if (ndata) {
             p->data = ndata;
             p->cap = ncap;
         } else {
             log_error("realloc: %s\n", strerror(errno));
-            assert(ndata);
-            return;
+            return 1;
         }
     }
-    assert(p->off + 1 < p->cap);
+    if (p->data == NULL) {
+        log_error("%s: NULL data\n", __func__);
+        return 1;
+    }
+    if (p->off + 1 >= p->cap) {
+        log_error("%s: cap exceeded in p\n", __func__);
+        return 1;
+    }
     p->data[p->off] = x;
     p->data[++p->off] = NULL;
+    return 0;
 }
 
 static int on_ppp_if_up(struct tunnel *tunnel)
@@ -139,6 +149,7 @@ static int pppd_run(struct tunnel *tunnel)
     pid_t pid;
     int amaster;
     int slave_stderr;
+
 #ifdef HAVE_STRUCT_TERMIOS
     struct termios termp;
     termp.c_cflag = B9600;
@@ -155,16 +166,18 @@ static int pppd_run(struct tunnel *tunnel)
 
     slave_stderr = dup(STDERR_FILENO);
 
+    if (slave_stderr < 0) {
+        log_error("slave stderr %s\n", strerror(errno));
+        return 1;
+    }
+
 #ifdef HAVE_STRUCT_TERMIOS
     pid = forkpty(&amaster, NULL, &termp, NULL);
 #else
     pid = forkpty(&amaster, NULL, NULL, NULL);
 #endif
 
-    if (pid == -1) {
-        log_error("forkpty: %s\n", strerror(errno));
-        return 1;
-    } else if (pid == 0) { // child process
+    if (pid == 0) { // child process
 
         struct ofv_varr pppd_args = { 0, 0, NULL };
 
@@ -173,25 +186,29 @@ static int pppd_run(struct tunnel *tunnel)
 
 #if HAVE_USR_SBIN_PPP
         /*
-        * assume there is a default configuration to start.
-        * Support for taking options from the command line
-        * e.g. the name of the configuration or options
-        * to send interactively to ppp will be added later
-        */
-        const char *v[] = {
+         * assume there is a default configuration to start.
+         * Support for taking options from the command line
+         * e.g. the name of the configuration or options
+         * to send interactively to ppp will be added later
+         */
+        static const char *const v[] = {
             ppp_path,
             "-direct"
         };
-        for (unsigned i = 0; i < sizeof v/sizeof v[0]; i++)
-            ofv_append_varr(&pppd_args, v[i]);
+        for (unsigned int i = 0; i < ARRAY_SIZE(v); i++)
+            if (ofv_append_varr(&pppd_args, v[i]))
+                return 1;
 #endif
 #if HAVE_USR_SBIN_PPPD
         if (tunnel->config->pppd_call) {
-            ofv_append_varr(&pppd_args, ppp_path);
-            ofv_append_varr(&pppd_args, "call");
-            ofv_append_varr(&pppd_args, tunnel->config->pppd_call);
+            if (ofv_append_varr(&pppd_args, ppp_path))
+                return 1;
+            if (ofv_append_varr(&pppd_args, "call"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_call))
+                return 1;
         } else {
-            const char *v[] = {
+            static const char *const v[] = {
                 ppp_path,
                 "115200", // speed
                 ":192.0.2.1", // <local_IP_address>:<remote_IP_address>
@@ -206,37 +223,53 @@ static int pppd_run(struct tunnel *tunnel)
                 "lcp-max-configure", "40",
                 "mru", "1354"
             };
-            for (unsigned i = 0; i < ARRAY_SIZE(v); i++)
-                ofv_append_varr(&pppd_args, v[i]);
+            for (unsigned int i = 0; i < ARRAY_SIZE(v); i++)
+                if (ofv_append_varr(&pppd_args, v[i]))
+                    return 1;
         }
         if (tunnel->config->pppd_use_peerdns)
-            ofv_append_varr(&pppd_args, "usepeerdns");
+            if (ofv_append_varr(&pppd_args, "usepeerdns"))
+                return 1;
         if (tunnel->config->pppd_log) {
-            ofv_append_varr(&pppd_args, "debug");
-            ofv_append_varr(&pppd_args, "logfile");
-            ofv_append_varr(&pppd_args, tunnel->config->pppd_log);
+            if (ofv_append_varr(&pppd_args, "debug"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, "logfile"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_log))
+                return 1;
         } else {
-            /* pppd defaults to logging to fd=1, clobbering the
-             * actual PPP data */
-            ofv_append_varr(&pppd_args, "logfd");
-            ofv_append_varr(&pppd_args, "2");
+            /*
+             * pppd defaults to logging to fd=1, clobbering the
+             * actual PPP data
+             */
+            if (ofv_append_varr(&pppd_args, "logfd"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, "2"))
+                return 1;
         }
         if (tunnel->config->pppd_plugin) {
-            ofv_append_varr(&pppd_args, "plugin");
-            ofv_append_varr(&pppd_args, tunnel->config->pppd_plugin);
+            if (ofv_append_varr(&pppd_args, "plugin"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_plugin))
+                return 1;
         }
         if (tunnel->config->pppd_ipparam) {
-            ofv_append_varr(&pppd_args, "ipparam");
-            ofv_append_varr(&pppd_args, tunnel->config->pppd_ipparam);
+            if (ofv_append_varr(&pppd_args, "ipparam"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ipparam))
+                return 1;
         }
         if (tunnel->config->pppd_ifname) {
-            ofv_append_varr(&pppd_args, "ifname");
-            ofv_append_varr(&pppd_args, tunnel->config->pppd_ifname);
+            if (ofv_append_varr(&pppd_args, "ifname"))
+                return 1;
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ifname))
+                return 1;
         }
 #endif
 #if HAVE_USR_SBIN_PPP
         if (tunnel->config->ppp_system) {
-            ofv_append_varr(&pppd_args, tunnel->config->ppp_system);
+            if (ofv_append_varr(&pppd_args, tunnel->config->ppp_system))
+                return 1;
         }
 #endif
 
@@ -246,8 +279,13 @@ static int pppd_run(struct tunnel *tunnel)
 
         fprintf(stderr, "execvp: %s\n", strerror(errno));
         _exit(EXIT_FAILURE);
+    } else {
+        close(slave_stderr);
+        if (pid == -1) {
+            log_error("forkpty: %s\n", strerror(errno));
+            return 1;
+        }
     }
-    close(slave_stderr);
 
     // Set non-blocking
     int flags = fcntl(amaster, F_GETFL, 0);
@@ -263,6 +301,7 @@ static int pppd_run(struct tunnel *tunnel)
 
     return 0;
 }
+
 
 static const char * const pppd_message[] = {
     "Has detached, or otherwise the connection was successfully established and terminated at the peer's request.",

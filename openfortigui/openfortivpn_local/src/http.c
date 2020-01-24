@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define BUFSZ 0x8000
 
@@ -45,8 +46,6 @@ static void url_encode(char *dest, const char *str)
         if (isalnum(*str) || *str == '-' || *str == '_'
             || *str == '.' || *str == '~')
             *dest++ = *str;
-        else if (*str == ' ')
-            *dest++ = '+';
         else {
             static const char hex[] = "0123456789ABCDEF";
 
@@ -77,16 +76,20 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
     va_start(args, request);
     length = vsnprintf(buffer, BUFSZ, request, args);
     va_end(args);
-    strcpy(logbuffer,buffer);
-    if (loglevel <= OFV_LOG_DEBUG_DETAILS && tunnel->config->password[0]!='\0') {
-        char* pwstart;
-        pwstart = strstr(logbuffer, tunnel->config->password);
+    strcpy(logbuffer, buffer);
+    if (loglevel <= OFV_LOG_DEBUG_DETAILS && tunnel->config->password[0] != '\0') {
+        char *pwstart;
+        char password[3 * FIELD_SIZE + 1];
+
+        url_encode(password, tunnel->config->password);
+        pwstart = strstr(logbuffer, password);
+
         if (pwstart != NULL) {
             int pos, pwlen, i;
             pos = pwstart - logbuffer;
             pwlen = strlen(tunnel->config->password);
-            for (i=pos; i<pos+pwlen; i++)
-                logbuffer[i]='*';
+            for (i = pos; i < pos + pwlen; i++)
+                logbuffer[i] = '*';
         }
     }
 
@@ -95,7 +98,7 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
     else if (length >= BUFSZ)
         return ERR_HTTP_TOO_LONG;
 
-    log_debug_details("%s: \n%s\n", __func__, logbuffer);
+    log_debug_details("%s:\n%s\n", __func__, logbuffer);
 
     while (n == 0)
         n = safe_ssl_write(tunnel->ssl_handle, (uint8_t *) buffer,
@@ -163,7 +166,7 @@ int http_receive(
                           (uint8_t *) buffer + bytes_read,
                           BUFSZ - 1 - bytes_read);
         if (n > 0) {
-            log_debug_details("%s: \n%s\n", __func__, buffer);
+            log_debug_details("%s:\n%s\n", __func__, buffer);
             const char *eoh;
 
             bytes_read += n;
@@ -189,8 +192,7 @@ int http_receive(
             }
 
             if (header_size) {
-                /* We saw the whole header, */
-                /* let's check if the body is done as well */
+                /* We saw the whole header, is the body done as well? */
                 if (chunked) {
                     /* Last chunk terminator. Done naively. */
                     if (bytes_read >= 7 &&
@@ -289,15 +291,13 @@ static int http_request(struct tunnel *tunnel, const char *method,
                         uint32_t *response_size
                        )
 {
-    int ret = do_http_request(
-                      tunnel, method, uri, data, response, response_size);
+    int ret = do_http_request(tunnel, method, uri, data,
+                              response, response_size);
 
     if (ret == ERR_HTTP_SSL) {
         ssl_connect(tunnel);
-        ret = do_http_request(
-                      tunnel, method, uri, data, response,
-                      response_size
-              );
+        ret = do_http_request(tunnel, method, uri, data,
+                              response, response_size);
     }
 
     if (ret != 1)
@@ -428,7 +428,8 @@ int try_otp_auth(
         return -1;
     strncpy(path, s, e - s);
     path[e - s] = '\0';
-    /* Try to get password prompt, asume it starts with 'Please'
+    /*
+     * Try to get password prompt, assume it starts with 'Please'
      * Fall back to default prompt if not found/parseable
      */
     p = strstr(s, "Please");
@@ -453,7 +454,8 @@ int try_otp_auth(
     /* Search for all inputs */
     while ((s = strcasestr(s, "<INPUT"))) {
         s += 6;
-        /* check if we found parameters for a later INPUT
+        /*
+         * check if we found parameters for a later INPUT
          * during last round
          */
         if (s < t || s < n || (v && s < v))
@@ -468,10 +470,12 @@ int try_otp_auth(
         n += 6;
         t += 6;
         if (strncmp(t, "hidden", 6) == 0 || strncmp(t, "password", 8) == 0) {
-            /* We try to be on the safe side
-             * and url-encode the variable name
+            /*
+             * We try to be on the safe side
+             * and URL-encode the variable name
+             *
+             * Append '&' if we found something in last round
              */
-            /* Append '&' if we found something in last round */
             if (d > data) {
                 if (!SPACE_AVAILABLE(1))
                     return -1;
@@ -567,17 +571,30 @@ int auth_log_in(struct tunnel *tunnel)
     uint32_t response_size;
 
     url_encode(username, tunnel->config->username);
-    url_encode(password, tunnel->config->password);
     url_encode(realm, tunnel->config->realm);
 
     tunnel->cookie[0] = '\0';
 
-    snprintf(data, sizeof(data), "username=%s&credential=%s&realm=%s&ajax=1"
-             "&redir=%%2Fremote%%2Findex&just_logged_in=1",
-             username, password, realm);
+    if (tunnel->config->use_engine
+        || (username[0] == '\0' && tunnel->config->password[0] == '\0')) {
+        snprintf(data, sizeof(data), "cert=&nup=1");
+        ret = http_request(tunnel, "GET", "/remote/login",
+                           data, &res, &response_size);
+    } else {
+        if (tunnel->config->password[0] == '\0') {
+            snprintf(data, sizeof(data),
+                     "username=%s&realm=%s&ajax=1&redir=%%2Fremote%%2Findex&just_logged_in=1",
+                     username, realm);
+        } else {
+            url_encode(password, tunnel->config->password);
+            snprintf(data, sizeof(data),
+                     "username=%s&credential=%s&realm=%s&ajax=1&redir=%%2Fremote%%2Findex&just_logged_in=1",
+                     username, password, realm);
+        }
+        ret = http_request(tunnel, "POST", "/remote/logincheck",
+                           data, &res, &response_size);
+    }
 
-    ret = http_request(
-                  tunnel, "POST", "/remote/logincheck", data, &res, &response_size);
     if (ret != 1)
         goto end;
 
@@ -601,7 +618,8 @@ int auth_log_in(struct tunnel *tunnel)
     if (ret == ERR_HTTP_NO_COOKIE) {
         struct vpn_config *cfg = tunnel->config;
 
-        /* If the response body includes a tokeninfo= parameter,
+        /*
+         * If the response body includes a tokeninfo= parameter,
          * it means the VPN gateway expects two-factor authentication.
          * It sends a one-time authentication credential for example
          * by email or SMS, and expects to receive it back in the
@@ -635,9 +653,8 @@ int auth_log_in(struct tunnel *tunnel)
         }
 
         url_encode(tokenresponse, cfg->otp);
-        snprintf(data, sizeof(data), "username=%s&realm=%s&reqid=%s"
-                 "&polid=%s&grp=%s&code=%s&code2="
-                 "&redir=%%2Fremote%%2Findex&just_logged_in=1",
+        snprintf(data, sizeof(data),
+                 "username=%s&realm=%s&reqid=%s&polid=%s&grp=%s&code=%s&code2=&redir=%%2Fremote%%2Findex&just_logged_in=1",
                  username, realm, reqid, polid, group, tokenresponse);
 
         delay_otp(tunnel);
@@ -681,6 +698,7 @@ static int parse_xml_config(struct tunnel *tunnel, const char *buffer)
 {
     const char *val;
     char *gateway;
+    char *dns_server;
     int ret = 0;
 
     if (strncmp(buffer, "HTTP/1.1 200 OK\r\n", 17)) {
@@ -699,6 +717,32 @@ static int parse_xml_config(struct tunnel *tunnel, const char *buffer)
     gateway = xml_get(xml_find(' ', "ipv4=", val, 1));
     if (!gateway)
         log_warn("No gateway address, using interface for routing\n");
+
+    // The dns search string
+    val = buffer;
+    while ((val = xml_find('<', "dns", val, 2))) {
+        if (xml_find(' ', "domain=", val, 1)) {
+            tunnel->ipv4.dns_suffix
+                    = xml_get(xml_find(' ', "domain=", val, 1));
+            log_debug("found dns suffix %s in xml config\n",
+                      tunnel->ipv4.dns_suffix);
+            break;
+        }
+    }
+
+    // The dns servers
+    val = buffer;
+    while ((val = xml_find('<', "dns", val, 2))) {
+        if (xml_find(' ', "ip=", val, 1)) {
+            dns_server = xml_get(xml_find(' ', "ip=", val, 1));
+            log_debug("found dns server %s in xml config\n", dns_server);
+            if (!tunnel->ipv4.ns1_addr.s_addr)
+                tunnel->ipv4.ns1_addr.s_addr = inet_addr(dns_server);
+            else if (!tunnel->ipv4.ns2_addr.s_addr)
+                tunnel->ipv4.ns2_addr.s_addr = inet_addr(dns_server);
+            free(dns_server);
+        }
+    }
 
     // Routes the tunnel wants to push
     val = xml_find('<', "split-tunnel-info", buffer, 1);
