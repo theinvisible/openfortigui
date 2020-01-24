@@ -36,7 +36,7 @@ vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
     thread_vpn = 0;
 }
 
-void vpnProcess::run(const QString &vpnname)
+void vpnProcess::setup(const QString &vpnname)
 {
     name = vpnname;
 
@@ -63,7 +63,7 @@ void vpnProcess::run(const QString &vpnname)
         qWarning() << apiServer->errorString();
     }
 
-    startVPN();
+    //startVPN();
 }
 
 void vpnProcess::closeProcess()
@@ -82,8 +82,6 @@ void vpnProcess::closeProcess()
 
 void vpnProcess::startVPN()
 {
-    qDebug() << "vpnProcess::startVPN::slot";
-
     tiConfVpnProfiles profiles;
     tiConfMain main_settings;
     bool usePasswordStore = main_settings.getValue("main/use_system_password_store").toBool();

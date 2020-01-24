@@ -164,7 +164,8 @@ int main(int argc, char *argv[])
             qDebug() << QString("start-vpn process::config_file::") << tiConfMain::main_config;
 
             vpnProcess proc;
-            proc.run(arg_vpnname);
+            proc.setup(arg_vpnname);
+            QTimer::singleShot(100, &proc, SLOT(startVPN()));
 
             return a.exec();
         }
@@ -194,13 +195,6 @@ int main(int argc, char *argv[])
 
         if(isRunningAlready())
         {
-            /*
-            qDebug() << "This application is already running, exiting now.";
-            QMessageBox::critical(0, QApplication::tr("Application error"),
-                                            QApplication::tr("This application is already running, exiting now."),
-                                            QMessageBox::Ok);
-            */
-
             // Ask the running instance to show the main window instead of error message
             QLocalSocket apiServer;
             apiServer.connectToServer(openfortigui_config::name);

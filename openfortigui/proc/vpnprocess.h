@@ -31,7 +31,7 @@ class vpnProcess : public QObject
     Q_OBJECT
 public:
     explicit vpnProcess(QObject *parent = 0);
-    void run(const QString &vpnname);
+    void setup(const QString &vpnname);
 
 private:
     QString name;
@@ -52,7 +52,6 @@ private:
 
     vpnStats stats;
 
-    void startVPN();
     bool checkVPNSettings(vpnProfile *profile);
     void sendCMD(const vpnApi &cmd);
     void updateStats();
@@ -65,6 +64,7 @@ private:
 signals:
 
 public slots:
+    void startVPN();
     void onServerReadyRead();
     void onServerDisconnected();
     void onVPNStatusChanged(vpnClientConnection::connectionStatus status);
