@@ -90,7 +90,6 @@ void vpnProcess::startVPN()
     vpnProfile *profile = profiles.getVpnProfileByName(name);
     if(!checkVPNSettings(profile))
     {
-        // TODO: Process does not exit here
         qDebug() << "VPN settings check failed, exiting!";
         closeProcess();
         return;
@@ -114,6 +113,7 @@ void vpnProcess::startVPN()
 
         if(wmax == 30)
         {
+            submitVPNMessage(tr("Timeout for password request from passstore!"), vpnMsg::TYPE_ERROR);
             closeProcess();
             return;
         }
@@ -145,6 +145,7 @@ void vpnProcess::startVPN()
 
         if(wmax == 30)
         {
+            submitVPNMessage(tr("Timeout for user/password request, try again!"), vpnMsg::TYPE_ERROR);
             closeProcess();
             return;
         }
@@ -185,7 +186,7 @@ bool vpnProcess::checkVPNSettings(vpnProfile *profile)
     QDir ldtest;
     if(!profile->pppd_log_file.isEmpty() && !ldtest.exists(ltest.absolutePath()))
     {
-        submitVPNMessage(tr("PPPD log file dir does not exist!"), vpnMsg::TYPE_ERROR);
+        submitVPNMessage(tr("PPPD log file dir %1 does not exist!").arg(profile->pppd_log_file), vpnMsg::TYPE_ERROR);
         ret = false;
     }
 

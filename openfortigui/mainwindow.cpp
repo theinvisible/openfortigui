@@ -915,7 +915,7 @@ void MainWindow::refreshVpnProfileList()
     tray_menu->clear();
     if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_TOP)
     {
-        tray_menu->addAction(QIcon(":/img/quit.png"),trUtf8("Quit app"), this, SLOT(onQuit()));
+        tray_menu->addAction(QIcon(":/img/quit.png"),trUtf8("Quit OpenFortiGUI"), this, SLOT(onQuit()));
         tray_menu->addAction(QIcon(":/img/settings.png"), trUtf8("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(QIcon(":/img/show.png"), trUtf8("Show mainwindow"), this, SLOT(show()));
         tray_menu->addSeparator();
@@ -1024,7 +1024,7 @@ void MainWindow::refreshVpnProfileList()
         tray_menu->addSeparator();
         tray_menu->addAction(QIcon(":/img/show.png"), trUtf8("Show mainwindow"), this, SLOT(show()));
         tray_menu->addAction(QIcon(":/img/settings.png"), trUtf8("Settings"), this, SLOT(onVPNSettings()));
-        tray_menu->addAction(QIcon(":/img/quit.png"), trUtf8("Quit app"), this, SLOT(onQuit()));
+        tray_menu->addAction(QIcon(":/img/quit.png"), trUtf8("Quit OpenFortiGUI"), this, SLOT(onQuit()));
     }
 
     tray->setContextMenu(tray_menu);

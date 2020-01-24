@@ -11,15 +11,15 @@
     <message>
         <location filename="../mainwindow.ui" line="25"/>
         <location filename="../mainwindow.ui" line="112"/>
-        <location filename="../mainwindow.cpp" line="108"/>
+        <location filename="../mainwindow.cpp" line="112"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="203"/>
-        <location filename="../mainwindow.cpp" line="217"/>
-        <location filename="../mainwindow.cpp" line="226"/>
-        <location filename="../mainwindow.cpp" line="246"/>
+        <location filename="../mainwindow.cpp" line="207"/>
+        <location filename="../mainwindow.cpp" line="221"/>
+        <location filename="../mainwindow.cpp" line="230"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>Delete VPN</source>
         <translation>VPN löschen</translation>
     </message>
@@ -28,7 +28,7 @@
         <translation type="vanished">VPN kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="268"/>
+        <location filename="../mainwindow.cpp" line="272"/>
         <source>Edit VPN</source>
         <translation>VPN bearbeiten</translation>
     </message>
@@ -38,7 +38,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="64"/>
-        <location filename="../mainwindow.cpp" line="103"/>
+        <location filename="../mainwindow.cpp" line="107"/>
         <source>VPN-Groups</source>
         <translation>VPN-Gruppen</translation>
     </message>
@@ -60,7 +60,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="31"/>
-        <location filename="../mainwindow.cpp" line="122"/>
+        <location filename="../mainwindow.cpp" line="126"/>
         <source>Search</source>
         <translation>Suche</translation>
     </message>
@@ -80,197 +80,207 @@
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="158"/>
-        <location filename="../mainwindow.cpp" line="127"/>
+        <location filename="../mainwindow.ui" line="152"/>
+        <source>Ctrl+Q</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="161"/>
+        <location filename="../mainwindow.cpp" line="131"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="167"/>
-        <location filename="../mainwindow.cpp" line="116"/>
-        <location filename="../mainwindow.cpp" line="800"/>
+        <location filename="../mainwindow.ui" line="170"/>
+        <location filename="../mainwindow.cpp" line="120"/>
+        <location filename="../mainwindow.cpp" line="823"/>
         <source>Connect</source>
         <translation>Verbinden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="176"/>
-        <location filename="../mainwindow.cpp" line="117"/>
-        <location filename="../mainwindow.cpp" line="801"/>
+        <location filename="../mainwindow.ui" line="179"/>
+        <location filename="../mainwindow.cpp" line="121"/>
+        <location filename="../mainwindow.cpp" line="824"/>
         <source>Disconnect</source>
         <translation>Trennen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="185"/>
+        <location filename="../mainwindow.ui" line="188"/>
         <source>Hide</source>
         <translation>Verstecken</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="194"/>
-        <location filename="../mainwindow.cpp" line="889"/>
-        <location filename="../mainwindow.cpp" line="996"/>
+        <location filename="../mainwindow.ui" line="191"/>
+        <source>Ctrl+W</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="200"/>
+        <location filename="../mainwindow.cpp" line="919"/>
+        <location filename="../mainwindow.cpp" line="1026"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="203"/>
+        <location filename="../mainwindow.ui" line="209"/>
         <source>Logs</source>
         <translation>Logs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="212"/>
+        <location filename="../mainwindow.ui" line="218"/>
         <source>Setup wizard</source>
         <translation>Installations-Assistent</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="221"/>
+        <location filename="../mainwindow.ui" line="227"/>
         <source>Changelog</source>
         <translation>Changelog</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="72"/>
-        <location filename="../mainwindow.cpp" line="94"/>
+        <location filename="../mainwindow.cpp" line="76"/>
+        <location filename="../mainwindow.cpp" line="98"/>
         <source>Status</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="72"/>
-        <location filename="../mainwindow.cpp" line="94"/>
+        <location filename="../mainwindow.cpp" line="76"/>
+        <location filename="../mainwindow.cpp" line="98"/>
         <source>Name</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="72"/>
+        <location filename="../mainwindow.cpp" line="76"/>
         <source>Gateway</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="72"/>
+        <location filename="../mainwindow.cpp" line="76"/>
         <source>User</source>
         <translation>Benutzer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="72"/>
+        <location filename="../mainwindow.cpp" line="76"/>
         <source>Traffic RX/TX</source>
         <translation>Daten RX/TX</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="77"/>
+        <location filename="../mainwindow.cpp" line="81"/>
         <source>Local VPNs</source>
         <translation>Lokale VPNs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="79"/>
+        <location filename="../mainwindow.cpp" line="83"/>
         <source>Global VPNs</source>
         <translation>Globale VPNs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="94"/>
+        <location filename="../mainwindow.cpp" line="98"/>
         <source>VPNs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="109"/>
+        <location filename="../mainwindow.cpp" line="113"/>
         <source>VPN-Group</source>
         <translation>VPN-Gruppe</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="114"/>
+        <location filename="../mainwindow.cpp" line="118"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="120"/>
-        <location filename="../mainwindow.cpp" line="803"/>
+        <location filename="../mainwindow.cpp" line="124"/>
+        <location filename="../mainwindow.cpp" line="826"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="121"/>
-        <location filename="../mainwindow.cpp" line="804"/>
+        <location filename="../mainwindow.cpp" line="125"/>
+        <location filename="../mainwindow.cpp" line="827"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="125"/>
-        <location filename="../mainwindow.cpp" line="805"/>
+        <location filename="../mainwindow.cpp" line="129"/>
+        <location filename="../mainwindow.cpp" line="828"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="204"/>
+        <location filename="../mainwindow.cpp" line="208"/>
         <source>Global VPN-Profiles cannot be deleted.</source>
         <translation>Globale VPN-Profile können nicht gelöscht werden.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="218"/>
-        <location filename="../mainwindow.cpp" line="269"/>
+        <location filename="../mainwindow.cpp" line="222"/>
+        <location filename="../mainwindow.cpp" line="273"/>
         <source>The VPN state must be disconnected to perform this action.</source>
         <translation>Die VPN muss getrennt sein um diese Aktion durchzuführen.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="227"/>
+        <location filename="../mainwindow.cpp" line="231"/>
         <source>Warning, the selected vpn will be deleted, continue?</source>
         <translation>Achtung, die gewählte VPN wird unwiderruflich gelöscht, weiter?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="246"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>The selected vpn could not be deleted, an error occured.</source>
         <translation>Die gewählte VPN konnte nicht gelöscht werden, ein Fehler ist aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="305"/>
+        <location filename="../mainwindow.cpp" line="309"/>
         <source>Copy VPN-profile</source>
         <translation>VPN-Profil kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="306"/>
+        <location filename="../mainwindow.cpp" line="310"/>
         <source>Enter the new VPN-profile name</source>
         <translation>Geben sie den neuen VPN-Namen an</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="352"/>
-        <location filename="../mainwindow.cpp" line="372"/>
+        <location filename="../mainwindow.cpp" line="356"/>
+        <location filename="../mainwindow.cpp" line="376"/>
         <source>Delete VPN-Group</source>
         <translation>VPN-Gruppe löschen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="353"/>
+        <location filename="../mainwindow.cpp" line="357"/>
         <source>Warning, the selected vpn-group will be deleted, continue?</source>
         <translation>Achtung, die gewählte VPN-Gruppe wird unwiderruflich gelöscht, weiter?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="372"/>
+        <location filename="../mainwindow.cpp" line="376"/>
         <source>The selected vpn-group could not be deleted, an error occured.</source>
         <translation>Die gewählte VPN-Gruppe konnte nicht gelöscht werden, ein Fehler ist aufgetreten.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="416"/>
+        <location filename="../mainwindow.cpp" line="420"/>
         <source>Copy Group-profile</source>
         <translation>Gruppen-Profil kopieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="417"/>
+        <location filename="../mainwindow.cpp" line="421"/>
         <source>Enter the new Group-profile name</source>
         <translation>Geben sie den neuen Gruppen-Namen an</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="701"/>
-        <location filename="../mainwindow.cpp" line="704"/>
+        <location filename="../mainwindow.cpp" line="705"/>
+        <location filename="../mainwindow.cpp" line="708"/>
         <source>VPN-Status</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="701"/>
+        <location filename="../mainwindow.cpp" line="705"/>
         <source>VPN %1 is connected</source>
         <translation>VPN %1 ist verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="704"/>
+        <location filename="../mainwindow.cpp" line="708"/>
         <source>VPN %1 is disconnected</source>
         <translation>VPN %1 ist getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="758"/>
+        <location filename="../mainwindow.cpp" line="764"/>
         <source>Gateway certificate validation failed and the certificate digest is not in the local whitelist nor a valid CA is provided. Certificate details:
 
 </source>
@@ -279,7 +289,7 @@
 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="759"/>
+        <location filename="../mainwindow.cpp" line="765"/>
         <source>
 
 Add certificate to VPN-profile whitelist?</source>
@@ -288,53 +298,72 @@ Add certificate to VPN-profile whitelist?</source>
 Zertifikat zu vertrauenswürdigen Zertifikaten dieses VPN-Profils hinzufügen?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="761"/>
+        <location filename="../mainwindow.cpp" line="767"/>
         <source>Gateway certificate validation failed</source>
         <translation>VPN-Gateway Zertifikat Validierung fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="807"/>
+        <location filename="../mainwindow.cpp" line="797"/>
+        <source>Error</source>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="800"/>
+        <source>Warning</source>
+        <translation>Warnung</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="804"/>
+        <source>Information</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="830"/>
         <source>View logs</source>
         <translation>Logs ansehen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="888"/>
-        <location filename="../mainwindow.cpp" line="997"/>
         <source>Quit app</source>
-        <translation>App beenden</translation>
+        <translation type="vanished">App beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="890"/>
-        <location filename="../mainwindow.cpp" line="995"/>
+        <location filename="../mainwindow.cpp" line="920"/>
+        <location filename="../mainwindow.cpp" line="1025"/>
         <source>Show mainwindow</source>
         <translation>Zeige Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1166"/>
+        <location filename="../mainwindow.cpp" line="1196"/>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;Developer:&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;eMail:&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Website:&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;App-Icon:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://deepdoc.at/&apos;&gt;https://deepdoc.at&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="671"/>
-        <location filename="../mainwindow.cpp" line="921"/>
+        <location filename="../mainwindow.cpp" line="675"/>
+        <location filename="../mainwindow.cpp" line="951"/>
         <source>Connected</source>
         <translation>Verbunden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="676"/>
-        <location filename="../mainwindow.cpp" line="926"/>
+        <location filename="../mainwindow.cpp" line="680"/>
+        <location filename="../mainwindow.cpp" line="956"/>
         <source>Connecting</source>
         <translation>Verbinden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="682"/>
-        <location filename="../mainwindow.cpp" line="931"/>
-        <location filename="../mainwindow.cpp" line="937"/>
+        <location filename="../mainwindow.cpp" line="686"/>
+        <location filename="../mainwindow.cpp" line="961"/>
+        <location filename="../mainwindow.cpp" line="967"/>
         <source>Disconnected</source>
         <translation>Getrennt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1166"/>
+        <location filename="../mainwindow.cpp" line="918"/>
+        <location filename="../mainwindow.cpp" line="1027"/>
+        <source>Quit OpenFortiGUI</source>
+        <translation>OpenFortiGUI beenden</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1196"/>
         <source>About openFortiGUI</source>
         <translation>Über openFortiGUI</translation>
     </message>
@@ -355,60 +384,58 @@ Zertifikat zu vertrauenswürdigen Zertifikaten dieses VPN-Profils hinzufügen?</
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="196"/>
         <source>Application error</source>
-        <translation>Anwendungsfehler</translation>
+        <translation type="vanished">Anwendungsfehler</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="197"/>
         <source>This application is already running, exiting now.</source>
-        <translation>Diese Anwendung läuft bereits, schließe nun diese Instanz.</translation>
+        <translation type="vanished">Diese Anwendung läuft bereits, schließe nun diese Instanz.</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../mainwindow.cpp" line="183"/>
+        <location filename="../mainwindow.cpp" line="187"/>
         <source> - Add VPN</source>
         <translation> - VPN hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="283"/>
+        <location filename="../mainwindow.cpp" line="287"/>
         <source> - Edit VPN</source>
         <translation> - VPN bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="331"/>
+        <location filename="../mainwindow.cpp" line="335"/>
         <source> - Add VPN-Group</source>
         <translation> - VPN-Gruppe hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="397"/>
+        <location filename="../mainwindow.cpp" line="401"/>
         <source> - Edit VPN-Group</source>
         <translation> - VPN-Gruppe bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="720"/>
+        <location filename="../mainwindow.cpp" line="724"/>
         <source> - Login</source>
         <translation> - Anmelden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="736"/>
+        <location filename="../mainwindow.cpp" line="742"/>
         <source> - OTP-Login</source>
         <translation> - OTP-Anmeldung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1202"/>
+        <location filename="../mainwindow.cpp" line="1230"/>
         <source> - Settings</source>
         <translation> - Einstellungen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1216"/>
+        <location filename="../mainwindow.cpp" line="1244"/>
         <source> - Setup wizard</source>
         <translation> - Installations-Assistent</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1237"/>
+        <location filename="../mainwindow.cpp" line="1265"/>
         <source> - Changelog</source>
         <translation> - Changelog</translation>
     </message>
@@ -416,32 +443,32 @@ Zertifikat zu vertrauenswürdigen Zertifikaten dieses VPN-Profils hinzufügen?</
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="134"/>
         <source>Start vpn-process [must be run as root]</source>
         <translation>Starte VPN-Prozess [muss als root ausgeführt werden]</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="136"/>
+        <location filename="../main.cpp" line="138"/>
         <source>Set vpn name &lt;vpnname&gt;</source>
         <translation>Setzte VPN-Name &lt;vpnname&gt;</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="137"/>
+        <location filename="../main.cpp" line="139"/>
         <source>vpnname</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="141"/>
+        <location filename="../main.cpp" line="143"/>
         <source>Use &lt;mainconfig&gt; as config file</source>
         <translation>Verwende &lt;mainconfig&gt; als Config-Datei</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="142"/>
+        <location filename="../main.cpp" line="144"/>
         <source>mainconfig</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="145"/>
+        <location filename="../main.cpp" line="147"/>
         <source>Kills all vpn-processes</source>
         <translation>Beende alle VPN-Prozesse</translation>
     </message>
@@ -762,36 +789,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="58"/>
-        <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.4&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (06.04.19)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
+        <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.8.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - Added optional setting to enable -E flag for SUDO to fix &gt;=Ubuntu 19.10/Debian10 connect (thanks @Dyrcona), you can enable this in File -&gt; Settings&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - Add shortcuts for Hide and Exit (thanks @Dyrcona)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="65"/>
+        <location filename="../vpnchangelog.cpp" line="66"/>
+        <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.8.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - Update openfortivpn core to version 1.10.0&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - When trying to start OpenFortiGUI but an instance is already running, show the main window instead of an error message&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnchangelog.cpp" line="74"/>
+        <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.4&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - Update to latest openfortivpn core (14.05.19)&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - Detect invalid gateway certificate messages and prompt user for action&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnchangelog.cpp" line="82"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.3&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (23.01.19)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Removed &apos;verify-cert&apos; option as no longer provided in upstream&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added various PPPD options from openfortivpn&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Fixes CA validation (using X509_CHECK_HOST by default)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="77"/>
+        <location filename="../vpnchangelog.cpp" line="94"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Minor changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Extend API to work with KRunner plugin VPN group start&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Adding more Umlaut support (ÄÖÜ) for VPN profile/group names&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="85"/>
+        <location filename="../vpnchangelog.cpp" line="102"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (02.09.18)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Validate VPN profile name before allowing save&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Fixes bug where realm was being passed to the user_key argument&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Save toolbar position&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Port number is now saved correctly if exceeding 15bit limit&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Adding Umlaut support (äüö) for VPN profile names&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="99"/>
+        <location filename="../vpnchangelog.cpp" line="116"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (08.07.18)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Passwords are only read and decrypted when required&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added japanese translation (thanks to tsundeoku@github)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Trusted cert should not depend on user cert/key&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various smaller Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (08.07.18)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Passwords are only read and decrypted when required&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added japanese translation (thanks to tsundeoku@github)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Trusted cert should not depend on user cert/key&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various smaller Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="112"/>
+        <location filename="../vpnchangelog.cpp" line="129"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added API for KRunner support&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS lookup is migrated from C style to Qt style&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hauptänderungen:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;API für KRunner support hinzugefügt&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinere Änderungen:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS-Auflösungen werden nun per Qt-Lib durchgeführt&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Viele Bugfixes (siehe Git Logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="123"/>
+        <location filename="../vpnchangelog.cpp" line="140"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added catalan language (thanks wagafo@github), Ubuntu 18.04 builds&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.1&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -803,7 +840,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../vpnchangelog.cpp" line="133"/>
+        <location filename="../vpnchangelog.cpp" line="150"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added &amp;quot;half internet routes&amp;quot; Option to VPN profile&lt;/p&gt;</source>
         <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -950,6 +987,24 @@ p, li { white-space: pre-wrap; }
         <location filename="../vpnotplogin.ui" line="132"/>
         <source>Submit</source>
         <translation>Absenden</translation>
+    </message>
+</context>
+<context>
+    <name>vpnProcess</name>
+    <message>
+        <location filename="../proc/vpnprocess.cpp" line="116"/>
+        <source>Timeout for password request from passstore!</source>
+        <translation>Timeout beim holen der Daten vom Passwortspeicher!</translation>
+    </message>
+    <message>
+        <location filename="../proc/vpnprocess.cpp" line="148"/>
+        <source>Timeout for user/password request, try again!</source>
+        <translation>Timeout beim abfragen der Benutzer/Passwort Daten, bitte wiederholen!</translation>
+    </message>
+    <message>
+        <location filename="../proc/vpnprocess.cpp" line="189"/>
+        <source>PPPD log file dir %1 does not exist!</source>
+        <translation>PPPD Logdatei %1 existiert nicht!</translation>
     </message>
 </context>
 <context>
@@ -1205,60 +1260,70 @@ p, li { white-space: pre-wrap; }
         <translation>System Passwort-Manager benutzen (KWallet, GNOME-Keyring)</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="125"/>
+        <location filename="../vpnsetting.ui" line="126"/>
+        <source>SUDO -E Option</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="133"/>
+        <source>SUDO Preserve Env. (&gt;=Ubuntu 19.10/Debian10 Fix)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="145"/>
         <source>Paths</source>
         <translation>Pfade</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="139"/>
+        <location filename="../vpnsetting.ui" line="159"/>
         <source>Local VPN-Profiles</source>
         <translation>Lokale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="152"/>
+        <location filename="../vpnsetting.ui" line="172"/>
         <source>Local VPN-Groups</source>
         <translation>Lokale VPN-Gruppen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="165"/>
+        <location filename="../vpnsetting.ui" line="185"/>
         <source>Global VPN-Profiles</source>
         <translation>Globale VPN-Profile</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="178"/>
+        <location filename="../vpnsetting.ui" line="198"/>
         <source>Logs</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="190"/>
-        <location filename="../vpnsetting.ui" line="204"/>
-        <location filename="../vpnsetting.ui" line="218"/>
-        <location filename="../vpnsetting.ui" line="232"/>
+        <location filename="../vpnsetting.ui" line="210"/>
+        <location filename="../vpnsetting.ui" line="224"/>
+        <location filename="../vpnsetting.ui" line="238"/>
+        <location filename="../vpnsetting.ui" line="252"/>
         <source>Choose</source>
         <translation>Wählen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="261"/>
+        <location filename="../vpnsetting.ui" line="281"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="281"/>
+        <location filename="../vpnsetting.ui" line="301"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.cpp" line="121"/>
+        <location filename="../vpnsetting.cpp" line="123"/>
         <source>System password manager error</source>
         <translation>Fehler im System Passwort-Manager</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.cpp" line="121"/>
+        <location filename="../vpnsetting.cpp" line="123"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
         <translation>Der Passwort Manager funktioniert nicht, bitte überprüfen sie ihr System ob der Passwort-Manager (GNOME-Keyring oder KWallet) läuft. Fehlermeldung: %1</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.cpp" line="131"/>
+        <location filename="../vpnsetting.cpp" line="133"/>
         <source>Choose a directory</source>
         <translation>Wähle ein Verzeichnis</translation>
     </message>
