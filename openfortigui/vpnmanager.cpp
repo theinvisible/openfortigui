@@ -87,8 +87,10 @@ void vpnManager::startVPN(const QString &name)
 
     QProcess *vpnProc = new QProcess(this);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
+#if QT_VERSION > QT_VERSION_CHECK(5, 7, 0)
     connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode); }, Qt::QueuedConnection);
     connect(vpnProc, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error){ onVPNProcessErrorOccurred(name, error); }, Qt::QueuedConnection);
+#endif
     emit addVPNLogger(name, vpnProc);
     qDebug() << "Start vpn::" << name;
     vpnProc->start("sudo", arguments);
