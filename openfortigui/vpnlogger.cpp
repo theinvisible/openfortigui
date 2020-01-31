@@ -83,8 +83,15 @@ void vpnLogger::logVPNOutput(const QString &name)
     QTextStream out(logfile);
 
     QString toLog = QString::fromUtf8(blog);
-    if(toLog.contains("Please") ||
-       toLog.contains("2factor authentication token:") ||
+    if(toLog.contains("Please load the ppp"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: %1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+    }
+
+    if(toLog.contains("2factor authentication token:") ||
        toLog.contains("Two-factor authentication"))
     {
         emit OTPRequest(proc);

@@ -25,6 +25,7 @@
 #include <QFile>
 
 #include "ticonfmain.h"
+#include "vpnapi.h"
 
 class vpnLogger : public QObject
 {
@@ -52,6 +53,7 @@ private slots:
 signals:
     void OTPRequest(QProcess *proc);
     void CertificateValidationFailed(QString name, QString buffer);
+    void VPNMessage(QString name, vpnMsg msg);
 
 public slots:
     void process();
