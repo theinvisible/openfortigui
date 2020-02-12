@@ -135,7 +135,7 @@ void vpnGroupEditor::on_btnSave_clicked()
 {
     if(ui->leName->text().isEmpty())
     {
-        QMessageBox::information(this, trUtf8("VPN-Group"), trUtf8("You must set a name for the VPN-group."));
+        QMessageBox::information(this, tr("VPN-Group"), tr("You must set a name for the VPN-group."));
         return;
     }
 
@@ -170,7 +170,7 @@ void vpnGroupEditor::on_btnSave_clicked()
             vpnprofile = vpns.getVpnProfileByName(item2->text(), origin);
             if(vpnprofile != 0 && (vpnprofile->name.isEmpty() || vpnprofile->password.isEmpty()))
             {
-                QMessageBox::warning(this, trUtf8("VPN-Group"), trUtf8("You must set username and password for each group you want to include in a group. "
+                QMessageBox::warning(this, tr("VPN-Group"), tr("You must set username and password for each group you want to include in a group. "
                                                                        "First missing on VPN: %1").arg(vpnprofile->name));
 
                 return;

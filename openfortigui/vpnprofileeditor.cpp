@@ -119,7 +119,7 @@ void vpnProfileEditor::on_btnChooseUserCert_clicked()
 {
     QString startDir = (ui->leUserCert->text().isEmpty()) ? QDir::homePath() : ui->leUserCert->text();
 
-    QString dir = QFileDialog::getOpenFileName(this, trUtf8("Select the user-cert"), startDir);
+    QString dir = QFileDialog::getOpenFileName(this, tr("Select the user-cert"), startDir);
 
     if(!dir.isEmpty())
         ui->leUserCert->setText(dir);
@@ -129,7 +129,7 @@ void vpnProfileEditor::on_btnChooseUserKey_clicked()
 {
     QString startDir = (ui->leUserKey->text().isEmpty()) ? QDir::homePath() : ui->leUserKey->text();
 
-    QString dir = QFileDialog::getOpenFileName(this, trUtf8("Select the user-key"), startDir);
+    QString dir = QFileDialog::getOpenFileName(this, tr("Select the user-key"), startDir);
 
     if(!dir.isEmpty())
         ui->leUserKey->setText(dir);
@@ -139,7 +139,7 @@ void vpnProfileEditor::on_btnChooseCAFile_clicked()
 {
     QString startDir = (ui->leCAFile->text().isEmpty()) ? QDir::homePath() : ui->leCAFile->text();
 
-    QString dir = QFileDialog::getOpenFileName(this, trUtf8("Select the CA-file"), startDir);
+    QString dir = QFileDialog::getOpenFileName(this, tr("Select the CA-file"), startDir);
 
     if(!dir.isEmpty())
         ui->leCAFile->setText(dir);
@@ -154,19 +154,19 @@ void vpnProfileEditor::on_btnSave_clicked()
 {
     if(ui->leName->text().isEmpty() || !ui->leName->hasAcceptableInput())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a valid name for the VPN."));
+        QMessageBox::information(this, tr("VPN"), tr("You must set a valid name for the VPN."));
         return;
     }
 
     if(ui->leGatewayHost->text().isEmpty())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway for the VPN."));
+        QMessageBox::information(this, tr("VPN"), tr("You must set a gateway for the VPN."));
         return;
     }
 
     if(ui->sBGatewayPort->text().isEmpty())
     {
-        QMessageBox::information(this, trUtf8("VPN"), trUtf8("You must set a gateway-port for the VPN."));
+        QMessageBox::information(this, tr("VPN"), tr("You must set a gateway-port for the VPN."));
         return;
     }
 

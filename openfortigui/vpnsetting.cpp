@@ -130,7 +130,7 @@ void vpnSetting::pathChooser(QLineEdit *widget)
 {
     QString startDir = (widget->text().isEmpty()) ? QDir::homePath() : tiConfMain::formatPath(widget->text());
 
-    QString dir = QFileDialog::getExistingDirectory(this, trUtf8("Choose a directory"),
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose a directory"),
                                                     startDir,
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);

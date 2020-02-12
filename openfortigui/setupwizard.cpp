@@ -145,7 +145,7 @@ void setupWizard::on_btnBack_clicked()
         if(saveAESData())
         {
             ui->swContent->setCurrentIndex(idx-1);
-            ui->btnNext->setText(trUtf8("Next"));
+            ui->btnNext->setText(tr("Next"));
         }
         break;
     }
@@ -161,7 +161,7 @@ void setupWizard::on_btnNext_clicked()
     case 0:
         loadAESData();
         ui->swContent->setCurrentIndex(idx+1);
-        ui->btnNext->setText(trUtf8("Finish"));
+        ui->btnNext->setText(tr("Finish"));
         break;
     case 1:
         if(saveAESData())
