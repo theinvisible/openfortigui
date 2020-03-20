@@ -27,6 +27,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QMessageBox>
+#include <QInputDialog>
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
@@ -357,12 +358,23 @@ void vpnClientConnection::submitPassStoreCred()
     QJsonDocument json;
     QJsonObject jsTop;
     vpnApi data;
+    QString password;
     data.action = vpnApi::ACTION_STOREPASS_SUBMIT;
     data.objName = name;
 
     tiConfVpnProfiles profiles;
     vpnProfile *profile = profiles.getVpnProfileByName(name);
-    jsTop["password"] = profile->readPassword();
+    password = profile->readPassword();
+
+    // Ask for otp if needed
+    if (profile->alwaysAskOtp)
+    {
+        QString otp = QInputDialog::getText(nullptr, "Enter OTP","OTP");
+        if (!otp.isEmpty())
+            password = QString("%1,%2").arg(password).arg(otp);
+    }
+
+    jsTop["password"] = password;
 
     json.setObject(jsTop);
     data.data = json.toJson();
