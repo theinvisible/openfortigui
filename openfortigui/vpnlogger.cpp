@@ -92,7 +92,8 @@ void vpnLogger::logVPNOutput(const QString &name)
     }
 
     if(toLog.contains("2factor authentication token:") ||
-       toLog.contains("Two-factor authentication"))
+       toLog.contains("Two-factor authentication") ||
+       toLog.contains("one-time password"))
     {
         emit OTPRequest(proc);
     }
