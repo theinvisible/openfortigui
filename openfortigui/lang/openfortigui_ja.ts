@@ -694,7 +694,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>vpnLogger</name>
     <message>
-        <location filename="../vpnlogger.cpp" line="89"/>
+        <location filename="../vpnlogger.cpp" line="94"/>
         <source>Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1030,9 +1030,13 @@ p, li { white-space: pre-wrap; }
         <translation>最小化状態で起動</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="74"/>
         <source>Password Manager (Beta)</source>
-        <translation>パスワード管理（実験版）</translation>
+        <translation type="vanished">パスワード管理（実験版）</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="74"/>
+        <source>Password Manager</source>
+        <translation type="unfinished">パスワード管理</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="87"/>

@@ -945,7 +945,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>vpnLogger</name>
     <message>
-        <location filename="../vpnlogger.cpp" line="89"/>
+        <location filename="../vpnlogger.cpp" line="94"/>
         <source>Error: %1</source>
         <translation>Fehler: %1</translation>
     </message>
@@ -1276,6 +1276,11 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
+        <location filename="../vpnsetting.ui" line="74"/>
+        <source>Password Manager</source>
+        <translation>Passwort Manager</translation>
+    </message>
+    <message>
         <location filename="../vpnsetting.ui" line="87"/>
         <source>AES-Key</source>
         <translation>AES-Schlüssel</translation>
@@ -1286,9 +1291,8 @@ p, li { white-space: pre-wrap; }
         <translation>Minimiert starten</translation>
     </message>
     <message>
-        <location filename="../vpnsetting.ui" line="74"/>
         <source>Password Manager (Beta)</source>
-        <translation>Passwort-Manager (Beta)</translation>
+        <translation type="vanished">Passwort-Manager (Beta)</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="103"/>

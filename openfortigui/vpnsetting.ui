@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>718</width>
-    <height>484</height>
+    <height>519</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,7 +71,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Password Manager (Beta)</string>
+           <string>Password Manager</string>
           </property>
          </widget>
         </item>
