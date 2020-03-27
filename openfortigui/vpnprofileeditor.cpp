@@ -75,6 +75,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leRealm->setText(config->realm);
     ui->cbAutostart->setChecked(config->autostart);
     ui->cbAlwaysAskOtp->setChecked(config->always_ask_otp);
+    ui->leOTPPromptString->setText(config->otp_prompt);
+    ui->sbOTPDelay->setValue(config->otp_delay);
     ui->cbHalfInternetRoutes->setChecked(config->half_internet_routers);
 
     ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
@@ -113,6 +115,9 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->lePPPDIfname->setDisabled(true);
         ui->lePPPDIPParam->setDisabled(true);
         ui->lePPPDCallName->setDisabled(true);
+        ui->cbAlwaysAskOtp->setDisabled(true);
+        ui->leOTPPromptString->setDisabled(true);
+        ui->sbOTPDelay->setDisabled(true);
     }
 }
 
@@ -212,6 +217,8 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.autostart = ui->cbAutostart->isChecked();
     vpn.always_ask_otp = ui->cbAlwaysAskOtp->isChecked();
     vpn.half_internet_routers = ui->cbHalfInternetRoutes->isChecked();
+    vpn.otp_prompt = ui->leOTPPromptString->text();
+    vpn.otp_delay = ui->sbOTPDelay->text().toInt();
 
     vpn.pppd_log_file = ui->lePPPDLogFile->text();
     vpn.pppd_plugin_file = ui->lePPPDPluginFile->text();

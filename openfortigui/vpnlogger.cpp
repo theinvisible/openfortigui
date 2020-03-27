@@ -32,6 +32,7 @@ vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
     loglocker = QMap<QString, bool>();
     logCertFailedMode = QMap<QString, bool>();
     logCertFailedBuffer = QMap<QString, QString>();
+    vpnConfigs = QMap<QString, vpnProfile>();
 
     connect(logMapperStdout, SIGNAL(mapped(QString)), this, SLOT(logVPNOutput(QString)));
     connect(logMapperFinished, SIGNAL(mapped(QString)), this, SLOT(procFinished(QString)));
@@ -45,6 +46,10 @@ vpnLogger::~vpnLogger()
 void vpnLogger::addVPN(const QString &name, QProcess *proc)
 {
     qDebug() << "add logger" << tiConfMain::main_config;
+    tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(name);
+
+    vpnConfigs.insert(name, *profile);
     loggers.insert(name, proc);
     loglocker.insert(name, false);
     logCertFailedMode.insert(name, false);
@@ -95,12 +100,20 @@ void vpnLogger::logVPNOutput(const QString &name)
         return;
     }
 
-    if(toLog.contains("Please") ||
-       toLog.contains("2factor authentication token:") ||
-       toLog.contains("Two-factor authentication") ||
-       toLog.contains("one-time password"))
+    if(vpnConfigs[name].otp_prompt.isEmpty())
     {
-        emit OTPRequest(proc);
+        if(toLog.contains("Please") ||
+           toLog.contains("2factor authentication token:") ||
+           toLog.contains("Two-factor authentication") ||
+           toLog.contains("one-time password"))
+        {
+            emit OTPRequest(proc);
+        }
+    } else {
+        if(toLog.contains(vpnConfigs[name].otp_prompt))
+        {
+            emit OTPRequest(proc);
+        }
     }
 
     if(toLog.contains("Gateway certificate validation failed, and the certificate digest in not in the local whitelist."))

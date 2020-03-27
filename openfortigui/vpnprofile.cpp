@@ -45,6 +45,8 @@ vpnProfile::vpnProfile()
     insecure_ssl = false;
     autostart = false;
     always_ask_otp = false;
+    otp_prompt = "";
+    otp_delay = 0;
 
     pppd_no_peerdns = false;
     pppd_log_file = "";

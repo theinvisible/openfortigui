@@ -44,6 +44,7 @@ private:
     QMap<QString, bool> loglocker;
     QMap<QString, bool> logCertFailedMode;
     QMap<QString, QString> logCertFailedBuffer;
+    QMap<QString, vpnProfile> vpnConfigs;
     tiConfMain main_settings;
 
 private slots:

@@ -462,6 +462,12 @@ void vpnWorker::process()
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
 
+    if(!vpnConfig.otp_prompt.isEmpty())
+        config.otp_prompt = strdup(vpnConfig.otp_prompt.toStdString().c_str());
+
+    if(vpnConfig.otp_delay > 0)
+        config.otp_delay = vpnConfig.otp_delay;
+
     if(!vpnConfig.pppd_log_file.isEmpty())
         config.pppd_log = strdup(vpnConfig.pppd_log_file.toStdString().c_str());
 

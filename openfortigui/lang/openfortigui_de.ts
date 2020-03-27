@@ -1096,37 +1096,47 @@ p, li { white-space: pre-wrap; }
         <translation>CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="403"/>
+        <location filename="../vpnprofileeditor.ui" line="409"/>
         <source>Always ask for OTP</source>
         <translation>Immer OTP abfragen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="432"/>
+        <location filename="../vpnprofileeditor.ui" line="429"/>
+        <source>OTP prompt string</source>
+        <translation>OTP Trigger Text</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="442"/>
+        <source>OTP delay</source>
+        <translation>OTP Verzögerung</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="470"/>
         <source>No peerdns</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="452"/>
+        <location filename="../vpnprofileeditor.ui" line="490"/>
         <source>Log File</source>
         <translation>Log Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="468"/>
+        <location filename="../vpnprofileeditor.ui" line="506"/>
         <source>Plugin File</source>
         <translation>Plugin Dateiname</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="484"/>
+        <location filename="../vpnprofileeditor.ui" line="522"/>
         <source>Ifname</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="497"/>
+        <location filename="../vpnprofileeditor.ui" line="535"/>
         <source>Ip-Parameter</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="516"/>
+        <location filename="../vpnprofileeditor.ui" line="554"/>
         <source>Call name</source>
         <translation></translation>
     </message>
@@ -1192,44 +1202,44 @@ p, li { white-space: pre-wrap; }
         <translation>Halbe Internet-Routen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="420"/>
+        <location filename="../vpnprofileeditor.ui" line="458"/>
         <source>PPPD</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="561"/>
+        <location filename="../vpnprofileeditor.ui" line="599"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="581"/>
+        <location filename="../vpnprofileeditor.ui" line="619"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="123"/>
+        <location filename="../vpnprofileeditor.cpp" line="128"/>
         <source>Select the user-cert</source>
         <translation>Wähle das Benutzer-Zertifikat</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="133"/>
+        <location filename="../vpnprofileeditor.cpp" line="138"/>
         <source>Select the user-key</source>
         <translation>Wähle den Benutzer-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="143"/>
+        <location filename="../vpnprofileeditor.cpp" line="148"/>
         <source>Select the CA-file</source>
         <translation>Wähle die CA-Datei</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="158"/>
-        <location filename="../vpnprofileeditor.cpp" line="164"/>
-        <location filename="../vpnprofileeditor.cpp" line="170"/>
+        <location filename="../vpnprofileeditor.cpp" line="163"/>
+        <location filename="../vpnprofileeditor.cpp" line="169"/>
+        <location filename="../vpnprofileeditor.cpp" line="175"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="158"/>
+        <location filename="../vpnprofileeditor.cpp" line="163"/>
         <source>You must set a valid name for the VPN.</source>
         <translation>Es muss ein gültiger Name für die VPN gesetzt sein.</translation>
     </message>
@@ -1238,12 +1248,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Es muss ein Name für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="164"/>
+        <location filename="../vpnprofileeditor.cpp" line="169"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>Es muss ein Gateway für die VPN gesetzt sein.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="170"/>
+        <location filename="../vpnprofileeditor.cpp" line="175"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Es muss ein Gateway-Port für die VPN gesetzt sein.</translation>
     </message>

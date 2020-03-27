@@ -56,6 +56,8 @@ public:
     bool debug;
     bool autostart;
     bool always_ask_otp;
+    QString otp_prompt;
+    quint16 otp_delay;
 
     bool pppd_no_peerdns;
     QString pppd_log_file;
