@@ -227,6 +227,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("debug", profile.debug);
     f->setValue("realm", profile.realm);
     f->setValue("autostart", profile.autostart);
+    f->setValue("always_ask_otp", profile.always_ask_otp);
     f->setValue("half_internet_routers", profile.half_internet_routers);
     f->setValue("pppd_log_file", profile.pppd_log_file);
     f->setValue("pppd_plugin_file", profile.pppd_plugin_file);
@@ -316,6 +317,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->debug = f->value("debug").toBool();
                 vpnprofile->realm = f->value("realm").toString();
                 vpnprofile->autostart = f->value("autostart").toBool();
+                vpnprofile->always_ask_otp = f->value("always_ask_otp").toBool();
                 vpnprofile->half_internet_routers = f->value("half_internet_routers").toBool();
                 vpnprofile->pppd_log_file = f->value("pppd_log_file").toString();
                 vpnprofile->pppd_plugin_file = f->value("pppd_plugin_file").toString();
