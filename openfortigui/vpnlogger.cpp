@@ -89,9 +89,14 @@ void vpnLogger::logVPNOutput(const QString &name)
         msg.msg = tr("Error: %1").arg(toLog);
         msg.type = vpnMsg::TYPE_ERROR;
         emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
     }
 
-    if(toLog.contains("2factor authentication token:") ||
+    if(toLog.contains("Please") ||
+       toLog.contains("2factor authentication token:") ||
        toLog.contains("Two-factor authentication") ||
        toLog.contains("one-time password"))
     {
