@@ -22,6 +22,9 @@ extern "C"  {
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 #include "openfortivpn/src/http.h"
+#ifndef HAVE_X509_CHECK_HOST
+#include "openfortivpn/src/openssl_hostname_validation.h"
+#endif
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -31,6 +34,8 @@ extern "C"  {
 #include <string.h>
 #include <net/if.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
 #include <openssl/engine.h>
@@ -61,8 +66,8 @@ extern "C"  {
 // -------------------
 
 struct ofv_varr {
-    unsigned cap;		// current capacity
-    unsigned off;		// next slot to write, always < max(cap - 1, 1)
+    unsigned int cap;		// current capacity
+    unsigned int off;		// next slot to write, always < max(cap - 1, 1)
     const char **data;	// NULL terminated
 };
 
@@ -71,6 +76,7 @@ static int ofv_append_varr(struct ofv_varr *p, const char *x)
     if (p->off + 1 >= p->cap) {
         const char **ndata;
         unsigned int ncap = (p->off + 1) * 2;
+
         if (p->off + 1 >= ncap) {
             log_error("%s: ncap exceeded\n", __func__);
             return 1;
@@ -108,9 +114,8 @@ static int on_ppp_if_up(struct tunnel *tunnel)
 
         ret = ipv4_set_tunnel_routes(tunnel);
 
-        if (ret != 0) {
+        if (ret != 0)
             log_warn("Adding route table is incomplete. Please check route table.\n");
-        }
     }
 
     if (tunnel->config->set_dns) {
@@ -158,6 +163,7 @@ static int pppd_run(struct tunnel *tunnel)
 #endif
 
     static const char ppp_path[] = PPP_PATH;
+
     if (access(ppp_path, F_OK) != 0) {
         log_error("%s: %s.\n", ppp_path, strerror(errno));
         return 1;
@@ -167,7 +173,7 @@ static int pppd_run(struct tunnel *tunnel)
     slave_stderr = dup(STDERR_FILENO);
 
     if (slave_stderr < 0) {
-        log_error("slave stderr %s\n", strerror(errno));
+        log_error("slave stderr: %s\n", strerror(errno));
         return 1;
     }
 
@@ -182,7 +188,8 @@ static int pppd_run(struct tunnel *tunnel)
         struct ofv_varr pppd_args = { 0, 0, NULL };
 
         dup2(slave_stderr, STDERR_FILENO);
-        close(slave_stderr);
+        if (close(slave_stderr))
+            log_warn("Could not close slave stderr (%s).\n", strerror(errno));
 
 #if HAVE_USR_SBIN_PPP
         /*
@@ -273,14 +280,17 @@ static int pppd_run(struct tunnel *tunnel)
         }
 #endif
 
-        close(tunnel->ssl_socket);
+        if (close(tunnel->ssl_socket))
+            log_warn("Could not close ssl socket (%s).\n", strerror(errno));
         execv(pppd_args.data[0], (char *const *)pppd_args.data);
         free(pppd_args.data);
 
         fprintf(stderr, "execvp: %s\n", strerror(errno));
         _exit(EXIT_FAILURE);
     } else {
-        close(slave_stderr);
+        if (close(slave_stderr))
+            log_error("Could not close slave stderr (%s).\n",
+                      strerror(errno));
         if (pid == -1) {
             log_error("forkpty: %s\n", strerror(errno));
             return 1;
@@ -289,6 +299,7 @@ static int pppd_run(struct tunnel *tunnel)
 
     // Set non-blocking
     int flags = fcntl(amaster, F_GETFL, 0);
+
     if (flags == -1)
         flags = 0;
     if (fcntl(amaster, F_SETFL, flags | O_NONBLOCK) == -1) {
@@ -328,17 +339,20 @@ static const char * const pppd_message[] = {
 
 static int pppd_terminate(struct tunnel *tunnel)
 {
-    close(tunnel->pppd_pty);
+    if (close(tunnel->pppd_pty))
+        log_warn("Could not close pppd pty (%s).\n", strerror(errno));
 
     log_debug("Waiting for %s to exit...\n", PPP_DAEMON);
 
     int status;
+
     if (waitpid(tunnel->pppd_pid, &status, 0) == -1) {
         log_error("waitpid: %s\n", strerror(errno));
         return 1;
     }
     if (WIFEXITED(status)) {
         int exit_status = WEXITSTATUS(status);
+
         log_debug("waitpid: %s exit status code %d\n",
                   PPP_DAEMON, exit_status);
 #if HAVE_USR_SBIN_PPPD
@@ -381,6 +395,7 @@ static int pppd_terminate(struct tunnel *tunnel)
 #endif
     } else if (WIFSIGNALED(status)) {
         int signal_number = WTERMSIG(status);
+
         log_debug("waitpid: %s terminated by signal %d\n",
                   PPP_DAEMON, signal_number);
         log_error("%s: terminated by signal: %s\n",
