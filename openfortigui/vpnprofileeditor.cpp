@@ -74,6 +74,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->cbDebug->setChecked(config->debug);
     ui->leRealm->setText(config->realm);
     ui->cbAutostart->setChecked(config->autostart);
+    ui->cbAlwaysAskOtp->setChecked(config->alwaysAskOtp);
     ui->cbHalfInternetRoutes->setChecked(config->half_internet_routers);
 
     ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
@@ -209,6 +210,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.debug = ui->cbDebug->isChecked();
     vpn.realm = ui->leRealm->text();
     vpn.autostart = ui->cbAutostart->isChecked();
+    vpn.alwaysAskOtp = ui->cbAlwaysAskOtp->isChecked();
     vpn.half_internet_routers = ui->cbHalfInternetRoutes->isChecked();
 
     vpn.pppd_log_file = ui->lePPPDLogFile->text();

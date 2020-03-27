@@ -55,6 +55,7 @@ public:
     bool insecure_ssl;
     bool debug;
     bool autostart;
+    bool alwaysAskOtp;
 
     bool pppd_no_peerdns;
     QString pppd_log_file;
