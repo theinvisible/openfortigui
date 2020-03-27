@@ -367,9 +367,9 @@ void vpnClientConnection::submitPassStoreCred()
     password = profile->readPassword();
 
     // Ask for otp if needed
-    if (profile->alwaysAskOtp)
+    if (profile->always_ask_otp)
     {
-        QString otp = QInputDialog::getText(nullptr, "Enter OTP","OTP");
+        QString otp = QInputDialog::getText(nullptr, tr("Enter OTP"), tr("Enter OTP token"));
         if (!otp.isEmpty())
             password = QString("%1,%2").arg(password).arg(otp);
     }
