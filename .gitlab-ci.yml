@@ -38,6 +38,7 @@ build-ubuntu-1804-64-dev:
     - git submodule init && git submodule update
     - export CI_T_DATE=`LANG=C date -R`
     - touch ./debian/changelog
+    - echo ""                                                                             > ./debian/changelog
     - echo "openfortigui (99.9.${CI_PIPELINE_ID}-1) precise; urgency=low"                >> ./debian/changelog
     - echo ""                                                                            >> ./debian/changelog
     - echo "  * Dev build from master"                                                   >> ./debian/changelog
