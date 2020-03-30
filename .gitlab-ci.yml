@@ -26,6 +26,41 @@ build-ubuntu-1804-64:
 
   tags:
     - build-ubuntu-1804-64
+    
+  only:
+    - tags
+    
+# Stage "ubuntu-dev"
+build-ubuntu-1804-64-dev:
+  stage: build
+  script:
+    - cd openfortigui
+    - git submodule init && git submodule update
+    - export CI_T_DATE=`LANG=C date -R`
+    - touch ./debian/changelog
+    - echo "openfortigui (99.9.${CI_PIPELINE_ID}-1) precise; urgency=low"                >> ./debian/changelog
+    - echo ""                                                                            >> ./debian/changelog
+    - echo "  * Dev build from master"                                                   >> ./debian/changelog
+    - echo ""                                                                            >> ./debian/changelog
+    - echo " -- Rene Hadler <rene@hadler.me>  ${CI_T_DATE}"                              >> ./debian/changelog
+    - sed -i 's/\*version =.*/\*version = "99.9.'"${CI_PIPELINE_ID}"'-dev";/' ./config.h
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd ../krunner_openfortigui
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd .. && mkdir build
+    - mv openforti*.deb build/
+    - upload_build_dev build/openforti*.deb || true
+
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - build-ubuntu-1804-64
+    
+  only:
+    - master
 
 # Stage "ubuntu"
 build-ubuntu-1604-64:  
