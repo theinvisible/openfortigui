@@ -185,7 +185,7 @@ build-debian-10-64-dev:
     - cd .. && mkdir build
     - mv openfortigui_*.deb build/
     - mv openfortigui-runner_*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_dev build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
