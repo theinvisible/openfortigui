@@ -169,6 +169,9 @@ build-debian-10-64:
   tags:
     - build-debian-10-64
 
+  only:
+    - tags
+
 # Stage "debian-dev"
 build-debian-10-64-dev:
   <<: *build_template_def
