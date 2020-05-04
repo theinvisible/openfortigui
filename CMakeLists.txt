@@ -10,7 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 REQUIRED Core Widgets Network)
+find_package(Qt5 REQUIRED Core Widgets Network Keychain)
 
 # Add 'd' suffix to debug libs
 set(CMAKE_DEBUG_POSTFIX _debug)
