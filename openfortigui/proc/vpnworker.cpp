@@ -22,39 +22,42 @@ extern "C"  {
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 #include "openfortivpn/src/http.h"
+
 #ifndef HAVE_X509_CHECK_HOST
-#include "openfortivpn/src/openssl_hostname_validation.h"
+#include "openssl_hostname_validation.h"
+#endif
+
+#include <openssl/err.h>
+#include <openssl/engine.h>
+#include <openssl/ui.h>
+#include <openssl/x509v3.h>
+#if HAVE_SYSTEMD
+#include <systemd/sd-daemon.h>
 #endif
 
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <ifaddrs.h>
-#include <netdb.h>
-#include <errno.h>
-#include <string.h>
 #include <net/if.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <openssl/err.h>
-#include <openssl/x509v3.h>
-#include <openssl/engine.h>
+#include <netdb.h>
 #if HAVE_PTY_H
 #include <pty.h>
 #elif HAVE_UTIL_H
 #include <util.h>
 #endif
-#include <termios.h>
-#include <signal.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/wait.h>
-#if HAVE_SYSTEMD
-#include <systemd/sd-daemon.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#if HAVE_LIBUTIL_H
+#include <libutil.h>
 #endif
 
-// we use this constant in the source, so define a fallback if not defined
-#ifndef OPENSSL_API_COMPAT
-#define OPENSSL_API_COMPAT 0x0908000L
-#endif
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
 }
 
 #include <QDebug>
@@ -103,6 +106,7 @@ static int ofv_append_varr(struct ofv_varr *p, const char *x)
     return 0;
 }
 
+
 static int on_ppp_if_up(struct tunnel *tunnel)
 {
     log_info("Interface %s is UP.\n", tunnel->ppp_iface);
@@ -134,7 +138,11 @@ static int on_ppp_if_up(struct tunnel *tunnel)
 
 static int on_ppp_if_down(struct tunnel *tunnel)
 {
-    log_info("Setting ppp interface down.\n");
+#if HAVE_SYSTEMD
+    sd_notify(0, "STOPPING=1");
+#endif
+
+    log_info("Setting %s interface down.\n", tunnel->ppp_iface);
 
     if (tunnel->config->set_routes) {
         log_info("Restoring routes...\n");
@@ -203,17 +211,25 @@ static int pppd_run(struct tunnel *tunnel)
             "-direct"
         };
         for (unsigned int i = 0; i < ARRAY_SIZE(v); i++)
-            if (ofv_append_varr(&pppd_args, v[i]))
+            if (ofv_append_varr(&pppd_args, v[i])) {
+                free(pppd_args.data);
                 return 1;
+            }
 #endif
 #if HAVE_USR_SBIN_PPPD
         if (tunnel->config->pppd_call) {
-            if (ofv_append_varr(&pppd_args, ppp_path))
+            if (ofv_append_varr(&pppd_args, ppp_path)) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, "call"))
+            }
+            if (ofv_append_varr(&pppd_args, "call")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_call))
+            }
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_call)) {
+                free(pppd_args.data);
                 return 1;
+            }
         } else {
             static const char *const v[] = {
                 ppp_path,
@@ -231,52 +247,80 @@ static int pppd_run(struct tunnel *tunnel)
                 "mru", "1354"
             };
             for (unsigned int i = 0; i < ARRAY_SIZE(v); i++)
-                if (ofv_append_varr(&pppd_args, v[i]))
+                if (ofv_append_varr(&pppd_args, v[i])) {
+                    free(pppd_args.data);
                     return 1;
+                }
         }
         if (tunnel->config->pppd_use_peerdns)
-            if (ofv_append_varr(&pppd_args, "usepeerdns"))
+            if (ofv_append_varr(&pppd_args, "usepeerdns")) {
+                free(pppd_args.data);
                 return 1;
+            }
         if (tunnel->config->pppd_log) {
-            if (ofv_append_varr(&pppd_args, "debug"))
+            if (ofv_append_varr(&pppd_args, "debug")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, "logfile"))
+            }
+            if (ofv_append_varr(&pppd_args, "logfile")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_log))
+            }
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_log)) {
+                free(pppd_args.data);
                 return 1;
+            }
         } else {
             /*
              * pppd defaults to logging to fd=1, clobbering the
              * actual PPP data
              */
-            if (ofv_append_varr(&pppd_args, "logfd"))
+            if (ofv_append_varr(&pppd_args, "logfd")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, "2"))
+            }
+            if (ofv_append_varr(&pppd_args, "2")) {
+                free(pppd_args.data);
                 return 1;
+            }
         }
         if (tunnel->config->pppd_plugin) {
-            if (ofv_append_varr(&pppd_args, "plugin"))
+            if (ofv_append_varr(&pppd_args, "plugin")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_plugin))
+            }
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_plugin)) {
+                free(pppd_args.data);
                 return 1;
+            }
         }
         if (tunnel->config->pppd_ipparam) {
-            if (ofv_append_varr(&pppd_args, "ipparam"))
+            if (ofv_append_varr(&pppd_args, "ipparam")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ipparam))
+            }
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ipparam)) {
+                free(pppd_args.data);
                 return 1;
+            }
         }
         if (tunnel->config->pppd_ifname) {
-            if (ofv_append_varr(&pppd_args, "ifname"))
+            if (ofv_append_varr(&pppd_args, "ifname")) {
+                free(pppd_args.data);
                 return 1;
-            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ifname))
+            }
+            if (ofv_append_varr(&pppd_args, tunnel->config->pppd_ifname)) {
+                free(pppd_args.data);
                 return 1;
+            }
         }
 #endif
 #if HAVE_USR_SBIN_PPP
         if (tunnel->config->ppp_system) {
-            if (ofv_append_varr(&pppd_args, tunnel->config->ppp_system))
+            if (ofv_append_varr(&pppd_args, tunnel->config->ppp_system)) {
+                free(pppd_args.data);
                 return 1;
+            }
         }
 #endif
 
@@ -285,7 +329,7 @@ static int pppd_run(struct tunnel *tunnel)
         execv(pppd_args.data[0], (char *const *)pppd_args.data);
         free(pppd_args.data);
 
-        fprintf(stderr, "execvp: %s\n", strerror(errno));
+        fprintf(stderr, "execv: %s\n", strerror(errno));
         _exit(EXIT_FAILURE);
     } else {
         if (close(slave_stderr))

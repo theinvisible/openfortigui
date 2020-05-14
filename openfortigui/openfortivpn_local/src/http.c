@@ -22,15 +22,22 @@
 #include "../../openfortivpn/src/userinput.h"
 #include "../../openfortivpn/src/log.h"
 
-#include <ctype.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define BUFSZ 0x10000
+#include <assert.h>
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+ * Fixed size of the buffer for outgoing HTTP requests.
+ * Initial size of the buffer for incoming HTTP responses.
+ */
+#define HTTP_BUFFER_SIZE 0x8000
+
 
 /*
  * URL-encodes a string for HTTP requests.
@@ -58,6 +65,7 @@ static void url_encode(char *dest, const char *str)
     *dest = '\0';
 }
 
+
 /*
  * Sends data to the HTTP server.
  *
@@ -68,13 +76,13 @@ static void url_encode(char *dest, const char *str)
 int http_send(struct tunnel *tunnel, const char *request, ...)
 {
     va_list args;
-    char buffer[BUFSZ];
-    char logbuffer[BUFSZ];
+    char buffer[HTTP_BUFFER_SIZE];
+    char logbuffer[HTTP_BUFFER_SIZE];
     int length;
     int n = 0;
 
     va_start(args, request);
-    length = vsnprintf(buffer, BUFSZ, request, args);
+    length = vsnprintf(buffer, HTTP_BUFFER_SIZE, request, args);
     va_end(args);
     strcpy(logbuffer, buffer);
     if (loglevel <= OFV_LOG_DEBUG_DETAILS && tunnel->config->password[0] != '\0') {
@@ -96,7 +104,7 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
 
     if (length < 0)
         return ERR_HTTP_INVALID;
-    else if (length >= BUFSZ)
+    else if (length >= HTTP_BUFFER_SIZE)
         return ERR_HTTP_TOO_LONG;
 
     log_debug_details("%s:\n%s\n", __func__, logbuffer);
@@ -112,6 +120,7 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
 
     return 1;
 }
+
 
 static const char *find_header(
         const char *res,
@@ -135,6 +144,7 @@ static const char *find_header(
     return NULL;
 }
 
+
 /*
  * Receives data from the HTTP server.
  *
@@ -150,75 +160,91 @@ int http_receive(
         uint32_t *response_size
 )
 {
-    uint32_t res_size = BUFSZ;
-    char *buffer, *res;
-    int n = 0;
-    int bytes_read = 0;
-    int header_size = 0;
-    int content_size = 0;
+    uint32_t capacity = HTTP_BUFFER_SIZE;
+    char *buffer;
+    uint32_t bytes_read = 0;
+    uint32_t header_size = 0;
+    uint32_t content_size = 0;
     int chunked = 0;
 
-    buffer = malloc(res_size);
+    buffer = malloc(capacity + 1); // room for terminal '\0'
     if (buffer == NULL)
         return ERR_HTTP_NO_MEM;
 
-    do {
-        n = safe_ssl_read(tunnel->ssl_handle,
-                          (uint8_t *) buffer + bytes_read,
-                          BUFSZ - 1 - bytes_read);
-        if (n > 0) {
-            log_debug_details("%s:\n%s\n", __func__, buffer);
-            const char *eoh;
+    while (1) {
+        int n;
 
-            bytes_read += n;
+        while ((n = safe_ssl_read(tunnel->ssl_handle,
+                                  (uint8_t *) buffer + bytes_read,
+                                  capacity - bytes_read)) == ERR_SSL_AGAIN)
+            ;
+        if (n < 0) {
+            log_debug("Error reading from SSL connection (%s).\n",
+                      err_ssl_str(n));
+            free(buffer);
+            return ERR_HTTP_SSL;
+        }
+        bytes_read += n;
 
-            if (!header_size) {
-                /* Did we see the header end? Then get the body size. */
-                eoh = memmem(buffer, bytes_read, "\r\n\r\n", 4);
-                if (eoh) {
-                    const char *header;
+        log_debug_details("%s:\n%s\n", __func__, buffer);
 
-                    header = find_header(
-                                     buffer,
-                                     "Content-Length: ", BUFSZ);
-                    header_size = eoh - buffer + 4;
-                    if (header)
-                        content_size = atoi(header);
+        if (!header_size) {
+            /* Have we reached the end of the HTTP header? */
+            static const char EOH[4] = "\r\n\r\n";
+            const char *eoh = memmem(buffer, bytes_read,
+                                     EOH, sizeof(EOH));
 
-                    if (find_header(buffer,
-                                    "Transfer-Encoding: chunked",
-                                    BUFSZ))
-                        chunked = 1;
-                }
-            }
+            if (eoh) {
+                header_size = eoh - buffer + sizeof(EOH);
 
-            if (header_size) {
-                /* We saw the whole header, is the body done as well? */
-                if (chunked) {
-                    /* Last chunk terminator. Done naively. */
-                    if (bytes_read >= 7 &&
-                        !memcmp(&buffer[bytes_read - 7],
-                                "\r\n0\r\n\r\n", 7))
-                        break;
-                } else {
-                    if (bytes_read >= header_size + content_size)
-                        break;
-                }
-            }
+                /* Get the body size. */
+                const char *header = find_header(buffer,
+                                                 "Content-Length: ",
+                                                 header_size);
 
-            if (bytes_read == BUFSZ - 1) {
-                log_warn("Response too big\n");
-                free(buffer);
-                return ERR_HTTP_SSL;
+                if (header)
+                    content_size = atoi(header);
+
+                if (find_header(buffer,
+                                "Transfer-Encoding: chunked",
+                                header_size))
+                    chunked = 1;
             }
         }
-    } while (n >= 0);
 
-    if (!header_size) {
-        log_debug("Error reading from SSL connection (%s).\n",
-                  err_ssl_str(n));
-        free(buffer);
-        return ERR_HTTP_SSL;
+        if (header_size) {
+            /* Have we reached the end of the HTTP body? */
+            if (chunked) {
+                static const char EOB[7] = "\r\n0\r\n\r\n";
+
+                /* Last chunk terminator. Done naively. */
+                if (bytes_read >= sizeof(EOB) &&
+                    !memcmp(&buffer[bytes_read - sizeof(EOB)],
+                            EOB, sizeof(EOB)))
+                    break;
+            } else {
+                if (bytes_read >= header_size + content_size)
+                    break;
+            }
+        }
+
+        /* expand the buffer if necessary */
+        if (bytes_read == capacity) {
+            char *new_buffer;
+
+            if ((UINT32_MAX - 1) / capacity < 2) {
+                free(buffer);
+                return ERR_HTTP_TOO_LONG;
+            }
+            capacity *= 2;
+
+            new_buffer = realloc(buffer, capacity + 1);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return ERR_HTTP_NO_MEM;
+            }
+            buffer = new_buffer;
+        }
     }
 
     if (memmem(&buffer[header_size], bytes_read - header_size,
@@ -231,22 +257,17 @@ int http_receive(
 
     if (response == NULL) {
         free(buffer);
-        return 1;
-    }
+    } else {
+        assert(bytes_read < capacity);
+        buffer[bytes_read] = '\0';
+        *response = buffer;
 
-    res_size = bytes_read + 1;
-    res = realloc(buffer, res_size);
-    if (res == NULL) {
-        free(buffer);
-        return ERR_HTTP_NO_MEM;
+        if (response_size != NULL)
+            *response_size = bytes_read + 1;
     }
-    res[bytes_read] = '\0';
-
-    *response = res;
-    if (response_size != NULL)
-        *response_size = res_size;
     return 1;
 }
+
 
 static int do_http_request(struct tunnel *tunnel,
                            const char *method,
@@ -276,6 +297,8 @@ static int do_http_request(struct tunnel *tunnel,
 
     return http_receive(tunnel, response, response_size);
 }
+
+
 /*
  * Sends and receives data from the HTTP server.
  *
@@ -292,20 +315,21 @@ static int http_request(struct tunnel *tunnel, const char *method,
                         uint32_t *response_size
                        )
 {
-    int ret = do_http_request(tunnel, method, uri, data,
-                              response, response_size);
+    int ret;
 
+    ret = do_http_request(tunnel, method, uri, data,
+                          response, response_size);
     if (ret == ERR_HTTP_SSL) {
         ssl_connect(tunnel);
         ret = do_http_request(tunnel, method, uri, data,
                               response, response_size);
     }
-
     if (ret != 1)
-        log_warn("Error issuing %s request\n", uri);
+        log_debug("Error issuing %s request\n", uri);
 
     return ret;
 }
+
 
 /*
  * Read value for key from a string like "key1=value1&key2=value2".
@@ -351,6 +375,7 @@ end:
     return ret;
 }
 
+
 static int get_auth_cookie(
         struct tunnel *tunnel,
         char *buf,
@@ -390,6 +415,7 @@ static int get_auth_cookie(
     return ret;
 }
 
+
 static void delay_otp(struct tunnel *tunnel)
 {
     if (tunnel->config->otp_delay > 0) {
@@ -398,8 +424,8 @@ static void delay_otp(struct tunnel *tunnel)
     }
 }
 
-static
-int try_otp_auth(
+
+static int try_otp_auth(
         struct tunnel *tunnel,
         const char *buffer,
         char **res,
@@ -555,6 +581,7 @@ int try_otp_auth(
 #undef SPACE_AVAILABLE
 }
 
+
 /*
  * Authenticates to gateway by sending username and password.
  *
@@ -579,8 +606,7 @@ int auth_log_in(struct tunnel *tunnel)
 
     tunnel->cookie[0] = '\0';
 
-    if (tunnel->config->use_engine > 0
-        || (username[0] == '\0' && tunnel->config->password[0] == '\0')) {
+    if (username[0] == '\0' && tunnel->config->password[0] == '\0') {
         snprintf(data, sizeof(data), "cert=&nup=1");
         ret = http_request(tunnel, "GET", "/remote/login",
                            data, &res, &response_size);
@@ -684,10 +710,12 @@ end:
     return ret;
 }
 
+
 int auth_log_out(struct tunnel *tunnel)
 {
     return http_request(tunnel, "GET", "/remote/logout", "", NULL, NULL);
 }
+
 
 int auth_request_vpn_allocation(struct tunnel *tunnel)
 {
@@ -698,6 +726,7 @@ int auth_request_vpn_allocation(struct tunnel *tunnel)
 
     return http_request(tunnel, "GET", "/remote/fortisslvpn", "", NULL, NULL);
 }
+
 
 static int parse_xml_config(struct tunnel *tunnel, const char *buffer)
 {
@@ -778,8 +807,9 @@ static int parse_xml_config(struct tunnel *tunnel, const char *buffer)
     return 1;
 }
 
-static
-int parse_config(struct tunnel *tunnel, const char *buffer)
+
+#ifdef SUPPORT_OBSOLETE_CODE
+static int parse_config(struct tunnel *tunnel, const char *buffer)
 {
     const char *c, *end;
 
@@ -827,6 +857,8 @@ int parse_config(struct tunnel *tunnel, const char *buffer)
 
     return 1;
 }
+#endif
+
 
 int auth_get_config(struct tunnel *tunnel)
 {
@@ -838,15 +870,19 @@ int auth_get_config(struct tunnel *tunnel)
         ret = parse_xml_config(tunnel, buffer);
         free(buffer);
     }
+
+#ifdef SUPPORT_OBSOLETE_CODE
     if (ret == 1)
         return ret;
+
+    log_warn("Configuration cannot be retrieved in XML format. This VPN-SSL portal might be outdated and vulnerable, you might not be able to connect from systems with recent OpenSSL libraries.\n");
 
     ret = http_request(tunnel, "GET", "/remote/fortisslvpn", "", &buffer, NULL);
     if (ret == 1) {
         ret = parse_config(tunnel, buffer);
         free(buffer);
     }
+#endif
 
     return ret;
 }
-

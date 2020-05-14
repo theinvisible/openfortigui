@@ -30,7 +30,8 @@ add_definitions(-DHAVE_USR_SBIN_PPPD=1
     -DHAVE_X509_CHECK_HOST=1
     -DPPP_PATH="/usr/sbin/pppd"
     -DRESOLVCONF_PATH=""
-    -DHAVE_PTY_H=1)
+    -DHAVE_PTY_H=1
+    -DSUPPORT_OBSOLETE_CODE=1)
 
 #########################################################
 # Sources
