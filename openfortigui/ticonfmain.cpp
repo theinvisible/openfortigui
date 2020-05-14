@@ -84,6 +84,7 @@ void tiConfMain::initMainConf()
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
         conf.setValue("paths/logs", logs_dir);
         conf.setValue("paths/initd", openfortigui_config::initd_default);
+        conf.setValue("checks/sudopresenv", false);
         conf.sync();
     }
     else
@@ -116,6 +117,12 @@ void tiConfMain::initMainConf()
         if(!conf.contains("main/changelogrev_read"))
         {
             conf.setValue("main/changelogrev_read", 0);
+            conf.sync();
+        }
+
+        if(!conf.contains("checks/sudopresenv"))
+        {
+            conf.setValue("checks/sudopresenv", false);
             conf.sync();
         }
     }

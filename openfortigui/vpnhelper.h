@@ -45,6 +45,11 @@ public:
     static QString Qaes128_decrypt(const QString &cipher, const QString &key, const QString &iv);
 
     static void ssl_handleErrors(void);
+    static QString getOSCodename();
+
+    static QString runCommandwithOutput(const QString &cmd);
+    static int runCommandwithReturnCode(const QString &cmd);
+
 };
 
 #endif // VPNHELPER_H

@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0)
 
 Package: openfortigui
 Architecture: amd64 i386
-Depends: ${shlibs:Depends}, sudo, qttranslations5-l10n, ppp
+Depends: ${shlibs:Depends}, sudo, qttranslations5-l10n, ppp, lsb-release
 Conflicts:
 Replaces:
 Provides: openfortigui

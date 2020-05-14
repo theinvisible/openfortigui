@@ -18,6 +18,7 @@
 #include "vpnhelper.h"
 
 #include <QEventLoop>
+#include <QProcess>
 
 #include "config.h"
 #include <qt5keychain/keychain.h>
@@ -267,5 +268,30 @@ QString vpnHelper::Qaes128_decrypt(const QString &cipher, const QString &key, co
 void vpnHelper::ssl_handleErrors()
 {
     ERR_print_errors_fp(stderr);
+}
+
+QString vpnHelper::getOSCodename()
+{
+    return vpnHelper::runCommandwithOutput("lsb_release --codename -s").trimmed();
+}
+
+QString vpnHelper::runCommandwithOutput(const QString &cmd)
+{
+    QProcess proc;
+    proc.start(cmd, QIODevice::ReadOnly);
+    proc.waitForStarted();
+    proc.waitForFinished();
+
+    return proc.readLine();
+}
+
+int vpnHelper::runCommandwithReturnCode(const QString &cmd)
+{
+    QProcess proc;
+    proc.start(cmd, QIODevice::ReadOnly);
+    proc.waitForStarted();
+    proc.waitForFinished();
+
+    return proc.exitCode();
 }
 

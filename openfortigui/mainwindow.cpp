@@ -171,6 +171,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(main_settings.getValue("gui/main_toolbar_location", 0).toInt() != 0)
         addToolBar(static_cast<Qt::ToolBarArea>(main_settings.getValue("gui/main_toolbar_location", 0).toInt()), this->ui->tbActions);
+
+    doOSChecks();
 }
 
 MainWindow::~MainWindow()
@@ -1152,6 +1154,41 @@ void MainWindow::autostartVPNs()
 
         if(vpn->autostart)
             vpnmanager->startVPN(vpn->name);
+    }
+}
+
+void MainWindow::doOSChecks()
+{
+    tiConfMain main_settings;
+    QString osname = vpnHelper::getOSCodename();
+    if(osname.isEmpty())
+    {
+        qWarning() << "OS could not be detected, please make sure lsb-release is installed and 'lsb_release --codename -s' returns a valid string/codename, will not apply any OS fixes!";
+        return;
+    }
+
+    QList<QString> sudoPreEnvOSes;
+    sudoPreEnvOSes << "buster" << "bullseye" << "eoan" << "focal" << "groovy";
+    if(sudoPreEnvOSes.contains(osname))
+    {
+        // Check if we need to do work
+        if(main_settings.getValue("checks/sudopresenv", false).toBool() == false || main_settings.getValue("checks/sudopresenv_lastos", "").toString() != osname)
+        {
+            // Detected OS for SUDO-Preserve-Env fix
+            qDebug() << "Detected OS to enable SUDO-Preserve-Env fix, osname::" << osname;
+            main_settings.setValue("main/sudo_preserve_env", true);
+            main_settings.setValue("checks/sudopresenv", true);
+            main_settings.setValue("checks/sudopresenv_lastos", osname);
+            main_settings.sync();
+        }
+        else
+        {
+            qDebug() << "SUDO-Preserve-Env fix already applied";
+        }
+    }
+    else
+    {
+        qDebug() << "OS not affected by SUDO-Preserve-Env fix or no supported OS found, osname::" << osname;
     }
 }
 
