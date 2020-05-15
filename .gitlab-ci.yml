@@ -30,6 +30,30 @@ stages:
     - sed -i 's/X-KDE-PluginInfo-Version=.*/X-KDE-PluginInfo-Version=99.9.'"${CI_PIPELINE_ID}"'/' ./plasma-runner-openfortigui.desktop
     - cd ..
 
+# Stage "ubuntu"
+build-ubuntu-2004-64:
+  stage: build
+  script:
+    - cd openfortigui
+    - git submodule init && git submodule update
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd ../krunner_openfortigui
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd .. && mkdir build
+    - mv openforti*.deb build/
+    - upload_build build/openforti*.deb || true
+
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - build-ubuntu-2004-64
+    
+  only:
+    - tags
+
 # Stage "ubuntu-dev"
 build-ubuntu-2004-64-dev:
   <<: *build_template_def
