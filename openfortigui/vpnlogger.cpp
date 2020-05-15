@@ -116,7 +116,7 @@ void vpnLogger::logVPNOutput(const QString &name)
         }
     }
 
-    if(toLog.contains("Gateway certificate validation failed, and the certificate digest in not in the local whitelist."))
+    if(toLog.contains("Gateway certificate validation failed, and the certificate digest is not in the local whitelist."))
         logCertFailedMode[name] = true;
 
     if(logCertFailedMode[name])
