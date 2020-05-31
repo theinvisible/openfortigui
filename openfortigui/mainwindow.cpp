@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapperGroups, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPNGroup(QString)));
 
     // Center window on startup
-    QRect geom = QApplication::desktop()->availableGeometry();
+    QRect geom = QGuiApplication::screens()[0]->availableGeometry();
     if(geom.width() > 2560 && geom.height() > 1440)
         resize(geom.width() / 3, geom.height() / 3);
     move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
@@ -323,7 +323,7 @@ void MainWindow::on_btnCopyVPN_clicked()
     }
 }
 
-void MainWindow::on_tvVpnProfiles_doubleClicked(const QModelIndex &index)
+void MainWindow::on_tvVpnProfiles_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
 {
     on_btnEditVPN_clicked();
 }
@@ -434,7 +434,7 @@ void MainWindow::on_btnCopyGroup_clicked()
     }
 }
 
-void MainWindow::on_tvVPNGroups_doubleClicked(const QModelIndex &index)
+void MainWindow::on_tvVPNGroups_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
 {
     on_btnEditGroup_clicked();
 }
@@ -475,7 +475,7 @@ void MainWindow::onTbActionSearch()
         ui->leSearch->hide();
 }
 
-void MainWindow::onvpnAdded(const vpnProfile &vpn)
+void MainWindow::onvpnAdded(__attribute__ ((unused)) const vpnProfile &vpn)
 {
     refreshVpnProfileList();
 }
@@ -494,17 +494,17 @@ void MainWindow::onvpnEdited(const vpnProfile &vpn)
     }
 }
 
-void MainWindow::onvpnGroupAdded(const vpnGroup &vpngroup)
+void MainWindow::onvpnGroupAdded(__attribute__ ((unused)) const vpnGroup &vpngroup)
 {
     refreshVpnGroupList();
 }
 
-void MainWindow::onvpnGroupEdited(const vpnGroup &vpngroup)
+void MainWindow::onvpnGroupEdited(__attribute__ ((unused)) const vpnGroup &vpngroup)
 {
     refreshVpnGroupList();
 }
 
-void MainWindow::onvpnSearch(const QString &searchtext)
+void MainWindow::onvpnSearch(__attribute__ ((unused)) const QString &searchtext)
 {
     refreshVpnProfileList();
 }
@@ -550,7 +550,7 @@ void MainWindow::onStartVPN()
     }
 }
 
-void MainWindow::onStartVPN(const QString &vpnname, vpnProfile::Origin origin)
+void MainWindow::onStartVPN(const QString &vpnname, __attribute__ ((unused)) vpnProfile::Origin origin)
 {
     qDebug() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
 
@@ -665,8 +665,6 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 {
     qDebug() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
 
-    vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
-
     //refreshVpnProfileList();
     QIcon statusicon;
     QStandardItem *statusitem = getVpnProfileItem(vpnname, 0);
@@ -711,6 +709,8 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
             break;
         case vpnClientConnection::STATUS_DISCONNECTED:
             tray->showMessage(tr("VPN-Status"), tr("VPN %1 is disconnected").arg(vpnname), QSystemTrayIcon::Information, 4000);
+            break;
+        case vpnClientConnection::STATUS_CONNECTING:
             break;
         }
     }
@@ -794,7 +794,7 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
     }
 }
 
-void MainWindow::onClientVPNMessage(QString vpnname, vpnMsg msg)
+void MainWindow::onClientVPNMessage(__attribute__ ((unused)) QString vpnname, vpnMsg msg)
 {
     switch(msg.type)
     {
@@ -1001,6 +1001,8 @@ void MainWindow::refreshVpnProfileList()
                 item->setData(vpnProfile::Origin_GLOBAL);
                 break;
             }
+        case vpnProfile::Origin_BOTH:
+            break;
         }
         // Update tray
         if(isVPNConnected)
@@ -1310,7 +1312,7 @@ void MainWindow::onChangelog()
     QApplication::setActiveWindow(changeWindow);
 }
 
-void MainWindow::onWatcherVpnProfilesChanged(const QString &path)
+void MainWindow::onWatcherVpnProfilesChanged(__attribute__ ((unused)) const QString &path)
 {
     refreshVpnProfileList();
     refreshVpnGroupList();

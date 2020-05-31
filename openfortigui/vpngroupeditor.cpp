@@ -71,6 +71,8 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
         case vpnProfile::Origin_GLOBAL:
             originText = tr("Global");
             break;
+        case vpnProfile::Origin_BOTH:
+            break;
         }
         item3 = new QStandardItem(originText);
         item3->setData(vpn->origin_location);

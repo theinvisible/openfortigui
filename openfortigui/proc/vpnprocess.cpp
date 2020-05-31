@@ -393,6 +393,8 @@ void vpnProcess::onObserverUpdate()
                 qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
                 onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTING);
                 break;
+            case STATE_DISCONNECTING:
+                break;
             }
 
             last_tunnel.state = thread_worker->ptr_tunnel->state;

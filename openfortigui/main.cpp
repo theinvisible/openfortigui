@@ -40,8 +40,6 @@ QFile *openfortiguiLog = 0;
 
 void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString & str)
 {
-    const char * msg = str.toStdString().c_str();
-
     tiConfMain main_settings;
     QTextStream sout(stdout);
 

@@ -90,7 +90,7 @@ void vpnManager::startVPN(const QString &name)
     QProcess *vpnProc = new QProcess(this);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
 #if QT_VERSION > QT_VERSION_CHECK(5, 7, 0)
-    connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode); }, Qt::QueuedConnection);
+    connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode, exitStatus); }, Qt::QueuedConnection);
     connect(vpnProc, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error){ onVPNProcessErrorOccurred(name, error); }, Qt::QueuedConnection);
 #endif
     emit addVPNLogger(name, vpnProc);
@@ -302,7 +302,7 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
     emit VPNCertificateValidationFailed(vpnname, buffer);
 }
 
-void vpnManager::onVPNProcessFinished(QString name, int exitCode)
+void vpnManager::onVPNProcessFinished(QString name, __attribute__ ((unused)) int exitCode, __attribute__ ((unused)) QProcess::ExitStatus exitStatus)
 {
     qDebug() << "VPN process " << name << " finished!";
     if(connections.contains(name))
@@ -311,7 +311,7 @@ void vpnManager::onVPNProcessFinished(QString name, int exitCode)
     }
 }
 
-void vpnManager::onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error)
+void vpnManager::onVPNProcessErrorOccurred(QString name, __attribute__ ((unused)) QProcess::ProcessError error)
 {
     qDebug() << "VPN process " << name << " error occurred!";
     if(connections.contains(name))

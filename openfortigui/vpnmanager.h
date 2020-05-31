@@ -108,7 +108,7 @@ public slots:
     void onClientVPNMessage(QString vpnname, vpnMsg msg);
     void onOTPRequest(QProcess *proc);
     void onCertificateValidationFailed(QString vpnname, QString buffer);
-    void onVPNProcessFinished(QString name, int exitCode);
+    void onVPNProcessFinished(QString name, int exitCode, QProcess::ExitStatus exitStatus);
     void onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error);
 };
 

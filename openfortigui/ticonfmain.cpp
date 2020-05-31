@@ -290,8 +290,9 @@ void tiConfVpnProfiles::readVpnProfiles()
             if(vpnprofilefilepath.endsWith(".conf"))
             {
                 qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
+                QString vpnprofilename = QDir(vpnprofilefilepath).dirName().split(".conf")[0];
 
-                if(!rexpName.exactMatch(QDir(vpnprofilefilepath).dirName()))
+                if(!rexpName.exactMatch(vpnprofilename))
                 {
                     qWarning() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
                     continue;
@@ -344,6 +345,8 @@ void tiConfVpnProfiles::readVpnProfiles()
                     break;
                 case vpnProfile::Origin_GLOBAL:
                     vpnprofile->origin_location = vpnProfile::Origin_GLOBAL;
+                    break;
+                case vpnProfile::Origin_BOTH:
                     break;
                 }
 
