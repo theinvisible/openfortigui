@@ -10,10 +10,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 REQUIRED Core Widgets Network Keychain)
+find_package(Qt5 REQUIRED Core Widgets Network Keychain DBus)
 
 # Add 'd' suffix to debug libs
 set(CMAKE_DEBUG_POSTFIX _debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
 
 # Generate debug symbol file (pdb)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
