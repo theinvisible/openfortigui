@@ -114,21 +114,21 @@ MainWindow::MainWindow(QWidget *parent) :
     tbtnAdd->setPopupMode(QToolButton::InstantPopup);
     tbtnAdd->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     tbtnAdd->setMenu(tmnuAdd);
-    tbtnAdd->setIcon(QIcon(":/img/add.png"));
+    tbtnAdd->setIcon(QIcon::fromTheme("list-add", QIcon(":/img/add.png")));
     tbtnAdd->setText(tr("Add"));
 
     ui->tbActions->addAction(QIcon(":/img/connected.png"), tr("Connect"), this, SLOT(onStartVPN()));
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), tr("Disconnect"), this, SLOT(onStopVPN()));
     ui->tbActions->addSeparator();
     ui->tbActions->addWidget(tbtnAdd);
-    ui->tbActions->addAction(QIcon(":/img/edit.png"), tr("Edit"), this, SLOT(onTbActionEdit()));
-    ui->tbActions->addAction(QIcon(":/img/copy.png"), tr("Copy"), this, SLOT(onTbActionCopy()));
-    QAction *actionSearch = ui->tbActions->addAction(QIcon(":/img/search.png"), tr("Search"), this, SLOT(onTbActionSearch()));
+    ui->tbActions->addAction(QIcon::fromTheme("accessories-text-editor", QIcon(":/img/edit.png")), tr("Edit"), this, SLOT(onTbActionEdit()));
+    ui->tbActions->addAction(QIcon::fromTheme("edit-copy", QIcon(":/img/copy.png")), tr("Copy"), this, SLOT(onTbActionCopy()));
+    QAction *actionSearch = ui->tbActions->addAction(QIcon::fromTheme("system-search", QIcon(":/img/search.png")), tr("Search"), this, SLOT(onTbActionSearch()));
     actionSearch->setCheckable(true);
     ui->tbActions->addSeparator();
-    ui->tbActions->addAction(QIcon(":/img/delete.png"), tr("Delete"), this, SLOT(onTbActionDelete()));
+    ui->tbActions->addAction(QIcon::fromTheme("edit-delete", QIcon(":/img/delete.png")), tr("Delete"), this, SLOT(onTbActionDelete()));
     ui->tbActions->addSeparator();
-    ui->tbActions->addAction(QIcon(":/img/about.png"), tr("About"), this, SLOT(onActionAbout()));
+    ui->tbActions->addAction(QIcon::fromTheme("help-about", QIcon(":/img/about.png")), tr("About"), this, SLOT(onActionAbout()));
 
     ui->leSearch->hide();
 
@@ -920,8 +920,8 @@ void MainWindow::refreshVpnProfileList()
     tray_menu->clear();
     if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_TOP)
     {
-        tray_menu->addAction(QIcon(":/img/quit.png"),tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
-        tray_menu->addAction(QIcon(":/img/settings.png"), tr("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(QIcon::fromTheme("application-exit", QIcon(":/img/quit.png")), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
+        tray_menu->addAction(QIcon::fromTheme("preferences-system", QIcon(":/img/settings.png")), tr("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(QIcon(":/img/show.png"), tr("Show mainwindow"), this, SLOT(show()));
         tray_menu->addSeparator();
         tray_menu->addMenu(tray_group_menu);
@@ -1030,8 +1030,8 @@ void MainWindow::refreshVpnProfileList()
         tray_menu->addMenu(tray_group_menu);
         tray_menu->addSeparator();
         tray_menu->addAction(QIcon(":/img/show.png"), tr("Show mainwindow"), this, SLOT(show()));
-        tray_menu->addAction(QIcon(":/img/settings.png"), tr("Settings"), this, SLOT(onVPNSettings()));
-        tray_menu->addAction(QIcon(":/img/quit.png"), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
+        tray_menu->addAction(QIcon::fromTheme("preferences-system", QIcon(":/img/settings.png")), tr("Settings"), this, SLOT(onVPNSettings()));
+        tray_menu->addAction(QIcon::fromTheme("application-exit", QIcon(":/img/quit.png")), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
     }
 
     tray->setContextMenu(tray_menu);

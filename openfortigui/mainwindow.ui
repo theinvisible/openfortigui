@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>22</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">
@@ -142,7 +142,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionMenuExit">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="application-exit" resource="res.qrc">
      <normaloff>:/img/quit.png</normaloff>:/img/quit.png</iconset>
    </property>
    <property name="text">
@@ -155,7 +155,7 @@
   <action name="actionMenuAbout">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/img/about.png</normaloff>:/img/about.png</iconset>
+     <normaloff>:/img/app.png</normaloff>:/img/app.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -193,7 +193,7 @@
   </action>
   <action name="actionMenuSettings">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="applications-system" resource="res.qrc">
      <normaloff>:/img/settings.png</normaloff>:/img/settings.png</iconset>
    </property>
    <property name="text">
@@ -202,7 +202,7 @@
   </action>
   <action name="actionMenuLogs">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="accessories-text-editor" resource="res.qrc">
      <normaloff>:/img/log.png</normaloff>:/img/log.png</iconset>
    </property>
    <property name="text">
@@ -211,7 +211,7 @@
   </action>
   <action name="actionMenuWizard">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="start-here" resource="res.qrc">
      <normaloff>:/img/sorceress.png</normaloff>:/img/sorceress.png</iconset>
    </property>
    <property name="text">
@@ -220,7 +220,7 @@
   </action>
   <action name="actionChangelog">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="accessories-dictionary" resource="res.qrc">
      <normaloff>:/img/changelog.png</normaloff>:/img/changelog.png</iconset>
    </property>
    <property name="text">
