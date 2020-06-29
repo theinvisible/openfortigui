@@ -92,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">
@@ -154,7 +154,7 @@
   </action>
   <action name="actionMenuAbout">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="help-about" resource="res.qrc">
      <normaloff>:/img/app.png</normaloff>:/img/app.png</iconset>
    </property>
    <property name="text">
@@ -181,7 +181,7 @@
   </action>
   <action name="actionMenuHide">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset theme="window-close" resource="res.qrc">
      <normaloff>:/img/hide.png</normaloff>:/img/hide.png</iconset>
    </property>
    <property name="text">
@@ -193,7 +193,7 @@
   </action>
   <action name="actionMenuSettings">
    <property name="icon">
-    <iconset theme="applications-system" resource="res.qrc">
+    <iconset theme="preferences-system" resource="res.qrc">
      <normaloff>:/img/settings.png</normaloff>:/img/settings.png</iconset>
    </property>
    <property name="text">

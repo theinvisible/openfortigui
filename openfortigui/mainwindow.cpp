@@ -121,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tbActions->addAction(QIcon(":/img/disconnected.png"), tr("Disconnect"), this, SLOT(onStopVPN()));
     ui->tbActions->addSeparator();
     ui->tbActions->addWidget(tbtnAdd);
-    ui->tbActions->addAction(QIcon::fromTheme("accessories-text-editor", QIcon(":/img/edit.png")), tr("Edit"), this, SLOT(onTbActionEdit()));
+    ui->tbActions->addAction(QIcon::fromTheme("edit-paste", QIcon(":/img/edit.png")), tr("Edit"), this, SLOT(onTbActionEdit()));
     ui->tbActions->addAction(QIcon::fromTheme("edit-copy", QIcon(":/img/copy.png")), tr("Copy"), this, SLOT(onTbActionCopy()));
     QAction *actionSearch = ui->tbActions->addAction(QIcon::fromTheme("system-search", QIcon(":/img/search.png")), tr("Search"), this, SLOT(onTbActionSearch()));
     actionSearch->setCheckable(true);
@@ -1029,7 +1029,7 @@ void MainWindow::refreshVpnProfileList()
         tray_menu->addSeparator();
         tray_menu->addMenu(tray_group_menu);
         tray_menu->addSeparator();
-        tray_menu->addAction(QIcon(":/img/show.png"), tr("Show mainwindow"), this, SLOT(show()));
+        tray_menu->addAction(QIcon::fromTheme("window-new", QIcon(":/img/show.png")), tr("Show mainwindow"), this, SLOT(show()));
         tray_menu->addAction(QIcon::fromTheme("preferences-system", QIcon(":/img/settings.png")), tr("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(QIcon::fromTheme("application-exit", QIcon(":/img/quit.png")), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
     }
