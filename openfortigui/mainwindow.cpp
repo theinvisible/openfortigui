@@ -828,11 +828,11 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     QAction *a_connect = menu.addAction(QIcon(":/img/connected.png"), tr("Connect"));
     QAction *a_disconnect = menu.addAction(QIcon(":/img/disconnected.png"), tr("Disconnect"));
     menu.addSeparator();
-    QAction *a_edit = menu.addAction(QIcon(":/img/edit.png"), tr("Edit"));
-    QAction *a_copy = menu.addAction(QIcon(":/img/copy.png"), tr("Copy"));
-    QAction *a_delete = menu.addAction(QIcon(":/img/delete.png"), tr("Delete"));
+    QAction *a_edit = menu.addAction(QIcon::fromTheme("edit-paste", QIcon(":/img/edit.png")), tr("Edit"));
+    QAction *a_copy = menu.addAction(QIcon::fromTheme("edit-copy", QIcon(":/img/copy.png")), tr("Copy"));
+    QAction *a_delete = menu.addAction(QIcon::fromTheme("edit-delete", QIcon(":/img/delete.png")), tr("Delete"));
     menu.addSeparator();
-    QAction *a_viewlogs = menu.addAction(QIcon(":/img/log.png"), tr("View logs"));
+    QAction *a_viewlogs = menu.addAction(QIcon::fromTheme("accessories-text-editor", QIcon(":/img/log.png")), tr("View logs"));
     QAction *choosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
 
     if(choosen == a_viewlogs)
