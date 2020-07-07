@@ -291,7 +291,6 @@ void tiConfVpnProfiles::readVpnProfiles()
             {
                 qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
                 QString vpnprofilename = QDir(vpnprofilefilepath).dirName().split(".conf")[0];
-
                 if(!rexpName.exactMatch(vpnprofilename))
                 {
                     qWarning() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
@@ -485,7 +484,8 @@ void tiConfVpnGroups::readVpnGroups()
         {
             qDebug() << "tiConfVpnGroups::readVpnGroups() -> vpngroup found:" << vpngroupfilepath;
 
-            if(!rexpName.exactMatch(QDir(vpngroupfilepath).dirName()))
+            QString vpngroupname = QDir(vpngroupfilepath).dirName().split(".conf")[0];
+            if(!rexpName.exactMatch(vpngroupname))
             {
                 qWarning() << "tiConfVpnProfile::readVpnGroups() -> vpngroup has not a valid name, skip loading: " << vpngroupfilepath;
                 continue;
