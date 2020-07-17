@@ -52,7 +52,7 @@ void vpnLogin::initAfter()
 
 void vpnLogin::on_btnSubmit_clicked()
 {
-    vpnmanager->submitVPNCred(vpnname, ui->leUsername->text(), ui->lePassword->text());
+    vpnmanager->submitVPNCred(vpnname, ui->leUsername->text(), ui->lePassword->text(), ui->leOTP->text());
     parentWidget()->hide();
 }
 
@@ -68,6 +68,11 @@ void vpnLogin::on_leUsername_returnPressed()
 }
 
 void vpnLogin::on_lePassword_returnPressed()
+{
+    on_btnSubmit_clicked();
+}
+
+void vpnLogin::on_leOTP_returnPressed()
 {
     on_btnSubmit_clicked();
 }

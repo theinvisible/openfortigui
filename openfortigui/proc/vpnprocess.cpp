@@ -129,7 +129,7 @@ void vpnProcess::startVPN()
     stats.bytes_written = 0;
     stats.vpn_start = 0;
 
-    if(profile->username.isEmpty() || profile->password.isEmpty())
+    if(profile->username.isEmpty() || profile->password.isEmpty() || profile->always_ask_otp)
     {
         cred_received = false;
         requestCred();
@@ -151,9 +151,15 @@ void vpnProcess::startVPN()
         }
 
         profile->username = cred_data.username;
-        profile->password = cred_data.password;
+        if(!cred_data.password.isEmpty())
+            profile->password = cred_data.password;
+        profile->otp = cred_data.otp;
         cred_data.username = "";
         cred_data.password = "";
+        cred_data.otp = "";
+
+        if(profile->always_ask_otp && !profile->otp.isEmpty())
+            profile->password = QString("%1,%2").arg(profile->password).arg(profile->otp);
     }
 
     thread_vpn = new QThread;
@@ -326,6 +332,7 @@ void vpnProcess::onServerReadyRead()
     case vpnApi::ACTION_CRED_SUBMIT:
         cred_data.username = jobj["username"].toString();
         cred_data.password = jobj["password"].toString();
+        cred_data.otp = jobj["otp"].toString();
         cred_received = true;
         break;
     case vpnApi::ACTION_STOREPASS_SUBMIT:

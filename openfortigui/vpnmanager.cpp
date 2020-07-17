@@ -138,7 +138,7 @@ vpnClientConnection *vpnManager::getClientConnection(const QString &name)
     return vpn;
 }
 
-void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, const QString &password)
+void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, const QString &password, const QString &otp)
 {
     if(connections.contains(vpnname))
     {
@@ -151,6 +151,7 @@ void vpnManager::submitVPNCred(const QString &vpnname, const QString &username, 
 
         jsTop["username"] = username;
         jsTop["password"] = password;
+        jsTop["otp"] = otp;
 
         json.setObject(jsTop);
         data.data = json.toJson();
@@ -367,12 +368,14 @@ void vpnClientConnection::submitPassStoreCred()
     password = profile->readPassword();
 
     // Ask for otp if needed
+    /*
     if (profile->always_ask_otp)
     {
         QString otp = QInputDialog::getText(nullptr, tr("Enter OTP"), tr("Enter OTP token"));
         if (!otp.isEmpty())
             password = QString("%1,%2").arg(password).arg(otp);
     }
+    */
 
     jsTop["password"] = password;
 

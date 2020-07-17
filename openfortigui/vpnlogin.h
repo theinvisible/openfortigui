@@ -49,6 +49,7 @@ private slots:
 
     void on_leUsername_returnPressed();
     void on_lePassword_returnPressed();
+    void on_leOTP_returnPressed();
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);

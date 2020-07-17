@@ -527,6 +527,12 @@ void vpnWorker::process()
     if(vpnConfig.otp_delay > 0)
         config.otp_delay = vpnConfig.otp_delay;
 
+    if(!vpnConfig.otp.isEmpty())
+    {
+        strncpy(config.otp, vpnConfig.otp.toStdString().c_str(), FIELD_SIZE);
+        config.otp[FIELD_SIZE] = '\0';
+    }
+
     if(!vpnConfig.pppd_log_file.isEmpty())
         config.pppd_log = strdup(vpnConfig.pppd_log_file.toStdString().c_str());
 

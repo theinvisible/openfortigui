@@ -77,7 +77,7 @@ public:
     void stopVPN(const QString &name);
 
     vpnClientConnection *getClientConnection(const QString &name);
-    void submitVPNCred(const QString &vpnname, const QString &username, const QString &password);
+    void submitVPNCred(const QString &vpnname, const QString &username, const QString &password, const QString &otp = "");
 
     void requestStats(const QString &vpnname);
     bool isSomeClientConnected();
