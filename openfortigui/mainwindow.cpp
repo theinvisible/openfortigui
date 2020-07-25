@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
     actionSearch->setCheckable(true);
     ui->tbActions->addSeparator();
     ui->tbActions->addAction(QIcon::fromTheme("edit-delete", QIcon(":/img/delete.png")), tr("Delete"), this, SLOT(onTbActionDelete()));
+    ui->tbActions->addAction(QIcon::fromTheme("accessories-text-editor", QIcon(":/img/log.png")), tr("Logs"), this, SLOT(onTbActionLogs()));
     ui->tbActions->addSeparator();
     ui->tbActions->addAction(QIcon::fromTheme("help-about", QIcon(":/img/about.png")), tr("About"), this, SLOT(onActionAbout()));
 
@@ -325,7 +326,12 @@ void MainWindow::on_btnCopyVPN_clicked()
 
 void MainWindow::on_tvVpnProfiles_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
 {
-    on_btnEditVPN_clicked();
+    tiConfMain main_settings;
+
+    if(main_settings.getValue("gui/connect_on_dblclick").toBool())
+        onStartVPN();
+    else
+        on_btnEditVPN_clicked();
 }
 
 void MainWindow::on_btnAddGroup_clicked()
@@ -436,7 +442,12 @@ void MainWindow::on_btnCopyGroup_clicked()
 
 void MainWindow::on_tvVPNGroups_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
 {
-    on_btnEditGroup_clicked();
+    tiConfMain main_settings;
+
+    if(main_settings.getValue("gui/connect_on_dblclick").toBool())
+        onStartVPN();
+    else
+        on_btnEditGroup_clicked();
 }
 
 void MainWindow::onTbActionEdit()
@@ -473,6 +484,27 @@ void MainWindow::onTbActionSearch()
         ui->leSearch->show();
     else
         ui->leSearch->hide();
+}
+
+void MainWindow::onTbActionLogs()
+{
+    if(ui->tabMain->currentIndex() == 0)
+    {
+        QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
+        QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
+        QModelIndexList sellist = selmodel->selectedRows(1);
+
+        if(sellist.count() < 1)
+        {
+            return;
+        }
+
+        QString vpnName = model->itemFromIndex(sellist.at(0))->text();
+        if(vpnName.isEmpty())
+            return;
+
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/vpn/%2.log").arg(tiConfMain::getAppDir(), vpnName)));
+    }
 }
 
 void MainWindow::onvpnAdded(__attribute__ ((unused)) const vpnProfile &vpn)
@@ -666,6 +698,7 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     qDebug() << "MainWindow::onClientVPNStatusChanged::" << vpnname << "::status::" << status;
 
     //refreshVpnProfileList();
+    tiConfMain main_settings;
     QIcon statusicon;
     QStandardItem *statusitem = getVpnProfileItem(vpnname, 0);
     if(statusitem != 0)
@@ -700,7 +733,7 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     else
         tray->setIcon(QIcon(":/img/app.png"));
 
-    if(isHidden())
+    if(isHidden() && !main_settings.getValue("gui/disable_notifications", false).toBool())
     {
         switch(status)
         {

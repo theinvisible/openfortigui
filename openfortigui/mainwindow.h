@@ -69,6 +69,7 @@ private slots:
     void onTbActionCopy();
     void onTbActionDelete();
     void onTbActionSearch();
+    void onTbActionLogs();
 
     void onvpnAdded(const vpnProfile &vpn);
     void onvpnEdited(const vpnProfile &vpn);

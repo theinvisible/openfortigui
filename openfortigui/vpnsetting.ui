@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>718</width>
-    <height>519</height>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,26 +43,6 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Start minimized</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="cbStartMinimized">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QLabel" name="label_9">
           <property name="minimumSize">
            <size>
@@ -75,7 +55,14 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="cbUseSystemPasswordStore">
+          <property name="text">
+           <string>Uses system password manager (KWallet, GNOME-Keyring)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QLabel" name="label_2">
           <property name="minimumSize">
            <size>
@@ -88,10 +75,10 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="2" column="1">
          <widget class="QLineEdit" name="leAESKey"/>
         </item>
-        <item row="4" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_8">
           <property name="minimumSize">
            <size>
@@ -104,17 +91,10 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="3" column="1">
          <widget class="QLineEdit" name="leAESIV"/>
         </item>
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="cbUseSystemPasswordStore">
-          <property name="text">
-           <string>Uses system password manager (KWallet, GNOME-Keyring)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_10">
           <property name="minimumSize">
            <size>
@@ -127,7 +107,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="4" column="1">
          <widget class="QCheckBox" name="cbSUDOPreserveEnv">
           <property name="text">
            <string>SUDO Preserve Env. (&gt;=Ubuntu 19.10/Debian10 Fix)</string>
@@ -254,6 +234,79 @@
            </widget>
           </item>
          </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>GUI</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Start minimized</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="cbStartMinimized">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Disable notifications</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Connect on doubleclick</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="cbDisableNotifications">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QCheckBox" name="cbConnectonDblClick">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

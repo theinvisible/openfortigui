@@ -50,6 +50,8 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->leLocalVPNGroups->setText(confMain.getValue("paths/localvpngroups").toString());
     ui->leGlobalVPNProfiles->setText(confMain.getValue("paths/globalvpnprofiles").toString());
     ui->leLogs->setText(confMain.getValue("paths/logs").toString());
+    ui->cbDisableNotifications->setChecked(confMain.getValue("gui/disable_notifications").toBool());
+    ui->cbConnectonDblClick->setChecked(confMain.getValue("gui/connect_on_dblclick").toBool());
 }
 
 vpnSetting::~vpnSetting()
@@ -87,6 +89,9 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));
     confMain.setValue("paths/globalvpnprofiles", tiConfMain::formatPathReverse(ui->leGlobalVPNProfiles->text()));
     confMain.setValue("paths/logs", tiConfMain::formatPathReverse(ui->leLogs->text()));
+
+    confMain.setValue("gui/disable_notifications", ui->cbDisableNotifications->isChecked());
+    confMain.setValue("gui/connect_on_dblclick", ui->cbConnectonDblClick->isChecked());
 
     confMain.sync();
 
