@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ja_JP">
+<TS version="2.1" language="es_ES">
 <context>
     <name>MainWindow</name>
     <message>
@@ -16,31 +16,68 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="31"/>
-        <location filename="../mainwindow.cpp" line="126"/>
-        <source>Search</source>
-        <translation>検索</translation>
+        <location filename="../mainwindow.cpp" line="213"/>
+        <location filename="../mainwindow.cpp" line="227"/>
+        <location filename="../mainwindow.cpp" line="236"/>
+        <location filename="../mainwindow.cpp" line="256"/>
+        <source>Delete VPN</source>
+        <translation>Eliminar VPN</translation>
+    </message>
+    <message>
+        <source>Copy VPN</source>
+        <translation type="vanished">Copiar VPN</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="278"/>
+        <source>Edit VPN</source>
+        <translation>Editar VPN</translation>
+    </message>
+    <message>
+        <source>Add VPN</source>
+        <translation type="vanished">Añadir VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="64"/>
         <location filename="../mainwindow.cpp" line="107"/>
         <source>VPN-Groups</source>
-        <translation>グループ</translation>
+        <translation>Grupos de VPN</translation>
+    </message>
+    <message>
+        <source>Delete Group</source>
+        <translation type="vanished">Eliminar el grupo</translation>
+    </message>
+    <message>
+        <source>Copy Group</source>
+        <translation type="vanished">Copiar el grupo</translation>
+    </message>
+    <message>
+        <source>Edit Group</source>
+        <translation type="vanished">Editar el grupo</translation>
+    </message>
+    <message>
+        <source>Add Group</source>
+        <translation type="vanished">Añadir un grupo</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="31"/>
+        <location filename="../mainwindow.cpp" line="126"/>
+        <source>Search</source>
+        <translation>Buscar</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="100"/>
         <source>File</source>
-        <translation>ファイル</translation>
+        <translation>Archivo</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="120"/>
         <source>Help</source>
-        <translation>ヘルプ</translation>
+        <translation>Ayuda</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="149"/>
         <source>Exit</source>
-        <translation>終了</translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="152"/>
@@ -51,26 +88,26 @@
         <location filename="../mainwindow.ui" line="161"/>
         <location filename="../mainwindow.cpp" line="132"/>
         <source>About</source>
-        <translation>情報</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="170"/>
         <location filename="../mainwindow.cpp" line="120"/>
         <location filename="../mainwindow.cpp" line="861"/>
         <source>Connect</source>
-        <translation>接続</translation>
+        <translation>Conectar</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="179"/>
         <location filename="../mainwindow.cpp" line="121"/>
         <location filename="../mainwindow.cpp" line="862"/>
         <source>Disconnect</source>
-        <translation>切断</translation>
+        <translation>Desconectar</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="188"/>
         <source>Hide</source>
-        <translation>非表示</translation>
+        <translation>Ocultar</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="191"/>
@@ -82,217 +119,187 @@
         <location filename="../mainwindow.cpp" line="957"/>
         <location filename="../mainwindow.cpp" line="1066"/>
         <source>Settings</source>
-        <translation>設定</translation>
+        <translation>Configuración</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="209"/>
         <location filename="../mainwindow.cpp" line="130"/>
         <source>Logs</source>
-        <translation>ログ</translation>
+        <translation>Registros</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="218"/>
         <source>Setup wizard</source>
-        <translation>セットアップウィザード</translation>
+        <translation>Assistent de configuración</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="227"/>
         <source>Changelog</source>
-        <translation>変更履歴</translation>
+        <translation>Registro de cambios</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <location filename="../mainwindow.cpp" line="98"/>
         <source>Status</source>
-        <translation>状態</translation>
+        <translation>Estado</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <location filename="../mainwindow.cpp" line="98"/>
         <source>Name</source>
-        <translation>名前</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <source>Gateway</source>
-        <translation>ゲートウェイ</translation>
+        <translation>Puerto</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <source>User</source>
-        <translation>ユーザー</translation>
+        <translation>Usuario</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="76"/>
         <source>Traffic RX/TX</source>
-        <translation>受送信</translation>
+        <translation>Tráfico RX/TX</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="81"/>
         <source>Local VPNs</source>
-        <translation>ローカル</translation>
+        <translation>VPN locales</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="83"/>
         <source>Global VPNs</source>
-        <translation>グローバル</translation>
+        <translation>VPN globales</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="98"/>
         <source>VPNs</source>
-        <translation>VPN</translation>
+        <translation>VPNs</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="113"/>
         <source>VPN-Group</source>
-        <translation>グループ</translation>
+        <translation>Grupo de VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="118"/>
         <source>Add</source>
-        <translation>追加</translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="124"/>
         <location filename="../mainwindow.cpp" line="864"/>
         <source>Edit</source>
-        <translation>編集</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="125"/>
         <location filename="../mainwindow.cpp" line="865"/>
         <source>Copy</source>
-        <translation>複製</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="129"/>
         <location filename="../mainwindow.cpp" line="866"/>
         <source>Delete</source>
-        <translation>削除</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="213"/>
-        <location filename="../mainwindow.cpp" line="227"/>
-        <location filename="../mainwindow.cpp" line="236"/>
-        <location filename="../mainwindow.cpp" line="256"/>
-        <source>Delete VPN</source>
-        <translation>VPN を削除</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="214"/>
         <source>Global VPN-Profiles cannot be deleted.</source>
-        <translation>グローバル VPN 定義を削除することができません。</translation>
+        <translation>Los perfiles VPN globales no se pueden eliminar</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="228"/>
         <location filename="../mainwindow.cpp" line="279"/>
         <source>The VPN state must be disconnected to perform this action.</source>
-        <translation>この作業を実行するには先ず VPN から切断する必要があります。</translation>
+        <translation>El VPN debe estar desconectado para realizar esta acción.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="237"/>
         <source>Warning, the selected vpn will be deleted, continue?</source>
-        <translation>指定された VPN を削除してもよろしいですか？</translation>
+        <translation>Advertencia, la VPN seleccionada se eliminará, ¿continuar?</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="256"/>
         <source>The selected vpn could not be deleted, an error occured.</source>
-        <translation>エラーが発生したため、指定された VPN を削除することができませんでした。</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="278"/>
-        <source>Edit VPN</source>
-        <translation>VPN を編集</translation>
+        <translation>El VPN seleccionado no se pudo eliminar, se produjo un error</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="315"/>
         <source>Copy VPN-profile</source>
-        <translation>VPN 定義を複製</translation>
+        <translation>Copia el perfil VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="316"/>
         <source>Enter the new VPN-profile name</source>
-        <translation>新しい VPN 定義の名前を入力して下さい</translation>
+        <translation>Ingrese el nuevo perfil VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="367"/>
         <location filename="../mainwindow.cpp" line="387"/>
         <source>Delete VPN-Group</source>
-        <translation>グループを削除</translation>
+        <translation>Elimina el grupo VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="368"/>
         <source>Warning, the selected vpn-group will be deleted, continue?</source>
-        <translation>指定されたグループを削除してもよろしいですか？</translation>
+        <translation>Advertencia, el grupo VPN seleccionado se eliminará, ¿continuar?</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="387"/>
         <source>The selected vpn-group could not be deleted, an error occured.</source>
-        <translation>エラーが発生したため、指定されたグループを削除することができませんでした。</translation>
+        <translation>El grupo VPN seleccionado no se pudo eliminar, se produjo un error.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="431"/>
         <source>Copy Group-profile</source>
-        <translation>グループ定義を複製</translation>
+        <translation>Copia el perfil de grupo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="432"/>
         <source>Enter the new Group-profile name</source>
-        <translation>グループ定義の名前を入力して下さい</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="711"/>
-        <location filename="../mainwindow.cpp" line="989"/>
-        <source>Connected</source>
-        <translation>接続済み</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="716"/>
-        <location filename="../mainwindow.cpp" line="994"/>
-        <source>Connecting</source>
-        <translation>接続中</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="722"/>
-        <location filename="../mainwindow.cpp" line="999"/>
-        <location filename="../mainwindow.cpp" line="1005"/>
-        <source>Disconnected</source>
-        <translation>切断</translation>
+        <translation>Ingrese el nuevo nombre de perfil de grupo</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="741"/>
         <location filename="../mainwindow.cpp" line="744"/>
         <source>VPN-Status</source>
-        <translation>VPN 状態</translation>
+        <translation>Estado del VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="741"/>
         <source>VPN %1 is connected</source>
-        <translation>VPN %1 は接続済みです</translation>
+        <translation>La VPN %1 está conectada</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="744"/>
         <source>VPN %1 is disconnected</source>
-        <translation>VPN %1 との接続が切れました</translation>
+        <translation>La VPN %1 ha sido desconectada</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="802"/>
         <source>Gateway certificate validation failed and the certificate digest is not in the local whitelist nor a valid CA is provided. Certificate details:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>La validación del certificado de puerta de enlace falló y el resumen del certificado no está en la lista blanca local ni se proporciona una CA válida. Detalles del certificado:
+        
+        </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="803"/>
         <source>
 
 Add certificate to VPN-profile whitelist?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Agregar certificado a la lista blanca de perfil VPN?</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="805"/>
         <source>Gateway certificate validation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>La validación del certificado de puerta de enlace ha fallado</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="835"/>
@@ -302,54 +309,86 @@ Add certificate to VPN-profile whitelist?</source>
     <message>
         <location filename="../mainwindow.cpp" line="838"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Advertencia</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="842"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="868"/>
         <source>View logs</source>
-        <translation>ログを表示</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="956"/>
-        <location filename="../mainwindow.cpp" line="1067"/>
-        <source>Quit OpenFortiGUI</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver los registros</translation>
     </message>
     <message>
         <source>Quit app</source>
-        <translation type="vanished">終了</translation>
+        <translation type="vanished">Salir de la aplicación</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="958"/>
         <location filename="../mainwindow.cpp" line="1065"/>
         <source>Show mainwindow</source>
-        <translation>表示</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1271"/>
-        <source>About openFortiGUI</source>
-        <translation>OpenFortiGUI について</translation>
+        <translation>Mostrar ventana principal</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1271"/>
         <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;Developer:&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;eMail:&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Website:&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;App-Icon:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://deepdoc.at/&apos;&gt;https://deepdoc.at&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
-        <translation>&lt;b&gt;OpenFortiGUI %1&lt;/b&gt;&lt;br&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;開発者：&lt;/td&gt; &lt;td&gt;&lt;b&gt;Rene Hadler&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;メール：&lt;/td&gt; &lt;td&gt; &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;ウェブサイト：&lt;/td&gt; &lt;td&gt; &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;以下の資源が使用されています：&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;td width=&apos;150&apos;&gt;GCC %2:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;QT %3:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;openfortivpn:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Icons8:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;App-Icon:&lt;/td&gt; &lt;td&gt; &lt;a href=&apos;https://deepdoc.at/&apos;&gt;https://deepdoc.at&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="711"/>
+        <location filename="../mainwindow.cpp" line="989"/>
+        <source>Connected</source>
+        <translation>Conectado</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="716"/>
+        <location filename="../mainwindow.cpp" line="994"/>
+        <source>Connecting</source>
+        <translation>Conectando</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="722"/>
+        <location filename="../mainwindow.cpp" line="999"/>
+        <location filename="../mainwindow.cpp" line="1005"/>
+        <source>Disconnected</source>
+        <translation>Desconectado</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="956"/>
+        <location filename="../mainwindow.cpp" line="1067"/>
+        <source>Quit OpenFortiGUI</source>
+        <translation>Salir de OpenFortiGUI</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1271"/>
+        <source>About openFortiGUI</source>
+        <translation>Sobre OpenFortiGUI</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
+        <translation type="vanished">&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Desenevolupament: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;Correu electrònic: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Pàgina Web: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aquest programa utilitza les biblioteques/recursos següents:&lt;/p&gt;GCC %2: &lt;a href=&apos;https://gcc.gnu.org/&apos;&gt;https://gcc.gnu.org&lt;/a&gt; &lt;br&gt;QT %3: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
+        <translation type="vanished">&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Desenvolupador: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;Correu electrònic: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Pàgina web: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aquest programa utilitza les biblioteques/recursos següents:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Developer: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;eMail: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Website: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;This program uses following libs/resources:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</source>
+        <comment>abouttext</comment>
+        <translation type="vanished">&lt;b&gt;openFortiGUI %1&lt;/b&gt; &lt;br&gt;&lt;br&gt;Desenvolupador: &lt;b&gt;Rene Hadler&lt;/b&gt; &lt;br&gt;Correu electrònic: &lt;a href=mailto:&apos;rene@hadler.me&apos;&gt;rene@hadler.me&lt;/a&gt; &lt;br&gt;Pàgina web: &lt;a href=https://hadler.me&gt;https://hadler.me&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Aquest programa utilitza les biblioteques/recursos següents:&lt;/p&gt;QT: &lt;a href=&apos;https://www.qt.io&apos;&gt;https://www.qt.io&lt;/a&gt; &lt;br&gt;openfortivpn: &lt;a href=&apos;https://github.com/adrienverge/openfortivpn&apos;&gt;https://github.com/adrienverge/openfortivpn&lt;/a&gt; &lt;br&gt;QTinyAes: &lt;a href=&apos;https://github.com/Skycoder42/QTinyAes&apos;&gt;https://github.com/Skycoder42/QTinyAes&lt;/a&gt; &lt;br&gt;tiny-AES128-C: &lt;a href=&apos;https://github.com/kokke/tiny-AES128-C&apos;&gt;https://github.com/kokke/tiny-AES128-C&lt;/a&gt; &lt;br&gt;Icons8: &lt;a href=&apos;https://icons8.com/&apos;&gt;https://icons8.com&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <source>Application error</source>
-        <translation type="vanished">アプリケーションエラー</translation>
+        <translation type="vanished">Error de la aplicación</translation>
     </message>
     <message>
         <source>This application is already running, exiting now.</source>
-        <translation type="vanished">アプリケーションは既に実行中なので終了します。</translation>
+        <translation type="vanished">Esta aplicación ya se está ejecutando, saliendo ahora.</translation>
     </message>
 </context>
 <context>
@@ -357,47 +396,47 @@ Add certificate to VPN-profile whitelist?</source>
     <message>
         <location filename="../mainwindow.cpp" line="193"/>
         <source> - Add VPN</source>
-        <translation> - VPN を追加</translation>
+        <translation> - Añadir VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="293"/>
         <source> - Edit VPN</source>
-        <translation> - VPN を編集</translation>
+        <translation> - Editar VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="346"/>
         <source> - Add VPN-Group</source>
-        <translation> - グループを追加</translation>
+        <translation> - Añadir grupo VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="412"/>
         <source> - Edit VPN-Group</source>
-        <translation> - グループを編集</translation>
+        <translation> - Editar grupo VPN</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="762"/>
         <source> - Login</source>
-        <translation> - ログイン</translation>
+        <translation> - Iniciar sesión</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="780"/>
         <source> - OTP-Login</source>
-        <translation> - OTP ログイン</translation>
+        <translation> - Inicio de sesión OTP</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1305"/>
         <source> - Settings</source>
-        <translation> - 設定</translation>
+        <translation> - Configuración</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1319"/>
         <source> - Setup wizard</source>
-        <translation> - セットアップウィザード</translation>
+        <translation> - Asistente de configuración</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1340"/>
         <source> - Changelog</source>
-        <translation> - 変更履歴</translation>
+        <translation> - Registro de cambios</translation>
     </message>
 </context>
 <context>
@@ -405,32 +444,32 @@ Add certificate to VPN-profile whitelist?</source>
     <message>
         <location filename="../main.cpp" line="132"/>
         <source>Start vpn-process [must be run as root]</source>
-        <translation>VPN プロセスを開始</translation>
+        <translation>Iniciar proceso vpn [debe ejecutarse como root]</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="136"/>
         <source>Set vpn name &lt;vpnname&gt;</source>
-        <translation>VPN 名 &lt;vpnname&gt; を設定</translation>
+        <translation>Establecer nombre de VPN &lt;vpnname&gt;</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="137"/>
         <source>vpnname</source>
-        <translation></translation>
+        <translation>Nombre de VPN</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="141"/>
         <source>Use &lt;mainconfig&gt; as config file</source>
-        <translation>&lt;mainconfig&gt; を設定ファイルとして使用</translation>
+        <translation>Usar &lt;mainconfig&gt; como archivo de configuración</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="142"/>
         <source>mainconfig</source>
-        <translation></translation>
+        <translation>configuración principal</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="145"/>
         <source>Kills all vpn-processes</source>
-        <translation>VPN プロセスを全て停止</translation>
+        <translation>Matar todos los procesos VPN</translation>
     </message>
 </context>
 <context>
@@ -438,22 +477,26 @@ Add certificate to VPN-profile whitelist?</source>
     <message>
         <location filename="../setupwizard.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;OpenFortiGUI initial setup&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;OpenFortiGUI 初期設定&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Configuració inicial de l&apos;OpenFortiGUI&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="53"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This wizard will guide you trough some basic setup. To start just click &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt;If you dont need the wizard you can also abort it. You can always start it again from the main window.&lt;/p&gt;&lt;p&gt;Have fun.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OpenFortiGUI へようこそ。&lt;/span&gt;&lt;/p&gt;&lt;p&gt;このウィザードは基本設定を案内します。始めるには「次へ」をクリックして下さい。&lt;/p&gt;&lt;p&gt;ウィザードが必要ない場合、後でメニューから実行できますので終了しても大丈夫です。&lt;/p&gt;&lt;p&gt;お楽しみに！&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Us donem la benviguda a l&apos;OpenFortiGUI.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aquest assistent us guiarà per una configuració bàsica. Per començar, simplemnet cliqueu &amp;quot;Next&amp;quot;.&lt;/p&gt;&lt;p&gt; Si no us cal l&apos;assistent també el podeu aturar. Sempre el podeu reinciar des de la finestra principal.&lt;/p&gt;&lt;p&gt;Gaudiu.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Configuració de claus AES&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Definiu les vostres claus AES usades per encriptar la contrasenya.&lt;/p&gt;&lt;p&gt;Les podeu establir manualment per generar-les automàticment. Si us plau preneu nota que el canvi de les vostres claus AES implica que restabliu les contrasenyes pels vostrse perfils VPN.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="67"/>
         <source>AES-Key</source>
-        <translation>AES 鍵</translation>
+        <translation>Llave AES</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="90"/>
@@ -461,70 +504,74 @@ Add certificate to VPN-profile whitelist?</source>
         <translation></translation>
     </message>
     <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Definiu les vostres claus AES a usar per a l&apos;encriptat de la contrasenya.&lt;/p&gt;&lt;p&gt;Les podeu estabilr manualment o generar-les automàticament. Si us plau noteu que el canvi de les claus AES implica que restabliu les constrasenyes dels vostres perfils VPN existents.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warnung: &lt;/span&gt;Ihre AES-Schlüssel werden unverschlüsselt auf ihrem Benutzerlaufwerk gespeichert. Möchten sie diese verschlüsselt speichern schalten sie die &amp;quot;Passwort Manager&amp;quot; Checkbox ein. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <location filename="../setupwizard.ui" line="97"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Setup AES-Keys&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Define your AES-Keys used for password encryption.&lt;/p&gt;&lt;p&gt;You can set them manually or autogenerate them. Please note that changing your AES-Keys involves that you reset your passwords for your existing VPN-profiles.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Warning: &lt;/span&gt;Your AES-Keys are stored unencrypted on your home drive. If you want them stored encrypted, please tick the &amp;quot;Password Manager&amp;quot; checkbox if available. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES 鍵の設定&lt;/span&gt;&lt;/p&gt;&lt;p&gt;パスワード暗号化に使用される AES 鍵を指定して下さい。&lt;/p&gt;&lt;p&gt;手動指定か自動生成が可能です。AES 鍵を変更するには既存の VPN 定義のパスワードを再設定する必要がありますのでご注意下さい。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;注意：&lt;/span&gt;AES 鍵は非暗号化状態で保存されます。暗号化状態で保存されたい場合は「パスワード管理」を有効にして下さい。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AES-Schlüssel einrichten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Legen sie ihre AES-Schlüssel für die Verschlüsselung ihrer Passwörter fest.&lt;/p&gt;&lt;p&gt;Sie können diese manuell festlegen oder generieren lassen. Bitte beachten sie, dass neue AES-Schlüssel dazu führen, dass die Passwörter ihrer alten VPN-Profile nicht mehr lesbar sind. Diese müssen erneut gesetzt werden.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Advertiment: &lt;/span&gt;Les vostres claus AES s&apos;emmagatzemen sense encriptar a la vostra carpeta d&apos;inici. Si voleu que es desin encriptades si us plau marqueu la caixa &amp;quot;Gestor de contrasenyes&amp;quot; si està disponible. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="129"/>
         <source>Password Manager</source>
-        <translation>パスワード管理</translation>
+        <translation>Gestor de contraseñas</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="142"/>
         <source>Autogenerate keys</source>
-        <translation>鍵を自動生成</translation>
+        <translation>Generar claves automáticamente</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="149"/>
         <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
-        <translation>システムのパスワード管理（KWallet や GNOME Keyring）を使用</translation>
+        <translation>Utiliza el administrador de contraseñas del sistema (KWallet, GNOME-Keyring)</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="175"/>
         <source>Abort</source>
-        <translation>取消</translation>
+        <translation>Abortar</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="198"/>
         <source>Back</source>
-        <translation>前へ</translation>
+        <translation>Atrás</translation>
     </message>
     <message>
         <location filename="../setupwizard.ui" line="205"/>
         <location filename="../setupwizard.cpp" line="148"/>
         <source>Next</source>
-        <translation>次へ</translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="84"/>
         <source>AES-Key error</source>
-        <translation>AES 鍵エラー</translation>
+        <translation>Error de clave AES</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="85"/>
         <source>Both AES-Key and AES-IV must be 128bit (16 chars) long.</source>
-        <translation>AES 鍵と AES-IV の長さはどちらも 128 ビット（16字）でなければなりません。</translation>
+        <translation>Tanto AES-Key como AES-IV deben tener 128 bits (16 caracteres) de largo.</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="164"/>
         <source>Finish</source>
-        <translation>完了</translation>
+        <translation>Terminar</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="186"/>
         <source>Abort setup wizard</source>
-        <translation>セットアップウィザードを停止</translation>
+        <translation>Anular asistente de configuración</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
         <source>System password manager error</source>
-        <translation>システムパスワード管理エラー</translation>
+        <translation>Error del administrador de contraseña del sistema</translation>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>パスワード管理が無効です。KWallet や GNOME Keyring の状態を確認して下さい。エラー：%1</translation>
+        <translation>El administrador de contraseñas no funciona, verifique el estado de su sistema (GNOME Keyring o KWallet). Mensaje de error: %1</translation>
     </message>
 </context>
 <context>
@@ -532,7 +579,7 @@ Add certificate to VPN-profile whitelist?</source>
     <message>
         <location filename="../vpnchangelog.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../vpnchangelog.ui" line="20"/>
@@ -541,16 +588,92 @@ Add certificate to VPN-profile whitelist?</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added &amp;quot;half internet routes&amp;quot; Option to VPN profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hauptänderungen:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;AES-Implementierung wurde nach OpenSSL portiert, dadurch MÜSSEN alle Passwörter für die VPN-Profile neu gesetzt werden&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinere Änderungen:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Changeloghinweise wurden hinzugefügt&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Kleinere Fehlerbehebungen&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Option &amp;quot;Halbe Internet-Routen&amp;quot; zu VPN-Profilen hinzugefügt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hauptänderungen:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;AES-Implementierung wurde nach OpenSSL portiert, dadurch MÜSSEN alle Passwörter für die VPN-Profile neu gesetzt werden&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Kleinere Änderungen:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Changeloghinweise wurden hinzugefügt&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Kleinere Fehlerbehebungen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#aa5500;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#aa5500;&quot;&gt;Versió 0.6.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Canvis principals:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;S&apos;ha portat la implementació AES a l&apos;OpenSSL, en conseqüència heu de restablir totes les vostres contrasenyes dels perfils VPN&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;  - Solució d&apos;errors petits:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - S&apos;ha afegit el diàleg Changelog&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Solució de problemes petits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../vpnchangelog.ui" line="46"/>
         <source>OK</source>
-        <translation>了解</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="58"/>
@@ -590,37 +713,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnchangelog.cpp" line="119"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.3&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (23.01.19)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Removed &apos;verify-cert&apos; option as no longer provided in upstream&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added various PPPD options from openfortivpn&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Fixes CA validation (using X509_CHECK_HOST by default)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.3&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;最新の openfortivpn（23.01.19）に更新&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;アップストリームが提供終了した &apos;verify-cert&apos; 設定を削除&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - openfortivpn から様々な PPPD 設定を追加&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - CA の検証を修正（初期設定で X509_CHECK_HOST を使用）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="131"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Minor changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Extend API to work with KRunner plugin VPN group start&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Adding more Umlaut support (ÄÖÜ) for VPN profile/group names&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - KRunner VPN グループ起動に対応するため API を拡張&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - VPN やグループ名にさらなるトレマ（ÄÖÜ）対応を追加&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="139"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (02.09.18)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Validate VPN profile name before allowing save&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Fixes bug where realm was being passed to the user_key argument&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Save toolbar position&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Port number is now saved correctly if exceeding 15bit limit&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Adding Umlaut support (äüö) for VPN profile names&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;最新の openfortivpn に更新（02.09.18）&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 保存する前に VPN の定義名を検証&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - realm が user_key 引数に渡されてしまうバグを修正&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - ツールバーの一を保存&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 15ビット上限を超えてもポート番号を正しく保存する&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - VPN の定義名にトレマ（äüö）対応を追加&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="153"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.7.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Update to latest openfortivpn core (08.07.18)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Passwords are only read and decrypted when required&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added japanese translation (thanks to tsundeoku@github)&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Trusted cert should not depend on user cert/key&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various smaller Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.7.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;最新の openfortivpn（08.07.18）に更新&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;必要にときにしかパスワードを読み込んで解読しない&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;日本語訳を追加（tsundeoku@githubのお蔭で）&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 信頼された証明書はユーザの証明書・鍵に依存すべきではない&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 様々なバグ修正（git 記録を参照）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="166"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added API for KRunner support&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS lookup is migrated from C style to Qt style&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.2&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;KRunner 対応の API を追加&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - DNS 参照を C 式から Qt 式へ&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 様々なバグ修正（git 記録を参照）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="177"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Added catalan language (thanks wagafo@github), Ubuntu 18.04 builds&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Various Bugfixes (see git logs)&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.1&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;カタルーニャ語対応を追加（wagafo@github のお蔭で）、 Ubuntu 18.04 用ビルド&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 様々なバグ修正（git 記録を参照）&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;&lt;br /&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnchangelog.cpp" line="187"/>
         <source>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;Version 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Major changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;Switched AES library to OpenSSL. Due to padding differences to former library you MUST reset all your passwords for your VPN profiles&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other changes:&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added Changelog dialog&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Smaller bug fixes&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - Added &amp;quot;half internet routes&amp;quot; Option to VPN profile&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#00851b;&quot;&gt;バージョン 0.6.0&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;主な変更：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; &lt;/span&gt; - &lt;span style=&quot; color:#ff0000;&quot;&gt;AES ライブラリを OpenSSL に替えました。以前のライブラリとのパディングの違いのため、VPN 定義のパスワードを全て再設定しなければなりません。&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;その他：&lt;/span&gt;&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 変更履歴ダイアログを追加&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - ちょっとしたバグ修正&lt;/p&gt;             &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  - 「半インターネット経路」機能を VPN 定義に追加&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>vpnClientConnection</name>
+    <message>
+        <source>Enter OTP</source>
+        <translation type="vanished">Ingrese OTP</translation>
+    </message>
+    <message>
+        <source>Enter OTP token</source>
+        <translation type="vanished">Ingrese el token OTP</translation>
     </message>
 </context>
 <context>
@@ -628,70 +762,70 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpngroupeditor.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="24"/>
         <location filename="../vpngroupeditor.cpp" line="140"/>
         <location filename="../vpngroupeditor.cpp" line="175"/>
         <source>VPN-Group</source>
-        <translation>グループ</translation>
+        <translation>Grupo VPN</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="30"/>
         <source>Common</source>
-        <translation>共通</translation>
+        <translation>Común</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="44"/>
         <location filename="../vpngroupeditor.cpp" line="42"/>
         <source>Name</source>
-        <translation>名前</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="60"/>
         <source>Members</source>
-        <translation>所属 VPN</translation>
+        <translation>Miembros</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="94"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.ui" line="114"/>
         <source>Save</source>
-        <translation>保存</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="42"/>
         <source>Status</source>
-        <translation>状態</translation>
+        <translation>Estado</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="42"/>
         <source>Origin</source>
-        <translation>種類</translation>
+        <translation>Origen</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="69"/>
         <source>Local</source>
-        <translation>ローカル</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="72"/>
         <source>Global</source>
-        <translation>グローバル</translation>
+        <translation>Global</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="140"/>
         <source>You must set a name for the VPN-group.</source>
-        <translation>グループの名前を定義する必要があります。</translation>
+        <translation>Debe establecer un nombre para el grupo VPN.</translation>
     </message>
     <message>
         <location filename="../vpngroupeditor.cpp" line="175"/>
         <source>You must set username and password for each group you want to include in a group. First missing on VPN: %1</source>
-        <translation>全ての所属グループにパスワードを設定する必要があります。パスワードが欠落している最初の VPN：%1</translation>
+        <translation>Debe establecer el nombre de usuario y la contraseña para cada grupo que desee incluir en un grupo. Primero perdido en VPN: %1</translation>
     </message>
 </context>
 <context>
@@ -707,22 +841,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnlogin.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../vpnlogin.ui" line="20"/>
         <source>Please enter your login details.</source>
-        <translation>ログイン情報を入力して下さい。</translation>
+        <translation>Por favor, introduzca sus datos de inicio de sesión</translation>
     </message>
     <message>
         <location filename="../vpnlogin.ui" line="72"/>
         <source>Username</source>
-        <translation>ユーザー名</translation>
+        <translation>Nombre de usuario</translation>
     </message>
     <message>
         <location filename="../vpnlogin.ui" line="88"/>
         <source>Password</source>
-        <translation>パスワード</translation>
+        <translation>Contraseña</translation>
     </message>
     <message>
         <location filename="../vpnlogin.ui" line="102"/>
@@ -732,12 +866,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnlogin.ui" line="131"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../vpnlogin.ui" line="151"/>
         <source>Submit</source>
-        <translation>送信</translation>
+        <translation>Enviar</translation>
     </message>
 </context>
 <context>
@@ -745,12 +879,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnotplogin.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
+    </message>
+    <message>
+        <source>Please enter your login details.</source>
+        <translation type="obsolete">Por favor, introduzca sus datos de inicio de sesión.</translation>
     </message>
     <message>
         <location filename="../vpnotplogin.ui" line="20"/>
         <source>Please enter your OTP-login details.</source>
-        <translation>OTP ログイン情報を入力して下さい。</translation>
+        <translation>Ingrese sus datos de inicio de sesión OTP.</translation>
     </message>
     <message>
         <location filename="../vpnotplogin.ui" line="79"/>
@@ -760,12 +898,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnotplogin.ui" line="112"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../vpnotplogin.ui" line="132"/>
         <source>Submit</source>
-        <translation>送信</translation>
+        <translation>Enviar</translation>
     </message>
 </context>
 <context>
@@ -773,17 +911,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../proc/vpnprocess.cpp" line="116"/>
         <source>Timeout for password request from passstore!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Tiempo de espera para la solicitud de contraseña de la tienda de pases!</translation>
     </message>
     <message>
         <location filename="../proc/vpnprocess.cpp" line="148"/>
         <source>Timeout for user/password request, try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>El tiempo de espera para solicitud de usuario / contraseña se ha superado, ¡inténtalo de nuevo!</translation>
     </message>
     <message>
         <location filename="../proc/vpnprocess.cpp" line="195"/>
         <source>PPPD log file dir %1 does not exist!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El archivo de registro PPPD dir %1 no existe!</translation>
     </message>
 </context>
 <context>
@@ -791,77 +929,77 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="24"/>
         <source>VPN-Preferences</source>
-        <translation>VPN 設定</translation>
+        <translation>Preferencias de VPN</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="30"/>
         <source>Common</source>
-        <translation>共通</translation>
+        <translation>Común</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="42"/>
         <source>Name</source>
-        <translation>名前</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="58"/>
         <source>VPN-Server</source>
-        <translation>VPN サーバ</translation>
+        <translation>Servidor VPN</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="74"/>
         <source>Username</source>
-        <translation>ユーザー</translation>
+        <translation>Nombre de usuario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="87"/>
         <source>Password</source>
-        <translation>パスワード</translation>
+        <translation>Contraseña</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="100"/>
         <source>VPN-Port</source>
-        <translation>VPN ポート</translation>
+        <translation>Puerto de la VPN</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="136"/>
         <source>Certificate</source>
-        <translation>証明書</translation>
+        <translation>Certificado</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="154"/>
         <source>User-Certificate</source>
-        <translation>ユーザー証明書</translation>
+        <translation>Certificado de usuario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="181"/>
         <source>User-Key</source>
-        <translation>ユーザー鍵</translation>
+        <translation>Clave de usuario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="208"/>
         <source>CA-File</source>
-        <translation>CA ファイル</translation>
+        <translation>Archivo CA</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="409"/>
         <source>Always ask for OTP</source>
-        <translation type="unfinished"></translation>
+        <translation>Siempre solicite OTP</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="429"/>
         <source>OTP prompt string</source>
-        <translation type="unfinished"></translation>
+        <translation>Cadena de solicitud de OTP</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="442"/>
         <source>OTP delay</source>
-        <translation type="unfinished"></translation>
+        <translation>Retraso OTP</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="470"/>
@@ -871,12 +1009,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="490"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de registro</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="506"/>
         <source>Plugin File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de complemento</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="522"/>
@@ -886,107 +1024,103 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.ui" line="535"/>
         <source>Ip-Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Parámetros IP</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="554"/>
         <source>Call name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de llamada</translation>
     </message>
     <message>
         <source>Verify Certificate</source>
-        <translation type="vanished">証明証を検証</translation>
+        <translation type="vanished">Verificar certificado</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="166"/>
         <location filename="../vpnprofileeditor.ui" line="193"/>
         <location filename="../vpnprofileeditor.ui" line="220"/>
         <source>Choose</source>
-        <translation>選択</translation>
+        <translation>Elegir</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="241"/>
         <source>Trusted-Cert (SHA256)</source>
-        <translation>信頼される証明書（SHA256）</translation>
+        <translation>Certificado de confianza (SHA256)</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="255"/>
         <source>Options</source>
-        <translation>設定</translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="261"/>
         <source>Advanced</source>
-        <translation>詳細設定</translation>
-    </message>
-    <message>
-        <location filename="../vpnprofileeditor.ui" line="273"/>
-        <source>Connect on program start</source>
-        <translation>起動特に接続</translation>
+        <translation>Avanzado</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="293"/>
         <source>Set routes</source>
-        <translation>経路を設定</translation>
+        <translation>Establecer rutas</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="313"/>
         <source>Set DNS</source>
-        <translation>DNS を設定</translation>
+        <translation>Establecer DNS</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="333"/>
         <source>Insecure SSL</source>
-        <translation>安全ではない SSL</translation>
+        <translation>SSL no segura</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="353"/>
         <source>Debug</source>
-        <translation>デバッグ</translation>
+        <translation>Depurar</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="373"/>
         <source>Realm</source>
-        <translation>領域</translation>
+        <translation>Campo</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="273"/>
+        <source>Connect on program start</source>
+        <translation>Conectar al inicio del programa</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="389"/>
         <source>Half internet routes</source>
-        <translation>半インターネット経路</translation>
+        <translation>Medios rutas de internet</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="458"/>
         <source>PPPD</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>PPPD no peerdns</source>
-        <translation type="vanished">PPPD は peerdns なし</translation>
+        <translation>PPPD</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="599"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="619"/>
         <source>Save</source>
-        <translation>保存</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="128"/>
         <source>Select the user-cert</source>
-        <translation>ユーザー証明書を選択して下さい</translation>
+        <translation>Seleccione el certificado de usuario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="138"/>
         <source>Select the user-key</source>
-        <translation>ユーザー鍵を選択して下さい</translation>
+        <translation>Seleccione la clave de usuario</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="148"/>
         <source>Select the CA-file</source>
-        <translation>CA ファイルを選択して下さい</translation>
+        <translation>Seleccione el archivo CA</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="163"/>
@@ -998,21 +1132,21 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnprofileeditor.cpp" line="163"/>
         <source>You must set a valid name for the VPN.</source>
-        <translation type="unfinished"></translation>
+        <translation>Debe establecer un nombre válido para la VPN.</translation>
     </message>
     <message>
         <source>You must set a name for the VPN.</source>
-        <translation type="vanished">VPN の名前を設定する必要があります。</translation>
+        <translation type="vanished">Debe establecer un nombre para la VPN.</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="169"/>
         <source>You must set a gateway for the VPN.</source>
-        <translation>VPN のゲートウェイを設定する必要があります。</translation>
+        <translation>Debe establecer una puerta de enlace para la VPN.</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.cpp" line="175"/>
         <source>You must set a gateway-port for the VPN.</source>
-        <translation>VPN のポートを設定する必要があります。</translation>
+        <translation>Debe establecer un puerto de puerta de enlace para la VPN.</translation>
     </message>
 </context>
 <context>
@@ -1020,36 +1154,36 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="14"/>
         <source>Form</source>
-        <translation>フォーム</translation>
+        <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="20"/>
         <source>Main</source>
-        <translation>一般</translation>
+        <translation>Principal</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="34"/>
         <source>Debug</source>
-        <translation>デバッグ</translation>
-    </message>
-    <message>
-        <location filename="../vpnsetting.ui" line="260"/>
-        <source>Start minimized</source>
-        <translation>最小化状態で起動</translation>
-    </message>
-    <message>
-        <source>Password Manager (Beta)</source>
-        <translation type="vanished">パスワード管理（実験版）</translation>
+        <translation>Depurar</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="54"/>
         <source>Password Manager</source>
-        <translation type="unfinished">パスワード管理</translation>
+        <translation type="unfinished">Administrador de contraseñas</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="74"/>
         <source>AES-Key</source>
-        <translation>AES 鍵</translation>
+        <translation>Llaves AES</translation>
+    </message>
+    <message>
+        <location filename="../vpnsetting.ui" line="260"/>
+        <source>Start minimized</source>
+        <translation>Iniciar minimizado</translation>
+    </message>
+    <message>
+        <source>Password Manager (Beta)</source>
+        <translation type="vanished">Administrador de contraseñas (Beta)</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="90"/>
@@ -1059,7 +1193,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="61"/>
         <source>Uses system password manager (KWallet, GNOME-Keyring)</source>
-        <translation>システムのパスワード管理（KWallet や GNOME Keyring）を使用</translation>
+        <translation>Utiliza el administrador de contraseñas del sistema (KWallet, GNOME-Keyring)</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="106"/>
@@ -1074,27 +1208,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="125"/>
         <source>Paths</source>
-        <translation>パス</translation>
+        <translation>Rutas</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="139"/>
         <source>Local VPN-Profiles</source>
-        <translation>ローカル VPN 定義</translation>
+        <translation>Perfiles VPN locales</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="152"/>
         <source>Local VPN-Groups</source>
-        <translation>ローカルグループ</translation>
+        <translation>Grupos VPN locales</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="165"/>
         <source>Global VPN-Profiles</source>
-        <translation>グローバル定義</translation>
+        <translation>Perfiles VPN globales</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="178"/>
         <source>Logs</source>
-        <translation>ログ</translation>
+        <translation>Registros</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="190"/>
@@ -1102,7 +1236,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../vpnsetting.ui" line="218"/>
         <location filename="../vpnsetting.ui" line="232"/>
         <source>Choose</source>
-        <translation>選択</translation>
+        <translation>Elegir</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="246"/>
@@ -1122,27 +1256,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../vpnsetting.ui" line="334"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="354"/>
         <source>Save</source>
-        <translation>保存</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="128"/>
         <source>System password manager error</source>
-        <translation>システムパスワード管理エラー</translation>
+        <translation>Error del administrador de contraseña del sistema</translation>
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="128"/>
         <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
-        <translation>バスワード管理が無効です。KWallet や GNOME Keyringの状態を確認して下さい。エラー： %1</translation>
+        <translation>El administrador de contraseñas no funciona, verifique el estado de su sistema (GNOME Keyring o KWallet). Mensaje de error: %1</translation>
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="138"/>
         <source>Choose a directory</source>
-        <translation>ディレクトリを選択して下さい</translation>
+        <translation>Elige un directorio</translation>
     </message>
 </context>
 </TS>
