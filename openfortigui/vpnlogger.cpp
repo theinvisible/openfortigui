@@ -129,7 +129,8 @@ void vpnLogger::logVPNOutput(const QString &name)
         logCertFailedMode[name] = false;
     }
 
-    out << toLog;
+    QDateTime currentDate = QDateTime::currentDateTime();
+    out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " " << toLog;
     logfile->flush();
 }
 
