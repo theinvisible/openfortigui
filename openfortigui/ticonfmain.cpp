@@ -225,11 +225,11 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     QSettings *f = new QSettings(filename, QSettings::IniFormat);
 
     f->beginGroup("vpn");
-    f->setValue("name", profile.name);
-    f->setValue("gateway_host", profile.gateway_host);
+    f->setValue("name", profile.name.trimmed());
+    f->setValue("gateway_host", profile.gateway_host.trimmed());
     f->setValue("gateway_port", profile.gateway_port);
-    f->setValue("username", profile.username);
-    f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password, aeskey, aesiv));
+    f->setValue("username", profile.username.trimmed());
+    f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password.trimmed(), aeskey, aesiv));
     f->endGroup();
 
     f->beginGroup("cert");
