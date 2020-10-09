@@ -501,6 +501,7 @@ void vpnWorker::process()
     config.password = strdup(vpnConfig.password.toStdString().c_str());
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
+    config.user_agent = strdup("Mozilla/5.0 SV1");
 
     if(!vpnConfig.user_cert.isEmpty() && !vpnConfig.user_key.isEmpty())
     {

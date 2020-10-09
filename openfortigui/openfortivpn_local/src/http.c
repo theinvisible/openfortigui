@@ -50,10 +50,10 @@
 static void url_encode(char *dest, const char *str)
 {
     while (*str != '\0') {
-        if (isalnum(*str) || *str == '-' || *str == '_'
-            || *str == '.' || *str == '~')
+        if (isalnum(*str) || *str == '-' || *str == '_' ||
+            *str == '.' || *str == '~') {
             *dest++ = *str;
-        else {
+        } else {
             static const char hex[] = "0123456789ABCDEF";
 
             *dest++ = '%';
@@ -122,11 +122,8 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
 }
 
 
-static const char *find_header(
-        const char *res,
-        const char *header,
-        uint32_t response_size
-)
+static const char *find_header(const char *res, const char *header,
+                               uint32_t response_size)
 {
     const char *line = res;
 
@@ -154,11 +151,8 @@ static const char *find_header(
  * @return     1         in case of success
  *             < 0       in case of error
  */
-int http_receive(
-        struct tunnel *tunnel,
-        char **response,
-        uint32_t *response_size
-)
+int http_receive(struct tunnel *tunnel,
+                 char **response, uint32_t *response_size)
 {
     uint32_t capacity = HTTP_BUFFER_SIZE;
     char *buffer;
@@ -280,17 +274,20 @@ static int do_http_request(struct tunnel *tunnel,
     int ret;
     const char *template = ("%s %s HTTP/1.1\r\n"
                             "Host: %s:%d\r\n"
-                            "User-Agent: Mozilla/5.0 SV1\r\n"
-                            "Accept: text/plain\r\n"
-                            "Accept-Encoding: identity\r\n"
+                            "User-Agent: %s\r\n"
+                            "Accept: */*\r\n"
+                            "Accept-Encoding: gzip, deflate, br\r\n"
+                            "Pragma: no-cache\r\n"
+                            "Cache-Control: no-store, no-cache, must-revalidate\r\n"
+                            "If-Modified-Since: Sat, 1 Jan 2000 00:00:00 GMT\r\n"
                             "Content-Type: application/x-www-form-urlencoded\r\n"
                             "Cookie: %s\r\n"
                             "Content-Length: %d\r\n"
                             "\r\n%s");
 
     ret = http_send(tunnel, template, method, uri,
-                    tunnel->config->gateway_host,
-                    tunnel->config->gateway_port, tunnel->cookie,
+                    tunnel->config->gateway_host, tunnel->config->gateway_port,
+                    tunnel->config->user_agent, tunnel->cookie,
                     strlen(data), data);
     if (ret != 1)
         return ret;
@@ -375,12 +372,43 @@ end:
     return ret;
 }
 
+static int get_action_url(const char *buf, const char *key,
+                          char *retbuf, size_t retbuflen)
+{
 
-static int get_auth_cookie(
-        struct tunnel *tunnel,
-        char *buf,
-        uint32_t buffer_size
-)
+    int ret = -1;
+    char *tokens;
+    size_t keylen = strlen(key);
+    char *saveptr = NULL;
+
+    tokens = strdup(buf);
+    if (tokens == NULL) {
+        ret = -3;
+        goto end;
+    }
+
+    for (const char *kv_pair = strtok_r(tokens, " \"\r\n", &saveptr);
+         kv_pair != NULL;
+         kv_pair = strtok_r(NULL, " \"\r\n", &saveptr)) {
+        if (strncmp(key, kv_pair, keylen) == 0) {
+            const char *val = strtok_r(NULL, "\"\r\n", &saveptr);
+
+            if (strlen(val) > retbuflen - 1) {  // value too long
+                ret = -2;
+            } else {
+                strcpy(retbuf, val);
+                ret = 1;
+            }
+            break;
+        }
+    }
+
+    free(tokens);
+end:
+    return ret;
+}
+
+static int get_auth_cookie(struct tunnel *tunnel, char *buf, uint32_t buffer_size)
 {
     int ret = 0;
     const char *line;
@@ -393,13 +421,21 @@ static int get_auth_cookie(
             if (line[11] == ';' || line[11] == '\0') {
                 log_debug("Empty cookie.\n");
             } else {
-                char *end;
+                char *end1;
+                char *end2;
+                char end1_save = '\0';
+                char end2_save = '\0';
 
-                end = strstr(line, "\r");
-                end[0] = '\0';
-                end = strstr(line, ";");
-                if (end != NULL)
-                    end[0] = '\0';
+                end1 = strstr(line, "\r");
+                if (end1 != NULL) {
+                    end1_save = *end1;
+                    end1[0] = '\0';
+                }
+                end2 = strstr(line, ";");
+                if (end2 != NULL) {
+                    end2_save = *end2;
+                    end2[0] = '\0';
+                }
                 log_debug("Cookie: %s\n", line);
                 strncpy(tunnel->cookie, line, COOKIE_SIZE);
                 tunnel->cookie[COOKIE_SIZE] = '\0';
@@ -409,6 +445,10 @@ static int get_auth_cookie(
                 } else {
                     ret = 1; // success
                 }
+                if (end1 != NULL)
+                    end1[0] = end1_save;
+                if (end2 != NULL)
+                    end2[0] = end2_save;
             }
         }
     }
@@ -425,12 +465,8 @@ static void delay_otp(struct tunnel *tunnel)
 }
 
 
-static int try_otp_auth(
-        struct tunnel *tunnel,
-        const char *buffer,
-        char **res,
-        uint32_t *response_size
-)
+static int try_otp_auth(struct tunnel *tunnel, const char *buffer,
+                        char **res, uint32_t *response_size)
 {
     char data[256];
     char path[40];
@@ -597,7 +633,11 @@ int auth_log_in(struct tunnel *tunnel)
     char reqid[32] = { '\0' };
     char polid[32] = { '\0' };
     char group[128] = { '\0' };
-    char data[1024], token[128], tokenresponse[256];
+    char portal[64] = { '\0' };
+    char magic[32] = {'\0' };
+    char peer[32]  = { '\0' };
+    char data[1152], token[128], tokenresponse[256], tokenparams[320];
+    char action_url[1024] = { '\0' };
     char *res = NULL;
     uint32_t response_size;
 
@@ -618,7 +658,7 @@ int auth_log_in(struct tunnel *tunnel)
         } else {
             url_encode(password, tunnel->config->password);
             snprintf(data, sizeof(data),
-                     "username=%s&credential=%s&realm=%s&ajax=1&redir=%%2Fremote%%2Findex&just_logged_in=1",
+                     "username=%s&credential=%s&realm=%s&ajax=1",
                      username, password, realm);
         }
         ret = http_request(tunnel, "POST", "/remote/logincheck",
@@ -671,26 +711,46 @@ int auth_log_in(struct tunnel *tunnel)
         get_value_from_response(res, "grp=", group, 128);
         get_value_from_response(res, "reqid=", reqid, 32);
         get_value_from_response(res, "polid=", polid, 32);
+        get_value_from_response(res, "portal=", portal, 64);
+        get_value_from_response(res, "magic=", magic, 32);
+        get_value_from_response(res, "peer=", peer, 32);
 
-        if (cfg->otp[0] == '\0') {
-            read_password(cfg->pinentry, "otp",
-                          "Two-factor authentication token: ",
-                          cfg->otp, FIELD_SIZE);
+        if (cfg->otp[0] == '\0' &&
+            strncmp(token, "ftm_push", 8) == 0 &&
+            cfg->no_ftm_push == 0) {
+            /*
+             * The server supports FTM push if `tokeninfo` is `ftm_push`,
+             * but only try this if the OTP is not provided by the config
+             * file or command line.
+             */
+            snprintf(tokenparams, sizeof(tokenparams), "ftmpush=1");
+        } else {
             if (cfg->otp[0] == '\0') {
-                log_error("No token specified\n");
-                return 0;
+                // Prompt for 2FA token
+                read_password(cfg->pinentry, "2fa",
+                              "Two-factor authentication token: ",
+                              cfg->otp, FIELD_SIZE);
+
+                if (cfg->otp[0] == '\0') {
+                    log_error("No token specified\n");
+                    return 0;
+                }
             }
+
+            url_encode(tokenresponse, cfg->otp);
+            snprintf(tokenparams, sizeof(tokenparams),
+                     "code=%s&code2=&magic=%s",
+                     tokenresponse, magic);
         }
 
-        url_encode(tokenresponse, cfg->otp);
         snprintf(data, sizeof(data),
-                 "username=%s&realm=%s&reqid=%s&polid=%s&grp=%s&code=%s&code2=&redir=%%2Fremote%%2Findex&just_logged_in=1",
-                 username, realm, reqid, polid, group, tokenresponse);
+                 "username=%s&realm=%s&reqid=%s&polid=%s&grp=%s&portal=%s&peer=%s&%s",
+                 username, realm, reqid, polid, group, portal, peer,
+                 tokenparams);
 
         delay_otp(tunnel);
-        ret = http_request(
-                      tunnel, "POST", "/remote/logincheck",
-                      data, &res, &response_size);
+        ret = http_request(tunnel, "POST", "/remote/logincheck",
+                           data, &res, &response_size);
         if (ret != 1)
             goto end;
 
@@ -703,6 +763,18 @@ int auth_log_in(struct tunnel *tunnel)
         }
 
         ret = get_auth_cookie(tunnel, res, response_size);
+    }
+
+    /*
+     * If hostchecking enabled, get action url
+     */
+    get_action_url(res, "action=", action_url, 1024);
+    if (strlen(action_url) != 0) {
+        snprintf(data, sizeof(data), "hostcheck=%s&check_virtual_desktop=%s",
+                 tunnel->config->hostcheck,
+                 tunnel->config->check_virtual_desktop);
+        ret = http_request(tunnel, "POST", action_url,
+                           data, &res, &response_size);
     }
 
 end:
