@@ -43,6 +43,10 @@ void vpnLogin::setData(vpnManager *manager, const QString &name)
     tiConfVpnProfiles vpnss;
     vpnProfile *profile = vpnss.getVpnProfileByName(vpnname);
     ui->leUsername->setText(profile->username);
+    if(profile->username.length() > 0)
+    {
+            ui->lePassword->setFocus();
+    }
 }
 
 void vpnLogin::initAfter()
