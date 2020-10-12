@@ -41,7 +41,7 @@ build-ubuntu-2004-64:
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openforti*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -90,7 +90,7 @@ build-ubuntu-1804-64:
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openforti*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -141,7 +141,7 @@ build-ubuntu-1604-64:
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openforti*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -164,7 +164,7 @@ build-ubuntu-1604-32:
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openforti*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
@@ -186,7 +186,7 @@ build-debian-9-64:
     - cd .. && mkdir build
     - mv openfortigui_*.deb build/
     - mv openfortigui-runner_*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
     
   # The files which are to be made available in GitLab
   artifacts:
@@ -208,7 +208,7 @@ build-debian-10-64:
     - cd .. && mkdir build
     - mv openfortigui_*.deb build/
     - mv openfortigui-runner_*.deb build/
-    - upload_build build/openforti*.deb || true
+    - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
   artifacts:
