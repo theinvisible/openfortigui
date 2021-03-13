@@ -69,6 +69,7 @@ public:
     };
 
     QString msg;
+    QString detail;
     int type;
 };
 

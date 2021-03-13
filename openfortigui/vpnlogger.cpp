@@ -100,6 +100,32 @@ void vpnLogger::logVPNOutput(const QString &name)
         return;
     }
 
+    if(toLog.contains("ERROR:  Could not authenticate to gateway"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: Authentication failed, please check your username/password/cert/otp!");
+        msg.detail = tr("Error: %1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
+    if(toLog.contains("ERROR:  connect"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: Could not connect to VPN-Gateway!");
+        msg.detail = tr("Error: %1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
     if(vpnConfigs[name].otp_prompt.isEmpty())
     {
         if(toLog.contains("Please") ||

@@ -829,17 +829,21 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 
 void MainWindow::onClientVPNMessage(__attribute__ ((unused)) QString vpnname, vpnMsg msg)
 {
+    QString stext = QString("<b>%1</b>").arg(msg.msg);
+    if(!msg.detail.isEmpty())
+        stext.append("<br><br>Detail:<br><pre>").append(msg.detail).append("</pre>");
+
     switch(msg.type)
     {
     case vpnMsg::TYPE_ERROR:
-        QMessageBox::critical(this, tr("Error"), msg.msg);
+        QMessageBox::critical(this, tr("Error"), stext);
         break;
     case vpnMsg::TYPE_WARNING:
-        QMessageBox::warning(this, tr("Warning"), msg.msg);
+        QMessageBox::warning(this, tr("Warning"), stext);
         break;
     case vpnMsg::TYPE_INFO:
     default:
-        QMessageBox::information(this, tr("Information"), msg.msg);
+        QMessageBox::information(this, tr("Information"), stext);
         break;
     }
 }
