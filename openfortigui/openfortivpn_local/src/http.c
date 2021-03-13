@@ -87,7 +87,7 @@ int http_send(struct tunnel *tunnel, const char *request, ...)
     strcpy(logbuffer, buffer);
     if (loglevel <= OFV_LOG_DEBUG_DETAILS && tunnel->config->password[0] != '\0') {
         char *pwstart;
-        char password[3 * FIELD_SIZE + 1];
+        char password[3 * PASSWORD_SIZE + 1];
 
         url_encode(password, tunnel->config->password);
         pwstart = strstr(logbuffer, password);
@@ -515,7 +515,7 @@ static int try_otp_auth(struct tunnel *tunnel, const char *buffer,
         }
     }
     if (p == NULL)
-        p = "Please enter one-time password:";
+        p = "Please enter one-time password: ";
     /* Search for all inputs */
     while ((s = strcasestr(s, "<INPUT"))) {
         s += 6;
@@ -584,7 +584,7 @@ static int try_otp_auth(struct tunnel *tunnel, const char *buffer,
             v = NULL;
             if (cfg->otp[0] == '\0') {
                 read_password(cfg->pinentry, "otp",
-                              p, cfg->otp, FIELD_SIZE);
+                              p, cfg->otp, OTP_SIZE);
                 if (cfg->otp[0] == '\0') {
                     log_error("No OTP specified\n");
                     return 0;
@@ -627,16 +627,17 @@ static int try_otp_auth(struct tunnel *tunnel, const char *buffer,
 int auth_log_in(struct tunnel *tunnel)
 {
     int ret;
-    char username[3 * FIELD_SIZE + 1];
-    char password[3 * FIELD_SIZE + 1];
-    char realm[3 * FIELD_SIZE + 1];
+    char username[3 * USERNAME_SIZE + 1];
+    char password[3 * PASSWORD_SIZE + 1];
+    char realm[3 * REALM_SIZE + 1];
     char reqid[32] = { '\0' };
     char polid[32] = { '\0' };
     char group[128] = { '\0' };
     char portal[64] = { '\0' };
     char magic[32] = {'\0' };
     char peer[32]  = { '\0' };
-    char data[1152], token[128], tokenresponse[256], tokenparams[320];
+    char data[9 + 3 * USERNAME_SIZE + 12 + 3 * PASSWORD_SIZE + 7 + 3 * REALM_SIZE + 7 + 1];
+    char token[128], tokenresponse[256], tokenparams[320];
     char action_url[1024] = { '\0' };
     char *res = NULL;
     uint32_t response_size;
@@ -729,7 +730,7 @@ int auth_log_in(struct tunnel *tunnel)
                 // Prompt for 2FA token
                 read_password(cfg->pinentry, "2fa",
                               "Two-factor authentication token: ",
-                              cfg->otp, FIELD_SIZE);
+                              cfg->otp, OTP_SIZE);
 
                 if (cfg->otp[0] == '\0') {
                     log_error("No token specified\n");

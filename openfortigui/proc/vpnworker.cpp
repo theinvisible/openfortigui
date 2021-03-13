@@ -22,13 +22,16 @@ extern "C"  {
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 #include "openfortivpn/src/http.h"
+#include "openfortivpn/src/userinput.h"
 
 #ifndef HAVE_X509_CHECK_HOST
 #include "openssl_hostname_validation.h"
 #endif
 
 #include <openssl/err.h>
+#ifdef OPENSSL_ENGINE
 #include <openssl/engine.h>
+#endif
 #include <openssl/ui.h>
 #include <openssl/x509v3.h>
 #if HAVE_SYSTEMD
@@ -233,8 +236,8 @@ static int pppd_run(struct tunnel *tunnel)
         } else {
             static const char *const v[] = {
                 ppp_path,
-                "115200", // speed
-                ":192.0.2.1", // <local_IP_address>:<remote_IP_address>
+                "230400", // speed
+                ":169.254.2.1", // <local_IP_address>:<remote_IP_address>
                 "noipdefault",
                 "noaccomp",
                 "noauth",
@@ -358,7 +361,8 @@ static int pppd_run(struct tunnel *tunnel)
 }
 
 
-static const char * const pppd_message[] = {
+static const char * const ppp_message[] = {
+#if HAVE_USR_SBIN_PPPD // pppd(8) - https://ppp.samba.org/pppd.html
     "Has detached, or otherwise the connection was successfully established and terminated at the peer's request.",
     "An immediately fatal error of some kind occurred, such as an essential system call failing, or running out of virtual memory.",
     "An error was detected in processing the options given, such as two mutually exclusive options being used.",
@@ -379,6 +383,31 @@ static const char * const pppd_message[] = {
     "The PPP negotiation failed because serial loopback was detected.",
     "The init script failed (returned a non-zero exit status).",
     "We failed to authenticate ourselves to the peer."
+#else // sysexits(3) - https://www.freebsd.org/cgi/man.cgi?query=sysexits
+    // EX_NORMAL = EX_OK (0)
+    "Successful exit.",
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 1-9
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,     // 10-19
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 20-29
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 30-39
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 40-49
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 50-59
+    NULL, NULL, NULL, NULL, // 60-63
+    // EX_USAGE (64)
+    "The command was used incorrectly, e.g., with the wrong number of arguments, a bad flag, a bad syntax in a parameter, or whatever.",
+    NULL, NULL, NULL, NULL, // 65-68
+    // EX_UNAVAILABLE (69)
+    "A service is unavailable. This can occur if a support program or file does not exist.",
+    // EX_ERRDEAD = EX_SOFTWARE (70)
+    "An internal software error has been detected.",
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 71-77
+    // EX_CONFIG (78)
+    "Something was found in an unconfigured or misconfigured state.",
+    NULL, // 79
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 80-89
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 90-98
+    NULL // EX_TERMINATE (99), PPP internal pseudo-code
+#endif
 };
 
 static int pppd_terminate(struct tunnel *tunnel)
@@ -390,56 +419,79 @@ static int pppd_terminate(struct tunnel *tunnel)
 
     int status;
 
+    /*
+     * Errors outside of the PPP process are returned as negative integers.
+     */
     if (waitpid(tunnel->pppd_pid, &status, 0) == -1) {
         log_error("waitpid: %s\n", strerror(errno));
-        return 1;
+        return -1;
     }
+
+    /*
+     * Errors in the PPP process are returned as positive integers.
+     */
     if (WIFEXITED(status)) {
         int exit_status = WEXITSTATUS(status);
 
+        /*
+         * PPP exit status codes are positive integers. The way we interpret
+         * their value is not straightforward:
+         * - in the case of "normal" exit, the PPP process may return 0,
+         *   but also a strictly positive integer such as 16 in the case of
+         *   pppd,
+         * - in the case of failure, the PPP process will return a strictly
+         *   positive integer.
+         * For now we process PPP exit status codes as follows:
+         * - exit status codes synonym of success are logged and then
+         *   translated to 0 before they are returned to the calling function,
+         * - other exit status codes are considered synonyms of failure and
+         *   returned to the calling function as is.
+         */
         log_debug("waitpid: %s exit status code %d\n",
                   PPP_DAEMON, exit_status);
-#if HAVE_USR_SBIN_PPPD
-        if (exit_status >= ARRAY_SIZE(pppd_message) || exit_status < 0) {
-            log_error("%s: Returned an unknown exit status: %d\n",
+        if (exit_status >= ARRAY_SIZE(ppp_message) || exit_status < 0) {
+            log_error("%s: Returned an unknown exit status code: %d\n",
                       PPP_DAEMON, exit_status);
         } else {
             switch (exit_status) {
-            case 0: // success
+            /*
+             * PPP exit status codes considered as success
+             */
+            case 0:
                 log_debug("%s: %s\n",
-                          PPP_DAEMON, pppd_message[exit_status]);
+                          PPP_DAEMON, ppp_message[exit_status]);
                 break;
-            case 16: // emitted when exiting normally
-                log_info("%s: %s\n",
-                         PPP_DAEMON, pppd_message[exit_status]);
-                break;
+#if HAVE_USR_SBIN_PPPD
+            case 16: // emitted by Ctrl+C or "kill -15"
+                if (get_sig_received() == SIGINT
+                    || get_sig_received() == SIGTERM) {
+                    log_info("%s: %s\n",
+                             PPP_DAEMON, ppp_message[exit_status]);
+                    exit_status = 0;
+                    break;
+                }
+#endif
+            /*
+             * PPP exit status codes considered as failure
+             */
             default:
-                log_error("%s: %s\n",
-                          PPP_DAEMON, pppd_message[exit_status]);
+                if (ppp_message[exit_status])
+                    log_error("%s: %s\n",
+                              PPP_DAEMON, ppp_message[exit_status]);
+                else
+                    log_error("%s: Returned an unexpected exit status code: %d\n",
+                              PPP_DAEMON, exit_status);
                 break;
             }
         }
-#else
-        // ppp exit codes in the FreeBSD case
-        switch (exit_status) {
-        case 0: // success and EX_NORMAL as defined in ppp source directly
-            log_debug("%s: %s\n", PPP_DAEMON, pppd_message[exit_status]);
-            break;
-        case 1:
-        case 127:
-        case 255: // abnormal exit with hard-coded error codes in ppp
-            log_error("%s: exited with return value of %d\n",
-                      PPP_DAEMON, exit_status);
-            break;
-        default:
-            log_error("%s: %s (%d)\n", PPP_DAEMON, strerror(exit_status),
-                      exit_status);
-            break;
-        }
-#endif
+        return exit_status;
     } else if (WIFSIGNALED(status)) {
         int signal_number = WTERMSIG(status);
 
+        /*
+         * For now we do not consider interruption of the PPP process by
+         * a signal as a failure. Should we?
+         */
         log_debug("waitpid: %s terminated by signal %d\n",
                   PPP_DAEMON, signal_number);
         log_error("%s: terminated by signal: %s\n",
@@ -448,7 +500,6 @@ static int pppd_terminate(struct tunnel *tunnel)
 
     return 0;
 }
-
 
 static int get_gateway_host_ip(struct tunnel *tunnel)
 {
@@ -493,12 +544,13 @@ void vpnWorker::process()
     log_info("Start tunnel.\n");
 
     //init_vpn_config(&config);
-    strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), FIELD_SIZE);
-    config.gateway_host[FIELD_SIZE] = '\0';
+    strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), GATEWAY_HOST_SIZE);
+    config.gateway_host[GATEWAY_HOST_SIZE] = '\0';
     config.gateway_port = vpnConfig.gateway_port;
-    strncpy(config.username, vpnConfig.username.toStdString().c_str(), FIELD_SIZE);
-    config.username[FIELD_SIZE] = '\0';
-    config.password = strdup(vpnConfig.password.toStdString().c_str());
+    strncpy(config.username, vpnConfig.username.toStdString().c_str(), USERNAME_SIZE);
+    config.username[USERNAME_SIZE] = '\0';
+    strncpy(config.password, vpnConfig.password.toStdString().c_str(), PASSWORD_SIZE);
+    config.password[PASSWORD_SIZE] = '\0';
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
     config.user_agent = strdup("Mozilla/5.0 SV1");
@@ -513,7 +565,7 @@ void vpnWorker::process()
         add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
 
     if(!vpnConfig.realm.isEmpty())
-        strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), FIELD_SIZE);
+        strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), REALM_SIZE);
 
     if(!vpnConfig.ca_file.isEmpty())
         config.ca_file = strdup(vpnConfig.ca_file.toStdString().c_str());
@@ -530,8 +582,8 @@ void vpnWorker::process()
 
     if(!vpnConfig.otp.isEmpty())
     {
-        strncpy(config.otp, vpnConfig.otp.toStdString().c_str(), FIELD_SIZE);
-        config.otp[FIELD_SIZE] = '\0';
+        strncpy(config.otp, vpnConfig.otp.toStdString().c_str(), OTP_SIZE);
+        config.otp[OTP_SIZE] = '\0';
     }
 
     if(!vpnConfig.pppd_log_file.isEmpty())
