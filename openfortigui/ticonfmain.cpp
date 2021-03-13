@@ -230,6 +230,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("gateway_port", profile.gateway_port);
     f->setValue("username", profile.username.trimmed());
     f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password.trimmed(), aeskey, aesiv));
+    f->setValue("persistent", profile.persistent);
     f->endGroup();
 
     f->beginGroup("cert");
@@ -322,6 +323,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 if(read_profile_passwords) {
                     vpnprofile->password = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
                 }
+                vpnprofile->persistent = f->value("persistent", false).toBool();
                 f->endGroup();
 
                 f->beginGroup("cert");

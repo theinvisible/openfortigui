@@ -620,6 +620,8 @@ void vpnWorker::process()
     tunnel.ssl_handle = NULL;
     tunnel.ssl_context = NULL;
 
+start_tunnel:
+
     tunnel.state = STATE_CONNECTING;
     ptr_tunnel = &tunnel;
 
@@ -696,15 +698,14 @@ void vpnWorker::process()
             tunnel.on_ppp_if_down(&tunnel);
 
     tunnel.state = STATE_DISCONNECTING;
-    emit finished();
+    //emit finished();
 
 err_start_tunnel:
     pppd_terminate(&tunnel);
     log_info("Terminated pppd.\n");
-    emit finished();
+    //emit finished();
 err_tunnel:
     log_info("Closed connection to gateway.\n");
-    tunnel.state = STATE_DOWN;
 
     if (ssl_connect(&tunnel)) {
         log_info("Could not log out.\n");
@@ -719,6 +720,14 @@ err_tunnel:
         tunnel.ipv4.split_rt = NULL;
     }
 
+    // If persistent try to connect again after successful connect disconnected
+    if(vpnConfig.persistent and tunnel.state == STATE_DISCONNECTING)
+    {
+        log_info("Persistent mode enabled, trying to reconnect...\n");
+        goto start_tunnel;
+    }
+
+    tunnel.state = STATE_DOWN;
     emit finished();
 }
 

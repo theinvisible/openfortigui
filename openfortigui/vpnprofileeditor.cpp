@@ -57,6 +57,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->sBGatewayPort->setValue(config->gateway_port);
     ui->leUsername->setText(config->username);
     ui->lePassword->setText(config->readPassword());
+    ui->cbPersistent->setChecked(config->persistent);
 
     if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty() || !config->trusted_cert.isEmpty())
     {
@@ -93,6 +94,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->sBGatewayPort->setDisabled(true);
         ui->leUsername->setDisabled(true);
         ui->lePassword->setDisabled(true);
+        ui->cbPersistent->setDisabled(true);
         ui->gbCertificate->setDisabled(true);
         ui->leCAFile->setDisabled(true);
         ui->leUserCert->setDisabled(true);
@@ -199,6 +201,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.gateway_port = ui->sBGatewayPort->text().toInt();
     vpn.username = ui->leUsername->text();
     vpn.password = ui->lePassword->text();
+    vpn.persistent = ui->cbPersistent->isChecked();
 
     if(ui->gbCertificate->isChecked())
     {
