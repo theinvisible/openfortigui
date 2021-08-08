@@ -258,6 +258,8 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("pppd_ifname", profile.pppd_ifname);
     f->setValue("pppd_ipparam", profile.pppd_ipparam);
     f->setValue("pppd_call", profile.pppd_call);
+    f->setValue("seclevel1", profile.seclevel1);
+    f->setValue("min_tls", profile.min_tls);
     f->endGroup();
 
     f->sync();
@@ -351,6 +353,8 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->pppd_ifname = f->value("pppd_ifname").toString();
                 vpnprofile->pppd_ipparam = f->value("pppd_ipparam").toString();
                 vpnprofile->pppd_call = f->value("pppd_call").toString();
+                vpnprofile->seclevel1 = f->value("seclevel1", false).toBool();
+                vpnprofile->min_tls = f->value("min_tls", "default").toString();
                 f->endGroup();
 
                 switch(it_profileDirs.key())

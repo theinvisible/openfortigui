@@ -341,26 +341,6 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_14">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Insecure SSL</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="cbInsecureSSL">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="6" column="0">
            <widget class="QLabel" name="label_10">
             <property name="minimumSize">
@@ -577,6 +557,85 @@
           </item>
           <item row="6" column="1">
            <widget class="QLineEdit" name="lePPPDCallName"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>SSL</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Insecure SSL</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbInsecureSSL">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>SecLevel1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cbSecLevel1">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_28">
+            <property name="text">
+             <string>Min TLS version</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="comboMinTLSVersion">
+            <item>
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.0</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.3</string>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </widget>

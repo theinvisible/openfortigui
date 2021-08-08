@@ -79,6 +79,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leOTPPromptString->setText(config->otp_prompt);
     ui->sbOTPDelay->setValue(config->otp_delay);
     ui->cbHalfInternetRoutes->setChecked(config->half_internet_routers);
+    ui->cbSecLevel1->setChecked(config->seclevel1);
+    ui->comboMinTLSVersion->setCurrentText(config->min_tls);
 
     ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
     ui->lePPPDLogFile->setText(config->pppd_log_file);
@@ -120,6 +122,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbAlwaysAskOtp->setDisabled(true);
         ui->leOTPPromptString->setDisabled(true);
         ui->sbOTPDelay->setDisabled(true);
+        ui->cbSecLevel1->setDisabled(true);
+        ui->comboMinTLSVersion->setDisabled(true);
     }
 }
 
@@ -222,6 +226,8 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.half_internet_routers = ui->cbHalfInternetRoutes->isChecked();
     vpn.otp_prompt = ui->leOTPPromptString->text();
     vpn.otp_delay = ui->sbOTPDelay->text().toInt();
+    vpn.seclevel1 = ui->cbSecLevel1->isChecked();
+    vpn.min_tls = ui->comboMinTLSVersion->currentText();
 
     vpn.pppd_log_file = ui->lePPPDLogFile->text();
     vpn.pppd_plugin_file = ui->lePPPDPluginFile->text();

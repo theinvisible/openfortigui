@@ -53,7 +53,6 @@ public:
     QString user_key;
     QString trusted_cert;
     bool verify_cert;
-    bool insecure_ssl;
     bool debug;
     bool autostart;
     bool always_ask_otp;
@@ -66,6 +65,10 @@ public:
     QString pppd_ifname;
     QString pppd_ipparam;
     QString pppd_call;
+
+    bool insecure_ssl;
+    bool seclevel1;
+    QString min_tls;
 
     QString readPassword();
 };

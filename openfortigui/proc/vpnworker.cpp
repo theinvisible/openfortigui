@@ -573,6 +573,10 @@ void vpnWorker::process()
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
+    config.seclevel_1 = (vpnConfig.seclevel1) ? 1 : 0;
+    int min_tls = parse_min_tls(vpnConfig.min_tls.toStdString().c_str());
+    if (min_tls != -1)
+        config.min_tls = min_tls;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
 
     if(!vpnConfig.otp_prompt.isEmpty())

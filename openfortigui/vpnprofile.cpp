@@ -43,7 +43,6 @@ vpnProfile::vpnProfile()
     user_cert = "";
     user_key = "";
     verify_cert = false;
-    insecure_ssl = false;
     autostart = false;
     always_ask_otp = false;
     otp_prompt = "";
@@ -55,6 +54,10 @@ vpnProfile::vpnProfile()
     pppd_ifname = "";
     pppd_ipparam = "";
     pppd_call = "";
+
+    insecure_ssl = false;
+    seclevel1 = false;
+    min_tls = "default";
 }
 
 QString vpnProfile::readPassword()
