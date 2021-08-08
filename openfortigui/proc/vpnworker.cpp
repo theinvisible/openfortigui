@@ -329,6 +329,7 @@ static int pppd_run(struct tunnel *tunnel)
 
         if (close(tunnel->ssl_socket))
             log_warn("Could not close ssl socket (%s).\n", strerror(errno));
+        tunnel->ssl_socket = -1;
         execv(pppd_args.data[0], (char *const *)pppd_args.data);
         free(pppd_args.data);
 
@@ -618,6 +619,7 @@ void vpnWorker::process()
     tunnel.ipv4.ns1_addr.s_addr = 0;
     tunnel.ipv4.ns2_addr.s_addr = 0;
     tunnel.ssl_handle = NULL;
+    tunnel.ssl_socket = -1;
     tunnel.ssl_context = NULL;
 
 start_tunnel:
