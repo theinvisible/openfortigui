@@ -58,7 +58,6 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leName->setText(config->name);
     ui->leGatewayHost->setText(config->gateway_host);
     ui->sBGatewayPort->setValue(config->gateway_port);
-    ui->gbCredentials->setChecked(config->use_credentials);
     ui->cbPersistent->setChecked(config->persistent);
     ui->comboVPNDevice->setCurrentIndex(config->device_type);
 
