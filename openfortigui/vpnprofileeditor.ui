@@ -140,7 +140,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="7" column="1">
            <widget class="QCheckBox" name="cbPersistent">
             <property name="text">
              <string>Reconnect on disconnect</string>
@@ -158,6 +158,80 @@
            <widget class="QComboBox" name="comboVPNDevice"/>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbCredentials">
+         <property name="title">
+          <string>Credentials</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <widget class="QLineEdit" name="lePassword">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>70</y>
+            <width>480</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="leUsername">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>39</y>
+            <width>480</width>
+            <height>25</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_4">
+          <property name="geometry">
+           <rect>
+            <x>14</x>
+            <y>70</y>
+            <width>150</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Password</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>14</x>
+            <y>39</y>
+            <width>150</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Username</string>
+          </property>
+         </widget>
         </widget>
        </item>
        <item>
@@ -749,6 +823,44 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>leName</tabstop>
+  <tabstop>leGatewayHost</tabstop>
+  <tabstop>sBGatewayPort</tabstop>
+  <tabstop>cbPersistent</tabstop>
+  <tabstop>gbCredentials</tabstop>
+  <tabstop>leUsername</tabstop>
+  <tabstop>lePassword</tabstop>
+  <tabstop>gbCertificate</tabstop>
+  <tabstop>leUserCert</tabstop>
+  <tabstop>btnChooseUserCert</tabstop>
+  <tabstop>leUserKey</tabstop>
+  <tabstop>btnChooseUserKey</tabstop>
+  <tabstop>leCAFile</tabstop>
+  <tabstop>btnChooseCAFile</tabstop>
+  <tabstop>leTrustedCert</tabstop>
+  <tabstop>cbAutostart</tabstop>
+  <tabstop>cbSetRoutes</tabstop>
+  <tabstop>cbSetDNS</tabstop>
+  <tabstop>cbDebug</tabstop>
+  <tabstop>leRealm</tabstop>
+  <tabstop>cbHalfInternetRoutes</tabstop>
+  <tabstop>cbAlwaysAskOtp</tabstop>
+  <tabstop>leOTPPromptString</tabstop>
+  <tabstop>sbOTPDelay</tabstop>
+  <tabstop>cbPPPDNoPeerDNS</tabstop>
+  <tabstop>lePPPDLogFile</tabstop>
+  <tabstop>lePPPDPluginFile</tabstop>
+  <tabstop>lePPPDIfname</tabstop>
+  <tabstop>lePPPDIPParam</tabstop>
+  <tabstop>lePPPDCallName</tabstop>
+  <tabstop>cbInsecureSSL</tabstop>
+  <tabstop>cbSecLevel1</tabstop>
+  <tabstop>comboMinTLSVersion</tabstop>
+  <tabstop>btnCancel</tabstop>
+  <tabstop>btnSave</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
