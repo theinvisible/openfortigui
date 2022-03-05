@@ -58,6 +58,8 @@ vpnProfile::vpnProfile()
     insecure_ssl = false;
     seclevel1 = false;
     min_tls = "default";
+
+    trust_all_gw_certs = false;
 }
 
 QString vpnProfile::readPassword()

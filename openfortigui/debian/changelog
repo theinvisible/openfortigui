@@ -1,3 +1,9 @@
+openfortigui (0.9.6-1) precise; urgency=low
+
+  * For changelogs see https://github.com/theinvisible/openfortigui/blob/master/openfortigui/vpnchangelog.cpp
+
+ -- Rene Hadler <rene@hadler.me>  Sat, 5 Mar 2022 20:11:00 +0100
+
 openfortigui (0.9.5-1) precise; urgency=low
 
   * For changelogs see https://github.com/theinvisible/openfortigui/blob/master/openfortigui/vpnchangelog.cpp

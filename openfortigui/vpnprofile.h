@@ -70,6 +70,8 @@ public:
     bool seclevel1;
     QString min_tls;
 
+    bool trust_all_gw_certs;
+
     QString readPassword();
 };
 

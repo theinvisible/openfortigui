@@ -59,15 +59,17 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->lePassword->setText(config->readPassword());
     ui->cbPersistent->setChecked(config->persistent);
 
-    if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty() || !config->trusted_cert.isEmpty())
+    if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
     {
         ui->gbCertificate->setChecked(true);
 
         ui->leCAFile->setText(config->ca_file);
         ui->leUserCert->setText(config->user_cert);
         ui->leUserKey->setText(config->user_key);
-        ui->leTrustedCert->setText(config->trusted_cert);
     }
+
+    ui->leTrustedCert->setText(config->trusted_cert);
+    ui->cbTrustAllGwCerts->setChecked(config->trust_all_gw_certs);
 
     ui->cbSetRoutes->setChecked(config->set_routes);
     ui->cbSetDNS->setChecked(config->set_dns);
@@ -124,6 +126,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->sbOTPDelay->setDisabled(true);
         ui->cbSecLevel1->setDisabled(true);
         ui->comboMinTLSVersion->setDisabled(true);
+        ui->cbTrustAllGwCerts->setDisabled(true);
     }
 }
 
@@ -212,8 +215,10 @@ void vpnProfileEditor::on_btnSave_clicked()
         vpn.ca_file = ui->leCAFile->text();
         vpn.user_cert = ui->leUserCert->text();
         vpn.user_key = ui->leUserKey->text();
-        vpn.trusted_cert = ui->leTrustedCert->text();
     }
+
+    vpn.trusted_cert = ui->leTrustedCert->text();
+    vpn.trust_all_gw_certs = ui->cbTrustAllGwCerts->isChecked();
 
     vpn.set_routes = ui->cbSetRoutes->isChecked();
     vpn.set_dns = ui->cbSetDNS->isChecked();

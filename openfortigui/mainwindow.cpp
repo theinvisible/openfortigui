@@ -29,6 +29,7 @@
 #include <QToolButton>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QTimer>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -802,15 +803,46 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
     info.prepend(tr("Gateway certificate validation failed and the certificate digest is not in the local whitelist nor a valid CA is provided. Certificate details:\n\n"));
     info.append(tr("\n\nAdd certificate to VPN-profile whitelist?"));
 
-    if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
+    tiConfVpnProfiles profiles;
+    profiles.setReadProfilePasswords(true);
+    vpnProfile *profile = profiles.getVpnProfileByName(vpnname);
+
+    if(profile->trust_all_gw_certs)
     {
-        tiConfVpnProfiles profiles;
-        profiles.setReadProfilePasswords(true);
-        vpnProfile *profile = profiles.getVpnProfileByName(vpnname);
-        if(profile != 0)
+        tiConfMain cmain;
+        cmain.saveGwCertCache(vpnname, hash);
+
+        if(!hash.isEmpty())
         {
-            profile->trusted_cert = hash;
-            profiles.saveVpnProfile(*profile);
+            // Wait until old connection is closed and try connect again
+            int maxwait = 30, curwait = 0;
+            QTimer *timer = new QTimer(this);
+            connect(timer, &QTimer::timeout, [=]() mutable {
+                if(curwait < maxwait)
+                {
+                    curwait += 1;
+                    if(vpnmanager->getClientConnection(vpnname) == 0) {
+                        vpnmanager->startVPN(vpnname);
+                        timer->stop();
+                    }
+                }
+                else
+                {
+                    timer->stop();
+                }
+            });
+            timer->start(300);
+        }
+    }
+    else
+    {
+        if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
+        {
+            if(profile != 0)
+            {
+                profile->trusted_cert = hash;
+                profiles.saveVpnProfile(*profile);
+            }
         }
     }
 }

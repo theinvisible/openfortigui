@@ -30,12 +30,16 @@ public:
     ~tiConfMain();
 
     static QString main_config;
+    static QString main_gw_cert_cache;
 
     void initMainConf();
 
     QVariant getValue(const QString &iniPath, const QVariant &defaultValue = QVariant());
     void setValue(const QString &iniPath, const QVariant &val);
     void sync();
+
+    void saveGwCertCache(const QString &vpnname, const QString &certhash);
+    QString readGwCertCache(const QString &vpnname);
 
     static QString formatPath(const QString &path);
     static QString formatPathReverse(const QString &path);
@@ -45,6 +49,7 @@ public:
 
 private:
     QSettings *settings;
+    QSettings *gw_cert_cache;
 };
 
 class tiConfVpnProfiles

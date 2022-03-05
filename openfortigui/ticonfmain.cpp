@@ -28,10 +28,12 @@
 #include <qt5keychain/keychain.h>
 
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
+QString tiConfMain::main_gw_cert_cache = tiConfMain::formatPath(openfortigui_config::file_gw_cert_cache);
 
 tiConfMain::tiConfMain()
 {
     settings = 0;
+    gw_cert_cache = 0;
 
     initMainConf();
 
@@ -42,12 +44,16 @@ tiConfMain::tiConfMain()
     }
 
     settings = new QSettings(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
+    gw_cert_cache = new QSettings(tiConfMain::formatPath(tiConfMain::main_gw_cert_cache), QSettings::IniFormat);
 }
 
 tiConfMain::~tiConfMain()
 {
     if(settings != 0)
         delete settings;
+
+    if(gw_cert_cache != 0)
+        delete gw_cert_cache;
 }
 
 void tiConfMain::initMainConf()
@@ -155,6 +161,24 @@ void tiConfMain::setValue(const QString &iniPath, const QVariant &val)
 void tiConfMain::sync()
 {
     settings->sync();
+    gw_cert_cache->sync();
+}
+
+void tiConfMain::saveGwCertCache(const QString &vpnname, const QString &certhash)
+{
+    gw_cert_cache->beginGroup("gw_cert_hashes");
+    gw_cert_cache->setValue(vpnname, certhash.trimmed());
+    gw_cert_cache->endGroup();
+    gw_cert_cache->sync();
+}
+
+QString tiConfMain::readGwCertCache(const QString &vpnname)
+{
+    gw_cert_cache->beginGroup("gw_cert_hashes");
+    QString hash = gw_cert_cache->value(vpnname).toString();
+    gw_cert_cache->endGroup();
+
+    return hash;
 }
 
 QString tiConfMain::formatPath(const QString &path)
@@ -239,6 +263,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("user_key", profile.user_key);
     f->setValue("verify_cert", profile.verify_cert);
     f->setValue("trusted_cert", profile.trusted_cert);
+    f->setValue("trust_all_gw_certs", profile.trust_all_gw_certs);
     f->endGroup();
 
     f->beginGroup("options");
@@ -334,6 +359,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->user_key = f->value("user_key").toString();
                 vpnprofile->verify_cert = f->value("verify_cert").toBool();
                 vpnprofile->trusted_cert = f->value("trusted_cert").toString();
+                vpnprofile->trust_all_gw_certs = f->value("trust_all_gw_certs").toBool();
                 f->endGroup();
 
                 f->beginGroup("options");

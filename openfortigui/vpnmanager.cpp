@@ -75,7 +75,10 @@ void vpnManager::startVPN(const QString &name)
     tiConfMain main_settings;
 
     if(connections.contains(name))
+    {
+        qDebug() << "VPN already running with name" << name;
         return;
+    }
 
     QStringList arguments;
     if(main_settings.getValue("main/sudo_preserve_env").toBool())

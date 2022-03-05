@@ -162,6 +162,14 @@ void vpnProcess::startVPN()
             profile->password = QString("%1,%2").arg(profile->password).arg(profile->otp);
     }
 
+    if(profile->trust_all_gw_certs)
+    {
+        qDebug() << "read gw_cert_cache for " << profile->name;
+        QString hash = main_settings.readGwCertCache(profile->name);
+        if(!hash.isEmpty())
+            profile->trusted_cert = hash;
+    }
+
     thread_vpn = new QThread;
     thread_worker = new vpnWorker();
     thread_worker->setConfig(*profile);
