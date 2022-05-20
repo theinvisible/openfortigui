@@ -52,6 +52,27 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->leLogs->setText(confMain.getValue("paths/logs").toString());
     ui->cbDisableNotifications->setChecked(confMain.getValue("gui/disable_notifications").toBool());
     ui->cbConnectonDblClick->setChecked(confMain.getValue("gui/connect_on_dblclick").toBool());
+
+    if(!confMain.isWritable()) // Disable everything when the config file is not writable
+    {
+        ui->cbStartMinimized->setDisabled(true);
+        ui->cbDebug->setDisabled(true);
+        ui->cbUseSystemPasswordStore->setDisabled(true);
+        ui->cbSUDOPreserveEnv->setDisabled(true);
+        ui->leAESKey->setDisabled(true);
+        ui->leAESIV->setDisabled(true);
+        ui->leLocalVPNProfiles->setDisabled(true);
+        ui->leLocalVPNGroups->setDisabled(true);
+        ui->leGlobalVPNProfiles->setDisabled(true);
+        ui->leLogs->setDisabled(true);
+        ui->btnChooseLocalVPNProfiles->setDisabled(true);
+        ui->btnChooseLocalVPNGroups->setDisabled(true);
+        ui->btnChooseGlobalVPNProfiles->setDisabled(true);
+        ui->btnChooseLogs->setDisabled(true);
+        ui->cbDisableNotifications->setDisabled(true);
+        ui->cbConnectonDblClick->setDisabled(true);
+        ui->cbDisallowUnsecureCertificates->setDisabled(true);
+    }
 }
 
 vpnSetting::~vpnSetting()

@@ -181,6 +181,11 @@ QString tiConfMain::readGwCertCache(const QString &vpnname)
     return hash;
 }
 
+bool tiConfMain::isWritable()
+{
+    return settings->isWritable();
+}
+
 QString tiConfMain::formatPath(const QString &path)
 {
     QString p = path;

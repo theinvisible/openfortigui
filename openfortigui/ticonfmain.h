@@ -41,6 +41,8 @@ public:
     void saveGwCertCache(const QString &vpnname, const QString &certhash);
     QString readGwCertCache(const QString &vpnname);
 
+    bool isWritable();
+
     static QString formatPath(const QString &path);
     static QString formatPathReverse(const QString &path);
     static QString setMainConfig(const QString &config);
