@@ -45,6 +45,7 @@ vpnSetting::vpnSetting(QWidget *parent) :
         ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
         ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
     }
+    ui->cbDisallowUnsecureCertificates->setChecked(confMain.getValue("main/disallow_unsecure_certificates").toBool());	
 
     ui->leLocalVPNProfiles->setText(confMain.getValue("paths/localvpnprofiles").toString());
     ui->leLocalVPNGroups->setText(confMain.getValue("paths/localvpngroups").toString());
@@ -84,6 +85,8 @@ void vpnSetting::on_btnSave_clicked()
 
     confMain.setValue("main/aeskey", ui->leAESKey->text());
     confMain.setValue("main/aesiv", ui->leAESIV->text());
+
+    confMain.setValue("main/disallow_unsecure_certificates", ui->cbDisallowUnsecureCertificates->isChecked());
 
     confMain.setValue("paths/localvpnprofiles", tiConfMain::formatPathReverse(ui->leLocalVPNProfiles->text()));
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));

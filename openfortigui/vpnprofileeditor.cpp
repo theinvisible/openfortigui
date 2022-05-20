@@ -128,6 +128,15 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->comboMinTLSVersion->setDisabled(true);
         ui->cbTrustAllGwCerts->setDisabled(true);
     }
+
+    tiConfMain main_settings;
+    bool disallowUnsecureCertificates = main_settings.getValue("main/disallow_unsecure_certificates").toBool();
+    if(disallowUnsecureCertificates)
+    {
+        ui->gbCertificate->setDisabled(true);
+        ui->cbTrustAllGwCerts->setDisabled(true);
+        ui->leTrustedCert->setDisabled(true);
+    }
 }
 
 void vpnProfileEditor::on_btnChooseUserCert_clicked()
