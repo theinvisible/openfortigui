@@ -255,6 +255,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("username", profile.username.trimmed());
     f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password.trimmed(), aeskey, aesiv));
     f->setValue("persistent", profile.persistent);
+    f->setValue("device_type", profile.device_type);
     f->endGroup();
 
     f->beginGroup("cert");
@@ -351,6 +352,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                     vpnprofile->password = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
                 }
                 vpnprofile->persistent = f->value("persistent", false).toBool();
+                vpnprofile->device_type = static_cast<vpnProfile::Device>(f->value("device_type", 0).toInt());
                 f->endGroup();
 
                 f->beginGroup("cert");

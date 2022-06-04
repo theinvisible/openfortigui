@@ -18,6 +18,7 @@
 #include "vpnmanager.h"
 #include "config.h"
 #include "ticonfmain.h"
+#include "proc/vpnbarracuda.h"
 
 #include <QDataStream>
 #include <QProcess>
@@ -80,38 +81,56 @@ void vpnManager::startVPN(const QString &name)
         return;
     }
 
-    QStringList arguments;
-    if(main_settings.getValue("main/sudo_preserve_env").toBool())
-        arguments << "-E";
-    arguments << QCoreApplication::applicationFilePath();
-    arguments << "--start-vpn";
-    arguments << "--vpn-name";
-    arguments << name;
-    arguments << "--main-config";
-    arguments << tiConfMain::formatPath(QString("%1").arg(tiConfMain::main_config));
+    tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(name);
 
-    QProcess *vpnProc = new QProcess(this);
-    vpnProc->setProcessChannelMode(QProcess::MergedChannels);
-#if QT_VERSION > QT_VERSION_CHECK(5, 7, 0)
-    connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode, exitStatus); }, Qt::QueuedConnection);
-    connect(vpnProc, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error){ onVPNProcessErrorOccurred(name, error); }, Qt::QueuedConnection);
-#endif
-    emit addVPNLogger(name, vpnProc);
-    qDebug() << "Start vpn::" << name;
-    vpnProc->start("sudo", arguments);
-    // Close read channel to avoid memory leak
-    // TODO: Process output later on
-    vpnProc->waitForStarted();
-    //vpnProc->closeReadChannel(QProcess::StandardOutput);
-    //vpnProc->closeReadChannel(QProcess::StandardError);
+    switch(profile->device_type)
+    {
+    case vpnProfile::Device_Barracuda:
+    {
+        vpnClientConnection *clientConn = new vpnClientConnection(name);
+        vpnBarracuda *vpn = new vpnBarracuda(this);
+        vpn->start(name, clientConn);
+        connections[name] = clientConn;
+        break;
+    }
+    case vpnProfile::Device_Fortigate:
+    default:
+    {
+        QStringList arguments;
+        if(main_settings.getValue("main/sudo_preserve_env").toBool())
+            arguments << "-E";
+        arguments << QCoreApplication::applicationFilePath();
+        arguments << "--start-vpn";
+        arguments << "--vpn-name";
+        arguments << name;
+        arguments << "--main-config";
+        arguments << tiConfMain::formatPath(QString("%1").arg(tiConfMain::main_config));
 
-    vpnClientConnection *clientConn = new vpnClientConnection(name);
-    clientConn->proc = vpnProc;
-    connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
-    connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
-    connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
-    connect(clientConn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
-    connections[name] = clientConn;
+        QProcess *vpnProc = new QProcess(this);
+        vpnProc->setProcessChannelMode(QProcess::MergedChannels);
+    #if QT_VERSION > QT_VERSION_CHECK(5, 7, 0)
+        connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus){ onVPNProcessFinished(name, exitCode, exitStatus); }, Qt::QueuedConnection);
+        connect(vpnProc, &QProcess::errorOccurred, this, [=](QProcess::ProcessError error){ onVPNProcessErrorOccurred(name, error); }, Qt::QueuedConnection);
+    #endif
+        emit addVPNLogger(name, vpnProc);
+        qDebug() << "Start vpn::" << name;
+        vpnProc->start("sudo", arguments);
+        // Close read channel to avoid memory leak
+        // TODO: Process output later on
+        vpnProc->waitForStarted();
+        //vpnProc->closeReadChannel(QProcess::StandardOutput);
+        //vpnProc->closeReadChannel(QProcess::StandardError);
+
+        vpnClientConnection *clientConn = new vpnClientConnection(name);
+        clientConn->proc = vpnProc;
+        connect(clientConn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
+        connect(clientConn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
+        connect(clientConn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
+        connect(clientConn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
+        connections[name] = clientConn;
+    }
+    }
 
     //logger->addVPN(name, vpnProc);
 

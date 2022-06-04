@@ -40,6 +40,9 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     // Default settings
     ui->cbSetRoutes->setChecked(true);
     ui->cbSetDNS->setChecked(true);
+
+    ui->comboVPNDevice->addItem("Fortigate", 0);
+    ui->comboVPNDevice->addItem("Barracuda", 1);
 }
 
 vpnProfileEditor::~vpnProfileEditor()
@@ -58,6 +61,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leUsername->setText(config->username);
     ui->lePassword->setText(config->readPassword());
     ui->cbPersistent->setChecked(config->persistent);
+    ui->comboVPNDevice->setCurrentIndex(config->device_type);
 
     if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
     {
@@ -127,6 +131,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbSecLevel1->setDisabled(true);
         ui->comboMinTLSVersion->setDisabled(true);
         ui->cbTrustAllGwCerts->setDisabled(true);
+        ui->comboVPNDevice->setDisabled(true);
     }
 }
 
@@ -209,6 +214,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.username = ui->leUsername->text();
     vpn.password = ui->lePassword->text();
     vpn.persistent = ui->cbPersistent->isChecked();
+    vpn.device_type = static_cast<vpnProfile::Device>(ui->comboVPNDevice->currentData().toInt());
 
     if(ui->gbCertificate->isChecked())
     {

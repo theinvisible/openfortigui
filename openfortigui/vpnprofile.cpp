@@ -60,6 +60,7 @@ vpnProfile::vpnProfile()
     min_tls = "default";
 
     trust_all_gw_certs = false;
+    device_type = Device::Device_Fortigate;
 }
 
 QString vpnProfile::readPassword()

@@ -26,6 +26,7 @@ SOURCES += main.cpp\
     openfortivpn/src/tunnel.c \
     openfortivpn/src/userinput.c \
     openfortivpn/src/xml.c \
+    proc/vpnbarracuda.cpp \
     vpnmanager.cpp \
     ticonfmain.cpp \
     vpnapi.cpp \
@@ -55,6 +56,7 @@ HEADERS  += mainwindow.h \
     openfortivpn/src/userinput.h \
     openfortivpn/src/xml.h \
     config.h \
+    proc/vpnbarracuda.h \
     vpnmanager.h \
     ticonfmain.h \
     vpnapi.h \

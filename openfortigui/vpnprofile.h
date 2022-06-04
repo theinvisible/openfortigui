@@ -33,8 +33,15 @@ public:
         Origin_BOTH
     };
 
+    enum Device
+    {
+        Device_Fortigate = 0,
+        Device_Barracuda
+    };
+
     QString name;
     Origin origin_location;
+    Device device_type;
 
     QString gateway_host;
     quint16 gateway_port;
