@@ -28,6 +28,8 @@
 
 #include <vpnlogger.h>
 
+class vpnBarracuda;
+
 class vpnClientConnection : public QObject
 {
     Q_OBJECT
@@ -46,11 +48,15 @@ public:
     QProcess *proc;
 
     void setSocket(QLocalSocket *sock);
+    void setBarracudaObj(vpnBarracuda *bar);
+    vpnBarracuda *getBarracudaObj();
     void sendCMD(const vpnApi &cmd);
+    void stop();
 
 private:
     QString name;
     QLocalSocket *socket;
+    vpnBarracuda *barracuda_obj;
 
     void submitPassStoreCred();
 
@@ -81,6 +87,7 @@ public:
 
     void requestStats(const QString &vpnname);
     bool isSomeClientConnected();
+    bool isSomeBarracudaConnected();
 
 private:
 

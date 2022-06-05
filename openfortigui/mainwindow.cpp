@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Treeview VPNs
     QStringList headers;
-    headers << tr("Status") << tr("Name") << tr("Gateway") << tr("User") << tr("Traffic RX/TX");
+    headers << tr("Status") << tr("Name") << tr("Device") << tr("Gateway") << tr("User") << tr("Traffic RX/TX");
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
     ui->tvVpnProfiles->setModel(model);
@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVpnProfiles->setExpanded(model->indexFromItem(root_global_vpn), true);
     ui->tvVpnProfiles->header()->resizeSection(0, 150);
     ui->tvVpnProfiles->header()->resizeSection(1, int(width() * 0.27));
-    ui->tvVpnProfiles->header()->resizeSection(2, int(width() * 0.27));
+    ui->tvVpnProfiles->header()->resizeSection(3, int(width() * 0.27));
 
     connect(ui->tvVpnProfiles, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ontvVpnProfilesCustomContextMenu(const QPoint &)));
     connect(ui->leSearch, SIGNAL(textChanged(QString)), this, SLOT(onvpnSearch(QString)));
@@ -850,7 +850,7 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
 void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 {
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
-    QStandardItem *item_stats = getVpnProfileItem(vpnname, 4);
+    QStandardItem *item_stats = getVpnProfileItem(vpnname, 5);
 
     if(conn != 0 && item_stats != 0)
     {
@@ -982,6 +982,7 @@ void MainWindow::refreshVpnProfileList()
     QStandardItem *item3 = 0;
     QStandardItem *item4 = 0;
     QStandardItem *item5 = 0;
+    QStandardItem *item6 = 0;
     int localRow = 0, globalRow = 0;
 
     if(tray_menu == 0)
@@ -1045,6 +1046,17 @@ void MainWindow::refreshVpnProfileList()
         item2 = new QStandardItem(vpn->gateway_host);
         item3 = new QStandardItem(vpn->username);
         item5 = new QStandardItem();
+        item6 = new QStandardItem();
+        switch(vpn->device_type)
+        {
+        case vpnProfile::Device_Barracuda:
+            item6->setText("Barracuda");
+            break;
+        case vpnProfile::Device_Fortigate:
+        default:
+            item6->setText("Fortigate");
+            break;
+        }
 
         switch(vpn->origin_location)
         {
@@ -1053,9 +1065,10 @@ void MainWindow::refreshVpnProfileList()
                 localRow = root_local_vpn->rowCount();
                 root_local_vpn->setChild(localRow, 0, item4);
                 root_local_vpn->setChild(localRow, 1, item);
-                root_local_vpn->setChild(localRow, 2, item2);
-                root_local_vpn->setChild(localRow, 3, item3);
-                root_local_vpn->setChild(localRow, 4, item5);
+                root_local_vpn->setChild(localRow, 2, item6);
+                root_local_vpn->setChild(localRow, 3, item2);
+                root_local_vpn->setChild(localRow, 4, item3);
+                root_local_vpn->setChild(localRow, 5, item5);
                 item->setData(vpnProfile::Origin_LOCAL);
                 break;
             }
@@ -1064,9 +1077,10 @@ void MainWindow::refreshVpnProfileList()
                 globalRow = root_global_vpn->rowCount();
                 root_global_vpn->setChild(globalRow, 0, item4);
                 root_global_vpn->setChild(globalRow, 1, item);
-                root_global_vpn->setChild(globalRow, 2, item2);
-                root_global_vpn->setChild(globalRow, 3, item3);
-                root_global_vpn->setChild(globalRow, 4, item5);
+                root_global_vpn->setChild(globalRow, 2, item6);
+                root_global_vpn->setChild(globalRow, 3, item2);
+                root_global_vpn->setChild(globalRow, 4, item3);
+                root_global_vpn->setChild(globalRow, 5, item5);
                 item->setData(vpnProfile::Origin_GLOBAL);
                 break;
             }

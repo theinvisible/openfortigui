@@ -88,8 +88,29 @@ void vpnManager::startVPN(const QString &name)
     {
     case vpnProfile::Device_Barracuda:
     {
+        if(isSomeBarracudaConnected()) {
+            vpnMsg msg;
+            msg.msg = tr("Only one running barracuda VPN allowed!");
+            msg.type = vpnMsg::TYPE_ERROR;
+            emit VPNMessage(name, msg);
+            return;
+        }
+
+        if(profile->username.isEmpty() || profile->readPassword().isEmpty()) {
+            vpnMsg msg;
+            msg.msg = tr("Please provide username and password in your VPN profile!");
+            msg.type = vpnMsg::TYPE_ERROR;
+            emit VPNMessage(name, msg);
+            return;
+        }
+
         vpnClientConnection *clientConn = new vpnClientConnection(name);
-        vpnBarracuda *vpn = new vpnBarracuda(this);
+        vpnBarracuda *vpn = new vpnBarracuda(clientConn);
+        clientConn->setBarracudaObj(vpn);
+        connect(vpn, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
+        connect(vpn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
+        connect(vpn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
+        connect(vpn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
         vpn->start(name, clientConn);
         connections[name] = clientConn;
         break;
@@ -140,14 +161,28 @@ void vpnManager::stopVPN(const QString &name)
 {
     if(connections.contains(name))
     {
-        vpnApi apiData;
-        apiData.objName = name;
-        apiData.action = vpnApi::ACTION_STOP;
+        tiConfVpnProfiles profiles;
+        vpnProfile *profile = profiles.getVpnProfileByName(name);
 
-        qDebug() << "vpnManager::stopVPN::" << apiData.objName << "::" << apiData.action;
+        switch(profile->device_type)
+        {
+        case vpnProfile::Device_Barracuda:
+            connections[name]->stop();
+            connections.remove(name);
+            break;
+        case vpnProfile::Device_Fortigate:
+        default:
+        {
+            vpnApi apiData;
+            apiData.objName = name;
+            apiData.action = vpnApi::ACTION_STOP;
 
-        connections[name]->sendCMD(apiData);
-        connections.remove(name);
+            qDebug() << "vpnManager::stopVPN::" << apiData.objName << "::" << apiData.action;
+
+            connections[name]->sendCMD(apiData);
+            connections.remove(name);
+        }
+        }
     }
 }
 
@@ -210,6 +245,20 @@ bool vpnManager::isSomeClientConnected()
         i.next();
 
         if(i.value()->status == vpnClientConnection::STATUS_CONNECTED)
+            return true;
+    }
+
+    return false;
+}
+
+bool vpnManager::isSomeBarracudaConnected()
+{
+    QMapIterator<QString, vpnClientConnection*> i(connections);
+    while(i.hasNext())
+    {
+        i.next();
+
+        if(i.value()->status == vpnClientConnection::STATUS_CONNECTED && i.value()->getBarracudaObj() != 0)
             return true;
     }
 
@@ -347,6 +396,7 @@ vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QO
 {
     name = n;
     status = STATUS_DISCONNECTED;
+    barracuda_obj = 0;
 }
 
 void vpnClientConnection::setSocket(QLocalSocket *sock)
@@ -355,6 +405,16 @@ void vpnClientConnection::setSocket(QLocalSocket *sock)
 
     connect(socket, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
+}
+
+void vpnClientConnection::setBarracudaObj(vpnBarracuda *bar)
+{
+    barracuda_obj = bar;
+}
+
+vpnBarracuda *vpnClientConnection::getBarracudaObj()
+{
+    return barracuda_obj;
 }
 
 void vpnClientConnection::sendCMD(const vpnApi &cmd)
@@ -374,6 +434,20 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
 
     socket->write(block);
     socket->flush();
+}
+
+void vpnClientConnection::stop()
+{
+    tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(name);
+    switch(profile->device_type)
+    {
+    case vpnProfile::Device_Barracuda:
+        barracuda_obj->stop();
+        break;
+    case vpnProfile::Device_Fortigate:
+        break;
+    }
 }
 
 void vpnClientConnection::submitPassStoreCred()
