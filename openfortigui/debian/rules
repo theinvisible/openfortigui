@@ -13,3 +13,6 @@ override_dh_auto_install:
 	cp -a openfortigui debian/openfortigui/usr/bin/.
 	cp -a app-entry/openfortigui.desktop debian/openfortigui/usr/share/applications/.
 	cp -a app-entry/openfortigui.png debian/openfortigui/usr/share/pixmaps/.
+
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
