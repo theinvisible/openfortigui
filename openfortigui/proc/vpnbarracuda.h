@@ -31,6 +31,7 @@ signals:
     void VPNCredRequest(QString vpnname);
     void VPNStatsUpdate(QString vpnname, vpnStats stats);
     void VPNMessage(QString vpnname, vpnMsg msg);
+    void addVPNLogger(QString name, QProcess *vpnProc);
 
 signals:
 

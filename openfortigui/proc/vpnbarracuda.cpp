@@ -1,6 +1,7 @@
 #include "vpnbarracuda.h"
 
 #include <QTimer>
+#include <QDir>
 
 QString vpnBarracuda::conf_template = "BINDIP = \n"
     "CERTFILE = \n"
@@ -42,7 +43,10 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
     tiConfVpnProfiles profiles;
     vpn_profile = *profiles.getVpnProfileByName(vpnname);
 
-    QString vpn_conf_file = QString("/tmp/%1").arg(vpn_profile.name);
+    QDir logsdir_vpn_path("/tmp/ovpn_gui/ca");
+    logsdir_vpn_path.mkpath("/tmp/ovpn_gui/ca");
+
+    QString vpn_conf_file = QString("/tmp/ovpn_gui/barracudavpn.conf");
     QFile file(vpn_conf_file);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
@@ -58,29 +62,26 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
     arguments << "--serverpwd";
     arguments << pass;
     arguments << "--config";
-    arguments << vpn_conf_file;
+    arguments << "/tmp/ovpn_gui/";
     pass = "";
 
     emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_CONNECTING);
     QProcess *vpnProc = new QProcess(this);
+    emit addVPNLogger(vpnname, vpnProc);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
     qDebug() << "Start vpn::" << vpn_profile.name;
     vpnProc->start("barracudavpn", arguments);
-    vpnProc->waitForStarted();
-    vpnProc->waitForFinished();
-    QString pout = vpnProc->readAllStandardOutput();
-    qDebug() << pout;
-    if(pout.contains("failed")) {
-        qInfo() << "failed";
-        emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_DISCONNECTED);
-        client_con->status = vpnClientConnection::STATUS_DISCONNECTED;
-    } else {
-        qInfo() << "success";
-
-        statsupdater = new QTimer(this);
-        connect(statsupdater, &QTimer::timeout, this, &vpnBarracuda::statusCheck);
-        statsupdater->start(2000);
-    }
+    connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus) {
+        QString pout = vpnProc->readAllStandardOutput();
+        if(pout.contains("failed")) {
+            emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_DISCONNECTED);
+            client_con->status = vpnClientConnection::STATUS_DISCONNECTED;
+        } else {
+            statsupdater = new QTimer(this);
+            connect(statsupdater, &QTimer::timeout, this, &vpnBarracuda::statusCheck);
+            statsupdater->start(2000);
+        }
+    });
 }
 
 void vpnBarracuda::stop()

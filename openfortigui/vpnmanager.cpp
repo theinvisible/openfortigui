@@ -111,6 +111,7 @@ void vpnManager::startVPN(const QString &name)
         connect(vpn, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)), Qt::QueuedConnection);
         connect(vpn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
         connect(vpn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
+        connect(vpn, QOverload<QString, QProcess*>::of(&vpnBarracuda::addVPNLogger), this, [=](QString n, QProcess *p) { emit addVPNLogger(n, p); });
         vpn->start(name, clientConn);
         connections[name] = clientConn;
         break;
