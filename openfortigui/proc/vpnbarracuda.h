@@ -19,6 +19,7 @@ private:
     QString vpnname;
     vpnClientConnection *client_con;
     vpnProfile vpn_profile;
+    QTimer *statsupdater;
 
     static QString conf_template;
 

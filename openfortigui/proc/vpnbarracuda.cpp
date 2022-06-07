@@ -31,7 +31,7 @@ QString vpnBarracuda::conf_template = "BINDIP = \n"
 vpnBarracuda::vpnBarracuda(QObject *parent)
     : QObject{parent}
 {
-
+    statsupdater = 0;
 }
 
 void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
@@ -57,6 +57,8 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
     arguments << vpn_profile.username;
     arguments << "--serverpwd";
     arguments << pass;
+    arguments << "--config";
+    arguments << vpn_conf_file;
     pass = "";
 
     emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_CONNECTING);
@@ -75,9 +77,9 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
     } else {
         qInfo() << "success";
 
-        QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, &vpnBarracuda::statusCheck);
-        timer->start(2000);
+        statsupdater = new QTimer(this);
+        connect(statsupdater, &QTimer::timeout, this, &vpnBarracuda::statusCheck);
+        statsupdater->start(2000);
     }
 }
 

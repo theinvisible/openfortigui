@@ -444,6 +444,7 @@ void vpnClientConnection::stop()
     {
     case vpnProfile::Device_Barracuda:
         barracuda_obj->stop();
+        barracuda_obj->deleteLater();
         break;
     case vpnProfile::Device_Fortigate:
         break;
