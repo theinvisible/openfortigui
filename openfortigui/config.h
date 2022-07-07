@@ -21,7 +21,7 @@
 namespace openfortigui_config
 {
     static const char __attribute__ ((unused)) *name = "openfortiGUI";
-    static const char __attribute__ ((unused)) *version = "0.9.7-dev";
+    static const char __attribute__ ((unused)) *version = "0.9.7";
     static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
     static const char __attribute__ ((unused)) *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
     static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
