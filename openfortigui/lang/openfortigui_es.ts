@@ -1002,12 +1002,12 @@ p, li { white-space: pre-wrap; }
         <translation>Servidor VPN</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="103"/>
+        <location filename="../vpnprofileeditor.ui" line="148"/>
         <source>Username</source>
         <translation>Nombre de usuario</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="119"/>
+        <location filename="../vpnprofileeditor.ui" line="164"/>
         <source>Password</source>
         <translation>Contraseña</translation>
     </message>
@@ -1022,9 +1022,9 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="110"/>
+        <location filename="../vpnprofileeditor.ui" line="120"/>
         <source>Reconnect on disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Reconectar automáticamente</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="153"/>
@@ -1032,7 +1032,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="166"/>
+        <location filename="../vpnprofileeditor.ui" line="130"/>
         <source>Credentials</source>
         <translation>Credenciales</translation>
     </message>
