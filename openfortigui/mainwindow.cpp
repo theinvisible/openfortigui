@@ -801,6 +801,15 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
         return;
 
     info.prepend(tr("Gateway certificate validation failed and the certificate digest is not in the local whitelist nor a valid CA is provided. Certificate details:\n\n"));
+
+    tiConfMain main_settings;
+    bool disallowUnsecureCertificates = main_settings.getValue("main/disallow_unsecure_certificates").toBool();
+    if(disallowUnsecureCertificates)
+    {
+        QMessageBox::critical(this, tr("Gateway certificate validation failed"), info);
+        return;
+    }
+
     info.append(tr("\n\nAdd certificate to VPN-profile whitelist?"));
 
     tiConfVpnProfiles profiles;
