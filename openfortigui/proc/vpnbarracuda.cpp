@@ -24,7 +24,7 @@ QString vpnBarracuda::conf_template = "BINDIP = \n"
     "TUNNELENC = AES128-MD5\n"
     "TUNNELMODE = UDP\n"
     "TUNNELREKEY = 20\n"
-    "WRITEDNS = MERGE\n"
+    "WRITEDNS = NO\n"
     "\n"
     ".\n"
     "\n";
