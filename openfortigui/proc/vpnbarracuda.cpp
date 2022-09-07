@@ -111,9 +111,10 @@ void vpnBarracuda::statusCheck()
     vpnProc->waitForFinished();
     QString pout = vpnProc->readAllStandardOutput();
     if(pout.contains("Status:      CONNECTED")) {
-        if(client_con->status != vpnClientConnection::STATUS_CONNECTED)
+        if(client_con->status != vpnClientConnection::STATUS_CONNECTED) {
+            client_con->status = vpnClientConnection::STATUS_CONNECTED;
             emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_CONNECTED);
-        client_con->status = vpnClientConnection::STATUS_CONNECTED;
+        }
 
         vpnStats stats;
 
