@@ -361,7 +361,6 @@ static int pppd_run(struct tunnel *tunnel)
     return 0;
 }
 
-
 static const char * const ppp_message[] = {
 #if HAVE_USR_SBIN_PPPD // pppd(8) - https://ppp.samba.org/pppd.html
     "Has detached, or otherwise the connection was successfully established and terminated at the peer's request.",
@@ -450,7 +449,7 @@ static int pppd_terminate(struct tunnel *tunnel)
          */
         log_debug("waitpid: %s exit status code %d\n",
                   PPP_DAEMON, exit_status);
-        if (exit_status >= ARRAY_SIZE(ppp_message) || exit_status < 0) {
+        if (exit_status >= ARRAY_SIZE(ppp_message)) {
             log_error("%s: Returned an unknown exit status code: %d\n",
                       PPP_DAEMON, exit_status);
         } else {
