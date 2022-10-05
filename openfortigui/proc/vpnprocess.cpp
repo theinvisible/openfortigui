@@ -160,9 +160,6 @@ void vpnProcess::startVPN()
 
         if(profile->always_ask_otp && !profile->otp.isEmpty())
             profile->password = QString("%1,%2").arg(profile->password).arg(profile->otp);
-    } else {
-        profile->username = "";
-        profile->password = "";
     }
 
     if(profile->trust_all_gw_certs)
