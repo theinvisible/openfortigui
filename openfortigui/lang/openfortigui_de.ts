@@ -1461,6 +1461,11 @@ p, li { white-space: pre-wrap; }
         <translation>System Passwort-Manager benutzen (KWallet, GNOME-Keyring)</translation>
     </message>
     <message>
+        <location filename="../vpnsetting.ui" line="41"/>
+        <source>Warning, can cause big logs and unstable vpn on high traffic</source>
+        <translation>Achtung, erzeugt große Logs und instabile VPN bei viel Traffic</translation>
+    </message>
+    <message>
         <location filename="../vpnsetting.ui" line="106"/>
         <source>SUDO -E Option</source>
         <translation></translation>

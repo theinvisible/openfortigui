@@ -1321,6 +1321,11 @@ p, li { white-space: pre-wrap; }
         <translation>Usa un sistema de gestor de contrasenyes (Kwallet, Anell de claus GNOME)</translation>
     </message>
     <message>
+        <location filename="../vpnsetting.ui" line="41"/>
+        <source>Warning, can cause big logs and unstable vpn on high traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../vpnsetting.ui" line="106"/>
         <source>SUDO -E Option</source>
         <translation type="unfinished"></translation>

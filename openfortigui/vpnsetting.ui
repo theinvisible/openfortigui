@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
+    <width>741</width>
     <height>680</height>
    </rect>
   </property>
@@ -38,7 +38,7 @@
         <item row="0" column="1">
          <widget class="QCheckBox" name="cbDebug">
           <property name="text">
-           <string/>
+           <string>Warning, can cause big logs and unstable vpn on high traffic</string>
           </property>
          </widget>
         </item>

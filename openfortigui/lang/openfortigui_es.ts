@@ -1333,6 +1333,11 @@ p, li { white-space: pre-wrap; }
         <translation>Utiliza el administrador de contraseñas del sistema (KWallet, GNOME-Keyring)</translation>
     </message>
     <message>
+        <location filename="../vpnsetting.ui" line="41"/>
+        <source>Warning, can cause big logs and unstable vpn on high traffic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../vpnsetting.ui" line="106"/>
         <source>SUDO -E Option</source>
         <translation type="unfinished"></translation>
