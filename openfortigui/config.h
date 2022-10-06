@@ -21,7 +21,7 @@
 namespace openfortigui_config
 {
     static const char __attribute__ ((unused)) *name = "openfortiGUI";
-    static const char __attribute__ ((unused)) *version = "0.9.8-dev";
+    static const char __attribute__ ((unused)) *version = "0.9.8";
     static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
     static const char __attribute__ ((unused)) *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
     static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
@@ -36,7 +36,7 @@ namespace openfortigui_config
 
     static const char __attribute__ ((unused)) *validatorName = "^[a-zA-ZäöüÄÖÜ0-9 \\-_]{3,}$";
 
-    static const int __attribute__ ((unused)) changelogRev = 20;
+    static const int __attribute__ ((unused)) changelogRev = 21;
 }
 
 #endif // CONFIH_H
