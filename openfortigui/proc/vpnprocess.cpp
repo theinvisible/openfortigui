@@ -129,7 +129,7 @@ void vpnProcess::startVPN()
     stats.bytes_written = 0;
     stats.vpn_start = 0;
 
-    if(profile->username.isEmpty() || profile->password.isEmpty() || profile->always_ask_otp)
+    if((!profile->username.isEmpty() && profile->password.isEmpty()) || profile->always_ask_otp)
     {
         cred_received = false;
         requestCred();

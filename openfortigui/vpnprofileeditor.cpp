@@ -58,10 +58,21 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->leName->setText(config->name);
     ui->leGatewayHost->setText(config->gateway_host);
     ui->sBGatewayPort->setValue(config->gateway_port);
-    ui->leUsername->setText(config->username);
-    ui->lePassword->setText(config->readPassword());
     ui->cbPersistent->setChecked(config->persistent);
     ui->comboVPNDevice->setCurrentIndex(config->device_type);
+
+    if(!config->username.isEmpty())
+    {
+        ui->gbCredentials->setChecked(true);
+
+        ui->leUsername->setText(config->username);
+        ui->lePassword->setText(config->readPassword());
+    } else {
+        ui->gbCredentials->setChecked(false);
+
+        ui->leUsername->clear();
+        ui->lePassword->clear();
+    }
 
     if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
     {
@@ -103,6 +114,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->leUsername->setDisabled(true);
         ui->lePassword->setDisabled(true);
         ui->cbPersistent->setDisabled(true);
+        ui->gbCredentials->setDisabled(true);
         ui->gbCertificate->setDisabled(true);
         ui->leCAFile->setDisabled(true);
         ui->leUserCert->setDisabled(true);
@@ -199,6 +211,12 @@ void vpnProfileEditor::on_btnSave_clicked()
         return;
     }
 
+    if(ui->gbCredentials->isChecked() && ui->leUsername->text().isEmpty())
+    {
+        QMessageBox::information(this, tr("VPN"), tr("You must set a valid username if credentials are enabled."));
+        return;
+    }
+
     tiConfVpnProfiles vpns;
     vpnProfile vpn;
 
@@ -220,10 +238,19 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.name = ui->leName->text();
     vpn.gateway_host = ui->leGatewayHost->text();
     vpn.gateway_port = ui->sBGatewayPort->text().toInt();
-    vpn.username = ui->leUsername->text();
-    vpn.password = ui->lePassword->text();
     vpn.persistent = ui->cbPersistent->isChecked();
     vpn.device_type = static_cast<vpnProfile::Device>(ui->comboVPNDevice->currentData().toInt());
+
+    if(ui->gbCredentials->isChecked())
+    {
+        vpn.username = ui->leUsername->text();
+        vpn.password = ui->lePassword->text();
+    }
+    else
+    {
+        vpn.username = "";
+        vpn.password = "";
+    }
 
     if(ui->gbCertificate->isChecked())
     {

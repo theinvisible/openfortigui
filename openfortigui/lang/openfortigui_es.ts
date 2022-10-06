@@ -1002,12 +1002,12 @@ p, li { white-space: pre-wrap; }
         <translation>Servidor VPN</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="103"/>
+        <location filename="../vpnprofileeditor.ui" line="148"/>
         <source>Username</source>
         <translation>Nombre de usuario</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="119"/>
+        <location filename="../vpnprofileeditor.ui" line="164"/>
         <source>Password</source>
         <translation>Contraseña</translation>
     </message>
@@ -1017,14 +1017,14 @@ p, li { white-space: pre-wrap; }
         <translation>Puerto de la VPN</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="139"/>
+        <location filename="../vpnprofileeditor.ui" line="103"/>
         <source>Persistent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="146"/>
+        <location filename="../vpnprofileeditor.ui" line="120"/>
         <source>Reconnect on disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Reconectar automáticamente</translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="153"/>
@@ -1032,7 +1032,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="166"/>
+        <location filename="../vpnprofileeditor.ui" line="130"/>
+        <source>Credentials</source>
+        <translation>Credenciales</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="156"/>
         <source>Certificate</source>
         <translation>Certificado</translation>
     </message>
@@ -1238,9 +1243,10 @@ p, li { white-space: pre-wrap; }
         <translation>Seleccione el archivo CA</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="177"/>
-        <location filename="../vpnprofileeditor.cpp" line="183"/>
-        <location filename="../vpnprofileeditor.cpp" line="189"/>
+        <location filename="../vpnprofileeditor.cpp" line="190"/>
+        <location filename="../vpnprofileeditor.cpp" line="196"/>
+        <location filename="../vpnprofileeditor.cpp" line="202"/>
+        <location filename="../vpnprofileeditor.cpp" line="208"/>
         <source>VPN</source>
         <translation></translation>
     </message>
@@ -1262,6 +1268,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../vpnprofileeditor.cpp" line="189"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Debe establecer un puerto de puerta de enlace para la VPN.</translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.cpp" line="195"/>
+        <source>You must set a valid username if credentials are enabled.</source>
+        <translation>Debe indicar un nombre de usuario válido si desea habilitar el uso de credenciales.</translation>
     </message>
 </context>
 <context>
