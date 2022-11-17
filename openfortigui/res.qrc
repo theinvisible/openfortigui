@@ -21,8 +21,8 @@
         <file alias="sorceress.png">img/sorceress.png</file>
         <file alias="search.png">img/search.png</file>
         <file alias="changelog.png">img/changelog.png</file>
-        <file alias="tray-enc.png">img/tray-enc.png</file>
-        <file alias="tray.png">img/tray.png</file>
+        <file alias="tray-enc.png">img/connected.svg</file>
+        <file alias="tray.png">img/disconnected.svg</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="openfortigui_de.qm">lang/openfortigui_de.qm</file>
