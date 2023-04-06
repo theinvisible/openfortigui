@@ -12,7 +12,7 @@ class vpnBarracuda : public QObject
     Q_OBJECT
 public:
     explicit vpnBarracuda(QObject *parent = nullptr);
-    void start(const QString &vpnname, vpnClientConnection *conn);
+    void start(const QString &vpnname, vpnClientConnection *conn, const QString &otptoken);
     void stop();
 
 private:

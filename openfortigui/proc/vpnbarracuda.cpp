@@ -12,7 +12,7 @@ QString vpnBarracuda::conf_template = "BINDIP = \n"
     "KEEPALIVE = 10\n"
     "KEYFILE = \n"
     "MAXRECONNECT = 3\n"
-    "OTPMODE = OFF\n"
+    "OTPMODE = %2\n"
     "PROXYADDR = \n"
     "PROXYPORT = 8080\n"
     "PROXYTYPE = NO PROXY\n"
@@ -35,7 +35,7 @@ vpnBarracuda::vpnBarracuda(QObject *parent)
     statsupdater = 0;
 }
 
-void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
+void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, const QString &otptoken)
 {
     this->vpnname = vpnname;
     client_con = conn;
@@ -52,7 +52,7 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
         return;
 
     QTextStream out(&file);
-    out << conf_template.arg(vpn_profile.gateway_host);
+    out << conf_template.arg(vpn_profile.gateway_host, (vpn_profile.always_ask_otp) ? "STATIC" : "OFF");
 
     QString pass = vpn_profile.readPassword();
     QStringList arguments;
@@ -61,11 +61,18 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn)
     arguments << vpn_profile.username;
     arguments << "--serverpwd";
     arguments << pass;
+    if(vpn_profile.always_ask_otp) {
+        arguments << "--onetimepwd";
+        arguments << otptoken;
+    }
     arguments << "--config";
     arguments << "/tmp/ovpn_gui/";
+    if(vpn_profile.debug)
+        arguments << "--verbose";
     pass = "";
 
     emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_CONNECTING);
+    client_con->status = vpnClientConnection::STATUS_CONNECTING;
     QProcess *vpnProc = new QProcess(this);
     emit addVPNLogger(vpnname, vpnProc);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);

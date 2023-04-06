@@ -104,6 +104,14 @@ void vpnManager::startVPN(const QString &name)
             return;
         }
 
+        QString otptoken = "";
+        if(profile->always_ask_otp) {
+            bool ok;
+            otptoken = QInputDialog::getText(static_cast<QWidget *>(this->parent()), tr("OTP-Token required"),
+                                             tr("Please provide your OTP-Token:"), QLineEdit::Normal,
+                                             "", &ok);
+        }
+
         vpnClientConnection *clientConn = new vpnClientConnection(name);
         vpnBarracuda *vpn = new vpnBarracuda(clientConn);
         clientConn->setBarracudaObj(vpn);
@@ -112,7 +120,7 @@ void vpnManager::startVPN(const QString &name)
         connect(vpn, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)), Qt::QueuedConnection);
         connect(vpn, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
         connect(vpn, QOverload<QString, QProcess*>::of(&vpnBarracuda::addVPNLogger), this, [=](QString n, QProcess *p) { emit addVPNLogger(n, p); });
-        vpn->start(name, clientConn);
+        vpn->start(name, clientConn, otptoken);
         connections[name] = clientConn;
         break;
     }
@@ -168,9 +176,14 @@ void vpnManager::stopVPN(const QString &name)
         switch(profile->device_type)
         {
         case vpnProfile::Device_Barracuda:
+        {
+            if(connections[name]->status == vpnClientConnection::STATUS_CONNECTING)
+                return;
+
             connections[name]->stop();
             connections.remove(name);
             break;
+        }
         case vpnProfile::Device_Fortigate:
         default:
         {
