@@ -33,8 +33,8 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     ui->setupUi(this);
 
     // Validators
-    QRegExp rx(openfortigui_config::validatorName);
-    QValidator *validatorName = new QRegExpValidator(rx, this);
+    QRegularExpression rx(openfortigui_config::validatorName);
+    QValidator *validatorName = new QRegularExpressionValidator(rx, this);
     ui->leName->setValidator(validatorName);
 
     // Treeview VPN-Groups

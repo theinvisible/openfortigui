@@ -227,8 +227,9 @@ tiConfVpnProfiles::~tiConfVpnProfiles()
 
 void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 {
-    QRegExp rexpName(openfortigui_config::validatorName);
-    if(!rexpName.exactMatch(profile.name))
+    QRegularExpression rexpName(openfortigui_config::validatorName);
+    QRegularExpressionMatch match = rexpName.match(profile.name);
+    if(!match.hasMatch())
     {
         qWarning() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name: " << profile.name;
         return;
@@ -325,7 +326,7 @@ void tiConfVpnProfiles::readVpnProfiles()
     }
 
     QMapIterator<vpnProfile::Origin, QString> it_profileDirs(profileDirs);
-    QRegExp rexpName(openfortigui_config::validatorName);
+    QRegularExpression rexpName(openfortigui_config::validatorName);
     while(it_profileDirs.hasNext())
     {
         it_profileDirs.next();
@@ -339,7 +340,8 @@ void tiConfVpnProfiles::readVpnProfiles()
             {
                 qDebug() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile found:" << vpnprofilefilepath;
                 QString vpnprofilename = QDir(vpnprofilefilepath).dirName().split(".conf")[0];
-                if(!rexpName.exactMatch(vpnprofilename))
+		QRegularExpressionMatch match = rexpName.match(vpnprofilename);
+                if(!match.hasMatch())
                 {
                     qWarning() << "tiConfVpnProfile::readVpnProfiles() -> vpnprofile has not a valid name, skip loading: " << vpnprofilefilepath;
                     continue;
@@ -469,8 +471,9 @@ tiConfVpnGroups::~tiConfVpnGroups()
 
 void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
 {
-    QRegExp rexpName(openfortigui_config::validatorName);
-    if(!rexpName.exactMatch(group.name))
+    QRegularExpression rexpName(openfortigui_config::validatorName);
+    QRegularExpressionMatch match = rexpName.match(group.name);
+    if(!match.hasMatch())
     {
         qWarning() << "tiConfVpnProfile::saveVpnGroup() -> vpngroup has not a valid name: " << group.name;
         return;
@@ -529,7 +532,7 @@ void tiConfVpnGroups::readVpnGroups()
     QString vpngroupsdir = tiConfMain::formatPath(main_settings->getValue("paths/localvpngroups").toString());
     QDirIterator it_localgroupdir(vpngroupsdir);
     QString vpngroupfilepath;
-    QRegExp rexpName(openfortigui_config::validatorName);
+    QRegularExpression rexpName(openfortigui_config::validatorName);
     while (it_localgroupdir.hasNext())
     {
         vpngroupfilepath = it_localgroupdir.next();
@@ -538,7 +541,8 @@ void tiConfVpnGroups::readVpnGroups()
             qDebug() << "tiConfVpnGroups::readVpnGroups() -> vpngroup found:" << vpngroupfilepath;
 
             QString vpngroupname = QDir(vpngroupfilepath).dirName().split(".conf")[0];
-            if(!rexpName.exactMatch(vpngroupname))
+	    QRegularExpressionMatch match = rexpName.match(vpngroupname);
+            if(!match.hasMatch())
             {
                 qWarning() << "tiConfVpnProfile::readVpnGroups() -> vpngroup has not a valid name, skip loading: " << vpngroupfilepath;
                 continue;

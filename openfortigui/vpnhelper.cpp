@@ -278,17 +278,18 @@ QString vpnHelper::getOSCodename()
 QString vpnHelper::runCommandwithOutput(const QString &cmd)
 {
     QProcess proc;
-    proc.start(cmd, QIODevice::ReadOnly);
+    proc.setStandardOutputFile(QProcess::nullDevice(), QIODevice::ReadOnly);
+    proc.start(cmd);
     proc.waitForStarted();
     proc.waitForFinished();
-
-    return proc.readLine();
+    return proc.readLine().trimmed();
 }
 
 int vpnHelper::runCommandwithReturnCode(const QString &cmd)
 {
     QProcess proc;
-    proc.start(cmd, QIODevice::ReadOnly);
+    proc.setStandardOutputFile(QProcess::nullDevice(), QIODevice::ReadOnly);
+    proc.start(cmd);
     proc.waitForStarted();
     proc.waitForFinished();
 

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDataStream>
 #include <QProcess>
-
+#include <QRegularExpression>
 #include "../vpnmanager.h"
 
 class vpnBarracuda : public QObject

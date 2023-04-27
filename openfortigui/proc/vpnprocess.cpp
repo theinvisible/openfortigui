@@ -23,7 +23,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QFileInfo>
 #include <QDir>
 
@@ -235,7 +235,7 @@ void vpnProcess::updateStats()
         QTextStream in(&file);
         QString line = in.readLine();
         QStringList lineParse;
-        QRegExp reParse = QRegExp("^\\S{1,}$");
+        QRegularExpression reParse = QRegularExpression("^\\S{1,}$");
         while (!line.isNull())
         {
             lineParse = line.split(" ").filter(reParse);

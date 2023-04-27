@@ -21,7 +21,7 @@
 #include <QThread>
 #include <QProcess>
 #include <QTextStream>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QInputDialog>
