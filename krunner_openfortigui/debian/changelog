@@ -1,3 +1,9 @@
+openfortigui-runner (0.9.9-1) precise; urgency=low
+
+  * Fix vpn profile/group filename validation
+
+ -- Rene Hadler <rene@hadler.me>  Tue, 2 May 2023 12:10:00 +0100
+
 openfortigui-runner (0.7.2-1) precise; urgency=low
 
   * Adding Umlaut support and VPN group search

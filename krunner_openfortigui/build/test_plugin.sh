@@ -7,7 +7,7 @@ make clean
 cmake ..
 make -j4
 
-cp krunner_openfortigui.so ~/.local/lib/qt/plugins
+cp bin/krunner_openfortigui.so ~/.local/lib/qt/plugins
 cp ../plasma-runner-openfortigui.desktop ~/.local/share/kservices5
 
 # Restart krunner for the changes to take effect

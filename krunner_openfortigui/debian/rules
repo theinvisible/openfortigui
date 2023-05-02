@@ -6,7 +6,7 @@
 override_dh_auto_install:
 	mkdir -p debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins
 	mkdir -p debian/openfortigui-runner/usr/share/kservices5
-	cp -a obj-*-linux-gnu/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/. || cp -a obj-*-linux-gnu/bin/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/.
+	cp -a bin/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/. || cp -a obj-*-linux-gnu/bin/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/.
 	cp -a plasma-runner-openfortigui.desktop debian/openfortigui-runner/usr/share/kservices5/.
 
 override_dh_builddeb:
