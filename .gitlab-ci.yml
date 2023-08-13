@@ -5,6 +5,7 @@ before_script:
 # Defines stages which are to be executed
 stages:  
   - build
+  - update_repo
 
 .build_template: &build_template_def
   before_script:
@@ -127,77 +128,6 @@ build-ubuntu-2004-64-dev:
   only:
     - master
 
-# Stage "ubuntu"
-build-ubuntu-1804-64:  
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_release build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-1804-64
-    
-  only:
-    - tags
-    
-# Stage "ubuntu-dev"
-build-ubuntu-1804-64-dev:
-  <<: *build_template_def
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_dev build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-1804-64
-    
-  only:
-    - master
-
-# Stage "debian"
-build-debian-9-64:  
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
-    - upload_build_release build/openforti*.deb || true
-    
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-debian-9-64
-
 # Stage "debian"
 build-debian-10-64:  
   stage: build
@@ -299,3 +229,76 @@ build-debian-11-64-dev:
     
   only:
     - master
+
+# Stage "debian"
+build-debian-12-64:  
+  stage: build
+  script:
+    - cd openfortigui
+    - git submodule init && git submodule update
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd ../krunner_openfortigui
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd .. && mkdir build
+    - mv openfortigui_*.deb build/
+    - mv openfortigui-runner_*.deb build/
+    - upload_build_release build/openforti*.deb || true
+
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - build-debian-12-64
+
+  only:
+    - tags
+
+# Stage "debian-dev"
+build-debian-12-64-dev:
+  <<: *build_template_def
+  stage: build
+  script:
+    - cd openfortigui
+    - git submodule init && git submodule update
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd ../krunner_openfortigui
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd .. && mkdir build
+    - mv openfortigui_*.deb build/
+    - mv openfortigui-runner_*.deb build/
+    - upload_build_dev build/openforti*.deb || true
+
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - build-debian-12-64
+    
+  only:
+    - master
+
+update_repo-release:  
+  stage: update_repo
+  script:
+    - update_build_release
+
+  tags:
+    - build-ubuntu-2204-64
+
+  only:
+    - tags
+
+update_repo-dev:  
+  stage: update_repo
+  script:
+    - update_build_dev
+
+  tags:
+    - build-ubuntu-2204-64
+
+  only:
+    - tags
