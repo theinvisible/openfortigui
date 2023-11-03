@@ -102,6 +102,8 @@ void vpnBarracuda::stop()
     vpnProc->start("barracudavpn", arguments);
     vpnProc->waitForStarted();
     vpnProc->waitForFinished();
+    if(statsupdater != 0)
+        statsupdater->stop();
 
     emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_DISCONNECTED);
     client_con->status = vpnClientConnection::STATUS_DISCONNECTED;
@@ -151,5 +153,6 @@ void vpnBarracuda::statusCheck()
     } else {
         emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_DISCONNECTED);
         client_con->status = vpnClientConnection::STATUS_DISCONNECTED;
+        statsupdater->stop();
     }
 }
