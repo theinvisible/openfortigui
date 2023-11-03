@@ -51,6 +51,7 @@ extern "C"  {
 #endif
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <termios.h>
@@ -87,7 +88,7 @@ static int ofv_append_varr(struct ofv_varr *p, const char *x)
             log_error("%s: ncap exceeded\n", __func__);
             return 1;
         };
-        ndata = (const char**) realloc(p->data, ncap * sizeof(const char *));
+        ndata = (const char **) realloc(p->data, ncap * sizeof(const char *));
         if (ndata) {
             p->data = ndata;
             p->cap = ncap;
@@ -239,6 +240,7 @@ static int pppd_run(struct tunnel *tunnel)
                 "230400", // speed
                 ":169.254.2.1", // <local_IP_address>:<remote_IP_address>
                 "noipdefault",
+                "ipcp-accept-local",
                 "noaccomp",
                 "noauth",
                 "default-asyncmap",
@@ -317,6 +319,25 @@ static int pppd_run(struct tunnel *tunnel)
                 return 1;
             }
         }
+        if (tunnel->config->pppd_accept_remote)
+            /*
+             * With this option, pppd will accept the peer's idea of
+             * its (remote) IP address, even if the remote IP address
+             * was specified in an option.
+             *
+             * This option attempts to fix this with PPP 2.5.0:
+             *     Peer refused to agree to his IP address
+             *
+             * Currently (always?) breaks on macOS with:
+             *     Could not get current default route
+             *     (Parsing /proc/net/route failed).
+             *     Protecting tunnel route has failed.
+             *     But this can be working except for some cases.
+             */
+            if (ofv_append_varr(&pppd_args, "ipcp-accept-remote")) {
+                free(pppd_args.data);
+                return 1;
+            }
 #endif
 #if HAVE_USR_SBIN_PPP
         if (tunnel->config->ppp_system) {
@@ -383,11 +404,12 @@ static const char * const ppp_message[] = {
     "The PPP negotiation failed because serial loopback was detected.",
     "The init script failed (returned a non-zero exit status).",
     "We failed to authenticate ourselves to the peer."
-#else // sysexits(3) - https://www.freebsd.org/cgi/man.cgi?query=sysexits
+#endif
+#if HAVE_USR_SBIN_PPP // sysexits(3) - https://www.freebsd.org/cgi/man.cgi?query=sysexits
     // EX_NORMAL = EX_OK (0)
     "Successful exit.",
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 1-9
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,     // 10-19
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 10-19
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 20-29
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 30-39
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, // 40-49
