@@ -53,6 +53,7 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, cons
 
     QTextStream out(&file);
     out << conf_template.arg(vpn_profile.gateway_host, (vpn_profile.always_ask_otp) ? "STATIC" : "OFF");
+    file.flush();
 
     QString pass = vpn_profile.readPassword();
     QStringList arguments;

@@ -95,3 +95,6 @@ QMAKE_CXXFLAGS += $${OPENFORTIVPN_FLAGS}
 QMAKE_LFLAGS += $$(LDFLAGS)
 
 unix:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil -lqt5keychain
+
+OTHER_FILES += \
+    debian/changelog
