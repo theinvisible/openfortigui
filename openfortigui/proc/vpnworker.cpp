@@ -257,6 +257,27 @@ static int pppd_run(struct tunnel *tunnel)
                     return 1;
                 }
         }
+
+        if (tunnel->config->pppd_accept_remote)
+            /*
+             * With this option, pppd will accept the peer's idea of
+             * its (remote) IP address, even if the remote IP address
+             * was specified in an option.
+             *
+             * This option attempts to fix this with PPP 2.5.0:
+             *     Peer refused to agree to his IP address
+             *
+             * Currently (always?) breaks on macOS with:
+             *     Could not get current default route
+             *     (Parsing /proc/net/route failed).
+             *     Protecting tunnel route has failed.
+             *     But this can be working except for some cases.
+             */
+            if (ofv_append_varr(&pppd_args, "ipcp-accept-remote")) {
+                log_info("Accept remote parameter - IF\n");
+                free(pppd_args.data);
+                return 1;
+            }
         if (tunnel->config->pppd_use_peerdns)
             if (ofv_append_varr(&pppd_args, "usepeerdns")) {
                 free(pppd_args.data);
@@ -319,25 +340,6 @@ static int pppd_run(struct tunnel *tunnel)
                 return 1;
             }
         }
-        if (tunnel->config->pppd_accept_remote)
-            /*
-             * With this option, pppd will accept the peer's idea of
-             * its (remote) IP address, even if the remote IP address
-             * was specified in an option.
-             *
-             * This option attempts to fix this with PPP 2.5.0:
-             *     Peer refused to agree to his IP address
-             *
-             * Currently (always?) breaks on macOS with:
-             *     Could not get current default route
-             *     (Parsing /proc/net/route failed).
-             *     Protecting tunnel route has failed.
-             *     But this can be working except for some cases.
-             */
-            if (ofv_append_varr(&pppd_args, "ipcp-accept-remote")) {
-                free(pppd_args.data);
-                return 1;
-            }
 #endif
 #if HAVE_USR_SBIN_PPP
         if (tunnel->config->ppp_system) {
