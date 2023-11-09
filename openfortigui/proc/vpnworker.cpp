@@ -601,6 +601,7 @@ void vpnWorker::process()
     if (min_tls != -1)
         config.min_tls = min_tls;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
+    config.pppd_accept_remote = (vpnConfig.pppd_accept_remote) ? 1 : 0;
 
     if(!vpnConfig.otp_prompt.isEmpty())
         config.otp_prompt = strdup(vpnConfig.otp_prompt.toStdString().c_str());

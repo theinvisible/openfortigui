@@ -49,6 +49,7 @@ vpnProfile::vpnProfile()
     otp_delay = 0;
 
     pppd_no_peerdns = false;
+    pppd_accept_remote = false;
     pppd_log_file = "";
     pppd_plugin_file = "";
     pppd_ifname = "";

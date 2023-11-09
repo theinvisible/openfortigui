@@ -67,6 +67,7 @@ public:
     quint16 otp_delay;
 
     bool pppd_no_peerdns;
+    bool pppd_accept_remote;
     QString pppd_log_file;
     QString pppd_plugin_file;
     QString pppd_ifname;
