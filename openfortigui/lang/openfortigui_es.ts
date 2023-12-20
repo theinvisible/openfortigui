@@ -230,7 +230,7 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="257"/>
-        <source>The selected vpn could not be deleted, an error occured.</source>
+        <source>The selected vpn could not be deleted, an error occurred.</source>
         <translation>El VPN seleccionado no se pudo eliminar, se produjo un error</translation>
     </message>
     <message>
@@ -256,7 +256,7 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="388"/>
-        <source>The selected vpn-group could not be deleted, an error occured.</source>
+        <source>The selected vpn-group could not be deleted, an error occurred.</source>
         <translation>El grupo VPN seleccionado no se pudo eliminar, se produjo un error.</translation>
     </message>
     <message>
@@ -576,7 +576,7 @@ Add certificate to VPN-profile whitelist?</source>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
-        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <source>Password manager is not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
         <translation>El administrador de contraseñas no funciona, verifique el estado de su sistema (GNOME Keyring o KWallet). Mensaje de error: %1</translation>
     </message>
 </context>
@@ -1364,7 +1364,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="120"/>
-        <source>Disallow unsecure certificates</source>
+        <source>Disallow insecure certificates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1412,7 +1412,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="307"/>
-        <source>Connect on doubleclick</source>
+        <source>Connect on double-click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1432,7 +1432,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="152"/>
-        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <source>Password manager is not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
         <translation>El administrador de contraseñas no funciona, verifique el estado de su sistema (GNOME Keyring o KWallet). Mensaje de error: %1</translation>
     </message>
     <message>

@@ -201,7 +201,7 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="257"/>
-        <source>The selected vpn could not be deleted, an error occured.</source>
+        <source>The selected vpn could not be deleted, an error occurred.</source>
         <translation>エラーが発生したため、指定された VPN を削除することができませんでした。</translation>
     </message>
     <message>
@@ -232,7 +232,7 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="388"/>
-        <source>The selected vpn-group could not be deleted, an error occured.</source>
+        <source>The selected vpn-group could not be deleted, an error occurred.</source>
         <translation>エラーが発生したため、指定されたグループを削除することができませんでした。</translation>
     </message>
     <message>
@@ -529,7 +529,7 @@ Add certificate to VPN-profile whitelist?</source>
     </message>
     <message>
         <location filename="../setupwizard.cpp" line="217"/>
-        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <source>Password manager is not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
         <translation>パスワード管理が無効です。KWallet や GNOME Keyring の状態を確認して下さい。エラー：%1</translation>
     </message>
 </context>
@@ -1230,7 +1230,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="120"/>
-        <source>Disallow unsecure certificates</source>
+        <source>Disallow insecure certificates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1278,7 +1278,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.ui" line="307"/>
-        <source>Connect on doubleclick</source>
+        <source>Connect on double-click</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1298,7 +1298,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../vpnsetting.cpp" line="152"/>
-        <source>Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
+        <source>Password manager is not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1</source>
         <translation>バスワード管理が無効です。KWallet や GNOME Keyringの状態を確認して下さい。エラー： %1</translation>
     </message>
     <message>
