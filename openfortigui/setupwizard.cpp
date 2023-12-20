@@ -214,7 +214,7 @@ void setupWizard::on_cbUseSystemPasswordStore_toggled(bool checked)
         vpnHelperResult result = vpnHelper::checkSystemPasswordStoreAvailable();
         if(result.status == false)
         {
-            QMessageBox::critical(this, tr("System password manager error"), tr("Password manager ist not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1").arg(result.msg), QMessageBox::Ok);
+            QMessageBox::critical(this, tr("System password manager error"), tr("Password manager is not working, please check the status on your system (GNOME Keyring or KWallet). Error message: %1").arg(result.msg), QMessageBox::Ok);
             ui->cbUseSystemPasswordStore->setChecked(false);
         }
         else
