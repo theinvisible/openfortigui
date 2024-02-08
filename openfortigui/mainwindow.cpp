@@ -254,7 +254,7 @@ void MainWindow::on_btnDeleteVPN_clicked()
     }
     else
     {
-        QMessageBox::information(this, tr("Delete VPN"), tr("The selected vpn could not be deleted, an error occured."));
+        QMessageBox::information(this, tr("Delete VPN"), tr("The selected vpn could not be deleted, an error occurred."));
     }
 }
 
@@ -385,7 +385,7 @@ void MainWindow::on_btnDeleteGroup_clicked()
     }
     else
     {
-        QMessageBox::information(this, tr("Delete VPN-Group"), tr("The selected vpn-group could not be deleted, an error occured."));
+        QMessageBox::information(this, tr("Delete VPN-Group"), tr("The selected vpn-group could not be deleted, an error occurred."));
     }
 }
 
@@ -911,39 +911,39 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     QAction *a_delete = menu.addAction(QIcon::fromTheme("edit-delete", QIcon(":/img/delete.png")), tr("Delete"));
     menu.addSeparator();
     QAction *a_viewlogs = menu.addAction(QIcon::fromTheme("accessories-text-editor", QIcon(":/img/log.png")), tr("View logs"));
-    QAction *choosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
+    QAction *chosen = menu.exec(ui->tvVpnProfiles->mapToGlobal(point));
 
-    if(choosen == a_viewlogs)
+    if(chosen == a_viewlogs)
     {
         QDesktopServices::openUrl(QUrl::fromLocalFile(QString("%1/logs/vpn/%2.log").arg(tiConfMain::getAppDir(), vpnname)));
         return;
     }
 
-    if(choosen == a_connect)
+    if(chosen == a_connect)
     {
         onStartVPN(vpnname);
         return;
     }
 
-    if(choosen == a_disconnect)
+    if(chosen == a_disconnect)
     {
         onStopVPN(vpnname);
         return;
     }
 
-    if(choosen == a_edit)
+    if(chosen == a_edit)
     {
         on_btnEditVPN_clicked();
         return;
     }
 
-    if(choosen == a_copy)
+    if(chosen == a_copy)
     {
         on_btnCopyVPN_clicked();
         return;
     }
 
-    if(choosen == a_delete)
+    if(chosen == a_delete)
     {
         on_btnDeleteVPN_clicked();
         return;
@@ -1286,7 +1286,7 @@ void MainWindow::doOSChecks()
     }
 }
 
-QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)
+QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int column)
 {
     QStandardItem *retitem = 0;
 
@@ -1294,7 +1294,7 @@ QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)
     {
         if(root_local_vpn->child(i, 1)->text() == vpnname)
         {
-            return root_local_vpn->child(i, colum);
+            return root_local_vpn->child(i, column);
         }
     }
 
@@ -1304,7 +1304,7 @@ QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int colum)
         {
             if(root_global_vpn->child(i, 1)->text() == vpnname)
             {
-                return root_global_vpn->child(i, colum);
+                return root_global_vpn->child(i, column);
             }
         }
     }

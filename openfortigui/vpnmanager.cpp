@@ -347,7 +347,7 @@ void vpnManager::onClientConnected()
         if(connections.contains(cmd.objName))
             connections[cmd.objName]->setSocket(client);
         else
-            qWarning() << "no socket assigend";
+            qWarning() << "no socket assigned";
     }
 }
 

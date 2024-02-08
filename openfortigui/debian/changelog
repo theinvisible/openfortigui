@@ -297,7 +297,7 @@ openfortigui (0.2.7-1) precise; urgency=low
 
 openfortigui (0.2.6-1) precise; urgency=low
 
-  * Added some more actionbar buttons, Adjust traymenu on trayposition, smaller bugfixes/improvments
+  * Added some more actionbar buttons, Adjust traymenu on trayposition, smaller bugfixes/improvements
 
  -- Rene Hadler <rene@hadler.me>  Mon, 03 Apr 2017 15:14:00 +0100
 

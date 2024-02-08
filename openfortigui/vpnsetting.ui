@@ -117,7 +117,7 @@
         <item row="5" column="0">
          <widget class="QLabel" name="label_13">
           <property name="text">
-           <string>Disallow unsecure certificates</string>
+           <string>Disallow insecure certificates</string>
           </property>
          </widget>
         </item>
@@ -304,7 +304,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Connect on doubleclick</string>
+           <string>Connect on double-click</string>
           </property>
          </widget>
         </item>
