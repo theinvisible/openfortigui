@@ -32,7 +32,9 @@ add_definitions(-DHAVE_USR_SBIN_PPPD=1
     -DPPP_PATH="/usr/sbin/pppd"
     -DRESOLVCONF_PATH=""
     -DHAVE_PTY_H=1
-    -DSUPPORT_OBSOLETE_CODE=1)
+    -DSUPPORT_OBSOLETE_CODE=1
+    -DHAVE_SO_BINDTODEVICE=1
+    -DOPENSSL_ENGINE=1)
 
 #########################################################
 # Sources
@@ -59,7 +61,7 @@ openfortigui/main.cpp
 openfortigui/mainwindow.cpp
 openfortigui/openfortivpn/src/config.c
 openfortigui/openfortivpn/src/hdlc.c
-openfortigui/openfortivpn_local/src/http.c
+openfortigui/openfortivpn/src/http.c
 openfortigui/openfortivpn/src/io.c
 openfortigui/openfortivpn/src/ipv4.c
 openfortigui/openfortivpn/src/log.c
@@ -70,6 +72,7 @@ openfortigui/vpnmanager.cpp
 openfortigui/ticonfmain.cpp
 openfortigui/vpnapi.cpp
 openfortigui/proc/vpnprocess.cpp
+openfortigui/proc/vpnbarracuda.cpp
 openfortigui/vpnprofile.cpp
 openfortigui/vpnprofileeditor.cpp
 openfortigui/proc/vpnworker.cpp
