@@ -1167,12 +1167,12 @@ p, li { white-space: pre-wrap; }
         <translation>Estableix el DNS</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="628"/>
+        <location filename="../vpnprofileeditor.ui" line="642"/>
         <source>SSL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="640"/>
+        <location filename="../vpnprofileeditor.ui" line="654"/>
         <source>Insecure SSL</source>
         <translation>SSL no segura</translation>
     </message>
@@ -1202,80 +1202,85 @@ p, li { white-space: pre-wrap; }
         <translation>PPPD</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="654"/>
-        <source>SecLevel1</source>
+        <location filename="../vpnprofileeditor.ui" line="632"/>
+        <source>Accept remote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../vpnprofileeditor.ui" line="668"/>
+        <source>SecLevel1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../vpnprofileeditor.ui" line="682"/>
         <source>Min TLS version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="676"/>
+        <location filename="../vpnprofileeditor.ui" line="690"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="681"/>
+        <location filename="../vpnprofileeditor.ui" line="695"/>
         <source>1.0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="686"/>
+        <location filename="../vpnprofileeditor.ui" line="700"/>
         <source>1.1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="691"/>
+        <location filename="../vpnprofileeditor.ui" line="705"/>
         <source>1.2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="696"/>
+        <location filename="../vpnprofileeditor.ui" line="710"/>
         <source>1.3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="739"/>
+        <location filename="../vpnprofileeditor.ui" line="753"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.ui" line="759"/>
+        <location filename="../vpnprofileeditor.ui" line="773"/>
         <source>Save</source>
         <translation>Desa</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="163"/>
+        <location filename="../vpnprofileeditor.cpp" line="165"/>
         <source>Select the user-cert</source>
         <translation>Trieu el certificat d&apos;usuari</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="173"/>
+        <location filename="../vpnprofileeditor.cpp" line="175"/>
         <source>Select the user-key</source>
         <translation>Trieu la clau d&apos;usuari</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="183"/>
+        <location filename="../vpnprofileeditor.cpp" line="185"/>
         <source>Select the CA-file</source>
         <translation>Trieu el fitxer CA</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="198"/>
-        <location filename="../vpnprofileeditor.cpp" line="204"/>
-        <location filename="../vpnprofileeditor.cpp" line="210"/>
-        <location filename="../vpnprofileeditor.cpp" line="216"/>
+        <location filename="../vpnprofileeditor.cpp" line="200"/>
+        <location filename="../vpnprofileeditor.cpp" line="206"/>
+        <location filename="../vpnprofileeditor.cpp" line="212"/>
+        <location filename="../vpnprofileeditor.cpp" line="218"/>
         <source>VPN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="198"/>
+        <location filename="../vpnprofileeditor.cpp" line="200"/>
         <source>You must set a valid name for the VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="216"/>
+        <location filename="../vpnprofileeditor.cpp" line="218"/>
         <source>You must set a valid username if credentials are enabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1284,12 +1289,12 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Heu d&apos;establir un nom per a la VPN.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="204"/>
+        <location filename="../vpnprofileeditor.cpp" line="206"/>
         <source>You must set a gateway for the VPN.</source>
         <translation>Heu d&apos;establir una passarel·la per a la VPN.</translation>
     </message>
     <message>
-        <location filename="../vpnprofileeditor.cpp" line="210"/>
+        <location filename="../vpnprofileeditor.cpp" line="212"/>
         <source>You must set a gateway-port for the VPN.</source>
         <translation>Heu d&apos;establir un port de la passarel·la per a la VPN.</translation>
     </message>
