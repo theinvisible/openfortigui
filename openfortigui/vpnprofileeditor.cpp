@@ -100,6 +100,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->comboMinTLSVersion->setCurrentText(config->min_tls);
 
     ui->cbPPPDNoPeerDNS->setChecked(config->pppd_no_peerdns);
+    ui->cbPPPDAcceptRemote->setChecked(config->pppd_accept_remote);
     ui->lePPPDLogFile->setText(config->pppd_log_file);
     ui->lePPPDPluginFile->setText(config->pppd_plugin_file);
     ui->lePPPDIfname->setText(config->pppd_ifname);
@@ -123,6 +124,7 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->cbSetRoutes->setDisabled(true);
         ui->cbSetDNS->setDisabled(true);
         ui->cbPPPDNoPeerDNS->setDisabled(true);
+        ui->cbPPPDAcceptRemote->setDisabled(true);
         ui->cbInsecureSSL->setDisabled(true);
         ui->btnSave->setDisabled(true);
         ui->btnChooseCAFile->setDisabled(true);
@@ -265,6 +267,7 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.set_routes = ui->cbSetRoutes->isChecked();
     vpn.set_dns = ui->cbSetDNS->isChecked();
     vpn.pppd_no_peerdns = ui->cbPPPDNoPeerDNS->isChecked();
+    vpn.pppd_accept_remote = ui->cbPPPDAcceptRemote->isChecked();
     vpn.insecure_ssl = ui->cbInsecureSSL->isChecked();
     vpn.debug = ui->cbDebug->isChecked();
     vpn.realm = ui->leRealm->text();

@@ -519,7 +519,7 @@
           <string>PPPD</string>
          </property>
          <layout class="QFormLayout" name="formLayout_4">
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_13">
             <property name="minimumSize">
              <size>
@@ -532,14 +532,14 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QCheckBox" name="cbPPPDNoPeerDNS">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_9">
             <property name="minimumSize">
              <size>
@@ -552,10 +552,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="4" column="1">
            <widget class="QLineEdit" name="lePPPDLogFile"/>
           </item>
-          <item row="3" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_19">
             <property name="minimumSize">
              <size>
@@ -568,10 +568,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="5" column="1">
            <widget class="QLineEdit" name="lePPPDPluginFile"/>
           </item>
-          <item row="4" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="label_20">
             <property name="minimumSize">
              <size>
@@ -584,7 +584,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="label_21">
             <property name="minimumSize">
              <size>
@@ -597,13 +597,13 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="6" column="1">
            <widget class="QLineEdit" name="lePPPDIfname"/>
           </item>
-          <item row="5" column="1">
+          <item row="7" column="1">
            <widget class="QLineEdit" name="lePPPDIPParam"/>
           </item>
-          <item row="6" column="0">
+          <item row="8" column="0">
            <widget class="QLabel" name="label_22">
             <property name="minimumSize">
              <size>
@@ -616,8 +616,22 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="8" column="1">
            <widget class="QLineEdit" name="lePPPDCallName"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cbPPPDAcceptRemote">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>Accept remote</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
