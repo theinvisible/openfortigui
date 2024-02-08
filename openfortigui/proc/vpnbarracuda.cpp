@@ -126,7 +126,7 @@ void vpnBarracuda::statusCheck()
             emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_CONNECTED);
         }
 
-        vpnStats stats;
+        vpnStats stats = { 0, 0, 0 };
 
         QFile file("/proc/net/dev");
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
