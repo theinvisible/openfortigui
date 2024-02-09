@@ -53,7 +53,7 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, cons
 
     QTextStream out(&file);
     out << conf_template.arg(vpn_profile.gateway_host, (vpn_profile.always_ask_otp) ? "STATIC" : "OFF");
-    file.flush();
+    out.flush();
 
     QString pass = vpn_profile.readPassword();
     QStringList arguments;
@@ -78,7 +78,6 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, cons
     emit addVPNLogger(vpnname, vpnProc);
     vpnProc->setProcessChannelMode(QProcess::MergedChannels);
     qDebug() << "Start vpn::" << vpn_profile.name;
-    vpnProc->start("barracudavpn", arguments);
     connect(vpnProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode, QProcess::ExitStatus exitStatus) {
         QString pout = vpnProc->readAllStandardOutput();
         if(pout.contains("failed")) {
@@ -90,6 +89,7 @@ void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, cons
             statsupdater->start(2000);
         }
     });
+    vpnProc->start("barracudavpn", arguments);
 }
 
 void vpnBarracuda::stop()
