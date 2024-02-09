@@ -26,6 +26,9 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <QFile>
+#include <QDir>
+#include <pwd.h>
 
 vpnHelper::vpnHelper()
 {
@@ -293,5 +296,43 @@ int vpnHelper::runCommandwithReturnCode(const QString &cmd)
     proc.waitForFinished();
 
     return proc.exitCode();
+}
+
+QString vpnHelper::linHomeExpansion(const QString &path) {
+    if (!path.startsWith(QLatin1Char('~')))
+        return path;
+    int separatorPosition = path.indexOf(QDir::separator());
+    if (separatorPosition < 0)
+        separatorPosition = path.size();
+    if (separatorPosition == 1) {
+        return QDir::homePath() + path.midRef(1);
+    } else {
+#if defined(Q_OS_VXWORKS) || defined(Q_OS_INTEGRITY)
+        const QString homePath = QDir::homePath();
+#else
+        const QByteArray userName = path.midRef(1, separatorPosition - 1).toLocal8Bit();
+# if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD) && !defined(Q_OS_WASM)
+        passwd pw;
+        passwd *tmpPw;
+        char buf[200];
+        const int bufSize = sizeof(buf);
+        int err = 0;
+#  if defined(Q_OS_SOLARIS) && (_POSIX_C_SOURCE - 0 < 199506L)
+        tmpPw = getpwnam_r(userName.constData(), &pw, buf, bufSize);
+#  else
+        err = getpwnam_r(userName.constData(), &pw, buf, bufSize, &tmpPw);
+#  endif
+        if (err || !tmpPw)
+            return path;
+        const QString homePath = QString::fromLocal8Bit(pw.pw_dir);
+# else
+        passwd *pw = getpwnam(userName.constData());
+        if (!pw)
+            return path;
+        const QString homePath = QString::fromLocal8Bit(pw->pw_dir);
+# endif
+#endif
+        return homePath + path.midRef(separatorPosition);
+    }
 }
 

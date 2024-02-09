@@ -50,6 +50,7 @@ public:
     static QString runCommandwithOutput(const QString &cmd);
     static int runCommandwithReturnCode(const QString &cmd);
 
+    static QString linHomeExpansion(const QString &path);
 };
 
 #endif // VPNHELPER_H

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>970</height>
+    <height>842</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,20 @@
          <property name="title">
           <string>Common</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_26">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Persistent</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label">
             <property name="minimumSize">
@@ -43,8 +56,12 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="leName"/>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="cbPersistent">
+            <property name="text">
+             <string>Reconnect on disconnect</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
@@ -59,39 +76,13 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="0" column="1" colspan="3">
+           <widget class="QLineEdit" name="leName"/>
+          </item>
+          <item row="1" column="1" colspan="3">
            <widget class="QLineEdit" name="leGatewayHost"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="minimumSize">
-             <size>
-              <width>150</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>VPN-Port</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="sBGatewayPort">
-            <property name="suffix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>65535</number>
-            </property>
-            <property name="value">
-             <number>10443</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
            <widget class="QLabel" name="label_30">
             <property name="minimumSize">
              <size>
@@ -104,11 +95,11 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1">
            <widget class="QComboBox" name="comboVPNDevice"/>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_26">
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_5">
             <property name="minimumSize">
              <size>
               <width>150</width>
@@ -116,14 +107,23 @@
              </size>
             </property>
             <property name="text">
-             <string>Persistent</string>
+             <string>VPN-Port</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="cbPersistent">
-            <property name="text">
-             <string>Reconnect on disconnect</string>
+          <item row="2" column="3">
+           <widget class="QSpinBox" name="sBGatewayPort">
+            <property name="suffix">
+             <string/>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>10443</number>
             </property>
            </widget>
           </item>
@@ -353,7 +353,20 @@
          <property name="title">
           <string>Advanced</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_3">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Realm</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_17">
             <property name="minimumSize">
@@ -367,54 +380,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="cbAutostart">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Set routes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbSetRoutes">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Set DNS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbSetDNS">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="label_10">
             <property name="minimumSize">
              <size>
@@ -427,28 +393,19 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QCheckBox" name="cbDebug">
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbHalfInternetRoutes">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_16">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="cbDebug">
             <property name="text">
-             <string>Realm</string>
+             <string/>
             </property>
            </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLineEdit" name="leRealm"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_18">
@@ -463,10 +420,82 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbHalfInternetRoutes">
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Set routes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbAutostart">
             <property name="text">
              <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>OTP prompt string</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="cbSetRoutes">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_12">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Set DNS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QCheckBox" name="cbSetDNS">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="3">
+           <widget class="QLineEdit" name="leRealm"/>
+          </item>
+          <item row="8" column="3">
+           <widget class="QSpinBox" name="sbOTPDelay"/>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLabel" name="label_25">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>OTP delay</string>
             </property>
            </widget>
           </item>
@@ -490,37 +519,8 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="label_24">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>OTP prompt string</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="0">
-           <widget class="QLabel" name="label_25">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>OTP delay</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
+          <item row="7" column="1" colspan="3">
            <widget class="QLineEdit" name="leOTPPromptString"/>
-          </item>
-          <item row="10" column="1">
-           <widget class="QSpinBox" name="sbOTPDelay"/>
           </item>
          </layout>
         </widget>
@@ -530,8 +530,8 @@
          <property name="title">
           <string>PPPD</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_4">
-          <item row="2" column="0">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
            <widget class="QLabel" name="label_13">
             <property name="minimumSize">
              <size>
@@ -544,78 +544,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbPPPDNoPeerDNS">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Log File</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lePPPDLogFile"/>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_19">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Plugin File</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="lePPPDPluginFile"/>
-          </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_20">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Ifname</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_21">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Ip-Parameter</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLineEdit" name="lePPPDIfname"/>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLineEdit" name="lePPPDIPParam"/>
-          </item>
-          <item row="8" column="0">
            <widget class="QLabel" name="label_22">
             <property name="minimumSize">
              <size>
@@ -628,17 +557,46 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Log File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" colspan="3">
            <widget class="QLineEdit" name="lePPPDCallName"/>
           </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbPPPDAcceptRemote">
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbPPPDNoPeerDNS">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
+          <item row="5" column="1" colspan="3">
+           <widget class="QLineEdit" name="lePPPDIPParam"/>
+          </item>
           <item row="3" column="0">
+           <widget class="QLabel" name="label_19">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Plugin File</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
            <widget class="QLabel" name="label_31">
             <property name="minimumSize">
              <size>
@@ -651,6 +609,48 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="1" colspan="3">
+           <widget class="QLineEdit" name="lePPPDPluginFile"/>
+          </item>
+          <item row="2" column="1" colspan="3">
+           <widget class="QLineEdit" name="lePPPDLogFile"/>
+          </item>
+          <item row="4" column="1" colspan="3">
+           <widget class="QLineEdit" name="lePPPDIfname"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_20">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Ifname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Ip-Parameter</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="cbPPPDAcceptRemote">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -659,8 +659,8 @@
          <property name="title">
           <string>SSL</string>
          </property>
-         <layout class="QFormLayout" name="formLayout_5">
-          <item row="2" column="0">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
            <widget class="QLabel" name="label_14">
             <property name="minimumSize">
              <size>
@@ -673,34 +673,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbInsecureSSL">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_27">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>SecLevel1</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbSecLevel1">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_28">
             <property name="minimumSize">
              <size>
@@ -713,7 +686,14 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbInsecureSSL">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
            <widget class="QComboBox" name="comboMinTLSVersion">
             <item>
              <property name="text">
@@ -740,6 +720,26 @@
               <string>1.3</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_27">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>SecLevel1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="cbSecLevel1">
+            <property name="text">
+             <string/>
+            </property>
            </widget>
           </item>
          </layout>
@@ -812,7 +812,6 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>leName</tabstop>
   <tabstop>leGatewayHost</tabstop>
-  <tabstop>sBGatewayPort</tabstop>
   <tabstop>cbPersistent</tabstop>
   <tabstop>gbCredentials</tabstop>
   <tabstop>leUsername</tabstop>
@@ -826,14 +825,10 @@
   <tabstop>btnChooseCAFile</tabstop>
   <tabstop>leTrustedCert</tabstop>
   <tabstop>cbAutostart</tabstop>
-  <tabstop>cbSetRoutes</tabstop>
-  <tabstop>cbSetDNS</tabstop>
   <tabstop>cbDebug</tabstop>
   <tabstop>leRealm</tabstop>
   <tabstop>cbHalfInternetRoutes</tabstop>
-  <tabstop>cbAlwaysAskOtp</tabstop>
   <tabstop>leOTPPromptString</tabstop>
-  <tabstop>sbOTPDelay</tabstop>
   <tabstop>cbPPPDNoPeerDNS</tabstop>
   <tabstop>lePPPDLogFile</tabstop>
   <tabstop>lePPPDPluginFile</tabstop>
@@ -841,7 +836,6 @@
   <tabstop>lePPPDIPParam</tabstop>
   <tabstop>lePPPDCallName</tabstop>
   <tabstop>cbInsecureSSL</tabstop>
-  <tabstop>cbSecLevel1</tabstop>
   <tabstop>comboMinTLSVersion</tabstop>
   <tabstop>btnCancel</tabstop>
   <tabstop>btnSave</tabstop>
