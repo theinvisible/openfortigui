@@ -102,7 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tvVPNGroups->setModel(model2);
 
     tray = new QSystemTrayIcon(this);
-    tray->setIcon(QIcon(":/img/app.png"));
+    //tray->setIcon(QIcon::fromTheme("network-vpn-disconnected-symbolic", QIcon(":/img/tray.png")));
+    tray->setIcon(QIcon(":/img/tray.png"));       
     tray->show();
     tray_menu = tray->contextMenu();
     tray_group_menu = new QMenu(tr("VPN-Groups"));
@@ -730,9 +731,11 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     refreshVpnGroupList();
 
     if(vpnmanager->isSomeClientConnected())
-        tray->setIcon(QIcon(":/img/app-enc.png"));
+        //tray->setIcon(QIcon::fromTheme("network-vpn-symbolic", QIcon(":/img/tray-enc.png")));        
+        tray->setIcon(QIcon(":/img/tray-enc.png"));       
     else
-        tray->setIcon(QIcon(":/img/app.png"));
+        //tray->setIcon(QIcon::fromTheme("network-vpn-disconnected-symbolic", QIcon(":/img/tray.png")));        
+        tray->setIcon(QIcon(":/img/tray.png"));       
 
     if(isHidden() && !main_settings.getValue("gui/disable_notifications", false).toBool())
     {
@@ -1097,10 +1100,13 @@ void MainWindow::refreshVpnProfileList()
             break;
         }
         // Update tray
+
         if(isVPNConnected)
-            tray->setIcon(QIcon(":/img/app-enc.png"));
+            //tray->setIcon(QIcon::fromTheme("network-vpn-symbolic", QIcon(":/img/tray-enc.png")));        
+            tray->setIcon(QIcon(":/img/tray-enc.png"));        
         else
-            tray->setIcon(QIcon(":/img/app.png"));
+            //tray->setIcon(QIcon::fromTheme("network-vpn-disconnected-symbolic", QIcon(":/img/tray.png"))); 
+            tray->setIcon(QIcon(":/img/tray.png"));       
 
         // Menu
         QAction *action = new QAction(status, vpn->name, tray_menu);
