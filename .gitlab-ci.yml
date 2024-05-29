@@ -32,6 +32,31 @@ stages:
     - cd ..
 
 # Stage "ubuntu-dev"
+build-ubuntu-2404-64-release:
+  image: git.styrion.net:4567/iteas/docker-build-images/iteas-build-ubuntu-2404-64
+  stage: build
+  script:
+    - cd openfortigui
+    - git submodule init && git submodule update
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd ../krunner_openfortigui
+    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
+    - cd .. && mkdir build
+    - mv openforti*.deb build/
+    - upload_build_release build/openforti*.deb || true
+
+  # The files which are to be made available in GitLab
+  artifacts:
+    paths:
+      - build/*
+
+  tags:
+    - k8s-iteas-prod
+
+  only:
+    - tags
+
+# Stage "ubuntu-dev"
 build-ubuntu-2404-64-dev:
   <<: *build_template_def
   image: git.styrion.net:4567/iteas/docker-build-images/iteas-build-ubuntu-2404-64
