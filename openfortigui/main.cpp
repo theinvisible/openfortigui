@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     tiConfMain main_settings;
 
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath));
 
     QTranslator openfortiguiTranslator;
     openfortiguiTranslator.load("openfortigui_" + QLocale::system().name(), ":/translations");
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
             {
                 QByteArray block;
                 QDataStream out(&block, QIODevice::WriteOnly);
-                out.setVersion(QDataStream::Qt_5_2);
+                out.setVersion(QDataStream::Qt_6_0);
                 vpnApi apiData;
                 apiData.action = vpnApi::ACTION_SHOW_MAIN;
                 out << apiData;

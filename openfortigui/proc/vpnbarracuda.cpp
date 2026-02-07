@@ -2,6 +2,7 @@
 
 #include <QTimer>
 #include <QDir>
+#include <QRegularExpression>
 
 QString vpnBarracuda::conf_template = "BINDIP = \n"
     "CERTFILE = \n"
@@ -135,7 +136,7 @@ void vpnBarracuda::statusCheck()
         QTextStream in(&file);
         QString line = in.readLine();
         QStringList lineParse;
-        QRegExp reParse = QRegExp("^\\S{1,}$");
+        QRegularExpression reParse("^\\S{1,}$");
         while (!line.isNull())
         {
             lineParse = line.split(" ").filter(reParse);

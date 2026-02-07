@@ -20,6 +20,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QRegularExpression>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -33,8 +34,8 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     ui->setupUi(this);
 
     // Validators
-    QRegExp rx(openfortigui_config::validatorName);
-    QValidator *validatorName = new QRegExpValidator(rx, this);
+    QRegularExpression rx(openfortigui_config::validatorName);
+    QValidator *validatorName = new QRegularExpressionValidator(rx, this);
     ui->leName->setValidator(validatorName);
 
     // Default settings

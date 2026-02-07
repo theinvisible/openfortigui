@@ -4,13 +4,14 @@ project (openfortigui)
 set (CMAKE_CONFIGURATION_TYPES Debug Release)
 
 # Set the CXX standard as C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 REQUIRED Core Widgets Network Keychain DBus)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+find_package(Qt6Keychain REQUIRED)
 
 # Add 'd' suffix to debug libs
 set(CMAKE_DEBUG_POSTFIX _debug)
@@ -46,14 +47,14 @@ include_directories(${QT_INCLUDE_DIRS})
 include_directories(openfortigui openfortigui/openfortivpn)
 
 list (APPEND FORTI_LIBS
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Core
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::Core
     crypto
     ssl
     pthread
     util
-    qt5keychain
+    qt6keychain
 )
 
 list (APPEND FORTI_SOURCE_FILES

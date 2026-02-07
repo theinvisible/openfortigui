@@ -34,8 +34,8 @@ vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
     logCertFailedBuffer = QMap<QString, QString>();
     vpnConfigs = QMap<QString, vpnProfile>();
 
-    connect(logMapperStdout, SIGNAL(mapped(QString)), this, SLOT(logVPNOutput(QString)));
-    connect(logMapperFinished, SIGNAL(mapped(QString)), this, SLOT(procFinished(QString)));
+    connect(logMapperStdout, SIGNAL(mappedString(QString)), this, SLOT(logVPNOutput(QString)));
+    connect(logMapperFinished, SIGNAL(mappedString(QString)), this, SLOT(procFinished(QString)));
 }
 
 vpnLogger::~vpnLogger()

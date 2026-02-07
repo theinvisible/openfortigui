@@ -21,7 +21,6 @@
 #include <QThread>
 #include <QProcess>
 #include <QTextStream>
-#include <QDesktopWidget>
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -62,9 +61,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNShowMainWindowRequest()), this, SLOT(showMainWindow()));
 
     signalMapper = new QSignalMapper(this);
-    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPN(QString)));
+    connect(signalMapper, SIGNAL(mappedString(QString)), this, SLOT(onActionStartVPN(QString)));
     signalMapperGroups = new QSignalMapper(this);
-    connect(signalMapperGroups, SIGNAL(mapped(QString)), this, SLOT(onActionStartVPNGroup(QString)));
+    connect(signalMapperGroups, SIGNAL(mappedString(QString)), this, SLOT(onActionStartVPNGroup(QString)));
 
     // Center window on startup
     QRect geom = QGuiApplication::screens()[0]->availableGeometry();

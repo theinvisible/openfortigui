@@ -21,7 +21,7 @@
 #include <QProcess>
 
 #include "config.h"
-#include <qt5keychain/keychain.h>
+#include <qt6keychain/keychain.h>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
@@ -281,7 +281,7 @@ QString vpnHelper::getOSCodename()
 QString vpnHelper::runCommandwithOutput(const QString &cmd)
 {
     QProcess proc;
-    proc.start(cmd, QIODevice::ReadOnly);
+    proc.startCommand(cmd, QIODevice::ReadOnly);
     proc.waitForStarted();
     proc.waitForFinished();
 
@@ -291,7 +291,7 @@ QString vpnHelper::runCommandwithOutput(const QString &cmd)
 int vpnHelper::runCommandwithReturnCode(const QString &cmd)
 {
     QProcess proc;
-    proc.start(cmd, QIODevice::ReadOnly);
+    proc.startCommand(cmd, QIODevice::ReadOnly);
     proc.waitForStarted();
     proc.waitForFinished();
 
@@ -305,12 +305,12 @@ QString vpnHelper::linHomeExpansion(const QString &path) {
     if (separatorPosition < 0)
         separatorPosition = path.size();
     if (separatorPosition == 1) {
-        return QDir::homePath() + path.midRef(1);
+        return QDir::homePath() + path.mid(1);
     } else {
 #if defined(Q_OS_VXWORKS) || defined(Q_OS_INTEGRITY)
         const QString homePath = QDir::homePath();
 #else
-        const QByteArray userName = path.midRef(1, separatorPosition - 1).toLocal8Bit();
+        const QByteArray userName = path.mid(1, separatorPosition - 1).toLocal8Bit();
 # if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD) && !defined(Q_OS_WASM)
         passwd pw;
         passwd *tmpPw;
@@ -332,7 +332,7 @@ QString vpnHelper::linHomeExpansion(const QString &path) {
         const QString homePath = QString::fromLocal8Bit(pw->pw_dir);
 # endif
 #endif
-        return homePath + path.midRef(separatorPosition);
+        return homePath + path.mid(separatorPosition);
     }
 }
 

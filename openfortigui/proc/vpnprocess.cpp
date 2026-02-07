@@ -23,7 +23,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QFileInfo>
 #include <QDir>
 
@@ -49,7 +49,7 @@ void vpnProcess::setup(const QString &vpnname)
 
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_5_2);
+        out.setVersion(QDataStream::Qt_6_0);
         vpnApi apiData;
         apiData.objName = name;
         apiData.action = vpnApi::ACTION_HELLO;
@@ -211,7 +211,7 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_2);
+    out.setVersion(QDataStream::Qt_6_0);
     out << cmd;
 
     if(!apiServer->isOpen())
@@ -235,7 +235,7 @@ void vpnProcess::updateStats()
         QTextStream in(&file);
         QString line = in.readLine();
         QStringList lineParse;
-        QRegExp reParse = QRegExp("^\\S{1,}$");
+        QRegularExpression reParse("^\\S{1,}$");
         while (!line.isNull())
         {
             lineParse = line.split(" ").filter(reParse);
@@ -325,7 +325,7 @@ void vpnProcess::onServerReadyRead()
     qDebug() << "server sent something::";
     vpnApi cmd;
     QDataStream in(apiServer);
-    in.setVersion(QDataStream::Qt_5_2);
+    in.setVersion(QDataStream::Qt_6_0);
     in >> cmd;
     qDebug() << "server api command2::" << cmd.action << "::name::" << cmd.objName;
 

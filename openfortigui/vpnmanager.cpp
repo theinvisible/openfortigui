@@ -288,7 +288,7 @@ void vpnManager::onClientConnected()
         client->waitForReadyRead();
         vpnApi cmd;
         QDataStream in(client);
-        in.setVersion(QDataStream::Qt_5_2);
+        in.setVersion(QDataStream::Qt_6_0);
         in >> cmd;
         qDebug() << "client api helo command::" << cmd.action << "::name::" << cmd.objName;
         client->flush();
@@ -435,7 +435,7 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_2);
+    out.setVersion(QDataStream::Qt_6_0);
     out << cmd;
 
     qDebug() << "vpnClientConnection::sendCMD::" << cmd.objName << "::" << cmd.action;
@@ -500,7 +500,7 @@ void vpnClientConnection::onClientReadyRead()
 {
     vpnApi cmd;
     QDataStream in(socket);
-    in.setVersion(QDataStream::Qt_5_2);
+    in.setVersion(QDataStream::Qt_6_0);
     in >> cmd;
 
     QJsonDocument json = QJsonDocument::fromJson(cmd.data);

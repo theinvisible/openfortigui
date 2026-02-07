@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = openfortigui
 TEMPLATE = app
 
-CONFIG += c++11
+CONFIG += c++17
 
 TRANSLATIONS = lang/openfortigui_de.ts lang/openfortigui_ca.ts lang/openfortigui_ja.ts lang/openfortigui_es.ts
 
@@ -94,7 +94,7 @@ QMAKE_CFLAGS += $$(CPPFLAGS) $${OPENFORTIVPN_FLAGS}
 QMAKE_CXXFLAGS += $${OPENFORTIVPN_FLAGS}
 QMAKE_LFLAGS += $$(LDFLAGS)
 
-unix:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil -lqt5keychain
+unix:!symbian: LIBS += -lcrypto -lpthread -lssl -lutil -lqt6keychain
 
 OTHER_FILES += \
     debian/changelog

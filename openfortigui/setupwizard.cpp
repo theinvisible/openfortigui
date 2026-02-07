@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QThread>
+#include <QRandomGenerator>
 
 setupWizard::setupWizard(QWidget *parent) :
     QWidget(parent),
@@ -113,22 +114,22 @@ QString setupWizard::randString(int len)
     QString str;
     int type;
     str.resize(len);
-    qsrand(QTime::currentTime().msec());
+    QRandomGenerator *rng = QRandomGenerator::global();
 
     for(int s = 0; s < len ; ++s)
     {
-        type = qrand() % 3;
+        type = rng->bounded(3);
 
         switch(type)
         {
         case 0:
-            str[s] = QChar('a' + char(qrand() % ('z' - 'a')));
+            str[s] = QChar('a' + char(rng->bounded('z' - 'a')));
             break;
         case 1:
-            str[s] = QChar('A' + char(qrand() % ('Z' - 'A')));
+            str[s] = QChar('A' + char(rng->bounded('Z' - 'A')));
             break;
         case 2:
-            str[s] = QChar('0' + char(qrand() % ('9' - '0')));
+            str[s] = QChar('0' + char(rng->bounded('9' - '0')));
             break;
         }
     }
