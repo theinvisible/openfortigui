@@ -30,7 +30,7 @@ class vpnProcess : public QObject
 {
     Q_OBJECT
 public:
-    explicit vpnProcess(QObject *parent = 0);
+    explicit vpnProcess(QObject *parent = nullptr);
     void setup(const QString &vpnname);
 
 private:
@@ -63,6 +63,8 @@ private:
     void submitVPNMessage(const QString &msg, int msg_type);
 
 signals:
+    void passtoreReceived();
+    void credReceived();
 
 public slots:
     void startVPN();

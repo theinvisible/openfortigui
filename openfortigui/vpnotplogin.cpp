@@ -26,7 +26,7 @@ vpnOTPLogin::vpnOTPLogin(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    procOTP = 0;
+    procOTP = nullptr;
 }
 
 vpnOTPLogin::~vpnOTPLogin()

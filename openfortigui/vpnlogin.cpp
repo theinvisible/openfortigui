@@ -26,7 +26,7 @@ vpnLogin::vpnLogin(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    vpnmanager = 0;
+    vpnmanager = nullptr;
     vpnname = "";
 }
 

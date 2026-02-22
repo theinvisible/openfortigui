@@ -73,7 +73,7 @@ void vpnLogger::logVPNOutput(const QString &name)
 
     QProcess *proc = loggers[name];
 
-    if(proc == 0)
+    if(proc == nullptr)
         return;
 
     if(proc->bytesAvailable() == 0 && proc->isReadable())
@@ -156,13 +156,13 @@ void vpnLogger::logVPNOutput(const QString &name)
     }
 
     QDateTime currentDate = QDateTime::currentDateTime();
-    out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " " << toLog;
+    out << currentDate.toString("MMM d hh:mm:ss") << " " << toLog;
     logfile->flush();
 }
 
 void vpnLogger::procFinished(const QString &name)
 {
-    loggers[name] = 0;
+    loggers[name] = nullptr;
 }
 
 void vpnLogger::process()

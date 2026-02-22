@@ -31,7 +31,7 @@ class vpnLogin : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnLogin(QWidget *parent = 0);
+    explicit vpnLogin(QWidget *parent = nullptr);
     ~vpnLogin();
 
     void setData(vpnManager *manager, const QString &name);

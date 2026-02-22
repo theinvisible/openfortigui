@@ -59,14 +59,11 @@ vpnManager::~vpnManager()
     if(logger_thread->isRunning())
         logger_thread->quit();
 
-    QMapIterator<QString, vpnClientConnection*> i(connections);
-    while(i.hasNext())
+    for (const QString &name : connections.keys())
     {
-        i.next();
-
-        if(i.value()->status != vpnClientConnection::STATUS_DISCONNECTED)
+        if(connections.contains(name) && connections[name]->status != vpnClientConnection::STATUS_DISCONNECTED)
         {
-            stopVPN(i.key());
+            stopVPN(name);
         }
     }
 }
@@ -202,7 +199,7 @@ void vpnManager::stopVPN(const QString &name)
 
 vpnClientConnection *vpnManager::getClientConnection(const QString &name)
 {
-    vpnClientConnection *vpn = 0;
+    vpnClientConnection *vpn = nullptr;
     if(connections.contains(name))
         vpn = connections[name];
 
@@ -253,12 +250,9 @@ void vpnManager::requestStats(const QString &vpnname)
 
 bool vpnManager::isSomeClientConnected()
 {
-    QMapIterator<QString, vpnClientConnection*> i(connections);
-    while(i.hasNext())
+    for (auto it = connections.cbegin(); it != connections.cend(); ++it)
     {
-        i.next();
-
-        if(i.value()->status == vpnClientConnection::STATUS_CONNECTED)
+        if(it.value()->status == vpnClientConnection::STATUS_CONNECTED)
             return true;
     }
 
@@ -267,12 +261,9 @@ bool vpnManager::isSomeClientConnected()
 
 bool vpnManager::isSomeBarracudaConnected()
 {
-    QMapIterator<QString, vpnClientConnection*> i(connections);
-    while(i.hasNext())
+    for (auto it = connections.cbegin(); it != connections.cend(); ++it)
     {
-        i.next();
-
-        if(i.value()->status == vpnClientConnection::STATUS_CONNECTED && i.value()->getBarracudaObj() != 0)
+        if(it.value()->status == vpnClientConnection::STATUS_CONNECTED && it.value()->getBarracudaObj() != nullptr)
             return true;
     }
 
@@ -325,10 +316,9 @@ void vpnManager::onClientConnected()
         {
             tiConfVpnGroups groups;
             vpnGroup *vpngroup = groups.getVpnGroupByName(cmd.objName);
-            QStringListIterator it(vpngroup->localMembers);
-            while(it.hasNext())
+            for (const QString &member : vpngroup->localMembers)
             {
-                startVPN(it.next());
+                startVPN(member);
             }
         }
 
@@ -336,10 +326,9 @@ void vpnManager::onClientConnected()
         {
             tiConfVpnGroups groups;
             vpnGroup *vpngroup = groups.getVpnGroupByName(cmd.objName);
-            QStringListIterator it(vpngroup->localMembers);
-            while(it.hasNext())
+            for (const QString &member : vpngroup->localMembers)
             {
-                stopVPN(it.next());
+                stopVPN(member);
             }
         }
 
@@ -388,7 +377,7 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
     emit VPNCertificateValidationFailed(vpnname, buffer);
 }
 
-void vpnManager::onVPNProcessFinished(QString name, __attribute__ ((unused)) int exitCode, __attribute__ ((unused)) QProcess::ExitStatus exitStatus)
+void vpnManager::onVPNProcessFinished(QString name, [[maybe_unused]] int exitCode, [[maybe_unused]] QProcess::ExitStatus exitStatus)
 {
     qDebug() << "VPN process " << name << " finished!";
     if(connections.contains(name))
@@ -397,7 +386,7 @@ void vpnManager::onVPNProcessFinished(QString name, __attribute__ ((unused)) int
     }
 }
 
-void vpnManager::onVPNProcessErrorOccurred(QString name, __attribute__ ((unused)) QProcess::ProcessError error)
+void vpnManager::onVPNProcessErrorOccurred(QString name, [[maybe_unused]] QProcess::ProcessError error)
 {
     qDebug() << "VPN process " << name << " error occurred!";
     if(connections.contains(name))
@@ -410,7 +399,7 @@ vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QO
 {
     name = n;
     status = STATUS_DISCONNECTED;
-    barracuda_obj = 0;
+    barracuda_obj = nullptr;
 }
 
 void vpnClientConnection::setSocket(QLocalSocket *sock)

@@ -36,14 +36,14 @@
 #include <QMessageBox>
 #include <QLocalSocket>
 
-QFile *openfortiguiLog = 0;
+QFile *openfortiguiLog = nullptr;
 
 void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString & str)
 {
     tiConfMain main_settings;
     QTextStream sout(stdout);
 
-    if(openfortiguiLog == 0)
+    if(openfortiguiLog == nullptr)
     {
         openfortiguiLog = new QFile(QString("%1/openfortigui.log").arg(tiConfMain::formatPath(main_settings.getValue("paths/logs").toString())));
         openfortiguiLog->open(QIODevice::Append | QIODevice::Text);
@@ -57,20 +57,20 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
     switch (type) {
     case QtDebugMsg:
         if(tidebug == true)
-            out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Debug: " << str << "\n";
+            out << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Debug: " << str << "\n";
         break;
     case QtWarningMsg:
-        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Warning: " << str << "\n";
+        out << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Warning: " << str << "\n";
         break;
     case QtCriticalMsg:
-        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Critical: " << str << "\n";
+        out << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Critical: " << str << "\n";
         break;
     case QtInfoMsg:
-        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Info: " << str << "\n";
-        sout << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Info: " << str << "\n";
+        out << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Info: " << str << "\n";
+        sout << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Info: " << str << "\n";
         break;
     case QtFatalMsg:
-        out << currentDate.toString("MMM d hh:mm:ss").toStdString().c_str() << " openfortiGUI::Fatal: " << str << "\n";
+        out << currentDate.toString("MMM d hh:mm:ss") << " openfortiGUI::Fatal: " << str << "\n";
         openfortiguiLog->flush();
         abort();
     }

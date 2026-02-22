@@ -19,6 +19,7 @@
 #define TICONFMAIN_H
 
 #include <QSettings>
+#include <memory>
 
 #include "vpnprofile.h"
 #include "vpngroup.h"
@@ -50,8 +51,8 @@ public:
     static QString getAppDir();
 
 private:
-    QSettings *settings;
-    QSettings *gw_cert_cache;
+    std::unique_ptr<QSettings> settings;
+    std::unique_ptr<QSettings> gw_cert_cache;
 };
 
 class tiConfVpnProfiles

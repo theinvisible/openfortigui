@@ -244,11 +244,14 @@ QString vpnHelper::Qaes128_encrypt(const QString &plain, const QString &key, con
     if(plain.isEmpty())
         return "";
 
+    QByteArray plainBytes = plain.toUtf8();
+    QByteArray keyBytes = key.toUtf8();
+    QByteArray ivBytes = iv.toUtf8();
     QByteArray tmp;
-    tmp.resize(plain.length() * 10);
+    tmp.resize(plainBytes.length() * 10);
     int ciphertext_len;
 
-    ciphertext_len = vpnHelper::aes128_encrypt((unsigned char *) plain.toStdString().c_str(), plain.toStdString().length(), (unsigned char *) key.toStdString().c_str(), (unsigned char *) iv.toStdString().c_str(), (unsigned char *) tmp.data());
+    ciphertext_len = vpnHelper::aes128_encrypt(reinterpret_cast<unsigned char *>(plainBytes.data()), plainBytes.length(), reinterpret_cast<unsigned char *>(keyBytes.data()), reinterpret_cast<unsigned char *>(ivBytes.data()), reinterpret_cast<unsigned char *>(tmp.data()));
     tmp.resize(ciphertext_len);
     return QString::fromUtf8(tmp.toBase64());
 }
@@ -258,12 +261,14 @@ QString vpnHelper::Qaes128_decrypt(const QString &cipher, const QString &key, co
     if(cipher.isEmpty())
         return "";
 
+    QByteArray keyBytes = key.toUtf8();
+    QByteArray ivBytes = iv.toUtf8();
     QByteArray tmp, ci;
     tmp.resize(cipher.length() * 10);
     int decryptedtext_len;
     ci = QByteArray::fromBase64(cipher.toUtf8());
 
-    decryptedtext_len = vpnHelper::aes128_decrypt((unsigned char *) ci.data(), ci.length(), (unsigned char *) key.toStdString().c_str(), (unsigned char *) iv.toStdString().c_str(), (unsigned char *) tmp.data());
+    decryptedtext_len = vpnHelper::aes128_decrypt(reinterpret_cast<unsigned char *>(ci.data()), ci.length(), reinterpret_cast<unsigned char *>(keyBytes.data()), reinterpret_cast<unsigned char *>(ivBytes.data()), reinterpret_cast<unsigned char *>(tmp.data()));
     tmp.resize(decryptedtext_len);
     return QString::fromUtf8(tmp);
 }

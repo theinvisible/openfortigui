@@ -37,7 +37,7 @@ class vpnGroupEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnGroupEditor(QWidget *parent = 0, vpnGroupEditorMode smode = vpnGroupEditorModeNew);
+    explicit vpnGroupEditor(QWidget *parent = nullptr, vpnGroupEditorMode smode = vpnGroupEditorModeNew);
     ~vpnGroupEditor();
 
     void loadVpnGroup(const QString &groupname);

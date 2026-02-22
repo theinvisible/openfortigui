@@ -33,7 +33,7 @@ QString vpnBarracuda::conf_template = "BINDIP = \n"
 vpnBarracuda::vpnBarracuda(QObject *parent)
     : QObject{parent}
 {
-    statsupdater = 0;
+    statsupdater = nullptr;
 }
 
 void vpnBarracuda::start(const QString &vpnname, vpnClientConnection *conn, const QString &otptoken)
@@ -103,7 +103,7 @@ void vpnBarracuda::stop()
     vpnProc->start("barracudavpn", arguments);
     vpnProc->waitForStarted();
     vpnProc->waitForFinished();
-    if(statsupdater != 0)
+    if(statsupdater != nullptr)
         statsupdater->stop();
 
     emit VPNStatusChanged(vpn_profile.name, vpnClientConnection::STATUS_DISCONNECTED);

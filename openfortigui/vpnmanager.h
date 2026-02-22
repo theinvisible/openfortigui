@@ -35,7 +35,7 @@ class vpnClientConnection : public QObject
     Q_OBJECT
 public:
 
-    explicit vpnClientConnection(const QString &n, QObject *parent = 0);
+    explicit vpnClientConnection(const QString &n, QObject *parent = nullptr);
 
     enum connectionStatus
     {
@@ -76,7 +76,7 @@ class vpnManager : public QObject
     Q_OBJECT
 public:
 
-    explicit vpnManager(QObject *parent = 0);
+    explicit vpnManager(QObject *parent = nullptr);
     ~vpnManager();
 
     void startVPN(const QString &name);

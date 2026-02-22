@@ -19,6 +19,8 @@
 
 #include <QDataStream>
 #include <QCoreApplication>
+#include <QEventLoop>
+#include <QTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -32,8 +34,8 @@
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
     init_last_tunnel = false;
-    thread_worker = 0;
-    thread_vpn = 0;
+    thread_worker = nullptr;
+    thread_vpn = nullptr;
 }
 
 void vpnProcess::setup(const QString &vpnname)
@@ -70,7 +72,7 @@ void vpnProcess::closeProcess()
 {
     qDebug() << "shutting down vpn process::" << name;
 
-    if(thread_worker != 0 && thread_vpn != 0)
+    if(thread_worker != nullptr && thread_vpn != nullptr)
     {
         thread_worker->end();
         thread_vpn->quit();
@@ -88,6 +90,13 @@ void vpnProcess::startVPN()
     if(usePasswordStore)
         profiles.setReadProfilePasswords(false);
     vpnProfile *profile = profiles.getVpnProfileByName(name);
+    if(profile == nullptr)
+    {
+        qWarning() << "VPN profile not found:" << name;
+        submitVPNMessage(tr("VPN profile '%1' not found!").arg(name), vpnMsg::TYPE_ERROR);
+        closeProcess();
+        return;
+    }
     if(!checkVPNSettings(profile))
     {
         qDebug() << "VPN settings check failed, exiting!";
@@ -103,15 +112,19 @@ void vpnProcess::startVPN()
         requestPassStore();
 
         // Wait for pass received
-        int wmax = 0;
-        while(!passstore_received && wmax < 30)
+        if(!passstore_received)
         {
-            QThread::sleep(1);
-            QCoreApplication::processEvents();
-            wmax++;
+            QEventLoop waitLoop;
+            QTimer timeoutTimer;
+            timeoutTimer.setSingleShot(true);
+            timeoutTimer.setInterval(30000);
+            connect(this, &vpnProcess::passtoreReceived, &waitLoop, &QEventLoop::quit);
+            connect(&timeoutTimer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
+            timeoutTimer.start();
+            waitLoop.exec();
         }
 
-        if(wmax == 30)
+        if(!passstore_received)
         {
             submitVPNMessage(tr("Timeout for password request from passstore!"), vpnMsg::TYPE_ERROR);
             closeProcess();
@@ -135,15 +148,19 @@ void vpnProcess::startVPN()
         requestCred();
 
         // Wait for cred received
-        int wmax = 0;
-        while(!cred_received && wmax < 30)
+        if(!cred_received)
         {
-            QThread::sleep(1);
-            QCoreApplication::processEvents();
-            wmax++;
+            QEventLoop waitLoop;
+            QTimer timeoutTimer;
+            timeoutTimer.setSingleShot(true);
+            timeoutTimer.setInterval(30000);
+            connect(this, &vpnProcess::credReceived, &waitLoop, &QEventLoop::quit);
+            connect(&timeoutTimer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
+            timeoutTimer.start();
+            waitLoop.exec();
         }
 
-        if(wmax == 30)
+        if(!cred_received)
         {
             submitVPNMessage(tr("Timeout for user/password request, try again!"), vpnMsg::TYPE_ERROR);
             closeProcess();
@@ -226,7 +243,7 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
 
 void vpnProcess::updateStats()
 {
-    if(thread_worker->ptr_tunnel != 0)
+    if(thread_worker->ptr_tunnel != nullptr)
     {
         QFile file("/proc/net/dev");
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -342,10 +359,12 @@ void vpnProcess::onServerReadyRead()
         cred_data.password = jobj["password"].toString();
         cred_data.otp = jobj["otp"].toString();
         cred_received = true;
+        emit credReceived();
         break;
     case vpnApi::ACTION_STOREPASS_SUBMIT:
         cred_data.password = jobj["password"].toString();
         passstore_received = true;
+        emit passtoreReceived();
         break;
     case vpnApi::ACTION_VPNSTATS_REQUEST:
         submitStats();
@@ -381,7 +400,7 @@ void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status
 
 void vpnProcess::onObserverUpdate()
 {
-    if(thread_worker->ptr_tunnel != 0)
+    if(thread_worker->ptr_tunnel != nullptr)
     {
         if(!init_last_tunnel)
         {

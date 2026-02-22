@@ -29,7 +29,7 @@ class setupWizard : public QWidget
     Q_OBJECT
 
 public:
-    explicit setupWizard(QWidget *parent = 0);
+    explicit setupWizard(QWidget *parent = nullptr);
     ~setupWizard();
 
 private:

@@ -30,7 +30,7 @@ class vpnOTPLogin : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnOTPLogin(QWidget *parent = 0);
+    explicit vpnOTPLogin(QWidget *parent = nullptr);
     ~vpnOTPLogin();
 
     void setData(QProcess *otpproc);

@@ -51,9 +51,9 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     ui->tvMembers->setSortingEnabled(false);
     model->removeRows(0, model->rowCount());
 
-    QStandardItem *item = 0;
-    QStandardItem *item2 = 0;
-    QStandardItem *item3 = 0;
+    QStandardItem *item = nullptr;
+    QStandardItem *item2 = nullptr;
+    QStandardItem *item3 = nullptr;
     int row = model->rowCount();
 
     QList<vpnProfile*> vpnss = vpns.getVpnProfiles();
@@ -105,7 +105,7 @@ void vpnGroupEditor::loadVpnGroup(const QString &groupname)
 
     ui->leName->setText(config->name);
 
-    QStandardItem *item = 0, *item2 = 0, *item3 = 0;
+    QStandardItem *item = nullptr, *item2 = nullptr, *item3 = nullptr;
     for(int i=0; i<model->rowCount(); i++)
     {
         item = model->item(i, 0);
@@ -113,17 +113,15 @@ void vpnGroupEditor::loadVpnGroup(const QString &groupname)
         item3 = model->item(i, 2);
         vpnProfile::Origin origin = static_cast<vpnProfile::Origin>(item3->data().toInt());
 
-        QStringListIterator it(config->localMembers);
-        while(it.hasNext())
+        for (const QString &member : config->localMembers)
         {
-            if(item2->text() == it.next() && origin == vpnProfile::Origin_LOCAL)
+            if(item2->text() == member && origin == vpnProfile::Origin_LOCAL)
                 item->setCheckState(Qt::Checked);
         }
 
-        QStringListIterator git(config->globalMembers);
-        while(git.hasNext())
+        for (const QString &member : config->globalMembers)
         {
-            if(item2->text() == git.next() && origin == vpnProfile::Origin_GLOBAL)
+            if(item2->text() == member && origin == vpnProfile::Origin_GLOBAL)
                 item->setCheckState(Qt::Checked);
         }
     }
@@ -155,7 +153,7 @@ void vpnGroupEditor::on_btnSave_clicked()
 
     vpngroup.name = ui->leName->text();
 
-    QStandardItem *item = 0, *item2 = 0, *item3 = 0;
+    QStandardItem *item = nullptr, *item2 = nullptr, *item3 = nullptr;
     QList<QString> lMembers, gMembers;
     tiConfVpnProfiles vpns;
     vpns.setReadProfilePasswords(true);
@@ -171,7 +169,7 @@ void vpnGroupEditor::on_btnSave_clicked()
         if(item->checkState() == Qt::Checked)
         {
             vpnprofile = vpns.getVpnProfileByName(item2->text(), origin);
-            if(vpnprofile != 0 && (vpnprofile->name.isEmpty() || vpnprofile->password.isEmpty()))
+            if(vpnprofile != nullptr && (vpnprofile->name.isEmpty() || vpnprofile->password.isEmpty()))
             {
                 QMessageBox::warning(this, tr("VPN-Group"), tr("You must set username and password for each group you want to include in a group. "
                                                                        "First missing on VPN: %1").arg(vpnprofile->name));

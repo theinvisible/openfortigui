@@ -15,28 +15,28 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIH_H
-#define CONFIH_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 namespace openfortigui_config
 {
-    static const char __attribute__ ((unused)) *name = "openfortiGUI";
-    static const char __attribute__ ((unused)) *version = "0.9.10";
-    static const char __attribute__ ((unused)) *file_main = "~/.openfortigui/main.conf";
-    static const char __attribute__ ((unused)) *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
-    static const char __attribute__ ((unused)) *initd_default = "/etc/init.d/openfortigui";
-    static const char __attribute__ ((unused)) *api_vpn_base_name = "openfortiguivpn";
-    static const char __attribute__ ((unused)) *vpnprofiles_local = "~/.openfortigui/vpnprofiles";
-    static const char __attribute__ ((unused)) *vpnprofiles_global = "/etc/openfortigui/vpnprofiles";
-    static const char __attribute__ ((unused)) *vpngroups_local = "~/.openfortigui/vpngroups";
+    inline constexpr const char *name = "openfortiGUI";
+    inline constexpr const char *version = "0.9.10";
+    inline constexpr const char *file_main = "~/.openfortigui/main.conf";
+    inline constexpr const char *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
+    inline constexpr const char *initd_default = "/etc/init.d/openfortigui";
+    inline constexpr const char *api_vpn_base_name = "openfortiguivpn";
+    inline constexpr const char *vpnprofiles_local = "~/.openfortigui/vpnprofiles";
+    inline constexpr const char *vpnprofiles_global = "/etc/openfortigui/vpnprofiles";
+    inline constexpr const char *vpngroups_local = "~/.openfortigui/vpngroups";
 
-    static const char __attribute__ ((unused)) *password_manager_namespace = "openfortigui";
-    static const char __attribute__ ((unused)) *aeskey = "yowp2IwTTRodgdWp";
-    static const char __attribute__ ((unused)) *aesiv = "VoUT5n5ToogkmQU3";
+    inline constexpr const char *password_manager_namespace = "openfortigui";
+    inline constexpr const char *aeskey = "yowp2IwTTRodgdWp";
+    inline constexpr const char *aesiv = "VoUT5n5ToogkmQU3";
 
-    static const char __attribute__ ((unused)) *validatorName = "^[a-zA-ZäöüÄÖÜ0-9 \\-_]{3,}$";
+    inline constexpr const char *validatorName = "^[a-zA-ZäöüÄÖÜ0-9 \\-_]{3,}$";
 
-    static const int __attribute__ ((unused)) changelogRev = 23;
+    inline constexpr int changelogRev = 23;
 }
 
-#endif // CONFIH_H
+#endif // CONFIG_H

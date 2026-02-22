@@ -33,7 +33,7 @@ class vpnWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit vpnWorker(QObject *parent = 0);
+    explicit vpnWorker(QObject *parent = nullptr);
 
     struct tunnel *ptr_tunnel;
     void setConfig(vpnProfile c);

@@ -37,7 +37,7 @@ class vpnProfileEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnProfileEditor(QWidget *parent = 0, vpnProfileEditorMode smode = vpnProfileEditorModeNew);
+    explicit vpnProfileEditor(QWidget *parent = nullptr, vpnProfileEditorMode smode = vpnProfileEditorModeNew);
     ~vpnProfileEditor();
 
     void loadVpnProfile(const QString &profile, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_BOTH);

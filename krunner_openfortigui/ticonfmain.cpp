@@ -439,7 +439,7 @@ QList<vpnGroup *> tiConfVpnGroups::getVpnGroups()
 vpnGroup *tiConfVpnGroups::getVpnGroupByName(const QString &groupname)
 {
     readVpnGroups();
-    vpnGroup *vpngroup = 0;
+    vpnGroup *vpngroup = nullptr;
 
     for(int i=0; i < vpngroups.count(); i++)
     {

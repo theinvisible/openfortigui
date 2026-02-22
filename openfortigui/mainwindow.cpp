@@ -41,7 +41,7 @@
 #include "setupwizard.h"
 #include "vpnchangelog.h"
 
-vpnManager *MainWindow::vpnmanager = 0;
+vpnManager *MainWindow::vpnmanager = nullptr;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -183,7 +183,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnAddVPN_clicked()
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeNew);
@@ -205,7 +205,7 @@ void MainWindow::on_btnDeleteVPN_clicked()
     if(sellist.count() < 1)
         return;
 
-    if(model->itemFromIndex(sellist.at(0))->parent() == 0)
+    if(model->itemFromIndex(sellist.at(0))->parent() == nullptr)
         return;
 
     if(model->itemFromIndex(sellist.at(0))->parent()->data().toInt() == vpnProfile::Origin_GLOBAL)
@@ -282,7 +282,7 @@ void MainWindow::on_btnEditVPN_clicked()
         return;
     }
 
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeEdit);
@@ -324,7 +324,7 @@ void MainWindow::on_btnCopyVPN_clicked()
     }
 }
 
-void MainWindow::on_tvVpnProfiles_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
+void MainWindow::on_tvVpnProfiles_doubleClicked([[maybe_unused]] const QModelIndex &index)
 {
     tiConfMain main_settings;
 
@@ -336,7 +336,7 @@ void MainWindow::on_tvVpnProfiles_doubleClicked(__attribute__ ((unused)) const Q
 
 void MainWindow::on_btnAddGroup_clicked()
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeNew);
@@ -401,7 +401,7 @@ void MainWindow::on_btnEditGroup_clicked()
 
     QString vpnGroup = model->itemFromIndex(sellist.at(0))->text();
 
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeEdit);
@@ -440,7 +440,7 @@ void MainWindow::on_btnCopyGroup_clicked()
     }
 }
 
-void MainWindow::on_tvVPNGroups_doubleClicked(__attribute__ ((unused)) const QModelIndex &index)
+void MainWindow::on_tvVPNGroups_doubleClicked([[maybe_unused]] const QModelIndex &index)
 {
     tiConfMain main_settings;
 
@@ -507,7 +507,7 @@ void MainWindow::onTbActionLogs()
     }
 }
 
-void MainWindow::onvpnAdded(__attribute__ ((unused)) const vpnProfile &vpn)
+void MainWindow::onvpnAdded([[maybe_unused]] const vpnProfile &vpn)
 {
     refreshVpnProfileList();
 }
@@ -518,7 +518,7 @@ void MainWindow::onvpnEdited(const vpnProfile &vpn)
     QStandardItem *item_gateway = getVpnProfileItem(vpn.name, 2);
     QStandardItem *item_user = getVpnProfileItem(vpn.name, 3);
 
-    if(item_name != 0 && item_gateway != 0 && item_user != 0)
+    if(item_name != nullptr && item_gateway != nullptr && item_user != nullptr)
     {
         item_name->setText(vpn.name);
         item_gateway->setText(vpn.gateway_host);
@@ -526,17 +526,17 @@ void MainWindow::onvpnEdited(const vpnProfile &vpn)
     }
 }
 
-void MainWindow::onvpnGroupAdded(__attribute__ ((unused)) const vpnGroup &vpngroup)
+void MainWindow::onvpnGroupAdded([[maybe_unused]] const vpnGroup &vpngroup)
 {
     refreshVpnGroupList();
 }
 
-void MainWindow::onvpnGroupEdited(__attribute__ ((unused)) const vpnGroup &vpngroup)
+void MainWindow::onvpnGroupEdited([[maybe_unused]] const vpnGroup &vpngroup)
 {
     refreshVpnGroupList();
 }
 
-void MainWindow::onvpnSearch(__attribute__ ((unused)) const QString &searchtext)
+void MainWindow::onvpnSearch([[maybe_unused]] const QString &searchtext)
 {
     refreshVpnProfileList();
 }
@@ -564,15 +564,13 @@ void MainWindow::onStartVPN()
     {
         tiConfVpnGroups groups;
         vpnGroup *group = groups.getVpnGroupByName(itemName);
-        QStringListIterator it(group->localMembers);
-        while(it.hasNext())
+        for (const QString &member : group->localMembers)
         {
-            onStartVPN(it.next(), vpnProfile::Origin_LOCAL);
+            onStartVPN(member, vpnProfile::Origin_LOCAL);
         }
-        QStringListIterator git(group->globalMembers);
-        while(git.hasNext())
+        for (const QString &member : group->globalMembers)
         {
-            onStartVPN(git.next(), vpnProfile::Origin_GLOBAL);
+            onStartVPN(member, vpnProfile::Origin_GLOBAL);
         }
     }
     else
@@ -582,7 +580,7 @@ void MainWindow::onStartVPN()
     }
 }
 
-void MainWindow::onStartVPN(const QString &vpnname, __attribute__ ((unused)) vpnProfile::Origin origin)
+void MainWindow::onStartVPN(const QString &vpnname, [[maybe_unused]] vpnProfile::Origin origin)
 {
     qDebug() << "start vpn:" << vpnname << "active-tab::" << ui->tabMain->currentIndex();
 
@@ -594,7 +592,7 @@ void MainWindow::onActionStartVPN(const QString &vpnname)
     qDebug() << "action vpn pressed::" << vpnname;
 
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
-    if(conn != 0)
+    if(conn != nullptr)
     {
         if(conn->status == vpnClientConnection::STATUS_DISCONNECTED)
             onStartVPN(vpnname);
@@ -612,13 +610,12 @@ void MainWindow::onActionStartVPNGroup(const QString &vpnname)
     tiConfVpnGroups groups;
     vpnClientConnection *conn;
     vpnGroup *vpngroup = groups.getVpnGroupByName(vpnname);
-    QStringListIterator it(vpngroup->localMembers);
     vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
     int connCount = 0;
-    while(it.hasNext())
+    for (const QString &member : vpngroup->localMembers)
     {
-        conn = vpnmanager->getClientConnection(it.next());
-        if(conn != 0)
+        conn = vpnmanager->getClientConnection(member);
+        if(conn != nullptr)
         {
             if(conn->status == vpnClientConnection::STATUS_CONNECTED)
                 connCount+=1;
@@ -632,13 +629,12 @@ void MainWindow::onActionStartVPNGroup(const QString &vpnname)
     else
         vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
 
-    QStringListIterator it2(vpngroup->localMembers);
-    while(it2.hasNext())
+    for (const QString &member : vpngroup->localMembers)
     {
         if(vpnGroupStatus == vpnClientConnection::STATUS_DISCONNECTED)
-            vpnmanager->startVPN(it2.next());
+            vpnmanager->startVPN(member);
         else
-            vpnmanager->stopVPN(it2.next());
+            vpnmanager->stopVPN(member);
     }
 }
 
@@ -664,15 +660,13 @@ void MainWindow::onStopVPN()
     {
         tiConfVpnGroups groups;
         vpnGroup *group = groups.getVpnGroupByName(itemName);
-        QStringListIterator it(group->localMembers);
-        while(it.hasNext())
+        for (const QString &member : group->localMembers)
         {
-            vpnmanager->stopVPN(it.next());
+            vpnmanager->stopVPN(member);
         }
-        QStringListIterator it2(group->globalMembers);
-        while(it2.hasNext())
+        for (const QString &member : group->globalMembers)
         {
-            vpnmanager->stopVPN(it2.next());
+            vpnmanager->stopVPN(member);
         }
     }
     else
@@ -701,7 +695,7 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
     tiConfMain main_settings;
     QIcon statusicon;
     QStandardItem *statusitem = getVpnProfileItem(vpnname, 0);
-    if(statusitem != 0)
+    if(statusitem != nullptr)
     {
         switch(status)
         {
@@ -751,7 +745,7 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 
 void MainWindow::onClientVPNCredRequest(QString vpnname)
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnLogin *f = new vpnLogin(prefWindow);
@@ -769,7 +763,7 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
 
 void MainWindow::onClientVPNOTPRequest(QProcess *proc)
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnOTPLogin *f = new vpnOTPLogin(prefWindow);
@@ -829,7 +823,7 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
                 if(curwait < maxwait)
                 {
                     curwait += 1;
-                    if(vpnmanager->getClientConnection(vpnname) == 0) {
+                    if(vpnmanager->getClientConnection(vpnname) == nullptr) {
                         vpnmanager->startVPN(vpnname);
                         timer->stop();
                     }
@@ -846,7 +840,7 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
     {
         if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
         {
-            if(profile != 0)
+            if(profile != nullptr)
             {
                 profile->trusted_cert = hash;
                 profiles.saveVpnProfile(*profile);
@@ -860,14 +854,14 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
     vpnClientConnection *conn = vpnmanager->getClientConnection(vpnname);
     QStandardItem *item_stats = getVpnProfileItem(vpnname, 5);
 
-    if(conn != 0 && item_stats != 0)
+    if(conn != nullptr && item_stats != nullptr)
     {
         QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
         item_stats->setText(disp);
     }
 }
 
-void MainWindow::onClientVPNMessage(__attribute__ ((unused)) QString vpnname, vpnMsg msg)
+void MainWindow::onClientVPNMessage([[maybe_unused]] QString vpnname, vpnMsg msg)
 {
     QString stext = QString("<b>%1</b>").arg(msg.msg);
     if(!msg.detail.isEmpty())
@@ -894,7 +888,7 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     QStandardItemModel *model = dynamic_cast<QStandardItemModel *>(ui->tvVpnProfiles->model());
 
     QStandardItem *item = model->itemFromIndex(index.sibling(index.row(), 1));
-    if(item == 0)
+    if(item == nullptr)
         return;
 
     QString vpnname = item->text();
@@ -985,15 +979,15 @@ void MainWindow::refreshVpnProfileList()
     root_local_vpn->removeRows(0, root_local_vpn->rowCount());
     root_global_vpn->removeRows(0, root_global_vpn->rowCount());
 
-    QStandardItem *item = 0;
-    QStandardItem *item2 = 0;
-    QStandardItem *item3 = 0;
-    QStandardItem *item4 = 0;
-    QStandardItem *item5 = 0;
-    QStandardItem *item6 = 0;
+    QStandardItem *item = nullptr;
+    QStandardItem *item2 = nullptr;
+    QStandardItem *item3 = nullptr;
+    QStandardItem *item4 = nullptr;
+    QStandardItem *item5 = nullptr;
+    QStandardItem *item6 = nullptr;
     int localRow = 0, globalRow = 0;
 
-    if(tray_menu == 0)
+    if(tray_menu == nullptr)
         tray_menu = new QMenu();
     tray_menu->clear();
     if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_TOP)
@@ -1025,7 +1019,7 @@ void MainWindow::refreshVpnProfileList()
 
         QIcon status;
         vpnClientConnection *conn = vpnmanager->getClientConnection(vpn->name);
-        if(conn != 0)
+        if(conn != nullptr)
         {
             switch(conn->status)
             {
@@ -1108,11 +1102,9 @@ void MainWindow::refreshVpnProfileList()
         trayItems[vpn->name] = action;
     }
 
-    QMapIterator<QString, QAction*> itItems(trayItems);
-    while(itItems.hasNext())
+    for (auto it = trayItems.cbegin(); it != trayItems.cend(); ++it)
     {
-        itItems.next();
-        tray_menu->insertAction(0, itItems.value());
+        tray_menu->insertAction(nullptr, it.value());
     }
 
     if(MainWindow::taskbarPosition() == MainWindow::TASKBAR_POSITION_BOTTOM)
@@ -1146,9 +1138,9 @@ void MainWindow::refreshVpnGroupList()
     model->removeRows(0, model->rowCount());
     ui->tvVPNGroups->setSortingEnabled(false);
 
-    QStandardItem *item = 0;
-    QStandardItem *item2 = 0;
-    QStandardItem *item3 = 0;
+    QStandardItem *item = nullptr;
+    QStandardItem *item2 = nullptr;
+    QStandardItem *item3 = nullptr;
     int row = model->rowCount();
 
     tray_group_menu->clear();
@@ -1162,23 +1154,21 @@ void MainWindow::refreshVpnGroupList()
         qDebug() << "MainWindow::refreshVpnGroupList() -> vpngroups found::" << vpngroup->name;
 
         QIcon status;
-        QStringListIterator it(vpngroup->localMembers);
-        QStringListIterator it2(vpngroup->globalMembers);
         vpnClientConnection::connectionStatus vpnGroupStatus = vpnClientConnection::STATUS_DISCONNECTED;
         int connCount = 0;
-        while(it.hasNext())
+        for (const QString &member : vpngroup->localMembers)
         {
-            conn = vpnmanager->getClientConnection(it.next());
-            if(conn != 0)
+            conn = vpnmanager->getClientConnection(member);
+            if(conn != nullptr)
             {
                 if(conn->status == vpnClientConnection::STATUS_CONNECTED)
                     connCount+=1;
             }
         }
-        while(it2.hasNext())
+        for (const QString &member : vpngroup->globalMembers)
         {
-            conn = vpnmanager->getClientConnection(it2.next());
-            if(conn != 0)
+            conn = vpnmanager->getClientConnection(member);
+            if(conn != nullptr)
             {
                 if(conn->status == vpnClientConnection::STATUS_CONNECTED)
                     connCount+=1;
@@ -1223,11 +1213,9 @@ void MainWindow::refreshVpnGroupList()
         trayItems[vpngroup->name] = action;
     }
 
-    QMapIterator<QString, QAction*> itItems(trayItems);
-    while(itItems.hasNext())
+    for (auto it = trayItems.cbegin(); it != trayItems.cend(); ++it)
     {
-        itItems.next();
-        tray_group_menu->insertAction(0, itItems.value());
+        tray_group_menu->insertAction(nullptr, it.value());
     }
 
     ui->tvVPNGroups->header()->resizeSection(0, 50);
@@ -1287,7 +1275,7 @@ void MainWindow::doOSChecks()
 
 QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int column)
 {
-    QStandardItem *retitem = 0;
+    QStandardItem *retitem = nullptr;
 
     for(int i=0; i < root_local_vpn->rowCount(); i++)
     {
@@ -1297,7 +1285,7 @@ QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int column)
         }
     }
 
-    if(retitem == 0)
+    if(retitem == nullptr)
     {
         for(int i=0; i < root_global_vpn->rowCount(); i++)
         {
@@ -1353,7 +1341,7 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::onVPNSettings()
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     vpnSetting *f = new vpnSetting(prefWindow);
@@ -1367,7 +1355,7 @@ void MainWindow::onVPNSettings()
 
 void MainWindow::onSetupWizard()
 {
-    QMainWindow *prefWindow = new QMainWindow(this, Qt::Dialog);
+    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
     prefWindow->setWindowModality(Qt::WindowModal);
 
     setupWizard *f = new setupWizard(prefWindow);
@@ -1388,7 +1376,7 @@ void MainWindow::onActionLogs()
 
 void MainWindow::onChangelog()
 {
-    QMainWindow *changeWindow = new QMainWindow(this, Qt::Dialog);
+    auto *changeWindow = new QMainWindow(this, Qt::Dialog);
     changeWindow->setWindowModality(Qt::WindowModal);
 
     vpnChangelog *f = new vpnChangelog(changeWindow);
@@ -1403,7 +1391,7 @@ void MainWindow::onChangelog()
     QApplication::setActiveWindow(changeWindow);
 }
 
-void MainWindow::onWatcherVpnProfilesChanged(__attribute__ ((unused)) const QString &path)
+void MainWindow::onWatcherVpnProfilesChanged([[maybe_unused]] const QString &path)
 {
     refreshVpnProfileList();
     refreshVpnGroupList();

@@ -30,7 +30,7 @@ class vpnSetting : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnSetting(QWidget *parent = 0);
+    explicit vpnSetting(QWidget *parent = nullptr);
     ~vpnSetting();
 
 public slots:

@@ -33,9 +33,6 @@ QString tiConfMain::main_gw_cert_cache = tiConfMain::formatPath(openfortigui_con
 
 tiConfMain::tiConfMain()
 {
-    settings = 0;
-    gw_cert_cache = 0;
-
     initMainConf();
 
     if(!QFile(tiConfMain::formatPath(tiConfMain::main_config)).exists())
@@ -44,18 +41,11 @@ tiConfMain::tiConfMain()
         exit(EXIT_FAILURE);
     }
 
-    settings = new QSettings(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
-    gw_cert_cache = new QSettings(tiConfMain::formatPath(tiConfMain::main_gw_cert_cache), QSettings::IniFormat);
+    settings = std::make_unique<QSettings>(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
+    gw_cert_cache = std::make_unique<QSettings>(tiConfMain::formatPath(tiConfMain::main_gw_cert_cache), QSettings::IniFormat);
 }
 
-tiConfMain::~tiConfMain()
-{
-    if(settings != 0)
-        delete settings;
-
-    if(gw_cert_cache != 0)
-        delete gw_cert_cache;
-}
+tiConfMain::~tiConfMain() = default;
 
 void tiConfMain::initMainConf()
 {
@@ -190,6 +180,17 @@ bool tiConfMain::isWritable()
 QString tiConfMain::formatPath(const QString &path)
 {
     QString p = path;
+    // When main_config is an absolute path (e.g. passed via --main-config),
+    // derive the user's home directory from it instead of using QDir::homePath(),
+    // which returns /root/ when running as root subprocess via sudo.
+    // Expected layout: <home>/.openfortigui/main.conf
+    if(QDir::isAbsolutePath(tiConfMain::main_config))
+    {
+        QFileInfo finfo(tiConfMain::main_config);
+        // Go up two levels: main.conf -> .openfortigui -> <home>
+        QString derivedHome = QFileInfo(finfo.absolutePath()).absolutePath();
+        return p.replace("~", derivedHome);
+    }
     return p.replace("~", QDir::homePath());
 }
 
@@ -252,7 +253,7 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
         aesiv = main_settings->getValue("main/aesiv").toString();
     }
 
-    QSettings *f = new QSettings(filename, QSettings::IniFormat);
+    auto f = std::make_unique<QSettings>(filename, QSettings::IniFormat);
 
     f->beginGroup("vpn");
     f->setValue("name", profile.name.trimmed());
@@ -296,15 +297,13 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->endGroup();
 
     f->sync();
-    delete f;
 }
 
 void tiConfVpnProfiles::readVpnProfiles()
 {
     QList<vpnProfile*> vpns = getVpnProfiles();
-    for(int i=0; i < vpns.count(); i++)
+    for (vpnProfile *vpn : vpns)
     {
-        vpnProfile *vpn = vpns.at(i);
         vpn->password = "";
         delete vpn;
     }
@@ -326,12 +325,9 @@ void tiConfVpnProfiles::readVpnProfiles()
         }
     }
 
-    QMapIterator<vpnProfile::Origin, QString> it_profileDirs(profileDirs);
     QRegularExpression rexpName(openfortigui_config::validatorName);
-    while(it_profileDirs.hasNext())
+    for (auto it_profileDirs = profileDirs.cbegin(); it_profileDirs != profileDirs.cend(); ++it_profileDirs)
     {
-        it_profileDirs.next();
-
         QDirIterator it_localvpndir(it_profileDirs.value());
         QString vpnprofilefilepath;
         while (it_localvpndir.hasNext())
@@ -347,8 +343,8 @@ void tiConfVpnProfiles::readVpnProfiles()
                     continue;
                 }
 
-                QSettings *f = new QSettings(vpnprofilefilepath, QSettings::IniFormat);
-                vpnProfile *vpnprofile = new vpnProfile;
+                auto f = std::make_unique<QSettings>(vpnprofilefilepath, QSettings::IniFormat);
+                auto *vpnprofile = new vpnProfile;
 
                 f->beginGroup("vpn");
                 vpnprofile->name = f->value("name").toString();
@@ -406,7 +402,6 @@ void tiConfVpnProfiles::readVpnProfiles()
                 }
 
                 vpnprofiles.append(vpnprofile);
-                delete f;
             }
         }
     }
@@ -425,13 +420,12 @@ QList<vpnProfile *> tiConfVpnProfiles::getVpnProfiles()
 vpnProfile *tiConfVpnProfiles::getVpnProfileByName(const QString &vpnname, vpnProfile::Origin sourceOrigin)
 {
     readVpnProfiles();
-    vpnProfile *vpn = 0;
+    vpnProfile *vpn = nullptr;
 
-    for(int i=0; i < vpnprofiles.count(); i++)
+    for (vpnProfile *p : vpnprofiles)
     {
-        vpn = vpnprofiles.at(i);
-        if((vpn->name == vpnname && vpn->origin_location == sourceOrigin) || (vpn->name == vpnname && sourceOrigin == vpnProfile::Origin_BOTH))
-            return vpn;
+        if((p->name == vpnname && p->origin_location == sourceOrigin) || (p->name == vpnname && sourceOrigin == vpnProfile::Origin_BOTH))
+            return p;
     }
 
     return vpn;
@@ -487,44 +481,36 @@ void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
     if(QFile::exists(filename))
         QFile::remove(filename);
 
-    QSettings *f = new QSettings(filename, QSettings::IniFormat);
+    auto f = std::make_unique<QSettings>(filename, QSettings::IniFormat);
 
     f->beginGroup("group");
     f->setValue("name", group.name);
 
     f->beginWriteArray("localMembers");
-    QListIterator<QString> it(group.localMembers);
-    int i = 0;
-    while(it.hasNext())
+    for (int i = 0; i < group.localMembers.count(); i++)
     {
         f->setArrayIndex(i);
-        f->setValue("name", it.next());
-        i++;
+        f->setValue("name", group.localMembers.at(i));
     }
     f->endArray();
 
     f->beginWriteArray("globalMembers");
-    QListIterator<QString> git(group.globalMembers);
-    int j = 0;
-    while(git.hasNext())
+    for (int j = 0; j < group.globalMembers.count(); j++)
     {
         f->setArrayIndex(j);
-        f->setValue("name", git.next());
-        j++;
+        f->setValue("name", group.globalMembers.at(j));
     }
     f->endArray();
     f->endGroup();
 
     f->sync();
-    delete f;
 }
 
 void tiConfVpnGroups::readVpnGroups()
 {
     QList<vpnGroup*> groups = getVpnGroups();
-    for(int i=0; i < groups.count(); i++)
+    for (vpnGroup *group : groups)
     {
-        vpnGroup *group = groups.at(i);
         delete group;
     }
     vpngroups.clear();
@@ -547,8 +533,8 @@ void tiConfVpnGroups::readVpnGroups()
                 continue;
             }
 
-            QSettings *f = new QSettings(vpngroupfilepath, QSettings::IniFormat);
-            vpnGroup *vpngroup = new vpnGroup;
+            auto f = std::make_unique<QSettings>(vpngroupfilepath, QSettings::IniFormat);
+            auto *vpngroup = new vpnGroup;
 
             f->beginGroup("group");
             vpngroup->name = f->value("name").toString();
@@ -570,7 +556,6 @@ void tiConfVpnGroups::readVpnGroups()
 
 
             vpngroups.append(vpngroup);
-            delete f;
         }
     }
 }
@@ -583,13 +568,12 @@ QList<vpnGroup *> tiConfVpnGroups::getVpnGroups()
 vpnGroup *tiConfVpnGroups::getVpnGroupByName(const QString &groupname)
 {
     readVpnGroups();
-    vpnGroup *vpngroup = 0;
+    vpnGroup *vpngroup = nullptr;
 
-    for(int i=0; i < vpngroups.count(); i++)
+    for (vpnGroup *g : vpngroups)
     {
-        vpngroup = vpngroups.at(i);
-        if(vpngroup->name == groupname)
-            return vpngroup;
+        if(g->name == groupname)
+            return g;
     }
 
     return vpngroup;

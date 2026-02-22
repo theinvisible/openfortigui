@@ -534,7 +534,8 @@ static int get_gateway_host_ip(struct tunnel *tunnel)
         return 1;
     }
 
-    inet_aton(hInfo.addresses().first().toString().toStdString().c_str(), &tunnel->config->gateway_ip);
+    QByteArray ipStr = hInfo.addresses().first().toString().toUtf8();
+    inet_aton(ipStr.constData(), &tunnel->config->gateway_ip);
     setenv("VPN_GATEWAY", inet_ntoa(tunnel->config->gateway_ip), 0);
 
     return 0;
@@ -542,7 +543,7 @@ static int get_gateway_host_ip(struct tunnel *tunnel)
 
 vpnWorker::vpnWorker(QObject *parent) : QObject(parent)
 {
-    ptr_tunnel = 0;
+    ptr_tunnel = nullptr;
 }
 
 void vpnWorker::setConfig(vpnProfile c)
@@ -568,12 +569,12 @@ void vpnWorker::process()
     log_info("Start tunnel.\n");
 
     //init_vpn_config(&config);
-    strncpy(config.gateway_host, vpnConfig.gateway_host.toStdString().c_str(), GATEWAY_HOST_SIZE);
+    strncpy(config.gateway_host, vpnConfig.gateway_host.toUtf8().constData(), GATEWAY_HOST_SIZE);
     config.gateway_host[GATEWAY_HOST_SIZE] = '\0';
     config.gateway_port = vpnConfig.gateway_port;
-    strncpy(config.username, vpnConfig.username.toStdString().c_str(), USERNAME_SIZE);
+    strncpy(config.username, vpnConfig.username.toUtf8().constData(), USERNAME_SIZE);
     config.username[USERNAME_SIZE] = '\0';
-    strncpy(config.password, vpnConfig.password.toStdString().c_str(), PASSWORD_SIZE);
+    strncpy(config.password, vpnConfig.password.toUtf8().constData(), PASSWORD_SIZE);
     config.password[PASSWORD_SIZE] = '\0';
     config.set_routes = (vpnConfig.set_routes) ? 1 : 0;
     config.half_internet_routes = (vpnConfig.half_internet_routers) ? 1 : 0;
@@ -581,54 +582,54 @@ void vpnWorker::process()
 
     if(!vpnConfig.user_cert.isEmpty() && !vpnConfig.user_key.isEmpty())
     {
-        config.user_cert = strdup(vpnConfig.user_cert.toStdString().c_str());
-        config.user_key = strdup(vpnConfig.user_key.toStdString().c_str());
+        config.user_cert = strdup(vpnConfig.user_cert.toUtf8().constData());
+        config.user_key = strdup(vpnConfig.user_key.toUtf8().constData());
     }
 
     if(!vpnConfig.trusted_cert.isEmpty())
-        add_trusted_cert(&config, vpnConfig.trusted_cert.toStdString().c_str());
+        add_trusted_cert(&config, vpnConfig.trusted_cert.toUtf8().constData());
 
     if(!vpnConfig.realm.isEmpty())
-        strncpy(config.realm, vpnConfig.realm.toStdString().c_str(), REALM_SIZE);
+        strncpy(config.realm, vpnConfig.realm.toUtf8().constData(), REALM_SIZE);
 
     if(!vpnConfig.ca_file.isEmpty())
-        config.ca_file = strdup(vpnConfig.ca_file.toStdString().c_str());
+        config.ca_file = strdup(vpnConfig.ca_file.toUtf8().constData());
 
     config.set_dns = (vpnConfig.set_dns) ? 1 : 0;
     config.insecure_ssl = (vpnConfig.insecure_ssl) ? 1 : 0;
     config.seclevel_1 = (vpnConfig.seclevel1) ? 1 : 0;
-    int min_tls = parse_min_tls(vpnConfig.min_tls.toStdString().c_str());
+    int min_tls = parse_min_tls(vpnConfig.min_tls.toUtf8().constData());
     if (min_tls != -1)
         config.min_tls = min_tls;
     config.pppd_use_peerdns = (vpnConfig.pppd_no_peerdns) ? 0 : 1;
     config.pppd_accept_remote = (vpnConfig.pppd_accept_remote) ? 1 : 0;
 
     if(!vpnConfig.otp_prompt.isEmpty())
-        config.otp_prompt = strdup(vpnConfig.otp_prompt.toStdString().c_str());
+        config.otp_prompt = strdup(vpnConfig.otp_prompt.toUtf8().constData());
 
     if(vpnConfig.otp_delay > 0)
         config.otp_delay = vpnConfig.otp_delay;
 
     if(!vpnConfig.otp.isEmpty())
     {
-        strncpy(config.otp, vpnConfig.otp.toStdString().c_str(), OTP_SIZE);
+        strncpy(config.otp, vpnConfig.otp.toUtf8().constData(), OTP_SIZE);
         config.otp[OTP_SIZE] = '\0';
     }
 
     if(!vpnConfig.pppd_log_file.isEmpty())
-        config.pppd_log = strdup(vpnConfig.pppd_log_file.toStdString().c_str());
+        config.pppd_log = strdup(vpnConfig.pppd_log_file.toUtf8().constData());
 
     if(!vpnConfig.pppd_plugin_file.isEmpty())
-        config.pppd_plugin = strdup(vpnConfig.pppd_plugin_file.toStdString().c_str());
+        config.pppd_plugin = strdup(vpnConfig.pppd_plugin_file.toUtf8().constData());
 
     if(!vpnConfig.pppd_ifname.isEmpty())
-        config.pppd_ifname = strdup(vpnConfig.pppd_ifname.toStdString().c_str());
+        config.pppd_ifname = strdup(vpnConfig.pppd_ifname.toUtf8().constData());
 
     if(!vpnConfig.pppd_ipparam.isEmpty())
-        config.pppd_ipparam = strdup(vpnConfig.pppd_ipparam.toStdString().c_str());
+        config.pppd_ipparam = strdup(vpnConfig.pppd_ipparam.toUtf8().constData());
 
     if(!vpnConfig.pppd_call.isEmpty())
-        config.pppd_call = strdup(vpnConfig.pppd_call.toStdString().c_str());
+        config.pppd_call = strdup(vpnConfig.pppd_call.toUtf8().constData());
 
     if(vpnConfig.debug)
         increase_verbosity();

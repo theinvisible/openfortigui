@@ -20,6 +20,7 @@
 #include "ticonfmain.h"
 #include "vpnhelper.h"
 
+#include <memory>
 #include <QDir>
 #include <QDebug>
 
@@ -66,7 +67,7 @@ vpnProfile::vpnProfile()
 
 QString vpnProfile::readPassword()
 {
-    tiConfMain *main_settings = new tiConfMain();
+    auto main_settings = std::make_unique<tiConfMain>();
     QString retPass = "";
 
     QMap<vpnProfile::Origin, QString> profileDirs;
@@ -84,11 +85,10 @@ QString vpnProfile::readPassword()
         aesiv = main_settings->getValue("main/aesiv").toString();
     }
 
-    QSettings *f = new QSettings(profileDir + QDir::separator() + name + ".conf", QSettings::IniFormat);
+    auto f = std::make_unique<QSettings>(profileDir + QDir::separator() + name + ".conf", QSettings::IniFormat);
     f->beginGroup("vpn");
     retPass = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
     f->endGroup();
-    delete f;
 
     return retPass;
 }

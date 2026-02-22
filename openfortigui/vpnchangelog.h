@@ -29,7 +29,7 @@ class vpnChangelog : public QWidget
     Q_OBJECT
 
 public:
-    explicit vpnChangelog(QWidget *parent = 0);
+    explicit vpnChangelog(QWidget *parent = nullptr);
     ~vpnChangelog();
 
     void initAfter();
