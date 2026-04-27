@@ -21,6 +21,7 @@
 #include <QObject>
 #include <QSignalMapper>
 #include <QProcess>
+#include <QPointer>
 #include <QMap>
 #include <QFile>
 
@@ -38,17 +39,16 @@ public slots:
     void addVPN(const QString &name, QProcess *proc);
 
 private:
-    QSignalMapper *logMapperStdout, *logMapperFinished;
-    QMap<QString, QProcess*> loggers;
+    QSignalMapper *logMapperFinished;
+    QMap<QString, QPointer<QProcess>> loggers;
     QMap<QString, QFile*> logfiles;
-    QMap<QString, bool> loglocker;
     QMap<QString, bool> logCertFailedMode;
     QMap<QString, QString> logCertFailedBuffer;
     QMap<QString, vpnProfile> vpnConfigs;
     tiConfMain main_settings;
 
 private slots:
-    void logVPNOutput(const QString &name);
+    void logVPNData(const QString &name, const QByteArray &data);
     void procFinished(const QString &name);
 
 signals:

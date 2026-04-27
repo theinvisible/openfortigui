@@ -20,21 +20,19 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QThread>
+#include <QMetaObject>
 
 #include "ticonfmain.h"
 
 vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
 {
-    logMapperStdout = new QSignalMapper(this);
     logMapperFinished = new QSignalMapper(this);
-    loggers = QMap<QString, QProcess*>();
+    loggers = QMap<QString, QPointer<QProcess>>();
     logfiles = QMap<QString, QFile*>();
-    loglocker = QMap<QString, bool>();
     logCertFailedMode = QMap<QString, bool>();
     logCertFailedBuffer = QMap<QString, QString>();
     vpnConfigs = QMap<QString, vpnProfile>();
 
-    connect(logMapperStdout, SIGNAL(mapped(QString)), this, SLOT(logVPNOutput(QString)));
     connect(logMapperFinished, SIGNAL(mapped(QString)), this, SLOT(procFinished(QString)));
 }
 
@@ -51,7 +49,6 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
 
     vpnConfigs.insert(name, *profile);
     loggers.insert(name, proc);
-    loglocker.insert(name, false);
     logCertFailedMode.insert(name, false);
     logCertFailedBuffer.insert(name, "");
     if(!logfiles.contains(name))
@@ -61,33 +58,25 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
         logfiles.insert(name, file);
     }
 
-    connect(proc, SIGNAL(readyReadStandardOutput()), logMapperStdout, SLOT(map()));
+    connect(proc, &QProcess::readyReadStandardOutput, proc, [this, name, proc]() {
+        QByteArray data = proc->readAll();
+        if(!data.isEmpty())
+            QMetaObject::invokeMethod(this, "logVPNData", Qt::QueuedConnection,
+                                      Q_ARG(QString, name), Q_ARG(QByteArray, data));
+    });
     connect(proc, SIGNAL(finished(int)), logMapperFinished, SLOT(map()));
-    logMapperStdout->setMapping(proc, name);
     logMapperFinished->setMapping(proc, name);
 }
 
-void vpnLogger::logVPNOutput(const QString &name)
+void vpnLogger::logVPNData(const QString &name, const QByteArray &data)
 {
-    QThread::msleep(200);
-
-    QProcess *proc = loggers[name];
-
-    if(proc == 0)
+    QFile *logfile = logfiles.value(name, nullptr);
+    if(logfile == nullptr)
         return;
 
-    if(proc->bytesAvailable() == 0 && proc->isReadable())
-        return;
-
-    qDebug() << QDateTime::currentMSecsSinceEpoch() << "bytes avail::" << proc->bytesAvailable();
-
-    QByteArray blog;
-    blog.append(proc->read(proc->bytesAvailable()));
-
-    QFile *logfile = logfiles[name];
     QTextStream out(logfile);
+    QString toLog = QString::fromUtf8(data);
 
-    QString toLog = QString::fromUtf8(blog);
     if(toLog.contains("Please load the ppp"))
     {
         vpnMsg msg;
@@ -126,20 +115,21 @@ void vpnLogger::logVPNOutput(const QString &name)
         return;
     }
 
+    bool needsOtp = false;
     if(vpnConfigs[name].otp_prompt.isEmpty())
     {
-        if(toLog.contains("Please") ||
-           toLog.contains("2factor authentication token:") ||
-           toLog.contains("Two-factor authentication") ||
-           toLog.contains("one-time password"))
-        {
-            emit OTPRequest(proc);
-        }
+        needsOtp = toLog.contains("Please") ||
+                   toLog.contains("2factor authentication token:") ||
+                   toLog.contains("Two-factor authentication") ||
+                   toLog.contains("one-time password");
     } else {
-        if(toLog.contains(vpnConfigs[name].otp_prompt))
-        {
+        needsOtp = toLog.contains(vpnConfigs[name].otp_prompt);
+    }
+    if(needsOtp)
+    {
+        QPointer<QProcess> proc = loggers.value(name);
+        if(!proc.isNull())
             emit OTPRequest(proc);
-        }
     }
 
     if(toLog.contains("Gateway certificate validation failed, and the certificate digest is not in the local whitelist."))
@@ -162,7 +152,17 @@ void vpnLogger::logVPNOutput(const QString &name)
 
 void vpnLogger::procFinished(const QString &name)
 {
-    loggers[name] = 0;
+    loggers.remove(name);
+    logCertFailedMode.remove(name);
+    logCertFailedBuffer.remove(name);
+    vpnConfigs.remove(name);
+    QFile *logfile = logfiles.value(name, nullptr);
+    if(logfile != nullptr)
+    {
+        logfile->close();
+        delete logfile;
+    }
+    logfiles.remove(name);
 }
 
 void vpnLogger::process()

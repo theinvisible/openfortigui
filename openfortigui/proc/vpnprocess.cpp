@@ -32,8 +32,10 @@
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
     init_last_tunnel = false;
-    thread_worker = 0;
-    thread_vpn = 0;
+    thread_worker = nullptr;
+    thread_vpn = nullptr;
+    observer = nullptr;
+    observerStats = nullptr;
 }
 
 void vpnProcess::setup(const QString &vpnname)
@@ -70,7 +72,12 @@ void vpnProcess::closeProcess()
 {
     qDebug() << "shutting down vpn process::" << name;
 
-    if(thread_worker != 0 && thread_vpn != 0)
+    if(observer != nullptr)
+        observer->stop();
+    if(observerStats != nullptr)
+        observerStats->stop();
+
+    if(thread_worker != nullptr && thread_vpn != nullptr)
     {
         thread_worker->end();
         thread_vpn->quit();
@@ -226,7 +233,7 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
 
 void vpnProcess::updateStats()
 {
-    if(thread_worker->ptr_tunnel != 0)
+    if(thread_worker != nullptr && thread_worker->ptr_tunnel != nullptr)
     {
         QFile file("/proc/net/dev");
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -381,7 +388,7 @@ void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status
 
 void vpnProcess::onObserverUpdate()
 {
-    if(thread_worker->ptr_tunnel != 0)
+    if(thread_worker != nullptr && thread_worker->ptr_tunnel != nullptr)
     {
         if(!init_last_tunnel)
         {
@@ -419,7 +426,8 @@ void vpnProcess::onObserverUpdate()
 
 void vpnProcess::onStatsUpdate()
 {
-    if(thread_worker->ptr_tunnel->state == STATE_UP)
+    if(thread_worker != nullptr && thread_worker->ptr_tunnel != nullptr
+       && thread_worker->ptr_tunnel->state == STATE_UP)
     {
         updateStats();
         submitStats();
