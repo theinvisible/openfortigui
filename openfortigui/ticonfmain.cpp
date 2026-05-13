@@ -91,6 +91,8 @@ void tiConfMain::initMainConf()
         conf.setValue("paths/logs", logs_dir);
         conf.setValue("paths/initd", openfortigui_config::initd_default);
         conf.setValue("checks/sudopresenv", false);
+        conf.setValue("main/sudo_binary", "");
+        conf.setValue("main/sudo_extra_options", "");
         conf.setValue("gui/disable_notifications", false);
         conf.setValue("gui/connect_on_dblclick", false);
         conf.sync();
@@ -143,6 +145,18 @@ void tiConfMain::initMainConf()
         if(!conf.contains("gui/connect_on_dblclick"))
         {
             conf.setValue("gui/connect_on_dblclick", false);
+            conf.sync();
+        }
+
+        if(!conf.contains("main/sudo_binary"))
+        {
+            conf.setValue("main/sudo_binary", "");
+            conf.sync();
+        }
+
+        if(!conf.contains("main/sudo_extra_options"))
+        {
+            conf.setValue("main/sudo_extra_options", "");
             conf.sync();
         }
     }

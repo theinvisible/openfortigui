@@ -18,6 +18,7 @@
 #include "vpnmanager.h"
 #include "config.h"
 #include "ticonfmain.h"
+#include "vpnhelper.h"
 #include "proc/vpnbarracuda.h"
 
 #include <QDataStream>
@@ -29,6 +30,7 @@
 #include <QJsonArray>
 #include <QMessageBox>
 #include <QInputDialog>
+
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
@@ -127,9 +129,25 @@ void vpnManager::startVPN(const QString &name)
     case vpnProfile::Device_Fortigate:
     default:
     {
+        QString sudoBin = main_settings.getValue("main/sudo_binary").toString().trimmed();
+        if(sudoBin.isEmpty())
+            sudoBin = "sudo";
+
+        bool sudoRs = vpnHelper::isSudoRs(sudoBin);
+
         QStringList arguments;
-        if(main_settings.getValue("main/sudo_preserve_env").toBool())
-            arguments << "-E";
+        QString extraOpts = main_settings.getValue("main/sudo_extra_options").toString().trimmed();
+        if(!extraOpts.isEmpty()) {
+            QStringList opts = extraOpts.split(' ', Qt::SkipEmptyParts);
+            if(sudoRs && opts.removeAll("-E") > 0)
+                qWarning() << "vpnManager::startVPN: sudo-rs detected, -E option is not supported and has been removed";
+            arguments << opts;
+        } else if(main_settings.getValue("main/sudo_preserve_env").toBool()) {
+            if(sudoRs)
+                qWarning() << "vpnManager::startVPN: sudo-rs detected, ignoring sudo_preserve_env (-E is not supported)";
+            else
+                arguments << "-E";
+        }
         arguments << QCoreApplication::applicationFilePath();
         arguments << "--start-vpn";
         arguments << "--vpn-name";
@@ -145,7 +163,7 @@ void vpnManager::startVPN(const QString &name)
     #endif
         emit addVPNLogger(name, vpnProc);
         qDebug() << "Start vpn::" << name;
-        vpnProc->start("sudo", arguments);
+        vpnProc->start(sudoBin, arguments);
         // Close read channel to avoid memory leak
         // TODO: Process output later on
         vpnProc->waitForStarted();
@@ -388,22 +406,67 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
     emit VPNCertificateValidationFailed(vpnname, buffer);
 }
 
-void vpnManager::onVPNProcessFinished(QString name, __attribute__ ((unused)) int exitCode, __attribute__ ((unused)) QProcess::ExitStatus exitStatus)
+void vpnManager::onVPNProcessFinished(QString name, int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qDebug() << "VPN process " << name << " finished!";
+    qDebug() << "VPN process " << name << " finished with code" << exitCode << "status" << exitStatus;
     if(connections.contains(name))
     {
+        // Only report NormalExit failures; crashes are handled by onVPNProcessErrorOccurred
+        if(exitStatus == QProcess::NormalExit && exitCode != 0)
+        {
+            vpnMsg msg;
+            msg.msg = tr("VPN '%1' failed to start (sudo exited with code %2). Check sudo permissions and the log file for details.").arg(name).arg(exitCode);
+            // Try to include any output not yet consumed by the logger
+            QProcess *proc = connections[name]->proc;
+            if(proc)
+            {
+                QByteArray remaining = proc->readAll();
+                if(!remaining.isEmpty())
+                    msg.detail = QString::fromUtf8(remaining);
+            }
+            msg.type = vpnMsg::TYPE_ERROR;
+            emit VPNMessage(name, msg);
+        }
         connections.remove(name);
     }
 }
 
-void vpnManager::onVPNProcessErrorOccurred(QString name, __attribute__ ((unused)) QProcess::ProcessError error)
+void vpnManager::onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error)
 {
-    qDebug() << "VPN process " << name << " error occurred!";
-    if(connections.contains(name))
+    qDebug() << "VPN process " << name << " error occurred:" << error;
+
+    if(!connections.contains(name))
+        return;
+
+    QString errorMsg;
+    switch(error)
     {
-        connections.remove(name);
+    case QProcess::FailedToStart:
+        errorMsg = tr("Failed to start the VPN process for '%1': sudo binary not found or not executable.\nCheck the sudo binary path in Settings.").arg(name);
+        break;
+    case QProcess::Crashed:
+        errorMsg = tr("VPN process '%1' crashed unexpectedly.").arg(name);
+        break;
+    case QProcess::Timedout:
+        errorMsg = tr("Timeout while waiting for VPN process '%1'.").arg(name);
+        break;
+    case QProcess::WriteError:
+        errorMsg = tr("Write error on VPN process '%1'.").arg(name);
+        break;
+    case QProcess::ReadError:
+        errorMsg = tr("Read error on VPN process '%1'.").arg(name);
+        break;
+    default:
+        errorMsg = tr("Unknown error on VPN process '%1' (code: %2).").arg(name).arg(static_cast<int>(error));
+        break;
     }
+
+    vpnMsg msg;
+    msg.msg = errorMsg;
+    msg.type = vpnMsg::TYPE_ERROR;
+    emit VPNMessage(name, msg);
+
+    connections.remove(name);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)

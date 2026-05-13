@@ -18,6 +18,7 @@
 #include "vpnhelper.h"
 
 #include <QEventLoop>
+#include <QMap>
 #include <QProcess>
 
 #include "config.h"
@@ -296,6 +297,25 @@ int vpnHelper::runCommandwithReturnCode(const QString &cmd)
     proc.waitForFinished();
 
     return proc.exitCode();
+}
+
+bool vpnHelper::isSudoRs(const QString &sudoBin)
+{
+    static QMap<QString, bool> cache;
+    if(cache.contains(sudoBin))
+        return cache[sudoBin];
+
+    QProcess proc;
+    proc.start(sudoBin, QStringList() << "--version");
+    bool started = proc.waitForFinished(3000);
+    QString output;
+    if(started)
+        output = QString::fromUtf8(proc.readAllStandardOutput()) +
+                 QString::fromUtf8(proc.readAllStandardError());
+
+    bool result = output.toLower().contains("sudo-rs");
+    cache[sudoBin] = result;
+    return result;
 }
 
 QString vpnHelper::linHomeExpansion(const QString &path) {

@@ -1,1 +1,5 @@
-%sudo  ALL=NOPASSWD:SETENV: /usr/bin/openfortigui --start-vpn *
+Defaults!/usr/bin/openfortigui env_keep += "DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS HOME"
+%sudo ALL=(ALL) NOPASSWD: /usr/bin/openfortigui
+
+Defaults!/usr/bin/openfortivpn env_keep += "DISPLAY XAUTHORITY DBUS_SESSION_BUS_ADDRESS"
+%sudo ALL=(ALL) NOPASSWD: /usr/bin/openfortivpn

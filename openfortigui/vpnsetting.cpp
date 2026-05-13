@@ -20,9 +20,23 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProcess>
+#include <QFile>
 
 #include "ticonfmain.h"
 #include "vpnhelper.h"
+
+static void updateSudoEOptionState(QCheckBox *cb, const QString &sudoBinData)
+{
+    QString bin = sudoBinData;
+    if(bin.isEmpty())
+        bin = "sudo";
+    bool isSudoRs = (bin != QLatin1String("custom")) && vpnHelper::isSudoRs(bin);
+    cb->setEnabled(!isSudoRs);
+    cb->setToolTip(isSudoRs
+        ? QObject::tr("Not supported by sudo-rs: use env_keep in sudoers to preserve environment variables")
+        : QString());
+}
 
 vpnSetting::vpnSetting(QWidget *parent) :
     QWidget(parent),
@@ -45,7 +59,25 @@ vpnSetting::vpnSetting(QWidget *parent) :
         ui->leAESKey->setText(confMain.getValue("main/aeskey").toString());
         ui->leAESIV->setText(confMain.getValue("main/aesiv").toString());
     }
-    ui->cbDisallowUnsecureCertificates->setChecked(confMain.getValue("main/disallow_unsecure_certificates").toBool());	
+    ui->cbDisallowUnsecureCertificates->setChecked(confMain.getValue("main/disallow_unsecure_certificates").toBool());
+
+    populateSudoAlternatives();
+    QString savedBinary = confMain.getValue("main/sudo_binary").toString();
+    if(savedBinary.isEmpty()) {
+        ui->cboSudoBinary->setCurrentIndex(0);
+    } else {
+        int idx = ui->cboSudoBinary->findData(savedBinary);
+        if(idx >= 0) {
+            ui->cboSudoBinary->setCurrentIndex(idx);
+        } else {
+            int customIdx = ui->cboSudoBinary->findData(QString("custom"));
+            if(customIdx >= 0)
+                ui->cboSudoBinary->setCurrentIndex(customIdx);
+            ui->leSudoCustomBinary->setText(savedBinary);
+        }
+    }
+    ui->leSudoExtraOptions->setText(confMain.getValue("main/sudo_extra_options").toString());
+    updateSudoEOptionState(ui->cbSUDOPreserveEnv, ui->cboSudoBinary->currentData().toString());
 
     ui->leLocalVPNProfiles->setText(confMain.getValue("paths/localvpnprofiles").toString());
     ui->leLocalVPNGroups->setText(confMain.getValue("paths/localvpngroups").toString());
@@ -73,6 +105,10 @@ vpnSetting::vpnSetting(QWidget *parent) :
         ui->cbDisableNotifications->setDisabled(true);
         ui->cbConnectonDblClick->setDisabled(true);
         ui->cbDisallowUnsecureCertificates->setDisabled(true);
+        ui->cboSudoBinary->setDisabled(true);
+        ui->leSudoCustomBinary->setDisabled(true);
+        ui->btnSudoBrowse->setDisabled(true);
+        ui->leSudoExtraOptions->setDisabled(true);
     }
 }
 
@@ -108,6 +144,14 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/aesiv", ui->leAESIV->text());
 
     confMain.setValue("main/disallow_unsecure_certificates", ui->cbDisallowUnsecureCertificates->isChecked());
+
+    QString sudoBinary;
+    if(ui->cboSudoBinary->currentData().toString() == QLatin1String("custom"))
+        sudoBinary = ui->leSudoCustomBinary->text().trimmed();
+    else
+        sudoBinary = ui->cboSudoBinary->currentData().toString();
+    confMain.setValue("main/sudo_binary", sudoBinary);
+    confMain.setValue("main/sudo_extra_options", ui->leSudoExtraOptions->text().trimmed());
 
     confMain.setValue("paths/localvpnprofiles", tiConfMain::formatPathReverse(ui->leLocalVPNProfiles->text()));
     confMain.setValue("paths/localvpngroups", tiConfMain::formatPathReverse(ui->leLocalVPNGroups->text()));
@@ -166,4 +210,50 @@ void vpnSetting::pathChooser(QLineEdit *widget)
 
     if(!dir.isEmpty())
         widget->setText(dir);
+}
+
+void vpnSetting::populateSudoAlternatives()
+{
+    ui->cboSudoBinary->blockSignals(true);
+    ui->cboSudoBinary->clear();
+    ui->cboSudoBinary->addItem(tr("System default (sudo)"), QString(""));
+
+    QProcess proc;
+    proc.start("update-alternatives", QStringList() << "--list" << "sudo");
+    proc.waitForFinished(3000);
+    if(proc.exitCode() == 0) {
+        QString output = QString::fromUtf8(proc.readAllStandardOutput());
+        QStringList alternatives = output.split('\n', Qt::SkipEmptyParts);
+        for(const QString &alt : alternatives) {
+            QString trimmed = alt.trimmed();
+            if(!trimmed.isEmpty() && QFile::exists(trimmed))
+                ui->cboSudoBinary->addItem(trimmed, trimmed);
+        }
+    }
+
+    ui->cboSudoBinary->addItem(tr("Custom..."), QString("custom"));
+    ui->cboSudoBinary->blockSignals(false);
+
+    bool isCustom = (ui->cboSudoBinary->currentData().toString() == QLatin1String("custom"));
+    ui->label_sudo_custom->setVisible(isCustom);
+    ui->leSudoCustomBinary->setVisible(isCustom);
+    ui->btnSudoBrowse->setVisible(isCustom);
+}
+
+void vpnSetting::on_cboSudoBinary_currentIndexChanged(int index)
+{
+    QString data = ui->cboSudoBinary->itemData(index).toString();
+    bool isCustom = (data == QLatin1String("custom"));
+    ui->label_sudo_custom->setVisible(isCustom);
+    ui->leSudoCustomBinary->setVisible(isCustom);
+    ui->btnSudoBrowse->setVisible(isCustom);
+    if(!isCustom)
+        updateSudoEOptionState(ui->cbSUDOPreserveEnv, data);
+}
+
+void vpnSetting::on_btnSudoBrowse_clicked()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Select SUDO binary"), "/usr/bin", tr("Executables (*)"));
+    if(!file.isEmpty())
+        ui->leSudoCustomBinary->setText(file);
 }

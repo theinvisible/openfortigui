@@ -42,11 +42,14 @@ public slots:
     void on_btnChooseGlobalVPNProfiles_clicked();
     void on_btnChooseLogs_clicked();
     void on_cbUseSystemPasswordStore_toggled(bool checked);
+    void on_cboSudoBinary_currentIndexChanged(int index);
+    void on_btnSudoBrowse_clicked();
 
 private:
     Ui::vpnSetting *ui;
 
     void pathChooser(QLineEdit *widget);
+    void populateSudoAlternatives();
 };
 
 #endif // VPNSETTING_H

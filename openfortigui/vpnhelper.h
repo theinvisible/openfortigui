@@ -51,6 +51,8 @@ public:
     static int runCommandwithReturnCode(const QString &cmd);
 
     static QString linHomeExpansion(const QString &path);
+
+    static bool isSudoRs(const QString &sudoBin);
 };
 
 #endif // VPNHELPER_H
