@@ -11,11 +11,16 @@ tests/fortigate-vm/testlab test    # all test cases                    (~80 s)
 tests/fortigate-vm/testlab down    # VM and network gone
 ```
 
-Last full run (FortiOS 7.4.12, evaluation license): **8/8 cases, 112 checks
-green in 91 s.** Building this lab uncovered three crash and cleanup bugs in
-openfortiGUI, and decoupling the VPN process from the inherited environment
-uncovered a fourth; all are fixed, and the test cases now guard them against
-regression — see [Findings](#8-findings-in-openfortigui).
+Two cases need no FortiGate: `90_gui` drives the real GUI on a virtual screen,
+`91_sudo_rs` runs the packaged build inside an Ubuntu 26.04 container with
+sudo-rs. `testlab test 90_gui` therefore works without a VM at all.
+
+Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 161 checks
+green in 165 s.** Building this lab uncovered three crash and cleanup bugs in
+openfortiGUI; decoupling the VPN process from the inherited environment
+uncovered a fourth, the cookie path a fifth, and the GUI and packaging cases two
+more — all are fixed, and the cases now guard them against regression, see
+[Findings](#8-findings-in-openfortigui).
 
 ---
 
@@ -31,6 +36,12 @@ regression — see [Findings](#8-findings-in-openfortigui).
 | `sudo` | for bridges/taps/netns and the VPN client (pppd needs root) |
 | FortiGate KVM image | `FGT_VM64_KVM-*.kvm.zip` from Fortinet |
 | FortiGate VM license | see [VM license](#7-vm-license) — **effectively required** |
+| `xvfb`, `xdotool`, `openbox`, `x11-utils`, `x11-apps` | `90_gui` only: `apt install xvfb xdotool openbox x11-utils x11-apps` |
+| `docker` | `91_sudo_rs` only: a usable daemon and membership in group `docker` |
+
+The last two rows are needed only for the cases that declare them (see
+[Extending the suite](#6-extending-the-suite)); everything else runs without
+them.
 
 libvirt is **not** needed. The lab drives QEMU directly over serial and QMP
 unix sockets.
@@ -273,6 +284,8 @@ printf '%s' "$pw" | openssl enc -aes-128-cbc -a -A \
 | `60_persistent` | a server-side killed tunnel (`execute vpn sslvpn del-tunnel <index>`) is rebuilt via `persistent=true`; SIGTERM stops the process despite `persistent` | 15 |
 | `70_guistop` | stop initiated by the GUI while the tunnel is up: `ACTION_STOP` over the local socket, and the GUI going away. Uses `mock_gui.py`, which provides the `openfortiGUI` QLocalServer | 22 |
 | `80_env` | independence from the inherited environment: connect with a wrong `HOME` and no `XDG_RUNTIME_DIR`, the child reaches the GUI over `--api-socket`, log and `gw_cert.cache` follow `--main-config`, nothing written to `/root`, `main.conf` keeps its owner | 10 |
+| `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up | 25 |
+| `91_sudo_rs` | the built `.deb` inside an Ubuntu 26.04 container with sudo-rs: dependencies resolvable, sudoers file parsed by `visudo-rs`, the `--start-vpn *` wildcard effective and nothing beyond it, `-E` semantics of both sudo implementations, and a real tunnel started through sudo-rs | 24 |
 
 Four of these checks used to report the crashes described under
 [Findings](#8-findings-in-openfortigui). Since the fix they are regression
@@ -314,10 +327,25 @@ Three settings the provisioning applies that are not obvious:
 ## 6. Extending the suite
 
 A case is a standalone bash script under `cases/`. Discovery is by glob, so
-dropping a file in is enough. The scaffolding comes from `lib/case.sh`:
+dropping a file in is enough.
+
+Each case declares what it needs in a `# lab-requires:` line near the top:
+
+| Token | Meaning |
+|---|---|
+| `vm` | the FortiGate VM and the lab network — `testlab test` boots nothing, it only checks |
+| `gui` | a virtual screen: `Xvfb`, `openbox`, `xdotool`, `xwininfo`, `xprop` |
+| `docker` | a usable docker daemon |
+
+`cmd_test` collects the tokens of the **selected** cases and demands only those,
+which is what makes `testlab test 90_gui` work without a FortiGate. A case
+without the line counts as `vm`, so nothing runs unguarded by accident.
+
+The scaffolding comes from `lib/case.sh`:
 
 ```bash
 #!/usr/bin/env bash
+# lab-requires: vm
 set -uo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/case.sh"
 case_setup                     # checks network/VM/binary, cleans leftovers,
@@ -350,6 +378,28 @@ Useful helpers:
 | `client_exit_code`, `client_wait_log`, `client_wait_log_count`, `client_wait_exit` | wait for and inspect results |
 | `ppp_iface`, `ppp_ip`, `wait_ppp_up`, `route_to_dev`, `route_snapshot`, `iface_bytes` | network state |
 | `fgt_cli "<cmd>"` | run a FortiOS command from inside a case |
+| `client_make_client_cert <dir> <pass>` | client certificate with an encrypted key |
+
+For a `gui` case, `lib/gui.sh` adds `gui_start_display`, `gui_app_start`,
+`gui_win`/`gui_wait_window`, `gui_win_size`/`gui_win_pos`, `gui_min_size`,
+`gui_click`, `gui_key`/`gui_type` and `gui_screenshot`. Four details in there are
+not obvious and are the reason the case works at all:
+
+- **`WAYLAND_DISPLAY` has to be unset.** Qt6 prefers the Wayland plugin whenever
+  it is set and then ignores `DISPLAY` — the windows open on the developer's real
+  desktop and nothing is found on Xvfb.
+- **`DBUS_SESSION_BUS_ADDRESS` has to be unset too**, otherwise the menu bar can
+  be exported to the desktop's global menu and the window has none. `gui_app_start`
+  therefore builds the environment with `env -i`.
+- **A window manager is not optional.** Without one nothing has input focus and
+  `WM_NORMAL_HINTS` is not enforced, so both the keyboard and the minimum-size
+  assertions would be meaningless.
+- **Positions come from `xwininfo -id`, not from `xdotool getwindowgeometry`** —
+  the latter is off by the title bar height under a reparenting WM. Sizes agree.
+
+`main.conf` must exist before the GUI is started: `tiConfMain::setMainConfig()`
+only accepts a path that is already there (`ticonfmain.cpp:262`), otherwise it
+silently keeps `$HOME/.openfortigui`. `client_init_home` writes one.
 
 ## 7. VM license
 
@@ -642,6 +692,70 @@ the prefix when it is missing.
 Covered by `40_auth` e), which fetches a real cookie from the portal and
 connects with it, without a user name or password.
 
+### 8. `sudo -E` was never a dependable way to pass the environment — fixed
+
+The VPN child process used to be started with `sudo -E` so that it would inherit
+`XDG_RUNTIME_DIR` and find the GUI's local socket. `91_sudo_rs` d) measures what
+that actually does, in a container that is a stock Ubuntu 26.04:
+
+| Invocation | Result |
+|---|---|
+| sudo-rs, rule without `SETENV:` | warns `preserving the entire environment is not supported, '-E' is ignored`, runs **without** the environment |
+| sudo-rs, rule **with** `SETENV:` | same — sudo-rs ignores `-E` in either case |
+| classic sudo, rule without `SETENV:` | **refuses to run at all**: `sorry, you are not allowed to preserve the environment` |
+| classic sudo, rule **with** `SETENV:` | environment preserved |
+
+The sudoers rule openfortiGUI ships (`%sudo ALL=NOPASSWD: /usr/bin/openfortigui
+--start-vpn *`) has no `SETENV:` tag and never had one. So on the classic sudo the
+call was refused outright, and on sudo-rs the flag was quietly dropped — the
+decisive difference is the tag, not the implementation. Whether it ever worked
+depended entirely on what else was in the user's `/etc/sudoers`, which fits the
+scattered reports of missing dialogs and missing status updates.
+
+The environment is no longer used for this: the socket path travels as
+`--api-socket`, the configuration as `--main-config`, and `-E` is gone. `80_env`
+proves it on the host, `91_sudo_rs` e) proves it under real sudo-rs — tunnel up,
+mock GUI reached, no `/root/.openfortigui`.
+
+### 9. The package could not be installed on current Ubuntu — fixed
+
+Found by `91_sudo_rs` b), which installs the freshly built `.deb` in the
+container instead of trusting that it would work:
+
+- **`debian/control` required `qttranslations6-l10n`.** That package does not
+  exist; the Qt6 name is `qt6-translations-l10n` (the Qt5 one was
+  `qttranslations5-l10n`). Every dependency resolution failed, so the package was
+  uninstallable on 24.04 and 26.04.
+- **`debian/rules` called `qmake`.** Since the Qt6 port there is no `qmake`
+  binary on a Qt6-only system, and debhelper's default qmake buildsystem invokes
+  exactly that. Now `dh $@ --buildsystem=qmake6`.
+- **`openfortigui.pro` had drifted from `CMakeLists.txt`.** The submodule bump to
+  openfortivpn v1.24.1 was only carried out in the CMake build; the qmake project
+  — the one the package is built from — still lacked `openfortivpn/src/http_server.c`
+  and carried the removed defines `HAVE_X509_CHECK_HOST`, `SUPPORT_OBSOLETE_CODE`
+  and `OPENSSL_ENGINE` while missing `HAVE_PTHREAD_MUTEXATTR_SETROBUST` and
+  `HAVE_VDPRINTF`. The release build would have failed to compile.
+
+Both build systems stand in for openfortivpn's `configure` run, so they have to
+be changed together. There is a comment to that effect in each of them now.
+
+### 10. `--main-config` with a non-existent file falls back to `$HOME`
+
+Not a regression, but worth knowing: `tiConfMain::setMainConfig()` only takes the
+path if the file already exists (`ticonfmain.cpp:262`). Otherwise the argument is
+silently ignored and everything follows `$HOME` — as root that means
+`/root/.openfortigui` gets created. Noticed while writing `91_sudo_rs`, whose
+first version pointed a probe at a non-existent config and then found the very
+directory tree the case asserts against. The probes now use the real
+configuration.
+
+A related one was fixed on the way: **the GUI could not be started with
+arguments at all.** `main()` decided between the command-line and the GUI branch
+by `argc > 1`, so `openfortigui --main-config /path` exited with 0 without doing
+anything. The decision is now made by which options were actually given
+(`cliMode()`), which is also what lets `90_gui` run the GUI against an isolated
+configuration.
+
 ## 9. Known limitations
 
 **No way to supply credentials or an OTP headless.** If the password is empty
@@ -668,6 +782,20 @@ decoupling (Finding 6), the first `tiConfMain` constructor ran against
 directory structure there — under `sudo` that meant `/root`. Current versions no
 longer do this (`80_env` a) checks it), but an existing tree stays behind.
 `testlab clean` removes it as long as there are no profiles in it.
+
+**Scroll bars cannot be asserted directly.** X11 shows windows, not Qt's widget
+tree, so `90_gui` cannot see whether the `QScrollArea` actually scrolls. What it
+does check is the window size, the minimum size in `WM_NORMAL_HINTS`, that the
+window can be shrunk below the size of the form, and that "Save" stays reachable
+via Enter. A raw `xwd` screenshot is written to the case output on every failure,
+for the human eye.
+
+**The sudo-rs container isolates user space, not the network.** `91_sudo_rs` runs
+with `--network host --pid host`, so the FortiGate is reached over the same lab
+bridge as in every other case and the `ppp` interface appears on the host, where
+`client_cleanup_all` removes it again. What the container provides is Ubuntu 26.04
+with sudo-rs and the installed package — nothing about network isolation is being
+tested here.
 
 **Only one console client.** The QEMU serial socket accepts one connection at
 a time, so `testlab console` and `provision`/`fgt` are mutually exclusive. A

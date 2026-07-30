@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # Routes and data path through the tunnel.
 #

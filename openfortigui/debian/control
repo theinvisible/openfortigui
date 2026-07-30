@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0)
 
 Package: openfortigui
 Architecture: amd64 i386
-Depends: ${shlibs:Depends}, sudo, qttranslations6-l10n, ppp, libqt6keychain1
+Depends: ${shlibs:Depends}, sudo, qt6-translations-l10n, ppp, libqt6keychain1
 Recommends: gnome-keyring | kwalletmanager
 Conflicts:
 Replaces:

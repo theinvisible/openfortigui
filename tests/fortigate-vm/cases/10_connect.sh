@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # Happy path: connect with a pinned gateway certificate.
 #

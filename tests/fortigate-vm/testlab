@@ -301,6 +301,26 @@ cmd_status() {
 # Test runner
 # --------------------------------------------------------------------------
 
+# _case_requirements <case file...> -> sorted, deduplicated requirement tokens
+#
+# Every case declares what it needs in a "# lab-requires:" line near the top:
+#   vm      the FortiGate VM and the lab network
+#   gui     a virtual screen (Xvfb, a window manager, xdotool)
+#   docker  a usable docker daemon
+# A case without the line is treated as needing the VM -- the safe assumption,
+# so nothing runs unguarded by accident.
+_case_requirements() {
+    local f line all=()
+    for f in "$@"; do
+        line="$(grep -m1 '^# lab-requires:' "$f" 2>/dev/null)"
+        line="${line#\# lab-requires:}"
+        [[ -z "${line// /}" ]] && line="vm"
+        # shellcheck disable=SC2206
+        all+=($line)
+    done
+    printf '%s\n' "${all[@]}" | sort -u | paste -sd' '
+}
+
 cmd_test() {
     local keep_going=0
     local -a wanted=()
@@ -313,8 +333,6 @@ cmd_test() {
         shift
     done
 
-    vm_running || die "VM is not running -- run 'testlab up' first"
-    net_is_up || die "lab network is missing -- run 'testlab up' first"
     client_require_bin >/dev/null
     ensure_sudo
     client_init_home
@@ -322,11 +340,6 @@ cmd_test() {
     # Clear leftovers of an aborted run first -- in particular an orphaned
     # gateway route, which would make the FortiGate unreachable.
     client_cleanup_all
-
-    tcp_open "$FGT_WAN_IP" "$FGT_SSLVPN_PORT" \
-        || die "SSL-VPN on $FGT_WAN_IP:$FGT_SSLVPN_PORT is unreachable.
-Does the host reach the gateway? 'ip route get $FGT_WAN_IP' should
-show 'dev $LAB_BR_OUT'."
 
     local -a files=()
     if (( ${#wanted[@]} )); then
@@ -342,11 +355,44 @@ show 'dev $LAB_BR_OUT'."
     fi
     (( ${#files[@]} )) || die "no test cases found"
 
-    # Determine the certificate digest once and pass it to every case
-    LAB_GW_DIGEST="$(vm_gateway_cert_digest)"
-    [[ ${#LAB_GW_DIGEST} -eq 64 ]] \
-        || die "could not read the gateway certificate (TLS handshake?).
+    # Only demand what the selected cases actually need. Most want the FortiGate,
+    # but the GUI checks run against a virtual screen and the sudo-rs checks
+    # inside a container, so "testlab test 90_gui" has to work without a VM.
+    local needs; needs="$(_case_requirements "${files[@]}")"
+    info "requirements of this selection: ${needs:-none}"
+
+    if [[ " $needs " == *" gui "* ]]; then
+        local guitool missing_gui=()
+        for guitool in Xvfb xdotool openbox xwininfo xprop; do
+            have "$guitool" || missing_gui+=("$guitool")
+        done
+        (( ${#missing_gui[@]} )) && die "the GUI cases need: ${missing_gui[*]}
+    sudo apt install xvfb xdotool openbox x11-utils x11-apps"
+    fi
+
+    if [[ " $needs " == *" docker "* ]]; then
+        have docker || die "the sudo-rs case needs docker: sudo apt install docker.io"
+        docker info >/dev/null 2>&1 \
+            || die "cannot talk to the docker daemon -- is the user in the 'docker' group?"
+    fi
+
+    if [[ " $needs " == *" vm "* ]]; then
+        vm_running || die "VM is not running -- run 'testlab up' first"
+        net_is_up || die "lab network is missing -- run 'testlab up' first"
+
+        tcp_open "$FGT_WAN_IP" "$FGT_SSLVPN_PORT" \
+            || die "SSL-VPN on $FGT_WAN_IP:$FGT_SSLVPN_PORT is unreachable.
+Does the host reach the gateway? 'ip route get $FGT_WAN_IP' should
+show 'dev $LAB_BR_OUT'."
+
+        # Determine the certificate digest once and pass it to every case
+        LAB_GW_DIGEST="$(vm_gateway_cert_digest)"
+        [[ ${#LAB_GW_DIGEST} -eq 64 ]] \
+            || die "could not read the gateway certificate (TLS handshake?).
 Diagnose with: openssl s_client -connect $FGT_WAN_IP:$FGT_SSLVPN_PORT"
+    else
+        LAB_GW_DIGEST=""
+    fi
     export LAB_GW_DIGEST
 
     local results_dir="$LAB_OUT_DIR/results"

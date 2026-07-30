@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # Authentication and configuration errors.
 

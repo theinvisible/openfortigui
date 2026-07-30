@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # The VPN process must not depend on an inherited environment.
 #

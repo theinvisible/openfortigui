@@ -48,6 +48,10 @@ void vpnOTPLogin::setPrompt(const QString &question, const QString &fieldLabel)
 void vpnOTPLogin::initAfter()
 {
     window()->installEventFilter(this);
+
+    // The dialog exists to answer one question -- put the cursor where the
+    // answer goes, without the user having to click first.
+    ui->leOTP->setFocus();
 }
 
 void vpnOTPLogin::on_btnSubmit_clicked()

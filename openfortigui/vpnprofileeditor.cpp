@@ -59,6 +59,18 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     ui->comboVPNDevice->addItem("Barracuda", 1);
 }
 
+/*
+ * Focus the name field, not in the constructor: openToolWindow() puts this form
+ * into a QScrollArea, and reparenting drops whatever focus was set before. By
+ * the time we are shown the form is in its final place, so the focus sticks --
+ * and only then is the Return shortcut above of any use.
+ */
+void vpnProfileEditor::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    ui->leName->setFocus();
+}
+
 vpnProfileEditor::~vpnProfileEditor()
 {
     delete ui;

@@ -14,7 +14,7 @@ object_script.*.Release
 object_script.*.Debug
 *_plugin_import.cpp
 /.qmake.cache
-/.qmake.stash
+.qmake.stash
 *.pro.user
 *.pro.user.*
 *.qbs.user
@@ -53,3 +53,16 @@ CMakeLists.txt.user*
 tests/fortigate-vm/lab.env
 tests/fortigate-vm/lab/
 tests/fortigate-vm/__pycache__/
+
+# Debian-Paketbau (dpkg-buildpackage aus openfortigui/ heraus)
+*.deb
+*.ddeb
+*.buildinfo
+*.changes
+openfortigui/openfortigui
+krunner_openfortigui/*.so
+openfortigui/debian/files
+openfortigui/debian/*.substvars
+openfortigui/debian/*.debhelper.log
+openfortigui/debian/.debhelper/
+openfortigui/debian/openfortigui/

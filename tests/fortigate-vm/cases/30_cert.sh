@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # Certificate paths.
 #
@@ -206,10 +207,7 @@ part "g) an encrypted client key asks for its passphrase"
 # FortiGate does not need to accept the certificate for that -- the key is loaded
 # before the handshake.
 KEYDIR="$CASE_OUT_DIR/clientcert"
-mkdir -p "$KEYDIR"
-if openssl req -x509 -newkey rsa:2048 -keyout "$KEYDIR/key.pem" \
-        -out "$KEYDIR/cert.pem" -days 2 -passout pass:labpass \
-        -subj "/CN=openfortigui-lab" >/dev/null 2>&1; then
+if client_make_client_cert "$KEYDIR" labpass; then
     LOG_I="$(case_log g-pem-passphrase)"
     client_write_profile "lab-cert-pemkey" "trusted_cert=$LAB_GW_DIGEST" \
         "user_cert=$KEYDIR/cert.pem" "user_key=$KEYDIR/key.pem" >/dev/null

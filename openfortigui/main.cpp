@@ -136,6 +136,29 @@ static void applyEarlyArgs(int argc, char *argv[])
     }
 }
 
+/*
+ * Which of the two modes main() runs in. This used to be "argc > 1", which made
+ * any option imply the command line: "openfortigui --main-config /path" exited
+ * with 0 without doing anything at all, instead of starting the GUI against that
+ * config. Only these four options actually ask for something other than the GUI.
+ */
+static bool cliMode(int argc, char *argv[])
+{
+    static const char *cliOptions[] = {
+        "--start-vpn", "--kill-vpn-processes", "--help", "-h", "--version", "-v"
+    };
+
+    for(int i = 1; i < argc; i++)
+    {
+        const QString arg = QString::fromLocal8Bit(argv[i]);
+        for(const char *opt : cliOptions)
+            if(arg == QLatin1String(opt))
+                return true;
+    }
+
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
     applyEarlyArgs(argc, argv);
@@ -154,7 +177,7 @@ int main(int argc, char *argv[])
     QTranslator openfortiguiTranslator;
     openfortiguiTranslator.load("openfortigui_" + QLocale::system().name(), ":/translations");
 
-    if(argc > 1)
+    if(cliMode(argc, argv))
     {
         QCoreApplication a(argc, argv);
         QCoreApplication::setApplicationName(openfortigui_config::name);

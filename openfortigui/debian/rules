@@ -1,7 +1,9 @@
 #!/usr/bin/make -f
 
+# qmake6, not qmake: since the Qt6 port there is no "qmake" binary on a Qt6-only
+# system, and debhelper's default qmake buildsystem calls exactly that.
 %:
-	dh $@ --parallel
+	dh $@ --parallel --buildsystem=qmake6
 
 override_dh_auto_install:
 	mkdir -p debian/openfortigui/usr/bin

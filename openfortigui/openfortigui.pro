@@ -20,6 +20,7 @@ SOURCES += main.cpp\
     openfortivpn/src/config.c \
     openfortivpn/src/hdlc.c \
     openfortivpn/src/http.c \
+    openfortivpn/src/http_server.c \
     openfortivpn/src/io.c \
     openfortivpn/src/ipv4.c \
     openfortivpn/src/log.c \
@@ -48,6 +49,7 @@ HEADERS  += mainwindow.h \
     openfortivpn/src/config.h \
     openfortivpn/src/hdlc.h \
     openfortivpn/src/http.h \
+    openfortivpn/src/http_server.h \
     openfortivpn/src/io.h \
     openfortivpn/src/ipv4.h \
     openfortivpn/src/log.h \
@@ -86,10 +88,12 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     res.qrc
 
+# Keep in sync with add_definitions() in ../CMakeLists.txt -- both stand in for
+# openfortivpn's configure run, and the package is built from this file.
 OPENFORTIVPN_FLAGS = -DHAVE_USR_SBIN_PPPD=1 -DHAVE_PROC_NET_ROUTE=1 -DHAVE_STRUCT_TERMIOS=1 \
-    -DHAVE_RT_ENTRY_WITH_RT_DST=1 -DHAVE_SYSTEMD=0 -DHAVE_X509_CHECK_HOST=1 \
-    -DPPP_PATH=\\\"/usr/sbin/pppd\\\" -DRESOLVCONF_PATH=\\\"\\\" -DHAVE_PTY_H=1 -DSUPPORT_OBSOLETE_CODE=1 \
-    -DHAVE_SO_BINDTODEVICE=1 -DOPENSSL_ENGINE=1
+    -DHAVE_RT_ENTRY_WITH_RT_DST=1 -DHAVE_SYSTEMD=0 \
+    -DPPP_PATH=\\\"/usr/sbin/pppd\\\" -DRESOLVCONF_PATH=\\\"\\\" -DHAVE_PTY_H=1 \
+    -DHAVE_SO_BINDTODEVICE=1 -DHAVE_PTHREAD_MUTEXATTR_SETROBUST=1 -DHAVE_VDPRINTF=1
 QMAKE_CFLAGS += $$(CPPFLAGS) $${OPENFORTIVPN_FLAGS}
 QMAKE_CXXFLAGS += $${OPENFORTIVPN_FLAGS}
 QMAKE_LFLAGS += $$(LDFLAGS)

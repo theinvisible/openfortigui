@@ -101,6 +101,14 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     ui->tvMembers->sortByColumn(1, Qt::AscendingOrder);
 }
 
+// See vpnProfileEditor::showEvent() -- the QScrollArea reparents the form, so
+// the focus has to be set once it is actually on screen.
+void vpnGroupEditor::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    ui->leName->setFocus();
+}
+
 vpnGroupEditor::~vpnGroupEditor()
 {
     delete ui;

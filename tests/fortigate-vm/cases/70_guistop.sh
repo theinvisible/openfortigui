@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# lab-requires: vm
 #
 # Stop initiated by the GUI while the tunnel is up.
 #

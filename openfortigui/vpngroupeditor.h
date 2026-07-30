@@ -42,6 +42,9 @@ public:
 
     void loadVpnGroup(const QString &groupname);
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     Ui::vpnGroupEditor *ui;
 

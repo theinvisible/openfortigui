@@ -72,7 +72,10 @@ aeskey=$OFGUI_AESKEY
 aesiv=$OFGUI_AESIV
 use_system_password_store=false
 start_minimized=false
-setupwizard=false
+# "setupwizard" is a done-flag, not a switch: MainWindow opens the wizard when it
+# is false. It has to be true or the GUI test finds a wizard instead of the main
+# window (mainwindow.cpp, end of the constructor).
+setupwizard=true
 changelogrev_read=99
 disallow_unsecure_certificates=false
 sudo_preserve_env=false
@@ -92,6 +95,20 @@ disable_notifications=true
 connect_on_dblclick=false
 EOF
     info "test home: $LAB_CLIENT_HOME (home is derived from --main-config)"
+}
+
+# client_make_client_cert <directory> <passphrase>
+#
+# Self-signed client certificate with an encrypted private key. openfortivpn asks
+# for the passphrase through pem_passphrase_cb() (tunnel.c), which is what issues
+# #166 is about -- used by 30_cert (prompt appears in the log) and by 90_gui (the
+# dialog appears on screen).
+client_make_client_cert() {
+    local dir="$1" pass="$2"
+    mkdir -p "$dir"
+    openssl req -x509 -newkey rsa:2048 -keyout "$dir/key.pem" \
+        -out "$dir/cert.pem" -days 2 -passout "pass:$pass" \
+        -subj "/CN=openfortigui-lab" >/dev/null 2>&1
 }
 
 # client_write_profile <name> [key=value ...]

@@ -16,6 +16,8 @@ source "$LAB_SRC_DIR/lib/vm.sh"
 source "$LAB_SRC_DIR/lib/net.sh"
 # shellcheck source=client.sh
 source "$LAB_SRC_DIR/lib/client.sh"
+# shellcheck source=gui.sh
+source "$LAB_SRC_DIR/lib/gui.sh"
 
 CASE_NAME="${CASE_NAME:-$(basename "${BASH_SOURCE[1]}" .sh)}"
 CASE_OUT_DIR="${CASE_OUT_DIR:-$LAB_OUT_DIR/$CASE_NAME}"
@@ -50,6 +52,7 @@ case_setup() {
 
 case_teardown() {
     local rc=$?
+    gui_stop_display 2>/dev/null || true
     client_cleanup_all
     # Keep the application log for troubleshooting
     if as_root test -f "$CLIENT_APP_LOG"; then

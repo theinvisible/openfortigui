@@ -42,6 +42,9 @@ public:
 
     void loadVpnProfile(const QString &profile, vpnProfile::Origin sourceOrigin = vpnProfile::Origin_BOTH);
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     Ui::vpnProfileEditor *ui;
 
