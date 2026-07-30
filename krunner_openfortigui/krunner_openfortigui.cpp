@@ -155,7 +155,7 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
         while(!sockConnected && curwait < maxwait)
         {
             QLocalSocket apiServerTest(this);
-            apiServerTest.connectToServer(openfortigui_config::name);
+            apiServerTest.connectToServer(vpnApi::socketPath());
             if(apiServerTest.waitForConnected(200))
             {
                 QByteArray block;
@@ -183,7 +183,7 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
     }
 
     QLocalSocket apiServer(this);
-    apiServer.connectToServer(openfortigui_config::name);
+    apiServer.connectToServer(vpnApi::socketPath());
     if(apiServer.waitForConnected(1000))
     {
         QByteArray block;

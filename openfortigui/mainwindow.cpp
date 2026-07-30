@@ -29,6 +29,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QTimer>
+#include <QScrollArea>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -43,6 +44,43 @@
 
 vpnManager *MainWindow::vpnmanager = nullptr;
 
+/*
+ * Host window for the editor forms.
+ *
+ * Every one of these used to be five hand-copied lines ending in
+ *   setMinimumSize(QSize(f->width(), f->height()))
+ * which pinned the window to the size the form was designed at. The VPN profile
+ * editor is 842 px high, so on a 1280x800 screen it could not be made to fit --
+ * the buttons at the bottom were simply unreachable (issue #205).
+ *
+ * The form now lives in a QScrollArea and the window opens at its size hint,
+ * capped at 90% of the available screen area. No minimum size: the user decides
+ * how small it gets, and the content scrolls.
+ */
+static QMainWindow *openToolWindow(QWidget *parent, QWidget *content, const QString &title)
+{
+    auto *window = new QMainWindow(parent, Qt::Dialog);
+    window->setWindowModality(Qt::WindowModal);
+    window->setWindowTitle(title);
+
+    auto *scroll = new QScrollArea(window);
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setWidget(content);
+    window->setCentralWidget(scroll);
+
+    QSize wanted = content->sizeHint();
+    if(window->screen() != nullptr)
+    {
+        // Leave room for panels and window decorations.
+        const QSize avail = window->screen()->availableGeometry().size() * 0.9;
+        wanted = wanted.boundedTo(avail);
+    }
+    window->resize(wanted);
+
+    return window;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -55,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNStatusChanged(QString,vpnClientConnection::connectionStatus)), this, SLOT(onClientVPNStatusChanged(QString,vpnClientConnection::connectionStatus)));
     connect(vpnmanager, SIGNAL(VPNCredRequest(QString)), this, SLOT(onClientVPNCredRequest(QString)));
     connect(vpnmanager, SIGNAL(VPNStatsUpdate(QString,vpnStats)), this, SLOT(onClientVPNStatsUpdate(QString,vpnStats)));
-    connect(vpnmanager, SIGNAL(VPNOTPRequest(QProcess*)), this, SLOT(onClientVPNOTPRequest(QProcess*)));
+    connect(vpnmanager, SIGNAL(VPNPromptRequest(QProcess*,int)), this, SLOT(onClientVPNPromptRequest(QProcess*,int)));
     connect(vpnmanager, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)));
     connect(vpnmanager, SIGNAL(VPNCertificateValidationFailed(QString,QString)), this, SLOT(onClientCertValidationFAiled(QString,QString)));
     connect(vpnmanager, SIGNAL(VPNShowMainWindowRequest()), this, SLOT(showMainWindow()));
@@ -73,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Treeview VPNs
     QStringList headers;
-    headers << tr("Status") << tr("Name") << tr("Device") << tr("Gateway") << tr("User") << tr("Traffic RX/TX");
+    headers << tr("Status") << tr("Name") << tr("Device") << tr("Gateway") << tr("User") << tr("Traffic RX/TX") << tr("Connected");
     QStandardItemModel *model = new QStandardItemModel(ui->tvVpnProfiles);
     model->setHorizontalHeaderLabels(headers);
     ui->tvVpnProfiles->setModel(model);
@@ -172,8 +210,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(main_settings.getValue("gui/main_toolbar_location", 0).toInt() != 0)
         addToolBar(static_cast<Qt::ToolBarArea>(main_settings.getValue("gui/main_toolbar_location", 0).toInt()), this->ui->tbActions);
-
-    doOSChecks();
 }
 
 MainWindow::~MainWindow()
@@ -183,14 +219,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnAddVPN_clicked()
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeNew);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Add VPN"));
+    vpnProfileEditor *f = new vpnProfileEditor(nullptr, vpnProfileEditorModeNew);
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Add VPN"));
 
     connect(f, SIGNAL(vpnAdded(vpnProfile)), this, SLOT(onvpnAdded(vpnProfile)));
     prefWindow->show();
@@ -282,15 +312,9 @@ void MainWindow::on_btnEditVPN_clicked()
         return;
     }
 
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnProfileEditor *f = new vpnProfileEditor(prefWindow, vpnProfileEditorModeEdit);
+    vpnProfileEditor *f = new vpnProfileEditor(nullptr, vpnProfileEditorModeEdit);
     f->loadVpnProfile(vpnName);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Edit VPN"));
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Edit VPN"));
 
     connect(f, SIGNAL(vpnEdited(vpnProfile)), this, SLOT(onvpnEdited(vpnProfile)));
     prefWindow->show();
@@ -336,14 +360,8 @@ void MainWindow::on_tvVpnProfiles_doubleClicked([[maybe_unused]] const QModelInd
 
 void MainWindow::on_btnAddGroup_clicked()
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeNew);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Add VPN-Group"));
+    vpnGroupEditor *f = new vpnGroupEditor(nullptr, vpnGroupEditorModeNew);
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Add VPN-Group"));
 
     connect(f, SIGNAL(vpnGroupAdded(vpnGroup)), this, SLOT(onvpnGroupAdded(vpnGroup)));
     prefWindow->show();
@@ -401,15 +419,9 @@ void MainWindow::on_btnEditGroup_clicked()
 
     QString vpnGroup = model->itemFromIndex(sellist.at(0))->text();
 
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnGroupEditor *f = new vpnGroupEditor(prefWindow, vpnGroupEditorModeEdit);
+    vpnGroupEditor *f = new vpnGroupEditor(nullptr, vpnGroupEditorModeEdit);
     f->loadVpnGroup(vpnGroup);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Edit VPN-Group"));
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Edit VPN-Group"));
 
     connect(f, SIGNAL(vpnGroupEdited(vpnGroup)), this, SLOT(onvpnGroupEdited(vpnGroup)));
     prefWindow->show();
@@ -745,15 +757,9 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 
 void MainWindow::onClientVPNCredRequest(QString vpnname)
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnLogin *f = new vpnLogin(prefWindow);
+    vpnLogin *f = new vpnLogin(nullptr);
     f->setData(vpnmanager, vpnname);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Login"));
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Login"));
     f->initAfter();
 
     prefWindow->show();
@@ -761,17 +767,31 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
     QApplication::setActiveWindow(prefWindow);
 }
 
-void MainWindow::onClientVPNOTPRequest(QProcess *proc)
+void MainWindow::onClientVPNPromptRequest(QProcess *proc, int type)
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
+    // Same one-line-to-stdin dialog for every prompt, only labelled for what is
+    // actually being asked -- an OTP field is no help when openfortivpn wants
+    // the passphrase for a private key (issue #166).
+    QString title, question, fieldLabel;
+    switch(type)
+    {
+    case vpnLogger::PROMPT_PEM_PASSPHRASE:
+        title = QObject::tr(" - Certificate passphrase");
+        question = tr("Please enter the pass phrase for your private key.");
+        fieldLabel = tr("Pass phrase");
+        break;
+    case vpnLogger::PROMPT_OTP:
+    default:
+        title = QObject::tr(" - OTP-Login");
+        question = tr("Please enter your OTP-login details.");
+        fieldLabel = tr("OTP");
+        break;
+    }
 
-    vpnOTPLogin *f = new vpnOTPLogin(prefWindow);
+    vpnOTPLogin *f = new vpnOTPLogin(nullptr);
     f->setData(proc);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - OTP-Login"));
+    f->setPrompt(question, fieldLabel);
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + title);
     f->initAfter();
 
     prefWindow->show();
@@ -808,6 +828,11 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
     tiConfVpnProfiles profiles;
     profiles.setReadProfilePasswords(true);
     vpnProfile *profile = profiles.getVpnProfileByName(vpnname);
+    if(profile == nullptr)
+    {
+        qWarning() << "onClientCertValidationFAiled:: VPN profile not found:" << vpnname;
+        return;
+    }
 
     if(profile->trust_all_gw_certs)
     {
@@ -815,38 +840,54 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
         cmain.saveGwCertCache(vpnname, hash);
 
         if(!hash.isEmpty())
-        {
-            // Wait until old connection is closed and try connect again
-            int maxwait = 30, curwait = 0;
-            QTimer *timer = new QTimer(this);
-            connect(timer, &QTimer::timeout, [=]() mutable {
-                if(curwait < maxwait)
-                {
-                    curwait += 1;
-                    if(vpnmanager->getClientConnection(vpnname) == nullptr) {
-                        vpnmanager->startVPN(vpnname);
-                        timer->stop();
-                    }
-                }
-                else
-                {
-                    timer->stop();
-                }
-            });
-            timer->start(300);
-        }
+            restartVPNWhenClosed(vpnname);
     }
     else
     {
         if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
         {
-            if(profile != nullptr)
-            {
-                profile->trusted_cert = hash;
-                profiles.saveVpnProfile(*profile);
-            }
+            profile->trusted_cert = hash;
+            profiles.saveVpnProfile(*profile);
+
+            /*
+             * Reconnect right away. Storing the hash used to be all that
+             * happened here, so from the user's side confirming the dialog did
+             * nothing at all and the connection had to be started again by hand
+             * -- which read as "the certificate is being ignored"
+             * (issues #184, #159).
+             */
+            restartVPNWhenClosed(vpnname);
         }
     }
+}
+
+/*
+ * Start a VPN again as soon as its previous connection has gone away. Used after
+ * a gateway certificate was accepted: the failed attempt is still shutting down
+ * at that point, and startVPN() would refuse while the name is still in
+ * vpnManager::connections.
+ */
+void MainWindow::restartVPNWhenClosed(const QString &vpnname)
+{
+    int maxwait = 30, curwait = 0;
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [=]() mutable {
+        if(curwait < maxwait)
+        {
+            curwait += 1;
+            if(vpnmanager->getClientConnection(vpnname) == nullptr) {
+                vpnmanager->startVPN(vpnname);
+                timer->stop();
+                timer->deleteLater();
+            }
+        }
+        else
+        {
+            timer->stop();
+            timer->deleteLater();
+        }
+    });
+    timer->start(300);
 }
 
 void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
@@ -859,6 +900,12 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
         QString disp = QString("%1 / %2").arg(vpnHelper::formatByteUnits(stats.bytes_read)).arg(vpnHelper::formatByteUnits(stats.bytes_written));
         item_stats->setText(disp);
     }
+
+    // How long the tunnel has been up -- useful where the gateway enforces a
+    // maximum session time (issue #185).
+    QStandardItem *item_uptime = getVpnProfileItem(vpnname, 6);
+    if(conn != nullptr && item_uptime != nullptr)
+        item_uptime->setText(vpnHelper::formatDuration(stats.vpn_start));
 }
 
 void MainWindow::onClientVPNMessage([[maybe_unused]] QString vpnname, vpnMsg msg)
@@ -1238,41 +1285,6 @@ void MainWindow::autostartVPNs()
     }
 }
 
-void MainWindow::doOSChecks()
-{
-    tiConfMain main_settings;
-    QString osname = vpnHelper::getOSCodename();
-    if(osname.isEmpty())
-    {
-        qWarning() << "OS could not be detected, please make sure lsb-release is installed and 'lsb_release --codename -s' returns a valid string/codename, will not apply any OS fixes!";
-        return;
-    }
-
-    QList<QString> sudoPreEnvOSes;
-    sudoPreEnvOSes << "buster" << "bullseye" << "eoan" << "focal" << "groovy";
-    if(sudoPreEnvOSes.contains(osname))
-    {
-        // Check if we need to do work
-        if(main_settings.getValue("checks/sudopresenv", false).toBool() == false || main_settings.getValue("checks/sudopresenv_lastos", "").toString() != osname)
-        {
-            // Detected OS for SUDO-Preserve-Env fix
-            qDebug() << "Detected OS to enable SUDO-Preserve-Env fix, osname::" << osname;
-            main_settings.setValue("main/sudo_preserve_env", true);
-            main_settings.setValue("checks/sudopresenv", true);
-            main_settings.setValue("checks/sudopresenv_lastos", osname);
-            main_settings.sync();
-        }
-        else
-        {
-            qDebug() << "SUDO-Preserve-Env fix already applied";
-        }
-    }
-    else
-    {
-        qDebug() << "OS not affected by SUDO-Preserve-Env fix or no supported OS found, osname::" << osname;
-    }
-}
-
 QStandardItem *MainWindow::getVpnProfileItem(const QString &vpnname, int column)
 {
     QStandardItem *retitem = nullptr;
@@ -1341,28 +1353,16 @@ void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::onVPNSettings()
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    vpnSetting *f = new vpnSetting(prefWindow);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Settings"));
+    vpnSetting *f = new vpnSetting(nullptr);
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Settings"));
 
     prefWindow->show();
 }
 
 void MainWindow::onSetupWizard()
 {
-    auto *prefWindow = new QMainWindow(this, Qt::Dialog);
-    prefWindow->setWindowModality(Qt::WindowModal);
-
-    setupWizard *f = new setupWizard(prefWindow);
-    prefWindow->setCentralWidget(f);
-    prefWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    prefWindow->setWindowTitle(windowTitle() + QObject::tr(" - Setup wizard"));
+    setupWizard *f = new setupWizard(nullptr);
+    auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Setup wizard"));
 
     prefWindow->show();
     prefWindow->raise();
@@ -1376,14 +1376,8 @@ void MainWindow::onActionLogs()
 
 void MainWindow::onChangelog()
 {
-    auto *changeWindow = new QMainWindow(this, Qt::Dialog);
-    changeWindow->setWindowModality(Qt::WindowModal);
-
-    vpnChangelog *f = new vpnChangelog(changeWindow);
-    changeWindow->setCentralWidget(f);
-    changeWindow->setMinimumSize(QSize(f->width(),f->height()));
-    //prefWindow->setMaximumSize(QSize(f->width(),f->height()));
-    changeWindow->setWindowTitle(windowTitle() + QObject::tr(" - Changelog"));
+    vpnChangelog *f = new vpnChangelog(nullptr);
+    auto *changeWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Changelog"));
     f->initAfter();
 
     changeWindow->show();

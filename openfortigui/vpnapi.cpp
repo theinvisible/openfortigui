@@ -17,11 +17,43 @@
 
 #include "vpnapi.h"
 
+#include "config.h"
+
 #include <QVariant>
+#include <QDir>
+#include <QFile>
+#include <QStandardPaths>
+
+#include <unistd.h>
+
+QString vpnApi::socket_path = QString();
 
 vpnApi::vpnApi()
 {
 
+}
+
+void vpnApi::setSocketPath(const QString &path)
+{
+    vpnApi::socket_path = path;
+}
+
+QString vpnApi::socketPath()
+{
+    if(!vpnApi::socket_path.isEmpty())
+        return vpnApi::socket_path;
+
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
+    if(dir.isEmpty())
+    {
+        // No XDG_RUNTIME_DIR: keep the socket per-uid so users cannot collide.
+        dir = QString("/tmp/openfortigui-%1").arg(getuid());
+        QDir().mkpath(dir);
+        QFile::setPermissions(dir, QFileDevice::ReadOwner | QFileDevice::WriteOwner
+                                   | QFileDevice::ExeOwner);
+    }
+
+    return QString("%1/%2").arg(dir, openfortigui_config::name);
 }
 
 

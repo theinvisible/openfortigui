@@ -28,6 +28,8 @@
 #include "vpnhelper.h"
 #include <qt6keychain/keychain.h>
 
+#include <unistd.h>
+
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
 QString tiConfMain::main_gw_cert_cache = tiConfMain::formatPath(openfortigui_config::file_gw_cert_cache);
 
@@ -81,7 +83,6 @@ void tiConfMain::initMainConf()
         conf.setValue("paths/localvpngroups", openfortigui_config::vpngroups_local);
         conf.setValue("paths/logs", logs_dir);
         conf.setValue("paths/initd", openfortigui_config::initd_default);
-        conf.setValue("checks/sudopresenv", false);
         conf.setValue("gui/disable_notifications", false);
         conf.setValue("gui/connect_on_dblclick", false);
         conf.sync();
@@ -106,35 +107,78 @@ void tiConfMain::initMainConf()
         QDir logsdir_vpn_path(logs_vpn_dir);
         logsdir_vpn_path.mkpath(logs_vpn_dir);
 
-        QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
-        if(!conf.contains("main/setupwizard"))
+        /*
+         * Only ever migrate as the owning user, never from the VPN child
+         * process. QSettings replaces the file atomically -- writing it as root
+         * would leave main.conf owned by root, after which isWritable() is false
+         * and the settings dialog stays disabled for good. The GUI runs before
+         * any VPN process, so it is always the one that migrates.
+         */
+        if(geteuid() != 0)
         {
-            conf.setValue("main/setupwizard", false);
-            conf.sync();
-        }
+            QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
 
-        if(!conf.contains("main/changelogrev_read"))
-        {
-            conf.setValue("main/changelogrev_read", 0);
-            conf.sync();
-        }
+            /*
+             * AES key and IV used to be written only when main.conf was created
+             * from scratch. A configuration carried over from an older version
+             * therefore had none, and every stored password decrypted to
+             * garbage -- reported as "bad decrypt" and as authentication
+             * failures with no visible cause (issues #160, #201). The keys are
+             * not a secret in themselves (they sit in main.conf), so filling
+             * them in is safe; only the password store variant keeps them
+             * elsewhere and is left alone.
+             */
+            if(!conf.value("main/use_system_password_store", false).toBool()
+               && !vpnHelper::aesKeyUsable(conf.value("main/aeskey").toString(),
+                                           conf.value("main/aesiv").toString()))
+            {
+                qWarning() << "AES key/IV missing or invalid in" << tiConfMain::main_config
+                           << "-- restoring the defaults. Stored passwords that were"
+                              " encrypted with a different key have to be entered again.";
+                conf.setValue("main/aeskey", openfortigui_config::aeskey);
+                conf.setValue("main/aesiv", openfortigui_config::aesiv);
+                conf.sync();
+            }
 
-        if(!conf.contains("checks/sudopresenv"))
-        {
-            conf.setValue("checks/sudopresenv", false);
-            conf.sync();
-        }
+            if(!conf.contains("main/setupwizard"))
+            {
+                conf.setValue("main/setupwizard", false);
+                conf.sync();
+            }
 
-        if(!conf.contains("gui/disable_notifications"))
-        {
-            conf.setValue("gui/disable_notifications", false);
-            conf.sync();
-        }
+            if(!conf.contains("main/changelogrev_read"))
+            {
+                conf.setValue("main/changelogrev_read", 0);
+                conf.sync();
+            }
 
-        if(!conf.contains("gui/connect_on_dblclick"))
-        {
-            conf.setValue("gui/connect_on_dblclick", false);
-            conf.sync();
+            /*
+             * "sudo -E" is gone: the VPN child process no longer depends on an
+             * inherited environment, it gets the config and socket paths handed
+             * over explicitly. Existing configurations must be switched off
+             * actively, because sudo-rs (Ubuntu 26.04 and later) rejects -E and
+             * the connection would keep failing (issue #208).
+             */
+            if(!conf.contains("checks/sudo_env_migrated"))
+            {
+                conf.remove("main/sudo_preserve_env");
+                conf.remove("checks/sudopresenv");
+                conf.remove("checks/sudopresenv_lastos");
+                conf.setValue("checks/sudo_env_migrated", true);
+                conf.sync();
+            }
+
+            if(!conf.contains("gui/disable_notifications"))
+            {
+                conf.setValue("gui/disable_notifications", false);
+                conf.sync();
+            }
+
+            if(!conf.contains("gui/connect_on_dblclick"))
+            {
+                conf.setValue("gui/connect_on_dblclick", false);
+                conf.sync();
+            }
         }
     }
 }
@@ -179,19 +223,31 @@ bool tiConfMain::isWritable()
 
 QString tiConfMain::formatPath(const QString &path)
 {
-    QString p = path;
-    // When main_config is an absolute path (e.g. passed via --main-config),
-    // derive the user's home directory from it instead of using QDir::homePath(),
-    // which returns /root/ when running as root subprocess via sudo.
-    // Expected layout: <home>/.openfortigui/main.conf
+    // Only a leading tilde is a home reference. Replacing every "~" in the
+    // string mangled paths that legitimately contain one (issue #157).
+    if(!path.startsWith(QLatin1Char('~')))
+        return path;
+
+    // "~otheruser/..." refers to a different user's home and needs a passwd
+    // lookup, which vpnHelper::linHomeExpansion() does.
+    if(!path.startsWith(QLatin1String("~/")) && path != QLatin1String("~"))
+        return vpnHelper::linHomeExpansion(path);
+
+    /*
+     * When main_config is an absolute path (e.g. passed via --main-config),
+     * derive the user's home directory from it instead of using
+     * QDir::homePath(), which returns /root when the VPN process runs as root
+     * via sudo. Expected layout: <home>/.openfortigui/main.conf
+     */
+    QString home = QDir::homePath();
     if(QDir::isAbsolutePath(tiConfMain::main_config))
     {
         QFileInfo finfo(tiConfMain::main_config);
         // Go up two levels: main.conf -> .openfortigui -> <home>
-        QString derivedHome = QFileInfo(finfo.absolutePath()).absolutePath();
-        return p.replace("~", derivedHome);
+        home = QFileInfo(finfo.absolutePath()).absolutePath();
     }
-    return p.replace("~", QDir::homePath());
+
+    return home + path.mid(1);
 }
 
 QString tiConfMain::formatPathReverse(const QString &path)
@@ -204,7 +260,19 @@ QString tiConfMain::setMainConfig(const QString &config)
 {
     QFile conf_main(tiConfMain::formatPath(config));
     if(conf_main.exists())
+    {
         tiConfMain::main_config = config;
+
+        /*
+         * Recompute the certificate cache from the constant, not from the old
+         * value: main_gw_cert_cache was expanded during static initialization
+         * and is already absolute, so formatPath() -- which only replaces a
+         * leading "~" -- would keep a wrong home in it. Without this the cache
+         * follows HOME instead of --main-config, which meant root's /root in
+         * the VPN child process.
+         */
+        tiConfMain::main_gw_cert_cache = tiConfMain::formatPath(openfortigui_config::file_gw_cert_cache);
+    }
 
     return tiConfMain::main_config;
 }
@@ -261,6 +329,9 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("gateway_port", profile.gateway_port);
     f->setValue("username", profile.username.trimmed());
     f->setValue("password", vpnHelper::Qaes128_encrypt(profile.password.trimmed(), aeskey, aesiv));
+    // The SVPNCOOKIE is a session credential -- store it like the password.
+    f->setValue("cookie", vpnHelper::Qaes128_encrypt(profile.cookie.trimmed(), aeskey, aesiv));
+    f->setValue("sni", profile.sni.trimmed());
     f->setValue("persistent", profile.persistent);
     f->setValue("device_type", profile.device_type);
     f->endGroup();
@@ -353,7 +424,9 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->username = f->value("username").toString();
                 if(read_profile_passwords) {
                     vpnprofile->password = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
+                    vpnprofile->cookie = vpnHelper::Qaes128_decrypt(f->value("cookie").toString(), aeskey, aesiv);
                 }
+                vpnprofile->sni = f->value("sni").toString();
                 vpnprofile->persistent = f->value("persistent", false).toBool();
                 vpnprofile->device_type = static_cast<vpnProfile::Device>(f->value("device_type", 0).toInt());
                 f->endGroup();

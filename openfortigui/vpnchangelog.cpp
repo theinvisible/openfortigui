@@ -35,7 +35,7 @@ vpnChangelog::~vpnChangelog()
 
 void vpnChangelog::initAfter()
 {
-    parentWidget()->installEventFilter(this);
+    window()->installEventFilter(this);
     buildChangelog();
 }
 
@@ -53,6 +53,22 @@ void vpnChangelog::buildChangelog()
             <html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\"> \
             p, li { white-space: pre-wrap; } \
             </style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">";
+
+    // Version 0.9.11
+    changelog += tr("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600; color:#00851b;\">Version 0.9.11</span></p> \
+                <p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;\"><br /></p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Changes:</span></p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Port to Qt6</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Update openfortivpn to version 1.24.1</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - The VPN process no longer needs \"sudo -E\"; works with sudo-rs (Ubuntu 26.04)</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Fix missing status updates, OTP and credential dialogs</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - New options: SNI and SVPNCOOKIE</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - New column showing how long a VPN has been connected</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Ask for the pass phrase of an encrypted client key</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Reconnect automatically after a gateway certificate was accepted</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Editor windows fit on small screens, Enter saves and Escape closes</p> \
+             <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\"> </span> - Report broken AES keys instead of failing silently</p> \
+             <p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:600; color:#00851b;\"><br /></p>");
 
     // Version 0.9.10
     changelog += tr("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:600; color:#00851b;\">Version 0.9.10</span></p> \
@@ -271,12 +287,12 @@ void vpnChangelog::buildChangelog()
 void vpnChangelog::on_btnOK_clicked()
 {
     updateChangelogReadFlag();
-    parentWidget()->close();
+    window()->close();
 }
 
 bool vpnChangelog::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == parentWidget() && event->type() == QEvent::Close)
+    if(object == window() && event->type() == QEvent::Close)
     {
         updateChangelogReadFlag();
     }

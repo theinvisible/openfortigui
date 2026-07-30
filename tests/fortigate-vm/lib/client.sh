@@ -139,6 +139,9 @@ client_write_profile() {
         [pppd_call]=""
         [seclevel1]=false
         [min_tls]=default
+        # Encrypted like the password; "cookie_plain" is the readable input.
+        [cookie_plain]=""
+        [sni]=""
     )
 
     local kv key
@@ -157,6 +160,8 @@ gateway_host=${p[gateway_host]}
 gateway_port=${p[gateway_port]}
 username=${p[username]}
 password=$(ofg_encrypt "${p[password_plain]}")
+cookie=$(ofg_encrypt "${p[cookie_plain]}")
+sni=${p[sni]}
 persistent=${p[persistent]}
 device_type=${p[device_type]}
 
@@ -206,18 +211,12 @@ client_pid() { cat "$LAB_CLIENT_PIDFILE" 2>/dev/null; }
 
 # Extra environment for the VPN process.
 #
-# HOME is not optional here but required for full isolation -- --main-config
-# alone is not enough:
-#
-#  * tiConfMain::main_config and ::main_gw_cert_cache are initialized statically
-#    (ticonfmain.cpp:31-32), i.e. before --main-config takes effect, and
-#    main_gw_cert_cache is never updated by setMainConfig(). The
-#    gw_cert.cache path therefore depends on HOME.
-#  * logMessageOutput() opens openfortigui.log on the first qDebug
-#    (main.cpp:150, still before setMainConfig) and keeps that path afterwards.
-#    Without HOME the application log ends up in /root/.openfortigui/logs/.
-#
-# With HOME pointing at the test home, all three paths land there.
+# Nothing here is required any more: applyEarlyArgs() (main.cpp) evaluates
+# --main-config before the first qDebug and the first tiConfMain, setMainConfig()
+# recomputes main_gw_cert_cache, and the api socket path arrives via
+# --api-socket. HOME stays set anyway so that a regression falls back into the
+# test home instead of the real one -- 80_env is the case that deliberately runs
+# without it and proves the independence.
 CLIENT_EXTRA_ENV=(HOME="$LAB_CLIENT_HOME")
 
 # client_start <profile-name> <log-file>
@@ -242,7 +241,7 @@ client_start() {
     # capture the exit status. That also makes it possible to send SIGTERM to
     # exactly the PID in the PID file, with no sudo in between.
     as_root sh -c "$envprefix'$bin' --start-vpn --vpn-name '$name' \
-            --main-config '$LAB_MAIN_CONF' & \
+            --main-config '$LAB_MAIN_CONF' --api-socket '$LAB_API_SOCK' & \
         echo \$! >'$LAB_CLIENT_PIDFILE'; wait \$!; echo \$? >'$LAB_CLIENT_RCFILE'" \
         >>"$log" 2>&1 &
     disown 2>/dev/null || true

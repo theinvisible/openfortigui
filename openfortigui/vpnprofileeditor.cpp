@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QShortcut>
 
 #include "config.h"
 #include "ticonfmain.h"
@@ -32,6 +33,18 @@ vpnProfileEditor::vpnProfileEditor(QWidget *parent, vpnProfileEditorMode smode) 
     config(0)
 {
     ui->setupUi(this);
+
+    /*
+     * Enter saves, Escape cancels. The form is a QWidget inside a QMainWindow,
+     * not a QDialog, so there is no default-button mechanism -- tabbing to
+     * "Save" and pressing Enter used to do nothing at all (issue #205).
+     */
+    connect(new QShortcut(QKeySequence(Qt::Key_Return), this), &QShortcut::activated,
+            this, &vpnProfileEditor::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Enter), this), &QShortcut::activated,
+            this, &vpnProfileEditor::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Escape), this), &QShortcut::activated,
+            this, &vpnProfileEditor::on_btnCancel_clicked);
 
     // Validators
     QRegularExpression rx(openfortigui_config::validatorName);
@@ -61,18 +74,22 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->sBGatewayPort->setValue(config->gateway_port);
     ui->cbPersistent->setChecked(config->persistent);
     ui->comboVPNDevice->setCurrentIndex(config->device_type);
+    ui->leSNI->setText(config->sni);
 
-    if(!config->username.isEmpty())
+    const QString cookie = config->readCookie();
+    if(!config->username.isEmpty() || !cookie.isEmpty())
     {
         ui->gbCredentials->setChecked(true);
 
         ui->leUsername->setText(config->username);
         ui->lePassword->setText(config->readPassword());
+        ui->leCookie->setText(cookie);
     } else {
         ui->gbCredentials->setChecked(false);
 
         ui->leUsername->clear();
         ui->lePassword->clear();
+        ui->leCookie->clear();
     }
 
     if(!config->ca_file.isEmpty() || !config->user_cert.isEmpty() || !config->user_key.isEmpty())
@@ -115,6 +132,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->sBGatewayPort->setDisabled(true);
         ui->leUsername->setDisabled(true);
         ui->lePassword->setDisabled(true);
+        ui->leCookie->setDisabled(true);
+        ui->leSNI->setDisabled(true);
         ui->cbPersistent->setDisabled(true);
         ui->gbCredentials->setDisabled(true);
         ui->gbCertificate->setDisabled(true);
@@ -191,7 +210,7 @@ void vpnProfileEditor::on_btnChooseCAFile_clicked()
 
 void vpnProfileEditor::on_btnCancel_clicked()
 {
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnProfileEditor::on_btnSave_clicked()
@@ -243,16 +262,19 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.gateway_port = ui->sBGatewayPort->text().toInt();
     vpn.persistent = ui->cbPersistent->isChecked();
     vpn.device_type = static_cast<vpnProfile::Device>(ui->comboVPNDevice->currentData().toInt());
+    vpn.sni = ui->leSNI->text();
 
     if(ui->gbCredentials->isChecked())
     {
         vpn.username = ui->leUsername->text();
         vpn.password = ui->lePassword->text();
+        vpn.cookie = ui->leCookie->text();
     }
     else
     {
         vpn.username = "";
         vpn.password = "";
+        vpn.cookie = "";
     }
 
     if(ui->gbCertificate->isChecked())
@@ -288,7 +310,7 @@ void vpnProfileEditor::on_btnSave_clicked()
 
     vpns.saveVpnProfile(vpn);
 
-    parentWidget()->close();
+    window()->close();
 
     if(mode == vpnProfileEditorModeEdit)
         emit vpnEdited(vpn);

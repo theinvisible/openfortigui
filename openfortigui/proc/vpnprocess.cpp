@@ -28,6 +28,7 @@
 #include <QRegularExpression>
 #include <QFileInfo>
 #include <QDir>
+#include <QDateTime>
 
 #include <signal.h>
 #include <unistd.h>
@@ -53,9 +54,11 @@ void vpnProcess::setup(const QString &vpnname)
 {
     name = vpnname;
 
+    const QString socket_path = vpnApi::socketPath();
+
     apiServer = new QLocalSocket(this);
     connect(apiServer, SIGNAL(readyRead()), this, SLOT(onServerReadyRead()));
-    apiServer->connectToServer(openfortigui_config::name);
+    apiServer->connectToServer(socket_path);
     if(apiServer->waitForConnected(1000))
     {
         connect(apiServer, SIGNAL(disconnected()), this, SLOT(onServerDisconnected()));
@@ -73,7 +76,16 @@ void vpnProcess::setup(const QString &vpnname)
     }
     else
     {
-        qWarning() << apiServer->errorString();
+        /*
+         * Without this connection the GUI learns nothing: no status updates, no
+         * OTP prompt, no credential dialog. Say so, and say which path we
+         * tried -- guessing this from "Socket not open" cost users a lot of
+         * time (issues #158, #107).
+         */
+        qWarning() << "Could not connect to the openfortiGUI api socket at"
+                   << socket_path << "::" << apiServer->errorString()
+                   << ":: the GUI will not receive status updates or credential"
+                      " requests for this connection";
     }
 
     //startVPN();
@@ -196,9 +208,12 @@ void vpnProcess::startVPN()
         }
 
         profile->password = cred_data.password;
+        profile->cookie = cred_data.cookie;
         cred_data.password = "";
+        cred_data.cookie = "";
     } else {
         profile->password = profile->readPassword();
+        profile->cookie = profile->readCookie();
     }
 
     // Reset stats
@@ -431,6 +446,7 @@ void vpnProcess::onServerReadyRead()
         break;
     case vpnApi::ACTION_STOREPASS_SUBMIT:
         cred_data.password = jobj["password"].toString();
+        cred_data.cookie = jobj["cookie"].toString();
         passstore_received = true;
         emit passtoreReceived();
         break;
@@ -480,11 +496,18 @@ void vpnProcess::onObserverUpdate()
     switch(state)
     {
     case STATE_DOWN:
+        stats.vpn_start = 0;
         onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
         break;
     case STATE_UP:
         qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name
                  << "ppp-interface::" << thread_worker->tunnelPppIface();
+        /*
+         * Start of the connection, for the "Connected" column in the GUI. The
+         * last_tunnel_state guard below makes this fire once per transition, so
+         * a reconnect with persistent=true correctly restarts the clock.
+         */
+        stats.vpn_start = QDateTime::currentSecsSinceEpoch();
         onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
         break;
     case STATE_CONNECTING:

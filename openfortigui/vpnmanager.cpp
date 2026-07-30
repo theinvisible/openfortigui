@@ -32,11 +32,14 @@
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
-    QLocalServer::removeServer(openfortigui_config::name);
+    const QString socket_path = vpnApi::socketPath();
+    QLocalServer::removeServer(socket_path);
     server = new QLocalServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(onClientConnected()));
-    if(!server->listen(openfortigui_config::name))
-        qDebug() << "vpnManager::DiskMain() on apiServer->listen::" << server->errorString();
+    if(!server->listen(socket_path))
+        qDebug() << "vpnManager::DiskMain() on apiServer->listen::" << socket_path << "::" << server->errorString();
+    else
+        qDebug() << "vpnManager:: api socket listening on" << socket_path;
 
     // Start VPN-Logger Thread
     logger_thread = new QThread;
@@ -47,7 +50,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     connect(logger_thread, SIGNAL(started()), logger, SLOT(process()));
     connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
     connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
-    connect(logger, SIGNAL(OTPRequest(QProcess*)), this, SLOT(onOTPRequest(QProcess*)), Qt::QueuedConnection);
+    connect(logger, SIGNAL(PromptRequest(QProcess*,int)), this, SLOT(onPromptRequest(QProcess*,int)), Qt::QueuedConnection);
     connect(logger, SIGNAL(CertificateValidationFailed(QString,QString)), this, SLOT(onCertificateValidationFailed(QString,QString)), Qt::QueuedConnection);
     connect(logger, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(finished()), logger_thread, SLOT(deleteLater()));
@@ -70,8 +73,6 @@ vpnManager::~vpnManager()
 
 void vpnManager::startVPN(const QString &name)
 {
-    tiConfMain main_settings;
-
     if(connections.contains(name))
     {
         qDebug() << "VPN already running with name" << name;
@@ -125,14 +126,15 @@ void vpnManager::startVPN(const QString &name)
     default:
     {
         QStringList arguments;
-        if(main_settings.getValue("main/sudo_preserve_env").toBool())
-            arguments << "-E";
         arguments << QCoreApplication::applicationFilePath();
         arguments << "--start-vpn";
         arguments << "--vpn-name";
         arguments << name;
         arguments << "--main-config";
         arguments << tiConfMain::formatPath(QString("%1").arg(tiConfMain::main_config));
+        // The child runs as root and cannot derive our runtime location itself.
+        arguments << "--api-socket";
+        arguments << vpnApi::socketPath();
 
         QProcess *vpnProc = new QProcess(this);
         vpnProc->setProcessChannelMode(QProcess::MergedChannels);
@@ -365,10 +367,10 @@ void vpnManager::onClientVPNMessage(QString vpnname, vpnMsg msg)
     emit VPNMessage(vpnname, msg);
 }
 
-void vpnManager::onOTPRequest(QProcess *proc)
+void vpnManager::onPromptRequest(QProcess *proc, int type)
 {
-    qDebug() << "otprequest from vpnmanager";
-    emit VPNOTPRequest(proc);
+    qDebug() << "prompt request from vpnmanager, type" << type;
+    emit VPNPromptRequest(proc, type);
 }
 
 void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
@@ -478,6 +480,9 @@ void vpnClientConnection::submitPassStoreCred()
     */
 
     jsTop["password"] = password;
+    // With the system password store the child cannot decrypt the profile
+    // itself (key and IV live in the keychain), so the cookie travels along.
+    jsTop["cookie"] = profile->readCookie();
 
     json.setObject(jsTop);
     data.data = json.toJson();

@@ -24,18 +24,23 @@ endif ()
 
 # Set lib flag
 # add_definitions(-DFORTI_LIBRARY)
+#
+# These replace openfortivpn's configure run -- keep them in sync with
+# openfortivpn/configure.ac when bumping the submodule. HAVE_RESOLVCONF stays
+# undefined on purpose: openfortiGUI writes /etc/resolv.conf directly, so
+# RESOLVCONF_PATH is empty as well. LEGACY_PPPD is only used by
+# openfortivpn/src/main.c, which we do not compile.
 add_definitions(-DHAVE_USR_SBIN_PPPD=1
     -DHAVE_PROC_NET_ROUTE=1
     -DHAVE_STRUCT_TERMIOS=1
     -DHAVE_RT_ENTRY_WITH_RT_DST=1
     -DHAVE_SYSTEMD=0
-    -DHAVE_X509_CHECK_HOST=1
     -DPPP_PATH="/usr/sbin/pppd"
     -DRESOLVCONF_PATH=""
     -DHAVE_PTY_H=1
-    -DSUPPORT_OBSOLETE_CODE=1
     -DHAVE_SO_BINDTODEVICE=1
-    -DOPENSSL_ENGINE=1)
+    -DHAVE_PTHREAD_MUTEXATTR_SETROBUST=1
+    -DHAVE_VDPRINTF=1)
 
 #########################################################
 # Sources
@@ -63,6 +68,7 @@ openfortigui/mainwindow.cpp
 openfortigui/openfortivpn/src/config.c
 openfortigui/openfortivpn/src/hdlc.c
 openfortigui/openfortivpn/src/http.c
+openfortigui/openfortivpn/src/http_server.c
 openfortigui/openfortivpn/src/io.c
 openfortigui/openfortivpn/src/ipv4.c
 openfortigui/openfortivpn/src/log.c

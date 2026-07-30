@@ -34,6 +34,8 @@ public:
     ~vpnOTPLogin();
 
     void setData(QProcess *otpproc);
+    // Adapt the wording to what is being asked for (OTP, key passphrase, ...).
+    void setPrompt(const QString &question, const QString &fieldLabel);
     void initAfter();
 
 private:

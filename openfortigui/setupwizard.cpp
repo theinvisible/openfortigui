@@ -170,7 +170,7 @@ void setupWizard::on_btnNext_clicked()
             tiConfMain main_settings;
             main_settings.setValue("main/setupwizard", true);
             main_settings.sync();
-            parentWidget()->close();
+            window()->close();
         }
         break;
     }
@@ -197,7 +197,7 @@ void setupWizard::on_btnCancel_clicked()
         }
     }
 
-    parentWidget()->close();
+    window()->close();
 }
 
 void setupWizard::on_btnGenKeys_clicked()

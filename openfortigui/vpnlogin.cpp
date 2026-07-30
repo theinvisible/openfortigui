@@ -51,19 +51,19 @@ void vpnLogin::setData(vpnManager *manager, const QString &name)
 
 void vpnLogin::initAfter()
 {
-    parentWidget()->installEventFilter(this);
+    window()->installEventFilter(this);
 }
 
 void vpnLogin::on_btnSubmit_clicked()
 {
     vpnmanager->submitVPNCred(vpnname, ui->leUsername->text(), ui->lePassword->text(), ui->leOTP->text());
-    parentWidget()->hide();
+    window()->hide();
 }
 
 void vpnLogin::on_btnCancel_clicked()
 {
     vpnmanager->submitVPNCred(vpnname, "", "");
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnLogin::on_leUsername_returnPressed()
@@ -83,11 +83,11 @@ void vpnLogin::on_leOTP_returnPressed()
 
 bool vpnLogin::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == parentWidget() && event->type() == QEvent::Close)
+    if(object == window() && event->type() == QEvent::Close)
     {
         on_btnCancel_clicked();
         event->ignore();
-        parentWidget()->hide();
+        window()->hide();
 
         return true;
     }

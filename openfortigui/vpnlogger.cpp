@@ -88,6 +88,32 @@ void vpnLogger::logVPNOutput(const QString &name)
     QTextStream out(logfile);
 
     QString toLog = QString::fromUtf8(blog);
+
+    /*
+     * sudo could not run us without asking for a password, which means the
+     * NOPASSWD rule did not apply -- usually because the user is not in the
+     * group the rule names. This was the single most reported problem
+     * (issues #133, #167, #193, #203) and always needed a maintainer to
+     * explain it, because the raw sudo message says nothing about openfortiGUI.
+     */
+    if(toLog.contains("a terminal is required to read the password")
+       || toLog.contains("a password is required"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: sudo asked for a password, so the VPN process could not be started.");
+        msg.detail = tr("openfortiGUI needs a sudo rule that allows starting the VPN process "
+                        "without a password. Check that /etc/sudoers.d/openfortigui exists, that "
+                        "/etc/sudoers includes that directory, and that your user is a member of "
+                        "the group the rule names (\"sudo\" by default -- domain/AD users usually "
+                        "are not, so the rule has to name their group instead).\n\n%1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
     if(toLog.contains("Please load the ppp"))
     {
         vpnMsg msg;
@@ -126,19 +152,30 @@ void vpnLogger::logVPNOutput(const QString &name)
         return;
     }
 
-    if(vpnConfigs[name].otp_prompt.isEmpty())
+    /*
+     * The gateway's prompts are only visible as text on the child's stdout, so
+     * they are recognised by pattern. openfortivpn asks for the private key
+     * passphrase the same way (pem_passphrase_cb in tunnel.c), which is why
+     * profiles with an encrypted client key used to hang forever: no pattern
+     * matched, no dialog appeared, and the process waited on stdin (issue #166).
+     */
+    if(toLog.contains("PEM pass phrase"))
+    {
+        emit PromptRequest(proc, vpnLogger::PROMPT_PEM_PASSPHRASE);
+    }
+    else if(vpnConfigs[name].otp_prompt.isEmpty())
     {
         if(toLog.contains("Please") ||
            toLog.contains("2factor authentication token:") ||
            toLog.contains("Two-factor authentication") ||
            toLog.contains("one-time password"))
         {
-            emit OTPRequest(proc);
+            emit PromptRequest(proc, vpnLogger::PROMPT_OTP);
         }
     } else {
         if(toLog.contains(vpnConfigs[name].otp_prompt))
         {
-            emit OTPRequest(proc);
+            emit PromptRequest(proc, vpnLogger::PROMPT_OTP);
         }
     }
 

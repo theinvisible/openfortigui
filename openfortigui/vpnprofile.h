@@ -49,6 +49,10 @@ public:
     QString password;
     QString otp;
     QString realm;
+    // Hostname sent in the TLS SNI extension, if it differs from gateway_host.
+    QString sni;
+    // SVPNCOOKIE, used in place of username/password when set.
+    QString cookie;
 
     bool set_routes;
     bool set_dns;
@@ -81,6 +85,10 @@ public:
     bool trust_all_gw_certs;
 
     QString readPassword();
+    QString readCookie();
+
+private:
+    QString readSecret(const QString &key);
 };
 
 #endif // VPNPROFILE_H

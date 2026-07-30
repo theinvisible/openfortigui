@@ -95,4 +95,43 @@ fi
 assert_not_contains "no tunnel without a password" "$LOG_D" 'Tunnel is up and running'
 assert_true "no ppp interface" test -z "$(ppp_iface)"
 
+# --------------------------------------------------------------------------
+part "e) authentication with an SVPNCOOKIE instead of a password"
+# --------------------------------------------------------------------------
+
+# The profile field goes to config.cookie in vpnWorker::process(); openfortivpn
+# then skips auth_log_in and uses the session directly. This is the path a
+# SAML/SSO login ends in -- the cookie here is fetched with a normal portal
+# login so that no IdP is needed.
+COOKIE="$(curl -sk --max-time 15 -X POST \
+    "https://$FGT_WAN_IP:$FGT_SSLVPN_PORT/remote/logincheck" \
+    -A "Mozilla/5.0 SV1" \
+    --data-urlencode "username=$VPN_USER" \
+    --data-urlencode "credential=$VPN_PASS" \
+    --data "realm=&ajax=1" -D - -o /dev/null 2>/dev/null \
+    | sed -nE 's/^[Ss]et-[Cc]ookie: SVPNCOOKIE=([^;]+).*/\1/p' | head -n1)"
+
+if [[ -z "$COOKIE" ]]; then
+    skip "SVPNCOOKIE" "the portal did not return a cookie"
+else
+    ok "SVPNCOOKIE obtained from the portal (${#COOKIE} characters)"
+
+    LOG_E="$(case_log e-cookie)"
+    # No user name, no password -- the cookie has to carry the login on its own.
+    client_write_profile "lab-auth-cookie" \
+        "trusted_cert=$LAB_GW_DIGEST" "username=" "password_plain=" \
+        "cookie_plain=$COOKIE" >/dev/null
+    client_start "lab-auth-cookie" "$LOG_E" || fail "process did not start"
+
+    if client_wait_log "$LOG_E" 'Tunnel is up and running' "$TIMEOUT_CONNECT"; then
+        ok "tunnel is up with the cookie alone"
+    else
+        fail "cookie authentication failed" \
+            "Is the cookie reaching config.cookie? See vpnWorker::process().
+$(tail -n 25 "$LOG_E")"
+    fi
+    assert_not_contains "no credential prompt" "$LOG_E" 'Could not authenticate to gateway'
+    client_stop TERM 30 >/dev/null 2>&1 || true
+fi
+
 case_finish

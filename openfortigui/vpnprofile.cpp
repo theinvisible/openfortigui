@@ -34,6 +34,8 @@ vpnProfile::vpnProfile()
     password = "";
     otp = "";
     realm = "";
+    sni = "";
+    cookie = "";
 
     set_routes = true;
     set_dns = false;
@@ -67,6 +69,21 @@ vpnProfile::vpnProfile()
 
 QString vpnProfile::readPassword()
 {
+    return readSecret("password");
+}
+
+QString vpnProfile::readCookie()
+{
+    return readSecret("cookie");
+}
+
+/*
+ * Read a single encrypted value straight out of the profile file. Used where the
+ * profile list was loaded without secrets (setReadProfilePasswords(false)) but
+ * one of them is needed after all.
+ */
+QString vpnProfile::readSecret(const QString &key)
+{
     auto main_settings = std::make_unique<tiConfMain>();
     QString retPass = "";
 
@@ -87,7 +104,7 @@ QString vpnProfile::readPassword()
 
     auto f = std::make_unique<QSettings>(profileDir + QDir::separator() + name + ".conf", QSettings::IniFormat);
     f->beginGroup("vpn");
-    retPass = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
+    retPass = vpnHelper::Qaes128_decrypt(f->value(key).toString(), aeskey, aesiv);
     f->endGroup();
 
     return retPass;

@@ -24,6 +24,7 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QShortcut>
 
 vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     QWidget(parent),
@@ -32,6 +33,14 @@ vpnGroupEditor::vpnGroupEditor(QWidget *parent, vpnGroupEditorMode smode) :
     config(0)
 {
     ui->setupUi(this);
+
+    // Enter saves, Escape cancels -- see vpnProfileEditor (issue #205).
+    connect(new QShortcut(QKeySequence(Qt::Key_Return), this), &QShortcut::activated,
+            this, &vpnGroupEditor::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Enter), this), &QShortcut::activated,
+            this, &vpnGroupEditor::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Escape), this), &QShortcut::activated,
+            this, &vpnGroupEditor::on_btnCancel_clicked);
 
     // Validators
     QRegularExpression rx(openfortigui_config::validatorName);
@@ -129,7 +138,7 @@ void vpnGroupEditor::loadVpnGroup(const QString &groupname)
 
 void vpnGroupEditor::on_btnCancel_clicked()
 {
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnGroupEditor::on_btnSave_clicked()
@@ -188,7 +197,7 @@ void vpnGroupEditor::on_btnSave_clicked()
 
     vpngroups.saveVpnGroup(vpngroup);
 
-    parentWidget()->close();
+    window()->close();
 
     if(mode == vpnGroupEditorModeEdit)
         emit vpnGroupEdited(vpngroup);

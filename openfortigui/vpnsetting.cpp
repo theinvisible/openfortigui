@@ -20,6 +20,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QShortcut>
 
 #include "ticonfmain.h"
 #include "vpnhelper.h"
@@ -30,11 +31,18 @@ vpnSetting::vpnSetting(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Enter saves, Escape cancels -- see vpnProfileEditor (issue #205).
+    connect(new QShortcut(QKeySequence(Qt::Key_Return), this), &QShortcut::activated,
+            this, &vpnSetting::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Enter), this), &QShortcut::activated,
+            this, &vpnSetting::on_btnSave_clicked);
+    connect(new QShortcut(QKeySequence(Qt::Key_Escape), this), &QShortcut::activated,
+            this, &vpnSetting::on_btnCancel_clicked);
+
     tiConfMain confMain;
     ui->cbStartMinimized->setChecked(confMain.getValue("main/start_minimized").toBool());
     ui->cbDebug->setChecked(confMain.getValue("main/debug").toBool());
     ui->cbUseSystemPasswordStore->setChecked(confMain.getValue("main/use_system_password_store").toBool());
-    ui->cbSUDOPreserveEnv->setChecked(confMain.getValue("main/sudo_preserve_env").toBool());
     if(confMain.getValue("main/use_system_password_store").toBool())
     {
         ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
@@ -59,7 +67,6 @@ vpnSetting::vpnSetting(QWidget *parent) :
         ui->cbStartMinimized->setDisabled(true);
         ui->cbDebug->setDisabled(true);
         ui->cbUseSystemPasswordStore->setDisabled(true);
-        ui->cbSUDOPreserveEnv->setDisabled(true);
         ui->leAESKey->setDisabled(true);
         ui->leAESIV->setDisabled(true);
         ui->leLocalVPNProfiles->setDisabled(true);
@@ -83,7 +90,7 @@ vpnSetting::~vpnSetting()
 
 void vpnSetting::on_btnCancel_clicked()
 {
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnSetting::on_btnSave_clicked()
@@ -92,7 +99,6 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/start_minimized", ui->cbStartMinimized->isChecked());
     confMain.setValue("main/debug", ui->cbDebug->isChecked());
     confMain.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
-    confMain.setValue("main/sudo_preserve_env", ui->cbSUDOPreserveEnv->isChecked());
 
     if(ui->cbUseSystemPasswordStore->isChecked()) {
         vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
@@ -119,7 +125,7 @@ void vpnSetting::on_btnSave_clicked()
 
     confMain.sync();
 
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnSetting::on_btnChooseLocalVPNProfiles_clicked()

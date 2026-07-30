@@ -24,14 +24,14 @@ extern "C"  {
 #include "openfortivpn/src/http.h"
 #include "openfortivpn/src/userinput.h"
 
-#ifndef HAVE_X509_CHECK_HOST
-#include "openssl_hostname_validation.h"
-#endif
-
+/*
+ * There used to be a fallback to a vendored "openssl_hostname_validation.h"
+ * here for the case that X509_check_host() is missing. That header has never
+ * been part of the submodule, so the branch only ever compiled because
+ * HAVE_X509_CHECK_HOST was defined. openfortivpn calls X509_check_host()
+ * unconditionally today (tunnel.c:881) -- it is in OpenSSL since 1.0.2.
+ */
 #include <openssl/err.h>
-#ifdef OPENSSL_ENGINE
-#include <openssl/engine.h>
-#endif
 #include <openssl/ui.h>
 #include <openssl/x509v3.h>
 #if HAVE_SYSTEMD
@@ -655,6 +655,34 @@ void vpnWorker::process()
     if(!vpnConfig.realm.isEmpty())
         strncpy(config.realm, vpnConfig.realm.toUtf8().constData(), REALM_SIZE);
 
+    // Hostname for the TLS SNI extension, when it differs from gateway_host.
+    if(!vpnConfig.sni.isEmpty())
+    {
+        strncpy(config.sni, vpnConfig.sni.toUtf8().constData(), GATEWAY_HOST_SIZE);
+        config.sni[GATEWAY_HOST_SIZE] = '\0';
+    }
+
+    /*
+     * SVPNCOOKIE replaces username/password authentication.
+     *
+     * auth_set_cookie() (http.c:418) searches the string for "SVPNCOOKIE=" and
+     * keeps everything from there, up to the first ";", CR or LF -- it wants a
+     * whole Set-Cookie line. Users copy the bare value out of their browser far
+     * more often than the complete line, so accept both and add the prefix when
+     * it is missing. Without it the core logs "No cookie found" and the
+     * connection fails with "No cookie given".
+     */
+    if(!vpnConfig.cookie.isEmpty())
+    {
+        QString cookie = vpnConfig.cookie.trimmed();
+        if(!cookie.contains("SVPNCOOKIE="))
+            cookie.prepend("SVPNCOOKIE=");
+
+        // Length only -- the cookie is a live session credential.
+        qDebug() << "vpnWorker::process:: using cookie authentication, length" << cookie.length();
+        config.cookie = strdup(cookie.toUtf8().constData());
+    }
+
     if(!vpnConfig.ca_file.isEmpty())
         config.ca_file = strdup(vpnConfig.ca_file.toUtf8().constData());
 
@@ -745,9 +773,17 @@ start_tunnel:
         goto err_tunnel;
     }
 
-    // Step 2: connect to the HTTP interface and authenticate to get a
-    // cookie
-    ret = auth_log_in(&tunnel);
+    /*
+     * Step 2: connect to the HTTP interface and authenticate to get a cookie.
+     *
+     * With a cookie configured there is nothing to log in to -- the session
+     * already exists and only has to be adopted. This mirrors run_tunnel()
+     * (openfortivpn/src/tunnel.c:1381), whose sequence is reimplemented here.
+     */
+    if (config.cookie != NULL)
+        ret = auth_set_cookie(&tunnel, config.cookie);
+    else
+        ret = auth_log_in(&tunnel);
     if (ret != 1) {
         log_error("Could not authenticate to gateway (%s).\n",
                   err_http_str(ret));

@@ -11,9 +11,10 @@ tests/fortigate-vm/testlab test    # all test cases                    (~80 s)
 tests/fortigate-vm/testlab down    # VM and network gone
 ```
 
-Last full run (FortiOS 7.4.12, evaluation license): **7/7 cases, 93 checks
-green in 80 s.** Building this lab uncovered three crash and cleanup bugs in
-openfortiGUI; all three are fixed, and the test cases now guard them against
+Last full run (FortiOS 7.4.12, evaluation license): **8/8 cases, 112 checks
+green in 91 s.** Building this lab uncovered three crash and cleanup bugs in
+openfortiGUI, and decoupling the VPN process from the inherited environment
+uncovered a fourth; all are fixed, and the test cases now guard them against
 regression — see [Findings](#8-findings-in-openfortigui).
 
 ---
@@ -233,18 +234,19 @@ $OFGUI_LAB_DIR/client/home/.openfortigui/main.conf   →  home = .../client/home
                           /gw_cert.cache
 ```
 
-**`--main-config` alone is not enough.** Two paths depend on `HOME` rather
-than on the config path passed in, so the harness also sets `HOME` to the test
-home (`CLIENT_EXTRA_ENV` in `lib/client.sh`):
+`--main-config` is evaluated by `applyEarlyArgs()` (`main.cpp`) before the first
+`qDebug` and before the first `tiConfMain`, and `setMainConfig()` recomputes
+`main_gw_cert_cache` from it. Config, profiles, application log and certificate
+cache therefore all follow the path passed in, with no help from the
+environment. The api socket arrives the same way, via `--api-socket`.
 
-- `tiConfMain::main_gw_cert_cache` is initialized statically
-  (`ticonfmain.cpp:32`) and never updated by `setMainConfig()`.
-- `logMessageOutput()` opens `openfortigui.log` on the first `qDebug`
-  (`main.cpp:150`), which happens **before** `setMainConfig()`, and the path
-  stays fixed afterwards. Without `HOME`, the application log ends up in
-  `/root/.openfortigui/logs/`, because `sudo` sets `HOME` to `/root`.
+The harness still sets `HOME` to the test home (`CLIENT_EXTRA_ENV` in
+`lib/client.sh`) as a safety net: should something start deriving paths from
+`HOME` again, it lands in the test home instead of the real one. `80_env` is the
+case that runs deliberately **without** it — with `HOME` pointing at a
+non-existent directory and no `XDG_RUNTIME_DIR` — and proves the independence.
 
-With `HOME` set, the user's `~/.openfortigui` is never read or written.
+The user's `~/.openfortigui` is never read or written.
 
 The test `main.conf` sets `use_system_password_store=false`. With the password
 store enabled, the root child process asks the GUI for key and IV over the
@@ -265,11 +267,12 @@ printf '%s' "$pw" | openssl enc -aes-128-cbc -a -A \
 |---|---|---|
 | `10_connect` | connect with a pinned certificate: `Tunnel is up and running.`, ppp interface with a pool address, application log free of Critical/Fatal | 9 |
 | `20_routing` | split route to the inside network, **default route unchanged**, byte counters from `/proc/net/dev`; data path and DNS push optional | 5 |
-| `30_cert` | unknown certificate is rejected and the digest logged exactly the way `MainWindow` extracts it by regex; wrong digest; `insecure_ssl` alone does **not** disable the check; `gw_cert.cache`; `min_tls`/`seclevel1`/TLS 1.3 | 13 |
-| `40_auth` | wrong password, unknown user, missing profile, missing password without a GUI, exit code of the error path | 14 |
+| `30_cert` | unknown certificate is rejected and the digest logged exactly the way `MainWindow` extracts it by regex; wrong digest; `insecure_ssl` alone does **not** disable the check; `gw_cert.cache`; `min_tls`/`seclevel1`/TLS 1.3 , plus SNI (set explicitly and the fallback to the gateway host) and the passphrase prompt for an encrypted client key | 19 |
+| `40_auth` | wrong password, unknown user, missing profile, missing password without a GUI, exit code of the error path; authentication with an SVPNCOOKIE instead of a password | 17 |
 | `50_disconnect` | SIGTERM: clean teardown, ppp gone, routes and addresses as before, split route removed, no orphaned gateway route, no process leftovers, exit code | 15 |
 | `60_persistent` | a server-side killed tunnel (`execute vpn sslvpn del-tunnel <index>`) is rebuilt via `persistent=true`; SIGTERM stops the process despite `persistent` | 15 |
 | `70_guistop` | stop initiated by the GUI while the tunnel is up: `ACTION_STOP` over the local socket, and the GUI going away. Uses `mock_gui.py`, which provides the `openfortiGUI` QLocalServer | 22 |
+| `80_env` | independence from the inherited environment: connect with a wrong `HOME` and no `XDG_RUNTIME_DIR`, the child reaches the GUI over `--api-socket`, log and `gw_cert.cache` follow `--main-config`, nothing written to `/root`, `main.conf` keeps its owner | 10 |
 
 Four of these checks used to report the crashes described under
 [Findings](#8-findings-in-openfortigui). Since the fix they are regression
@@ -456,9 +459,9 @@ created. The provisioning detects this and reconfigures the existing portal
 
 ## 8. Findings in openfortiGUI
 
-Findings 1, 2 and 4 are **fixed** — they are documented here because the test
-cases keep guarding them. Finding 3 lives in the openfortivpn submodule and is
-reported upstream rather than patched locally. Finding 5 is documented
+Findings 1, 2, 4, 6 and 7 are **fixed** — they are documented here because the
+test cases keep guarding them. Finding 3 lives in the openfortivpn submodule and
+is reported upstream rather than patched locally. Finding 5 is documented
 behaviour.
 
 ### 1. Crash on every disconnect (SIGSEGV, exit code 139) — fixed
@@ -518,10 +521,11 @@ single `invalid pointer`.
 
 ### 3. Orphaned gateway route after a crash — upstream
 
-`ipv4_protect_tunnel_route()` (`openfortivpn/src/ipv4.c:729`) installs a `/32`
+`ipv4_protect_tunnel_route()` (`openfortivpn/src/ipv4.c:744`) installs a `/32`
 route to the VPN gateway. If the gateway is directly attached to a secondary
 interface, `ipv4_get_route()` determines the **wrong** next hop for it — the
-default gateway instead of the direct connection:
+default gateway instead of the direct connection. Still reproducible with
+submodule v1.24.1:
 
 ```
 DEBUG:  ip route show to 10.99.99.10/255.255.255.255 dev !ppp0
@@ -539,11 +543,15 @@ through findings 1 and 2. With those fixed the damage is gone;
 `50_disconnect` and `60_persistent` now check the gateway route explicitly,
 and `client_force_cleanup` in `lib/client.sh` remains as a net for hard aborts.
 
-The wrong choice itself is in the submodule (upstream v1.20.5) and is reported
-there, together with a second find on the same line: `ipv4.c:773` uses
-`sprintf` to write `"!ppp0"` (6 bytes) into the 5-byte buffer that
-`ipv4_get_route()` previously allocated with `strdup("ppp0")`, after freeing
-the original `malloc(strlen+2)` from `ipv4.c:759`.
+The wrong choice itself is in the submodule and is reported upstream. It is
+unchanged in v1.24.1 — the `via 10.0.0.138 dev wlp18s0` line above comes from a
+current lab run.
+
+A second find reported at the same time **is** fixed in v1.24.1: a `sprintf`
+used to write `"!ppp0"` (6 bytes) into the 5-byte buffer that
+`ipv4_get_route()` had replaced with `strdup("ppp0")`, after freeing the
+original `malloc(strlen+2)`. Today every `sprintf` of an `"!iface"` string gets
+its own `malloc(strlen + 2)` immediately before it (`ipv4.c:788`, `ipv4.c:806`).
 
 ### 4. No clean stop with `persistent=true` — fixed
 
@@ -558,11 +566,81 @@ Covered by `60_persistent`.
 
 ### 5. `insecure_ssl` does not disable certificate validation
 
-Contrary to what the name suggests, `insecure_ssl` in openfortivpn 1.20.5 only
+Contrary to what the name suggests, `insecure_ssl` in openfortivpn 1.24.1 only
 affects the cipher list and TLS protocol options
-(`openfortivpn/src/tunnel.c:1097-1145`). The digest whitelist is checked
+(`openfortivpn/src/tunnel.c:1039-1084`). The digest whitelist is checked
 independently of it. A profile with `insecure_ssl=true` and no `trusted_cert`
 therefore does **not** connect. `30_cert` c) pins both behaviours down.
+
+### 6. The VPN process depended on an inherited environment — fixed
+
+The api socket was opened by plain name (`openfortigui_config::name`), which Qt
+resolves against the runtime location: `/run/user/1000` for the GUI,
+`/run/user/0` or `/tmp/runtime-root` for the root child. The two only ever met
+because `vpnManager::startVPN()` passed `sudo -E`. Everything the GUI learns from
+a connection travels over that socket, so without it there are no status updates,
+no OTP prompt and no credential dialog — the reports in issues #158, #107, #179
+and #132. sudo-rs (Ubuntu 26.04) does not support `-E` at all, which broke
+connecting outright (#208).
+
+Two more paths hung off `HOME` for the same reason: `main_gw_cert_cache` (static,
+never updated by `setMainConfig()`) and the application log, opened on the first
+`qDebug` before `--main-config` had been parsed.
+
+The fix hands everything over explicitly:
+
+* `vpnApi::socketPath()` / `setSocketPath()` — the GUI derives the path, the
+  child receives it as `--api-socket`. `main.cpp` and the KRunner plugin use the
+  same helper, so all three agree.
+* `applyEarlyArgs()` parses `--main-config` and `--api-socket` straight from
+  `argv`, before the message handler and the first `tiConfMain`.
+* `setMainConfig()` recomputes `main_gw_cert_cache` from the constant.
+* `-E` is gone, along with the `sudoPreEnvOSes` list and the `SETENV:` tag in
+  `sudo/openfortigui`; a one-time migration (`checks/sudo_env_migrated`) clears
+  the setting from existing configurations.
+
+Writing this case surfaced one more defect, in the migration itself:
+`initMainConf()` rewrote `main.conf` from the **root** child process. QSettings
+replaces the file atomically, so the config ended up owned by root, after which
+`isWritable()` is false and the settings dialog stays disabled permanently. The
+migration now runs only when `geteuid() != 0`; the GUI always starts before any
+VPN process, so it is the one that migrates. `80_env` a) checks the owner.
+
+Covered by `80_env`.
+
+### 7. Cookie authentication never reached the gateway — fixed
+
+`vpnWorker::process()` reimplements the sequence of openfortivpn's
+`run_tunnel()` (ssl_connect → authenticate → allocation → config → pppd →
+io_loop) instead of calling it. When `--cookie` support was added upstream, the
+branch
+
+```c
+if (config->cookie)
+    ret = auth_set_cookie(&tunnel, config->cookie);
+else
+    ret = auth_log_in(&tunnel);
+```
+
+arrived in `tunnel.c:1381` — but not in the copy. openfortiGUI called
+`auth_log_in()` unconditionally, so a configured cookie was passed into
+`struct vpn_config` and then ignored: the client logged in with an empty user
+name, the gateway answered with an empty `SVPNCOOKIE`, and the run ended in
+`Empty cookie.` / `Could not authenticate to gateway (No cookie given)`. The
+symptom pointed at the cookie being lost on the way, when in fact it arrived
+intact and was never used.
+
+Worth remembering when bumping the submodule: **changes to `run_tunnel()` do not
+reach openfortiGUI on their own.** Diff that function against
+`vpnWorker::process()` after every bump.
+
+`auth_set_cookie()` also wants a whole `Set-Cookie` line, not a bare value — it
+searches for `SVPNCOOKIE=` and checks `cookie[11]`. Users copy the value out of
+their browser far more often than the full line, so `vpnWorker::process()` adds
+the prefix when it is missing.
+
+Covered by `40_auth` e), which fetches a real cookie from the portal and
+connects with it, without a user name or password.
 
 ## 9. Known limitations
 
@@ -584,23 +662,12 @@ default route explicitly.
 the stub. `OFGUI_TEST_DNS=1` enables the test; it backs the file up first and
 writes it back afterwards.
 
-**`--main-config` does not move the certificate cache and application log.**
-`tiConfMain::main_gw_cert_cache` is fixed during static initialization
-(`openfortigui/ticonfmain.cpp:32`) and never updated by `setMainConfig()`;
-`logMessageOutput()` opens `openfortigui.log` on the first `qDebug`
-(`main.cpp:150`), so also before `setMainConfig()`. Both paths therefore depend
-on `HOME` — under `sudo` on `/root`. That is why the harness always sets
-`HOME` to the test home, see
-[Isolation](#4-isolation-from-your-real-user-profile).
-
-**Orphaned `/root/.openfortigui`, or access to the real home.**
-`tiConfMain::main_config` is also initialized statically, before
-`--main-config` takes effect. The first `tiConfMain` constructor therefore
-still runs against `$HOME/.openfortigui` and calls `initMainConf()` there
-(mkpath and `chmod 0750`). Depending on whether `sudo` passes `HOME` through,
-this affects `/root/.openfortigui` or the real user home. Only the directory
-structure is written, no configuration. `testlab clean` removes an orphaned
-`/root/.openfortigui` as long as there are no profiles in it.
+**A leftover `/root/.openfortigui` from older versions.** Until the environment
+decoupling (Finding 6), the first `tiConfMain` constructor ran against
+`$HOME/.openfortigui` before `--main-config` took effect and created the
+directory structure there — under `sudo` that meant `/root`. Current versions no
+longer do this (`80_env` a) checks it), but an existing tree stays behind.
+`testlab clean` removes it as long as there are no profiles in it.
 
 **Only one console client.** The QEMU serial socket accepts one connection at
 a time, so `testlab console` and `provision`/`fgt` are mutually exclusive. A

@@ -95,7 +95,7 @@ private slots:
 
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
-    void onClientVPNOTPRequest(QProcess *proc);
+    void onClientVPNPromptRequest(QProcess *proc, int type);
     void onClientCertValidationFAiled(QString vpnname, QString buffer);
 
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
@@ -116,7 +116,7 @@ private:
     void refreshVpnProfileList();
     void refreshVpnGroupList();
     void autostartVPNs();
-    void doOSChecks();
+    void restartVPNWhenClosed(const QString &vpnname);
 
     QStandardItem *getVpnProfileItem(const QString &vpnname, int column);
 

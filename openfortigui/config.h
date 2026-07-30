@@ -21,7 +21,7 @@
 namespace openfortigui_config
 {
     inline constexpr const char *name = "openfortiGUI";
-    inline constexpr const char *version = "0.9.10";
+    inline constexpr const char *version = "0.9.11";
     inline constexpr const char *file_main = "~/.openfortigui/main.conf";
     inline constexpr const char *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
     inline constexpr const char *initd_default = "/etc/init.d/openfortigui";
@@ -36,7 +36,7 @@ namespace openfortigui_config
 
     inline constexpr const char *validatorName = "^[a-zA-ZäöüÄÖÜ0-9 \\-_]{3,}$";
 
-    inline constexpr int changelogRev = 23;
+    inline constexpr int changelogRev = 24;
 }
 
 #endif // CONFIG_H

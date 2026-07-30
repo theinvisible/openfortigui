@@ -26,6 +26,21 @@ class vpnApi
 public:
     vpnApi();
 
+    /*
+     * Path of the QLocalServer socket the GUI listens on.
+     *
+     * This must not be a plain name: Qt resolves those against the runtime
+     * location, which differs between the GUI (/run/user/<uid>) and the VPN
+     * child process started via sudo (/run/user/0 or /tmp/runtime-root). The
+     * two would never meet unless the whole environment is preserved.
+     *
+     * Everything running as the user derives the path with socketPath(). The
+     * root child gets it handed over via --api-socket and stores it with
+     * setSocketPath().
+     */
+    static void setSocketPath(const QString &path);
+    static QString socketPath();
+
     enum vpnApiAction
     {
         ACTION_HELLO = 0,
@@ -50,6 +65,9 @@ public:
     QString objName;
     int action;
     QByteArray data;
+
+private:
+    static QString socket_path;
 };
 
 class vpnStats

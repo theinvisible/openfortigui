@@ -51,6 +51,7 @@ private:
         QString username;
         QString password;
         QString otp;
+        QString cookie;
     };
     struct_cred_data cred_data;
 

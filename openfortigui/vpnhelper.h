@@ -33,6 +33,7 @@ public:
     vpnHelper();
 
     static QString formatByteUnits(qint64 num);
+    static QString formatDuration(qint64 since_epoch_secs);
 
     static vpnHelperResult checkSystemPasswordStoreAvailable();
     static vpnHelperResult systemPasswordStoreWrite(const QString &key, const QString &data);
@@ -43,9 +44,9 @@ public:
     static int aes128_decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,unsigned char *iv, unsigned char *plaintext);
     static QString Qaes128_encrypt(const QString &plain, const QString &key, const QString &iv);
     static QString Qaes128_decrypt(const QString &cipher, const QString &key, const QString &iv);
+    static bool aesKeyUsable(const QString &key, const QString &iv);
 
     static void ssl_handleErrors(void);
-    static QString getOSCodename();
 
     static QString runCommandwithOutput(const QString &cmd);
     static int runCommandwithReturnCode(const QString &cmd);

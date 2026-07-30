@@ -34,6 +34,16 @@ public:
     explicit vpnLogger(QObject *parent = nullptr);
     ~vpnLogger();
 
+    /*
+     * What the child process is waiting for on stdin. Recognised from its
+     * output, because that is the only channel there is.
+     */
+    enum promptType
+    {
+        PROMPT_OTP = 0,
+        PROMPT_PEM_PASSPHRASE
+    };
+
 public slots:
     void addVPN(const QString &name, QProcess *proc);
 
@@ -52,7 +62,7 @@ private slots:
     void procFinished(const QString &name);
 
 signals:
-    void OTPRequest(QProcess *proc);
+    void PromptRequest(QProcess *proc, int type);
     void CertificateValidationFailed(QString name, QString buffer);
     void VPNMessage(QString name, vpnMsg msg);
 

@@ -79,6 +79,13 @@ LAB_OUT_DIR="$OFGUI_LAB_DIR/out"
 LAB_CLIENT_HOME="$OFGUI_LAB_DIR/client/home"
 LAB_MAIN_CONF="$LAB_CLIENT_HOME/.openfortigui/main.conf"
 LAB_PROFILE_DIR="$LAB_CLIENT_HOME/.openfortigui/vpnprofiles"
+# The api socket the GUI (or mock_gui.py) listens on and that the VPN process
+# gets handed over with --api-socket. Exported because mock_gui.py reads it.
+# Keep it short: a unix socket path is limited to 107 bytes, and openfortiGUI
+# only reports "Invalid name" when that is exceeded.
+LAB_API_SOCK="$LAB_RUN_DIR/api.sock"
+export LAB_API_SOCK
+
 LAB_CONSOLE_SOCK="$LAB_RUN_DIR/console.sock"
 LAB_QMP_SOCK="$LAB_RUN_DIR/qmp.sock"
 LAB_QEMU_PID="$LAB_RUN_DIR/qemu.pid"

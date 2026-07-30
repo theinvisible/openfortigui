@@ -62,9 +62,9 @@ client_stop TERM 20 >/dev/null 2>&1 || true
 part "c) insecure_ssl does NOT bypass certificate validation"
 # --------------------------------------------------------------------------
 
-# Contrary to what the name suggests, insecure_ssl in openfortivpn 1.20.5 only
+# Contrary to what the name suggests, insecure_ssl in openfortivpn 1.24.1 only
 # affects the cipher list and the TLS protocol options
-# (openfortivpn/src/tunnel.c:1097-1145). The digest whitelist is checked
+# (openfortivpn/src/tunnel.c:1039-1084). The digest whitelist is checked
 # independently of it. A profile with insecure_ssl=true but no trusted_cert
 # therefore does not connect.
 LOG_C="$(case_log c-insecure-alone)"
@@ -77,7 +77,7 @@ else
     if grep -q 'Tunnel is up and running' "$LOG_C" 2>/dev/null; then
         fail "insecure_ssl skipped certificate validation" \
             "Behaviour has changed -- openfortivpn used to check the digest
-independently of insecure_ssl (tunnel.c:1097)."
+independently of insecure_ssl (tunnel.c:1039)."
     else
         fail "unexpected outcome" "$(tail -n 20 "$LOG_C")"
     fi
@@ -101,11 +101,11 @@ part "d) trust_all_gw_certs picks the hash up automatically"
 # --------------------------------------------------------------------------
 
 # With trust_all_gw_certs, vpnProcess::startVPN() (vpnprocess.cpp:180) reads the
-# hash from gw_cert.cache. The path of that file depends on HOME, not on
-# --main-config (tiConfMain::main_gw_cert_cache is initialized statically,
-# ticonfmain.cpp:32, and never updated by setMainConfig()) -- which is why the
-# harness always sets HOME to the test home, see CLIENT_EXTRA_ENV in
-# lib/client.sh.
+# hash from gw_cert.cache. That path used to depend on HOME rather than on
+# --main-config, because tiConfMain::main_gw_cert_cache is initialized statically
+# (ticonfmain.cpp:32) and setMainConfig() did not recompute it. It does now;
+# 80_env b) is the case that proves it, by running the same path with a
+# deliberately wrong HOME.
 CACHE="$LAB_CLIENT_HOME/.openfortigui/gw_cert.cache"
 cat >"$CACHE" <<EOF
 [gw_cert_hashes]
@@ -156,5 +156,79 @@ else
     skip "min_tls=1.3" "the FortiGate does not offer TLS 1.3 (informational)"
 fi
 client_stop TERM 30 >/dev/null 2>&1 || true
+
+# --------------------------------------------------------------------------
+part "f) SNI"
+# --------------------------------------------------------------------------
+
+# openfortivpn puts config.sni into the TLS handshake and falls back to
+# gateway_host when it is empty (tunnel.c:1308-1315). openfortiGUI passes the
+# profile field through in vpnWorker::process(). Requires submodule >= v1.22.
+LOG_G="$(case_log f-sni)"
+SNI_NAME="vpn.example.test"
+client_write_profile "lab-cert-sni" "trusted_cert=$LAB_GW_DIGEST" "sni=$SNI_NAME" >/dev/null
+client_start "lab-cert-sni" "$LOG_G" || fail "process did not start"
+
+if client_wait_log "$LOG_G" 'Tunnel is up and running' "$TIMEOUT_CONNECT"; then
+    ok "tunnel is up with an SNI set"
+else
+    fail "tunnel with an SNI did not come up" "$(tail -n 20 "$LOG_G")"
+fi
+assert_contains "the configured SNI reaches the handshake" "$LOG_G" \
+    "Set SNI for TLS handshake: $SNI_NAME"
+client_stop TERM 30 >/dev/null 2>&1 || true
+
+# Empty SNI must keep using the gateway host, not send an empty name
+LOG_H="$(case_log f-sni-default)"
+client_write_profile "lab-cert-nosni" "trusted_cert=$LAB_GW_DIGEST" >/dev/null
+client_start "lab-cert-nosni" "$LOG_H" || fail "process did not start"
+if client_wait_log "$LOG_H" 'Tunnel is up and running' "$TIMEOUT_CONNECT"; then
+    ok "tunnel is up without an SNI"
+else
+    fail "tunnel without an SNI did not come up" "$(tail -n 20 "$LOG_H")"
+fi
+assert_contains "without an SNI the gateway host is used" "$LOG_H" \
+    "Set SNI for TLS handshake: $FGT_WAN_IP"
+client_stop TERM 30 >/dev/null 2>&1 || true
+
+# --------------------------------------------------------------------------
+part "g) an encrypted client key asks for its passphrase"
+# --------------------------------------------------------------------------
+
+# openfortivpn asks for the passphrase of an encrypted private key through
+# pem_passphrase_cb() (tunnel.c), which prints "Enter PEM pass phrase: " to
+# stdout and then waits on stdin. vpnLogger recognises prompts by exactly that
+# text and opens a dialog; without a matching pattern the process waits forever,
+# which is what issue #166 describes.
+#
+# Headless there is nobody to answer, so this only pins the prompt down: it has
+# to appear in the output, or the GUI has no way of knowing about it. The
+# FortiGate does not need to accept the certificate for that -- the key is loaded
+# before the handshake.
+KEYDIR="$CASE_OUT_DIR/clientcert"
+mkdir -p "$KEYDIR"
+if openssl req -x509 -newkey rsa:2048 -keyout "$KEYDIR/key.pem" \
+        -out "$KEYDIR/cert.pem" -days 2 -passout pass:labpass \
+        -subj "/CN=openfortigui-lab" >/dev/null 2>&1; then
+    LOG_I="$(case_log g-pem-passphrase)"
+    client_write_profile "lab-cert-pemkey" "trusted_cert=$LAB_GW_DIGEST" \
+        "user_cert=$KEYDIR/cert.pem" "user_key=$KEYDIR/key.pem" >/dev/null
+    client_start "lab-cert-pemkey" "$LOG_I" || fail "process did not start"
+
+    if client_wait_log "$LOG_I" 'Enter PEM pass phrase' 30; then
+        ok "the passphrase prompt appears in the output"
+    else
+        fail "no passphrase prompt for the encrypted key" \
+            "vpnLogger matches on \"PEM pass phrase\" (vpnlogger.cpp). If the
+wording changed upstream, the pattern has to follow or the dialog never opens.
+$(tail -n 20 "$LOG_I")"
+    fi
+    # It is waiting on stdin now -- no tunnel, and it will not exit on its own.
+    assert_not_contains "no tunnel while waiting for the passphrase" "$LOG_I" \
+        'Tunnel is up and running'
+    client_stop TERM 20 >/dev/null 2>&1 || client_kill >/dev/null 2>&1 || true
+else
+    skip "encrypted client key" "openssl could not create a test key"
+fi
 
 case_finish

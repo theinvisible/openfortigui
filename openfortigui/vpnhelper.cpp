@@ -19,6 +19,7 @@
 
 #include <QEventLoop>
 #include <QProcess>
+#include <QDateTime>
 
 #include "config.h"
 #include <qt6keychain/keychain.h>
@@ -45,6 +46,25 @@ QString vpnHelper::formatByteUnits(qint64 num)
         return QString("%1K").arg(QString::number((double)num / 1024, 'f', 2));
     else
         return QString("%1B").arg(num);
+}
+
+/*
+ * Time since a unix timestamp as H:mm:ss, or an empty string when the tunnel is
+ * not up (vpn_start == 0).
+ */
+QString vpnHelper::formatDuration(qint64 since_epoch_secs)
+{
+    if(since_epoch_secs <= 0)
+        return QString();
+
+    const qint64 secs = QDateTime::currentSecsSinceEpoch() - since_epoch_secs;
+    if(secs < 0)
+        return QString();
+
+    return QString("%1:%2:%3")
+            .arg(secs / 3600)
+            .arg((secs % 3600) / 60, 2, 10, QLatin1Char('0'))
+            .arg(secs % 60, 2, 10, QLatin1Char('0'));
 }
 
 vpnHelperResult vpnHelper::checkSystemPasswordStoreAvailable()
@@ -199,17 +219,29 @@ int vpnHelper::aes128_encrypt(unsigned char *plaintext, int plaintext_len, unsig
     return ciphertext_len;
 }
 
+/*
+ * Returns the plaintext length, or -1 on error.
+ *
+ * Every step is checked and bailed out of. It used to only print the OpenSSL
+ * error and carry on, so a failed decryption produced a length built from an
+ * uninitialised "len" -- and the caller got garbage that looked like a
+ * password. That is what turned a wrong AES key into "Could not authenticate
+ * to gateway (No cookie given)" with no hint of the real cause (issues #160,
+ * #201).
+ */
 int vpnHelper::aes128_decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext)
 {
     EVP_CIPHER_CTX *ctx;
 
-    int len;
-
-    int plaintext_len;
+    int len = 0;
+    int plaintext_len = 0;
 
     /* Create and initialise the context */
     if(!(ctx = EVP_CIPHER_CTX_new()))
+    {
         ssl_handleErrors();
+        return -1;
+    }
 
     /* Initialise the decryption operation. IMPORTANT - ensure you use a key
     * and IV size appropriate for your cipher
@@ -217,20 +249,33 @@ int vpnHelper::aes128_decrypt(unsigned char *ciphertext, int ciphertext_len, uns
     * IV size for *most* modes is the same as the block size. For AES this
     * is 128 bits */
     if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
+    {
         ssl_handleErrors();
+        EVP_CIPHER_CTX_free(ctx);
+        return -1;
+    }
 
     /* Provide the message to be decrypted, and obtain the plaintext output.
     * EVP_DecryptUpdate can be called multiple times if necessary
     */
     if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
+    {
         ssl_handleErrors();
+        EVP_CIPHER_CTX_free(ctx);
+        return -1;
+    }
     plaintext_len = len;
 
     /* Finalise the decryption. Further plaintext bytes may be written at
     * this stage.
     */
     if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len))
+    {
+        // Wrong key/IV, or the value is not what we wrote -- padding check failed.
         ssl_handleErrors();
+        EVP_CIPHER_CTX_free(ctx);
+        return -1;
+    }
     plaintext_len += len;
 
     /* Clean up */
@@ -239,19 +284,40 @@ int vpnHelper::aes128_decrypt(unsigned char *ciphertext, int ciphertext_len, uns
     return plaintext_len;
 }
 
+bool vpnHelper::aesKeyUsable(const QString &key, const QString &iv)
+{
+    // AES-128-CBC: both have to be exactly 16 bytes. Anything else and OpenSSL
+    // reads past the end of what we hand it.
+    return key.toUtf8().length() == 16 && iv.toUtf8().length() == 16;
+}
+
 QString vpnHelper::Qaes128_encrypt(const QString &plain, const QString &key, const QString &iv)
 {
     if(plain.isEmpty())
         return "";
 
+    if(!aesKeyUsable(key, iv))
+    {
+        qWarning() << "vpnHelper::Qaes128_encrypt:: AES key/IV are not 16 bytes, refusing to encrypt";
+        return "";
+    }
+
     QByteArray plainBytes = plain.toUtf8();
     QByteArray keyBytes = key.toUtf8();
     QByteArray ivBytes = iv.toUtf8();
     QByteArray tmp;
-    tmp.resize(plainBytes.length() * 10);
+    // CBC pads up to a full block, so the output can be longer than the input.
+    // "length * 10" was too small for anything shorter than two characters.
+    tmp.resize(plainBytes.length() + EVP_MAX_BLOCK_LENGTH);
     int ciphertext_len;
 
     ciphertext_len = vpnHelper::aes128_encrypt(reinterpret_cast<unsigned char *>(plainBytes.data()), plainBytes.length(), reinterpret_cast<unsigned char *>(keyBytes.data()), reinterpret_cast<unsigned char *>(ivBytes.data()), reinterpret_cast<unsigned char *>(tmp.data()));
+    if(ciphertext_len <= 0)
+    {
+        qWarning() << "vpnHelper::Qaes128_encrypt:: encryption failed";
+        return "";
+    }
+
     tmp.resize(ciphertext_len);
     return QString::fromUtf8(tmp.toBase64());
 }
@@ -261,14 +327,28 @@ QString vpnHelper::Qaes128_decrypt(const QString &cipher, const QString &key, co
     if(cipher.isEmpty())
         return "";
 
+    if(!aesKeyUsable(key, iv))
+    {
+        qWarning() << "vpnHelper::Qaes128_decrypt:: AES key/IV are not 16 bytes -- check main/aeskey and main/aesiv in your configuration";
+        return "";
+    }
+
     QByteArray keyBytes = key.toUtf8();
     QByteArray ivBytes = iv.toUtf8();
     QByteArray tmp, ci;
-    tmp.resize(cipher.length() * 10);
-    int decryptedtext_len;
     ci = QByteArray::fromBase64(cipher.toUtf8());
+    tmp.resize(ci.length() + EVP_MAX_BLOCK_LENGTH);
+    int decryptedtext_len;
 
     decryptedtext_len = vpnHelper::aes128_decrypt(reinterpret_cast<unsigned char *>(ci.data()), ci.length(), reinterpret_cast<unsigned char *>(keyBytes.data()), reinterpret_cast<unsigned char *>(ivBytes.data()), reinterpret_cast<unsigned char *>(tmp.data()));
+    if(decryptedtext_len < 0)
+    {
+        // Do not hand back garbage: an empty result makes the caller ask for a
+        // password instead of trying to authenticate with random bytes.
+        qWarning() << "vpnHelper::Qaes128_decrypt:: could not decrypt the stored value -- wrong AES key/IV?";
+        return "";
+    }
+
     tmp.resize(decryptedtext_len);
     return QString::fromUtf8(tmp);
 }
@@ -276,11 +356,6 @@ QString vpnHelper::Qaes128_decrypt(const QString &cipher, const QString &key, co
 void vpnHelper::ssl_handleErrors()
 {
     ERR_print_errors_fp(stderr);
-}
-
-QString vpnHelper::getOSCodename()
-{
-    return vpnHelper::runCommandwithOutput("lsb_release --codename -s").trimmed();
 }
 
 QString vpnHelper::runCommandwithOutput(const QString &cmd)

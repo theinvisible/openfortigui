@@ -39,9 +39,15 @@ void vpnOTPLogin::setData(QProcess *otpproc)
     procOTP = otpproc;
 }
 
+void vpnOTPLogin::setPrompt(const QString &question, const QString &fieldLabel)
+{
+    ui->label->setText(question);
+    ui->label_3->setText(fieldLabel);
+}
+
 void vpnOTPLogin::initAfter()
 {
-    parentWidget()->installEventFilter(this);
+    window()->installEventFilter(this);
 }
 
 void vpnOTPLogin::on_btnSubmit_clicked()
@@ -54,7 +60,7 @@ void vpnOTPLogin::on_btnSubmit_clicked()
     else
         qWarning() << "vpnOTPLogin::on_btnSubmit_clicked() :: Process is not writeable";
 
-    parentWidget()->hide();
+    window()->hide();
 }
 
 void vpnOTPLogin::on_btnCancel_clicked()
@@ -68,7 +74,7 @@ void vpnOTPLogin::on_btnCancel_clicked()
     else
         qWarning() << "vpnOTPLogin::on_btnCancel_clicked() :: Process is not writeable";
 
-    parentWidget()->close();
+    window()->close();
 }
 
 void vpnOTPLogin::on_leOTP_returnPressed()
@@ -78,11 +84,11 @@ void vpnOTPLogin::on_leOTP_returnPressed()
 
 bool vpnOTPLogin::eventFilter(QObject *object, QEvent *event)
 {
-    if(object == parentWidget() && event->type() == QEvent::Close)
+    if(object == window() && event->type() == QEvent::Close)
     {
         on_btnCancel_clicked();
         event->ignore();
-        parentWidget()->hide();
+        window()->hide();
 
         return true;
     }

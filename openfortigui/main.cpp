@@ -100,8 +100,46 @@ bool isRunningAlready()
     return (count > 1) ? true : false;
 }
 
+/*
+ * Pull --main-config and --api-socket out of argv before anything else runs.
+ *
+ * QCommandLineParser needs a QCoreApplication, and by the time we have one the
+ * damage is done: the first qDebug() opens the log file and the first tiConfMain
+ * constructor calls initMainConf(), both derived from HOME. In the VPN child
+ * process HOME is root's, so the log and a stray directory tree used to end up
+ * in /root/.openfortigui while the profiles were read from the user's home.
+ * Both paths follow main_config, so it has to be set first.
+ */
+static void applyEarlyArgs(int argc, char *argv[])
+{
+    auto value = [argc, argv](int i, const char *name) -> QString {
+        const QString arg = QString::fromLocal8Bit(argv[i]);
+        const QString opt = QString("--%1").arg(name);
+
+        if(arg == opt && i + 1 < argc)
+            return QString::fromLocal8Bit(argv[i + 1]);
+        if(arg.startsWith(opt + "="))
+            return arg.mid(opt.length() + 1);
+
+        return QString();
+    };
+
+    for(int i = 1; i < argc; i++)
+    {
+        const QString mainconfig = value(i, "main-config");
+        if(!mainconfig.isEmpty())
+            tiConfMain::setMainConfig(mainconfig);
+
+        const QString apisocket = value(i, "api-socket");
+        if(!apisocket.isEmpty())
+            vpnApi::setSocketPath(apisocket);
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    applyEarlyArgs(argc, argv);
+
     qInstallMessageHandler(logMessageOutput);
 
     qRegisterMetaType<vpnClientConnection::connectionStatus>("vpnClientConnection::connectionStatus");
@@ -141,6 +179,13 @@ int main(int argc, char *argv[])
                     QCoreApplication::translate("main", "Use <mainconfig> as config file"),
                     QCoreApplication::translate("main", "mainconfig"));
         parser.addOption(mainConfig);
+
+        // Already consumed by applyEarlyArgs(), declared so --help lists it and
+        // process() does not reject it as unknown.
+        QCommandLineOption apiSocket("api-socket",
+                    QCoreApplication::translate("main", "Use <apisocket> as api socket path"),
+                    QCoreApplication::translate("main", "apisocket"));
+        parser.addOption(apiSocket);
 
         QCommandLineOption killVPNProcesses("kill-vpn-processes", QCoreApplication::translate("main", "Kills all vpn-processes"));
         parser.addOption(killVPNProcesses);
@@ -195,7 +240,7 @@ int main(int argc, char *argv[])
         {
             // Ask the running instance to show the main window instead of error message
             QLocalSocket apiServer;
-            apiServer.connectToServer(openfortigui_config::name);
+            apiServer.connectToServer(vpnApi::socketPath());
             if(apiServer.waitForConnected(1000))
             {
                 QByteArray block;
