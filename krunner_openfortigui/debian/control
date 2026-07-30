@@ -1,13 +1,32 @@
 Source: openfortigui-runner
-Section: admin
+Section: net
 Priority: optional
 Maintainer: Rene Hadler <rene@hadler.me>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               extra-cmake-modules (>= 6.0),
+               qt6-base-dev,
+               qt6-declarative-dev,
+               libkf6runner-dev,
+               libkf6coreaddons-dev,
+               libkf6config-dev,
+               qtkeychain-qt6-dev,
+               libssl-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://github.com/theinvisible/openfortigui
+Vcs-Browser: https://github.com/theinvisible/openfortigui
+Vcs-Git: https://github.com/theinvisible/openfortigui.git
 
 Package: openfortigui-runner
-Architecture: amd64 i386
-Depends: ${shlibs:Depends}, openfortigui (>= 0.7.2-1)
-Conflicts:
-Replaces:
-Provides: openfortigui-runner
-Description: KRunner plugin for OpenFortiGUI
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         openfortigui (>= 0.9.11)
+Description: KRunner plugin for openfortiGUI
+ Starts an openfortiGUI connection straight from KRunner: type the name of a VPN
+ profile or of a group of profiles and the plugin asks a running openfortiGUI to
+ connect it, starting the application first if it is not up yet.
+ .
+ The plugin reads the same profiles as openfortiGUI itself and talks to it over
+ its local socket. It requires KDE Frameworks 6; the Qt5/KF5 version is gone.

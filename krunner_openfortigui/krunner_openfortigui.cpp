@@ -21,31 +21,26 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 
-#include <QMessageBox>
 #include <QLocalSocket>
 #include <QThread>
 
 #include "ticonfmain.h"
 #include "vpnhelper.h"
-#include "../openfortigui/vpnapi.h"
-#include "../openfortigui/config.h"
+#include "vpnapi.h"
+#include "config.h"
 
 #include "krunner_openfortigui.h"
 
 #define KB_ASSERT(cond) {if(!(cond)) {qDebug().nospace() << "[" << script << "] Failed on " << #cond; return;}}
 #define KB_ASSERT_MSG(cond, msg) {if(!(cond)) {qDebug().nospace() << "[" << script << "] " << msg; return;}}
 
-Krunner_openfortigui::Krunner_openfortigui(QObject* parent, const QVariantList& args)
-  : Plasma::AbstractRunner(parent, args)
+Krunner_openfortigui::Krunner_openfortigui(QObject *parent, const KPluginMetaData &metaData)
+  : KRunner::AbstractRunner(parent, metaData)
 {
-    setSpeed(AbstractRunner::NormalSpeed);
-    setPriority(HighestPriority);
-    setHasRunOptions(true);
-
-    setDefaultSyntax(Plasma::RunnerSyntax(QString::fromLatin1(":q:"), metadata().comment()));
+    addSyntax(QStringLiteral(":q:"), metaData.description());
 }
 
-void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
+void Krunner_openfortigui::match(KRunner::RunnerContext &ctxt)
 {
     if (!ctxt.isValid())
         return;
@@ -64,35 +59,31 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
 
         if(query == vpn->name.toLower())
         {
-            Plasma::QueryMatch match(this);
+            KRunner::QueryMatch match(this);
             match.setText(vpn->name);
             match.setSubtext(vpn->gateway_host);
             matchData["type"] = Krunner_openfortigui::DATA_TYPE_VPN;
             matchData["data"] = vpn->name;
             match.setData(QVariant(matchData));
-            match.setType(Plasma::QueryMatch::ExactMatch);
+            match.setCategoryRelevance(KRunner::QueryMatch::CategoryRelevance::Highest);
             match.setRelevance(1.0);
             match.setMatchCategory("VPN");
-            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
-            // Framework >5.24 only
-            // match.setIconName("openfortigui");
+            match.setIconName(QStringLiteral("openfortigui"));
 
             ctxt.addMatch(match);
         }
         else if(vpn->name.contains(query, Qt::CaseInsensitive))
         {
-            Plasma::QueryMatch match(this);
+            KRunner::QueryMatch match(this);
             match.setText(vpn->name);
             match.setSubtext(vpn->gateway_host);
             matchData["type"] = Krunner_openfortigui::DATA_TYPE_VPN;
             matchData["data"] = vpn->name;
             match.setData(matchData);
-            match.setType(Plasma::QueryMatch::CompletionMatch);
+            match.setCategoryRelevance(KRunner::QueryMatch::CategoryRelevance::Moderate);
             match.setRelevance(0.5);
             match.setMatchCategory("VPN");
-            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
-            // Framework >5.24 only
-            // match.setIconName("openfortigui");
+            match.setIconName(QStringLiteral("openfortigui"));
 
             ctxt.addMatch(match);
         }
@@ -105,44 +96,40 @@ void Krunner_openfortigui::match(Plasma::RunnerContext& ctxt)
 
         if(query == vpngroup->name.toLower())
         {
-            Plasma::QueryMatch match(this);
+            KRunner::QueryMatch match(this);
             match.setText(vpngroup->name);
             //vpnGroup *vpngroupi = vpnGroups.getVpnGroupByName(vpngroup->name);
             //qWarning() << vpngroupi->localMembers.join(", ");
             matchData["type"] = Krunner_openfortigui::DATA_TYPE_VPNGROUP;
             matchData["data"] = vpngroup->name;
             match.setData(matchData);
-            match.setType(Plasma::QueryMatch::ExactMatch);
+            match.setCategoryRelevance(KRunner::QueryMatch::CategoryRelevance::Highest);
             match.setRelevance(1.0);
             match.setMatchCategory("VPN Group");
-            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
-            // Framework >5.24 only
-            // match.setIconName("openfortigui");
+            match.setIconName(QStringLiteral("openfortigui"));
 
             ctxt.addMatch(match);
         }
         else if(vpngroup->name.contains(query, Qt::CaseInsensitive))
         {
-            Plasma::QueryMatch match(this);
+            KRunner::QueryMatch match(this);
             match.setText(vpngroup->name);
             //vpnGroup *vpngroupi = vpnGroups.getVpnGroupByName(vpngroup->name);
             //qWarning() << vpngroupi->localMembers.join(", ");
             matchData["type"] = Krunner_openfortigui::DATA_TYPE_VPNGROUP;
             matchData["data"] = vpngroup->name;
             match.setData(matchData);
-            match.setType(Plasma::QueryMatch::CompletionMatch);
+            match.setCategoryRelevance(KRunner::QueryMatch::CategoryRelevance::Moderate);
             match.setRelevance(0.5);
             match.setMatchCategory("VPN Group");
-            match.setIcon(QIcon("/usr/share/pixmaps/openfortigui.png"));
-            // Framework >5.24 only
-            // match.setIconName("openfortigui");
+            match.setIconName(QStringLiteral("openfortigui"));
 
             ctxt.addMatch(match);
         }
     }
 }
 
-void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::QueryMatch& match)
+void Krunner_openfortigui::run(const KRunner::RunnerContext &ctxt, const KRunner::QueryMatch &match)
 {
     Q_UNUSED(ctxt)
 
@@ -160,7 +147,7 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
             {
                 QByteArray block;
                 QDataStream out(&block, QIODevice::WriteOnly);
-                out.setVersion(QDataStream::Qt_5_2);
+                out.setVersion(QDataStream::Qt_6_0);
                 vpnApi apiData;
                 apiData.objName = "ping";
                 apiData.action = vpnApi::ACTION_PING;
@@ -188,7 +175,7 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
     {
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_5_2);
+        out.setVersion(QDataStream::Qt_6_0);
         vpnApi apiData;
         switch(match.data().toMap()["type"].toInt())
         {
@@ -219,6 +206,6 @@ void Krunner_openfortigui::run(const Plasma::RunnerContext& ctxt, const Plasma::
 
 }
 
-K_EXPORT_PLASMA_RUNNER(krunner_openfortigui, Krunner_openfortigui)
+K_PLUGIN_CLASS_WITH_JSON(Krunner_openfortigui, "krunner_openfortigui.json")
 
 #include "krunner_openfortigui.moc"

@@ -1,4 +1,11 @@
-openfortigui-runner (0.9.9-1) precise; urgency=low
+openfortigui-runner (0.9.11-1) unstable; urgency=low
+
+  * Port to KDE Frameworks 6, Qt5/KF5 support removed
+  * Use the application's own configuration layer instead of local copies
+
+ -- Rene Hadler <rene@hadler.me>  Thu, 30 Jul 2026 14:30:00 +0200
+
+openfortigui-runner (0.9.9-1) unstable; urgency=low
 
   * Fix vpn profile/group filename validation
 

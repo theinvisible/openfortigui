@@ -11,12 +11,13 @@ tests/fortigate-vm/testlab test    # all test cases                    (~80 s)
 tests/fortigate-vm/testlab down    # VM and network gone
 ```
 
-Two cases need no FortiGate: `90_gui` drives the real GUI on a virtual screen,
-`91_sudo_rs` runs the packaged build inside an Ubuntu 26.04 container with
-sudo-rs. `testlab test 90_gui` therefore works without a VM at all.
+`90_gui` needs no FortiGate at all — it drives the real GUI on a virtual screen,
+so `testlab test 90_gui` works without a VM. `91_distro` builds both Debian
+packages inside a container for every supported distribution, installs them there
+and connects with them.
 
-Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 161 checks
-green in 165 s.** Building this lab uncovered three crash and cleanup bugs in
+Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 236 checks
+green in 423 s.** Building this lab uncovered three crash and cleanup bugs in
 openfortiGUI; decoupling the VPN process from the inherited environment
 uncovered a fourth, the cookie path a fifth, and the GUI and packaging cases two
 more — all are fixed, and the cases now guard them against regression, see
@@ -37,7 +38,7 @@ more — all are fixed, and the cases now guard them against regression, see
 | FortiGate KVM image | `FGT_VM64_KVM-*.kvm.zip` from Fortinet |
 | FortiGate VM license | see [VM license](#7-vm-license) — **effectively required** |
 | `xvfb`, `xdotool`, `openbox`, `x11-utils`, `x11-apps` | `90_gui` only: `apt install xvfb xdotool openbox x11-utils x11-apps` |
-| `docker` | `91_sudo_rs` only: a usable daemon and membership in group `docker` |
+| `docker` | `91_distro` only: a usable daemon and membership in group `docker` |
 
 The last two rows are needed only for the cases that declare them (see
 [Extending the suite](#6-extending-the-suite)); everything else runs without
@@ -285,7 +286,7 @@ printf '%s' "$pw" | openssl enc -aes-128-cbc -a -A \
 | `70_guistop` | stop initiated by the GUI while the tunnel is up: `ACTION_STOP` over the local socket, and the GUI going away. Uses `mock_gui.py`, which provides the `openfortiGUI` QLocalServer | 22 |
 | `80_env` | independence from the inherited environment: connect with a wrong `HOME` and no `XDG_RUNTIME_DIR`, the child reaches the GUI over `--api-socket`, log and `gw_cert.cache` follow `--main-config`, nothing written to `/root`, `main.conf` keeps its owner | 10 |
 | `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up | 25 |
-| `91_sudo_rs` | the built `.deb` inside an Ubuntu 26.04 container with sudo-rs: dependencies resolvable, sudoers file parsed by `visudo-rs`, the `--start-vpn *` wildcard effective and nothing beyond it, `-E` semantics of both sudo implementations, and a real tunnel started through sudo-rs | 24 |
+| `91_distro` | both packages on **every supported distribution**, in a container each: build with `packaging/build-deb.sh`, install with all dependencies resolvable, sudoers file parsed by that distribution's `visudo`, the `--start-vpn *` wildcard effective and nothing beyond it, the `-E` semantics of whichever sudo is in charge, a real tunnel started through it, and — where KDE Frameworks 6 exists — the KRunner plugin built, installed and found where KRunner looks | 99 |
 
 Four of these checks used to report the crashes described under
 [Findings](#8-findings-in-openfortigui). Since the fix they are regression
@@ -400,6 +401,46 @@ not obvious and are the reason the case works at all:
 `main.conf` must exist before the GUI is started: `tiConfMain::setMainConfig()`
 only accepts a path that is already there (`ticonfmain.cpp:262`), otherwise it
 silently keeps `$HOME/.openfortigui`. `client_init_home` writes one.
+
+### The distribution matrix
+
+`91_distro` holds one list, and that list is the only place with distribution
+knowledge:
+
+```bash
+DISTROS_DEFAULT=(
+    "ubuntu:24.04|no|yes|no"   # image | sudo-rs active | classic sudo | KRunner plugin
+    "ubuntu:26.04|yes|yes|yes"
+    "debian:bookworm|no|yes|no"
+    "debian:trixie|no|yes|yes"
+)
+```
+
+| Target | Qt | sudo | KRunner plugin |
+|---|---|---|---|
+| `ubuntu:24.04` | 6.4.2 | classic 1.9.15 | no — KF5 only |
+| `ubuntu:26.04` | 6.10.2 | sudo-rs 0.2.13 | yes — KF6 6.24 |
+| `debian:bookworm` | 6.4.2 | classic 1.9.13 | no — KF5 only |
+| `debian:trixie` | 6.8.2 | classic 1.9.16 | yes — KF6 6.13 |
+
+Adding a target is one line. `LAB_DISTROS` narrows a run down:
+
+```bash
+LAB_DISTROS=debian:trixie tests/fortigate-vm/testlab test 91_distro
+```
+
+Each target gets its own image (`docker/distro/Dockerfile` with `BASE_IMAGE`,
+`USE_SUDO_RS` and `WITH_BUILD_DEPS` as build arguments) and its own package.
+A package per distribution is not optional: `dh_shlibdeps` writes the build
+host's Qt version into the dependencies, so one built on 26.04 demands
+`libqt6core6t64 (>= 6.10.2)` and cannot be installed on 24.04.
+
+The build itself is **not** in the test — it is `packaging/build-deb.sh`, the same
+script `.github/workflows/build-deb.yml` calls. Build dependencies come from
+`debian/control` via `apt-get build-dep`, so there is no second list to keep in
+step. Packages are cached under `$OFGUI_LAB_DIR/deb/<target>/` and rebuilt as soon
+as any source file is newer, which keeps a repeat run at seconds instead of
+minutes.
 
 ## 7. VM license
 
@@ -695,7 +736,7 @@ connects with it, without a user name or password.
 ### 8. `sudo -E` was never a dependable way to pass the environment — fixed
 
 The VPN child process used to be started with `sudo -E` so that it would inherit
-`XDG_RUNTIME_DIR` and find the GUI's local socket. `91_sudo_rs` d) measures what
+`XDG_RUNTIME_DIR` and find the GUI's local socket. `91_distro` measures what
 that actually does, in a container that is a stock Ubuntu 26.04:
 
 | Invocation | Result |
@@ -714,13 +755,13 @@ scattered reports of missing dialogs and missing status updates.
 
 The environment is no longer used for this: the socket path travels as
 `--api-socket`, the configuration as `--main-config`, and `-E` is gone. `80_env`
-proves it on the host, `91_sudo_rs` e) proves it under real sudo-rs — tunnel up,
+proves it on the host, `91_distro` proves it under real sudo-rs — tunnel up,
 mock GUI reached, no `/root/.openfortigui`.
 
-### 9. The package could not be installed on current Ubuntu — fixed
+### 9. The package could not be built or installed on current distributions — fixed
 
-Found by `91_sudo_rs` b), which installs the freshly built `.deb` in the
-container instead of trusting that it would work:
+Found by `91_distro`, which builds and installs the package in a container for
+every target instead of trusting that it would work:
 
 - **`debian/control` required `qttranslations6-l10n`.** That package does not
   exist; the Qt6 name is `qt6-translations-l10n` (the Qt5 one was
@@ -728,7 +769,17 @@ container instead of trusting that it would work:
   uninstallable on 24.04 and 26.04.
 - **`debian/rules` called `qmake`.** Since the Qt6 port there is no `qmake`
   binary on a Qt6-only system, and debhelper's default qmake buildsystem invokes
-  exactly that. Now `dh $@ --buildsystem=qmake6`.
+  exactly that. `--buildsystem=qmake6` fixed it on Ubuntu — and then broke on
+  Debian bookworm, whose debhelper 13.11 does not know that buildsystem yet
+  (*unable to load build system class 'qmake6'*; it arrived in 13.14). `rules`
+  now uses the plain `makefile` buildsystem and calls `qmake6` itself in
+  `override_dh_auto_configure`, passing the flags from
+  `/usr/share/dpkg/buildflags.mk`. That works on all four targets and depends on
+  no debhelper feature version.
+- **`Build-Depends` never listed the actual build dependencies** — only
+  `debhelper (>= 8.0.0)`. The GitLab CI hid this behind a prepared image. They are
+  declared now, which is what lets both the container test and the GitHub workflow
+  install them with `apt-get build-dep` from that one list.
 - **`openfortigui.pro` had drifted from `CMakeLists.txt`.** The submodule bump to
   openfortivpn v1.24.1 was only carried out in the CMake build; the qmake project
   — the one the package is built from — still lacked `openfortivpn/src/http_server.c`
@@ -739,12 +790,60 @@ container instead of trusting that it would work:
 Both build systems stand in for openfortivpn's `configure` run, so they have to
 be changed together. There is a comment to that effect in each of them now.
 
-### 10. `--main-config` with a non-existent file falls back to `$HOME`
+The `debian/` directory was brought up to current practice in the same pass, and
+`lintian` is quiet on the result:
+
+| Was | Now |
+|---|---|
+| `debian/compat` 9 | `debhelper-compat (= 13)` in `Build-Depends` |
+| no `Standards-Version`, no `Rules-Requires-Root` | 4.7.0, `no` (builds without fakeroot) |
+| `Depends` without `${misc:Depends}` | added — a debhelper package must carry it |
+| synopsis only | proper extended description |
+| full GPL text as `debian/copyright` | machine-readable DEP-5, referencing `/usr/share/common-licenses/GPL-3`, with openfortivpn's OpenSSL exception spelled out |
+| no manual page | `debian/openfortigui.1`, documenting `--start-vpn`, `--main-config`, `--api-socket` and the sudoers rule |
+| `Architecture: amd64 i386`, `Section: admin`, empty `Conflicts`/`Replaces`, self-`Provides` | `any`, `net`, removed |
+| an empty `/usr/share/polkit-1/actions` in the package | removed; nothing was ever installed there |
+
+### 10. The KRunner plugin was still on Qt5/KF5 — ported
+
+Issue **#200**. The plugin now builds against KDE Frameworks 6; the KF5 version is
+gone. What the port touched beyond the API:
+
+- **`Plasma::` became `KRunner::`**, the constructor takes `KPluginMetaData`
+  instead of a `QVariantList`, `setSpeed()`/`setPriority()`/`setHasRunOptions()`
+  are gone, `setDefaultSyntax()` became `addSyntax()`, and the `QueryMatch::Type`
+  enum was replaced by `setCategoryRelevance()`. Metadata is embedded JSON
+  (`krunner_openfortigui.json`) instead of a `.desktop` file.
+- **Two stale copies were removed.** `krunner_openfortigui/ticonfmain.cpp` and
+  `vpnhelper.cpp` were transcriptions of the application's files, and the
+  transcription of `formatPath()` was still the one that replaced *every* `~` in a
+  path — the bug from #157, long fixed in the application. The plugin now compiles
+  `../openfortigui/{ticonfmain,vpnprofile,vpngroup,vpnhelper,vpnapi}.cpp`, so both
+  resolve profiles and paths identically. `vpnHelper::isOpenFortiGUIRunning()`
+  moved into the application's helper for that reason.
+- **`CMakeLists.txt` installed into the builder's home**
+  (`DESTINATION $ENV{HOME}/.local/lib/qt/plugins`), which is why `debian/rules`
+  copied the `.so` out of the build directory by hand, with `x86_64-linux-gnu` and
+  `kservices5` hard-coded. It now uses `kcoreaddons_add_plugin(… INSTALL_NAMESPACE
+  "kf6/krunner")`, and `debian/rules` only points KDEInstallDirs at Debian's
+  layout (`KDE_INSTALL_USE_QT_SYS_PATHS=ON`).
+- The plugin wrote its socket messages with `QDataStream::Qt_5_2` while the server
+  reads `Qt_6_0`. Identical encoding for the types involved, so it never broke —
+  aligned anyway.
+- `debian/postinst` and `debian/postrm` are gone: both consisted of commented-out
+  `kquitapp5` lines and an `echo`.
+
+**Consequence worth knowing:** KDE Frameworks 6 does not exist on Ubuntu 24.04 or
+Debian bookworm, so the plugin is not available there any more. The application
+itself is unaffected. `91_distro` skips the plugin checks on those two targets
+rather than failing.
+
+### 11. `--main-config` with a non-existent file falls back to `$HOME`
 
 Not a regression, but worth knowing: `tiConfMain::setMainConfig()` only takes the
 path if the file already exists (`ticonfmain.cpp:262`). Otherwise the argument is
 silently ignored and everything follows `$HOME` — as root that means
-`/root/.openfortigui` gets created. Noticed while writing `91_sudo_rs`, whose
+`/root/.openfortigui` gets created. Noticed while writing `91_distro`, whose
 first version pointed a probe at a non-existent config and then found the very
 directory tree the case asserts against. The probes now use the real
 configuration.
@@ -790,12 +889,24 @@ window can be shrunk below the size of the form, and that "Save" stays reachable
 via Enter. A raw `xwd` screenshot is written to the case output on every failure,
 for the human eye.
 
-**The sudo-rs container isolates user space, not the network.** `91_sudo_rs` runs
+**The distribution containers isolate user space, not the network.** `91_distro` runs
 with `--network host --pid host`, so the FortiGate is reached over the same lab
 bridge as in every other case and the `ppp` interface appears on the host, where
-`client_cleanup_all` removes it again. What the container provides is Ubuntu 26.04
-with sudo-rs and the installed package — nothing about network isolation is being
-tested here.
+`client_cleanup_all` removes it again. What a container provides is the
+distribution, its sudo, its Qt and the package built from the current source —
+nothing about network isolation is being tested here.
+
+**The KRunner plugin is not actually loaded.** That would need a running Plasma
+session. `91_distro` checks that it builds, that the package installs, that the
+`.so` sits under `/usr/lib/*/qt6/plugins/kf6/krunner/` where KRunner looks, that
+it has no unresolved symbols and that its metadata is embedded. Whether KRunner
+then offers the profiles has to be tried by hand: install it, restart `krunner`,
+type a profile name.
+
+**One target at a time.** The matrix runs sequentially, and each target takes the
+api socket over for the duration of its tunnel. Running them in parallel would
+need one socket and one profile per target; the sequential run takes about two
+minutes for all four with cached packages, so it has not been worth it.
 
 **Only one console client.** The QEMU serial socket accepts one connection at
 a time, so `testlab console` and `provision`/`fgt` are mutually exclusive. A
@@ -818,6 +929,22 @@ complete transcript is available independently in
 
 ## 11. CI
 
-There is deliberately no hook in `.gitlab-ci.yml`: the runners have no KVM.
-The JUnit report is prepared for the day a runner with virtualization support
-is added.
+**The lab itself does not run in CI.** There is deliberately no hook in
+`.gitlab-ci.yml`: the runners have no KVM. The JUnit report is prepared for the
+day a runner with virtualization support is added.
+
+**The packages do.** `.github/workflows/build-deb.yml` builds one package per
+supported distribution on every push and pull request, in a matrix of
+distribution containers — `dh_shlibdeps` bakes the build host's Qt version into
+the dependencies, so a package has to be built on the distribution it is meant
+for, and GitHub offers no runner for most of them. The workflow calls
+`packaging/build-deb.sh`, the very script `91_distro` runs inside its containers,
+so what CI builds is what was tested locally. `lintian` runs on the result as an
+informational step.
+
+A second job builds the KRunner plugin, over the shorter list of targets that have
+KDE Frameworks 6 (`ubuntu:26.04`, `debian:trixie`).
+
+The distribution lists exist twice on purpose — once in the workflow matrix, once
+in `91_distro` — because a GitHub matrix cannot be read from a shell array. Keep
+them in step; they are a handful of lines each.

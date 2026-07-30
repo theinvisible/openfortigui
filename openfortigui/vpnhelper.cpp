@@ -20,8 +20,10 @@
 #include <QEventLoop>
 #include <QProcess>
 #include <QDateTime>
+#include <QLocalSocket>
 
 #include "config.h"
+#include "vpnapi.h"
 #include <qt6keychain/keychain.h>
 
 #include <openssl/conf.h>
@@ -416,3 +418,33 @@ QString vpnHelper::linHomeExpansion(const QString &path) {
     }
 }
 
+/*
+ * Is a GUI instance listening on the api socket?
+ *
+ * A ping over the socket, not a process listing: what callers want to know is
+ * whether there is an instance they can talk to. Used by the KRunner plugin
+ * before it starts one. (MainWindow's own isRunningAlready() in main.cpp still
+ * counts processes with "ps", which also counts running VPN children -- worth
+ * replacing with this one day.)
+ */
+bool vpnHelper::isOpenFortiGUIRunning()
+{
+    QLocalSocket apiServerTest;
+    apiServerTest.connectToServer(vpnApi::socketPath());
+    if(!apiServerTest.waitForConnected(200))
+        return false;
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_0);
+    vpnApi apiData;
+    apiData.objName = "ping";
+    apiData.action = vpnApi::ACTION_PING;
+    out << apiData;
+
+    apiServerTest.write(block);
+    apiServerTest.flush();
+    apiServerTest.close();
+
+    return true;
+}

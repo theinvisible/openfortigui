@@ -5,7 +5,7 @@ automatisch und testet die openfortiGUI-Binary headless dagegen.
 
 ```
 tests/fortigate-vm/testlab up      # Image, Netz, VM, Provisioning  (~5 min beim ersten Mal)
-tests/fortigate-vm/testlab test    # alle Testfälle                 (~3 min)
+tests/fortigate-vm/testlab test    # alle Testfälle                 (~4 min)
 tests/fortigate-vm/testlab down    # VM und Netz weg
 ```
 
@@ -16,14 +16,15 @@ tests/fortigate-vm/testlab down    # VM und Netz weg
 > Details: [VM-Lizenz](#vm-lizenz).
 
 Stand des letzten vollständigen Durchlaufs (FortiOS 7.4.12, Eval-Lizenz):
-**10/10 Fälle, 161 Prüfungen grün in 165 s.** Die Abstürze, die dieses Labor
+**10/10 Fälle, 236 Prüfungen grün in 423 s.** Die Abstürze, die dieses Labor
 zutage gebracht hat, sind behoben; die Testfälle bewachen sie jetzt gegen
 Rückfälle — siehe [Befunde](#befunde-in-openfortigui) und, vollständig und
 aktuell, [`TESTS.md`](../../TESTS.md).
 
-Zwei Fälle brauchen **keine** FortiGate: `90_gui` fährt die echte GUI auf einem
-virtuellen Bildschirm, `91_sudo_rs` prüft das gebaute Paket in einem
-Ubuntu-26.04-Container mit sudo-rs. `testlab test 90_gui` läuft also ohne VM.
+`90_gui` braucht **keine** FortiGate — der Fall fährt die echte GUI auf einem
+virtuellen Bildschirm, `testlab test 90_gui` läuft also ohne VM. `91_distro` baut
+beide Debian-Pakete pro unterstützter Distribution im Container, installiert sie
+dort und verbindet damit.
 
 ## Voraussetzungen
 
@@ -37,7 +38,7 @@ Ubuntu-26.04-Container mit sudo-rs. `testlab test 90_gui` läuft also ohne VM.
 | `sudo` | für Bridges/Taps/netns und den VPN-Client (pppd braucht root) |
 | FortiGate-KVM-Image | `FGT_VM64_KVM-*.kvm.zip` von Fortinet |
 | `xvfb`, `xdotool`, `openbox`, `x11-utils`, `x11-apps` | nur `90_gui`: `apt install xvfb xdotool openbox x11-utils x11-apps` |
-| `docker` | nur `91_sudo_rs`: nutzbarer Daemon, Benutzer in der Gruppe `docker` |
+| `docker` | nur `91_distro`: nutzbarer Daemon, Benutzer in der Gruppe `docker` |
 
 Die letzten zwei Zeilen verlangt nur der Fall, der sie in seiner
 `# lab-requires:`-Zeile deklariert — alles andere läuft ohne sie.
@@ -173,7 +174,16 @@ nur einmal. `prepare --rebuild` erzwingt eine Neuprovisionierung.
 | `70_guistop` | von der GUI angestoßener Stop: `ACTION_STOP` über den lokalen Socket, und eine verschwindende GUI. Nutzt `mock_gui.py` | vm | 22 |
 | `80_env` | Unabhängigkeit von der geerbten Umgebung: falsches `HOME`, kein `XDG_RUNTIME_DIR`, das Kind erreicht die GUI über `--api-socket`, nichts landet in `/root` | vm | 10 |
 | `90_gui` | die echte GUI auf 1280×800 (Xvfb): Einstellungen, Profil- und Gruppeneditor passen, haben keine große Mindestgröße und lassen sich verkleinern; Enter speichert, Escape verwirft; bei verschlüsseltem Client-Key erscheint der **Passphrase**-Dialog (nicht der OTP-Dialog) und der Tunnel kommt danach hoch | gui | 25 |
-| `91_sudo_rs` | das gebaute `.deb` in einem Ubuntu-26.04-Container mit sudo-rs: Abhängigkeiten auflösbar, sudoers-Datei von `visudo-rs` geparst, Wildcard `--start-vpn *` wirksam und nichts darüber hinaus, `-E`-Verhalten beider sudo-Implementierungen, echter Tunnel durch sudo-rs | vm docker | 24 |
+| `91_distro` | beide Pakete auf **jeder unterstützten Distribution**, je im Container: Bau per `packaging/build-deb.sh`, Installation mit auflösbaren Abhängigkeiten, sudoers-Datei vom `visudo` der Distribution geparst, Wildcard `--start-vpn *` wirksam und nichts darüber hinaus, `-E`-Verhalten des jeweils aktiven sudo, echter Tunnel darüber und — wo KDE Frameworks 6 existiert — das KRunner-Plugin gebaut, installiert und am richtigen Ort | vm docker | 99 |
+
+`91_distro` deckt `ubuntu:24.04`, `ubuntu:26.04`, `debian:bookworm` und
+`debian:trixie` ab — die Liste steht im Kopf des Falls, eine weitere Distribution
+ist eine Zeile. Das **KRunner-Plugin** braucht KDE Frameworks 6 und wird deshalb
+nur auf `ubuntu:26.04` und `debian:trixie` gebaut; auf den beiden älteren Zielen
+melden die Plugin-Prüfungen `skip` statt fehlzuschlagen. `LAB_DISTROS=debian:trixie testlab test 91_distro` schränkt einen
+Lauf ein. Gebaute Pakete liegen unter `$OFGUI_LAB_DIR/deb/<ziel>/` und werden
+wiederverwendet, solange keine Quelldatei neuer ist; gebaut wird mit demselben
+`packaging/build-deb.sh`, das auch `.github/workflows/build-deb.yml` aufruft.
 
 Die Spalte „Braucht" ist die `# lab-requires:`-Zeile im Kopf jedes Falls.
 `testlab test` verlangt nur, was die **ausgewählten** Fälle deklarieren — fehlt

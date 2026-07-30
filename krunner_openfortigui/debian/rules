@@ -1,13 +1,19 @@
 #!/usr/bin/make -f
 
-%:
-	dh $@ --parallel
+include /usr/share/dpkg/architecture.mk
 
-override_dh_auto_install:
-	mkdir -p debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins
-	mkdir -p debian/openfortigui-runner/usr/share/kservices5
-	cp -a obj-*-linux-gnu/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/. || cp -a bin/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/. || cp -a obj-*-linux-gnu/bin/krunner_openfortigui.so debian/openfortigui-runner/usr/lib/x86_64-linux-gnu/qt5/plugins/.
-	cp -a plasma-runner-openfortigui.desktop debian/openfortigui-runner/usr/share/kservices5/.
+# The build system is plain cmake and the install rules in CMakeLists.txt are
+# correct now, so nothing has to be copied by hand any more. Two KDE-specific
+# paths do have to be pointed at Debian's layout: KDEInstallDirs would otherwise
+# guess the library directory, and KRunner only finds plugins that sit in Qt's
+# plugin directory.
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	    -DKDE_INSTALL_USE_QT_SYS_PATHS=ON \
+	    -DKDE_INSTALL_LIBDIR=lib/$(DEB_HOST_MULTIARCH)
 
 override_dh_builddeb:
 	dh_builddeb -- -Zxz

@@ -1,0 +1,17 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "rene@hadler.me",
+                "Name": "Rene Hadler"
+            }
+        ],
+        "Description": "OpenFortiGUI VPN quickstart",
+        "EnabledByDefault": true,
+        "Icon": "openfortigui",
+        "Id": "krunner_openfortigui",
+        "License": "GPL-3.0-or-later",
+        "Name": "OpenFortiGUI",
+        "Website": "https://github.com/theinvisible/openfortigui"
+    }
+}

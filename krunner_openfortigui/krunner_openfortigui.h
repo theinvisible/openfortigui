@@ -18,14 +18,21 @@
 #ifndef KRUNNER_OPENFORTIGUI_H
 #define KRUNNER_OPENFORTIGUI_H
 
-#include <QtCore/QProcess>
-#include <KF5/KRunner/krunner/abstractrunner.h>
+#include <QProcess>
+#include <KRunner/AbstractRunner>
 
-class Krunner_openfortigui : public Plasma::AbstractRunner {
+/*
+ * KRunner 6. Compared to the KF5 version: the namespace is KRunner instead of
+ * Plasma, the constructor takes the plugin metadata instead of a QVariantList,
+ * and setSpeed()/setPriority()/setHasRunOptions() are gone -- KRunner runs every
+ * runner in its own thread and no longer has per-runner run options.
+ */
+class Krunner_openfortigui : public KRunner::AbstractRunner
+{
     Q_OBJECT
 
 public:
-    Krunner_openfortigui(QObject* parent, const QVariantList& args);
+    Krunner_openfortigui(QObject *parent, const KPluginMetaData &metaData);
 
     enum dataRunnerType
     {
@@ -33,8 +40,8 @@ public:
         DATA_TYPE_VPNGROUP
     };
 
-    void match(Plasma::RunnerContext&);
-    void run(const Plasma::RunnerContext&, const Plasma::QueryMatch&);
+    void match(KRunner::RunnerContext &context) override;
+    void run(const KRunner::RunnerContext &context, const KRunner::QueryMatch &match) override;
 };
 
 #endif // KRUNNER_OPENFORTIGUI_H

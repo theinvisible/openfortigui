@@ -52,6 +52,8 @@ public:
     static int runCommandwithReturnCode(const QString &cmd);
 
     static QString linHomeExpansion(const QString &path);
+
+    static bool isOpenFortiGUIRunning();
 };
 
 #endif // VPNHELPER_H

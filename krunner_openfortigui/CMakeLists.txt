@@ -1,33 +1,54 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.16)
 project(krunner_openfortigui)
 
-find_package(ECM 5.12.0 REQUIRED NO_MODULE)
-set (CMAKE_BUILD_TYPE RELEASE)
-set (CMAKE_MODULE_PATH
-     ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PATH}
-)
+set(QT_MIN_VERSION 6.4.0)
+set(KF_MIN_VERSION 6.0.0)
 
-find_package (Qt5 ${QT_MIN_VERSION} REQUIRED CONFIG COMPONENTS Widgets Core Quick Network)
-find_package (KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n Service Runner TextWidgets PlasmaQuick)
+find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings NO_POLICY_SCOPE)
+# Deliberately no KDECompilerSettings: it defines QT_NO_CAST_FROM_ASCII, and the
+# application sources compiled in below rely on implicit QString conversions the
+# way the main build allows them.
+
+# Gui is needed for QValidator, which ticonfmain.cpp includes -- not for widgets.
+find_package(Qt6 ${QT_MIN_VERSION} REQUIRED CONFIG COMPONENTS Core Gui Network)
+find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS Runner CoreAddons)
+# KF6::ConfigCore is in the link interface of KF6::Runner, so its package has to
+# be found as well. Not as a KF6 component: ECM's FindKF6 cannot resolve a
+# component literally named "Config".
+find_package(KF6Config ${KF_MIN_VERSION} REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(Qt6Keychain REQUIRED)
+
+# The configuration layer is not copied into this directory any more: the plugin
+# compiles the application's own files, so both resolve profile paths the same way.
+# Copies of ticonfmain.cpp and vpnhelper.cpp used to live here and had drifted --
+# theirs was still the formatPath() that replaced every "~" in a path (issue #157).
+set(OFGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../openfortigui)
 
 set(${PROJECT_NAME}_SRCS
     krunner_openfortigui.cpp
-    ticonfmain.cpp
-    vpnhelper.cpp
-    ../openfortigui/vpnapi.cpp
+    ${OFGUI_DIR}/ticonfmain.cpp
+    ${OFGUI_DIR}/vpnprofile.cpp
+    ${OFGUI_DIR}/vpngroup.cpp
+    ${OFGUI_DIR}/vpnhelper.cpp
+    ${OFGUI_DIR}/vpnapi.cpp
 )
 
-add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRCS})
-target_link_libraries(${PROJECT_NAME} KF5::Runner Qt5::Widgets Qt5::Network
-                      KF5::I18n
-                      KF5::Service
-                      KF5::Plasma)
-                      
-install(TARGETS ${PROJECT_NAME} DESTINATION $ENV{HOME}/.local/lib/qt/plugins)
-install(FILES plasma-runner-openfortigui.desktop DESTINATION $ENV{HOME}/.local/share/kservices5)
+kcoreaddons_add_plugin(${PROJECT_NAME}
+    SOURCES ${${PROJECT_NAME}_SRCS}
+    INSTALL_NAMESPACE "kf6/krunner")
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${OFGUI_DIR})
 
+target_link_libraries(${PROJECT_NAME}
+    KF6::Runner
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Network
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    qt6keychain)

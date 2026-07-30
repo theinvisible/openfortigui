@@ -1,17 +1,36 @@
 #!/usr/bin/make -f
 
-# qmake6, not qmake: since the Qt6 port there is no "qmake" binary on a Qt6-only
-# system, and debhelper's default qmake buildsystem calls exactly that.
-%:
-	dh $@ --parallel --buildsystem=qmake6
+# Hardening and reproducibility flags per Debian policy
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
 
+# The plain "makefile" build system plus an explicit qmake6 call, deliberately
+# not --buildsystem=qmake6: debhelper only learned that build system in 13.14 and
+# Debian bookworm ships 13.11, where the build dies with "unable to load build
+# system class 'qmake6'". Calling qmake6 ourselves works on every target -- and
+# plain "qmake", which debhelper's default qmake build system would use, does not
+# exist at all on a Qt6-only system.
+%:
+	dh $@ --buildsystem=makefile
+
+override_dh_auto_configure:
+	qmake6 -makefile \
+	    QMAKE_CFLAGS_RELEASE="$(CFLAGS) $(CPPFLAGS)" \
+	    QMAKE_CFLAGS_DEBUG="$(CFLAGS) $(CPPFLAGS)" \
+	    QMAKE_CXXFLAGS_RELEASE="$(CXXFLAGS) $(CPPFLAGS)" \
+	    QMAKE_CXXFLAGS_DEBUG="$(CXXFLAGS) $(CPPFLAGS)" \
+	    QMAKE_LFLAGS_RELEASE="$(LDFLAGS)" \
+	    QMAKE_LFLAGS_DEBUG="$(LDFLAGS)" \
+	    QMAKE_STRIP=: PREFIX=/usr
+
+# The .pro file has no INSTALLS, so the files are placed by hand.
 override_dh_auto_install:
 	mkdir -p debian/openfortigui/usr/bin
-	mkdir -p debian/openfortigui/usr/share/polkit-1/actions
 	mkdir -p debian/openfortigui/usr/share/applications
 	mkdir -p debian/openfortigui/usr/share/pixmaps
 	mkdir -p debian/openfortigui/etc/sudoers.d
 	cp -a sudo/openfortigui debian/openfortigui/etc/sudoers.d/.
+	chmod 0440 debian/openfortigui/etc/sudoers.d/openfortigui
 	cp -a openfortigui debian/openfortigui/usr/bin/.
 	cp -a app-entry/openfortigui.desktop debian/openfortigui/usr/share/applications/.
 	cp -a app-entry/openfortigui.png debian/openfortigui/usr/share/pixmaps/.

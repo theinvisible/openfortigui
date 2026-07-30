@@ -1,0 +1,95 @@
+.TH OPENFORTIGUI 1 "2026-07-30" "openfortiGUI" "User Commands"
+.SH NAME
+openfortigui \- Qt GUI for openfortivpn, a Fortinet SSL-VPN client
+.SH SYNOPSIS
+.B openfortigui
+.RI [ options ]
+.br
+.B openfortigui
+.B \-\-start\-vpn
+.B \-\-vpn\-name
+.I name
+.RI [ options ]
+.SH DESCRIPTION
+.B openfortiGUI
+manages several Fortinet SSL-VPN connections and groups of connections.
+openfortivpn is built in, so no separate client is needed.
+.PP
+Without arguments the graphical interface starts. It runs as the ordinary user
+and starts the privileged part of each connection as a separate process through
+.BR sudo (8),
+using the rule in
+.IR /etc/sudoers.d/openfortigui .
+The two processes talk over a unix socket whose path the interface passes to the
+child; nothing is inherited through the environment.
+.SH OPTIONS
+.TP
+.B \-\-start\-vpn
+Run as the privileged VPN process instead of starting the interface. Requires
+root and
+.BR \-\-vpn\-name .
+This is what the interface invokes; there is rarely a reason to call it by hand.
+.TP
+.BI \-\-vpn\-name " name"
+Name of the profile to connect, as shown in the interface.
+.TP
+.BI \-\-main\-config " path"
+Use
+.I path
+instead of
+.IR ~/.openfortigui/main.conf .
+Profiles, logs and the certificate cache follow it, so a second configuration is
+fully separate from the default one. The file has to exist; a path that does not
+is ignored.
+.TP
+.BI \-\-api\-socket " path"
+Path of the unix socket between the interface and the VPN processes. Defaults to
+.I $XDG_RUNTIME_DIR/openfortiGUI
+and is passed on to every child process.
+.TP
+.B \-\-kill\-vpn\-processes
+Terminate all running VPN processes and exit.
+.TP
+.BR \-h ", " \-\-help
+Show the built-in help and exit.
+.TP
+.BR \-v ", " \-\-version
+Show the version and exit.
+.SH FILES
+.TP
+.I ~/.openfortigui/main.conf
+Settings of the interface.
+.TP
+.I ~/.openfortigui/vpnprofiles/
+One file per connection profile.
+.TP
+.I ~/.openfortigui/vpngroups/
+One file per group of connections.
+.TP
+.I ~/.openfortigui/logs/
+Log of the interface and one log per connection.
+.TP
+.I /etc/openfortigui/vpnprofiles/
+System-wide profiles, available to every user.
+.TP
+.I /etc/sudoers.d/openfortigui
+Permits members of group
+.B sudo
+to start the VPN process as root. Without it, or without membership in that
+group, connecting fails with a request for a password that the interface cannot
+answer.
+.SH ENVIRONMENT
+.TP
+.B XDG_RUNTIME_DIR
+Where the api socket is created when
+.B \-\-api\-socket
+is not given.
+.SH SEE ALSO
+.BR openfortivpn (1),
+.BR sudoers (5)
+.PP
+Documentation and issue tracker:
+.UR https://github.com/theinvisible/openfortigui
+.UE
+.SH AUTHOR
+Rene Hadler <rene@hadler.me>

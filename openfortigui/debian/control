@@ -1,14 +1,35 @@
 Source: openfortigui
-Section: admin
+Section: net
 Priority: optional
 Maintainer: Rene Hadler <rene@hadler.me>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper-compat (= 13),
+               qt6-base-dev,
+               qt6-base-dev-tools,
+               qtkeychain-qt6-dev,
+               libssl-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://github.com/theinvisible/openfortigui
+Vcs-Browser: https://github.com/theinvisible/openfortigui
+Vcs-Git: https://github.com/theinvisible/openfortigui.git
 
 Package: openfortigui
-Architecture: amd64 i386
-Depends: ${shlibs:Depends}, sudo, qt6-translations-l10n, ppp, libqt6keychain1
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         ppp,
+         sudo,
+         libqt6keychain1,
+         qt6-translations-l10n
 Recommends: gnome-keyring | kwalletmanager
-Conflicts:
-Replaces:
-Provides: openfortigui
-Description: GUI for openfortivpn
+Description: Qt GUI for openfortivpn, a Fortinet SSL-VPN client
+ openfortiGUI manages several Fortinet SSL-VPN connections and groups of
+ connections. openfortivpn is built in, so no separate client is needed: the
+ privileged part of a connection is started through sudo while the interface
+ keeps running as the ordinary user.
+ .
+ A tray icon shows the state of every connection. Prompts for one-time passwords
+ and for the passphrase of an encrypted client certificate are answered in a
+ dialog, gateway certificates can be pinned, and credentials can be kept in the
+ system keyring instead of the configuration file. A KRunner plugin is packaged
+ separately.
