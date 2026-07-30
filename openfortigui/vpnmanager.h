@@ -25,6 +25,7 @@
 #include <QLocalServer>
 #include <QStandardItem>
 #include <QProcess>
+#include <QSet>
 
 #include <vpnlogger.h>
 
@@ -95,6 +96,12 @@ private:
     QMap<QString, vpnClientConnection*> connections;
     QThread *logger_thread;
     vpnLogger *logger;
+
+    // VPNs whose failure has already been explained to the user, see
+    // onClientVPNMessage() and reportProcessFailure().
+    QSet<QString> reported_errors;
+
+    void reportProcessFailure(const QString &name, const QString &text);
 
 signals:
     void VPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);

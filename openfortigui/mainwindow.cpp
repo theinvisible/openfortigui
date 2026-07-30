@@ -910,9 +910,10 @@ void MainWindow::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 
 void MainWindow::onClientVPNMessage([[maybe_unused]] QString vpnname, vpnMsg msg)
 {
-    QString stext = QString("<b>%1</b>").arg(msg.msg);
+    // Both carry program output, so neither may be interpreted as markup.
+    QString stext = QString("<b>%1</b>").arg(msg.msg.toHtmlEscaped());
     if(!msg.detail.isEmpty())
-        stext.append("<br><br>Detail:<br><pre>").append(msg.detail).append("</pre>");
+        stext.append("<br><br>Detail:<br><pre>").append(msg.detail.toHtmlEscaped()).append("</pre>");
 
     switch(msg.type)
     {

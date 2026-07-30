@@ -16,11 +16,11 @@ so `testlab test 90_gui` works without a VM. `91_distro` builds both Debian
 packages inside a container for every supported distribution, installs them there
 and connects with them.
 
-Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 236 checks
-green in 423 s.** Building this lab uncovered three crash and cleanup bugs in
+Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 243 checks
+green in 255 s.** Building this lab uncovered three crash and cleanup bugs in
 openfortiGUI; decoupling the VPN process from the inherited environment
-uncovered a fourth, the cookie path a fifth, and the GUI and packaging cases two
-more — all are fixed, and the cases now guard them against regression, see
+uncovered a fourth, the cookie path a fifth, and the GUI and packaging cases
+three more — all are fixed, and the cases now guard them against regression, see
 [Findings](#8-findings-in-openfortigui).
 
 ---
@@ -285,8 +285,8 @@ printf '%s' "$pw" | openssl enc -aes-128-cbc -a -A \
 | `60_persistent` | a server-side killed tunnel (`execute vpn sslvpn del-tunnel <index>`) is rebuilt via `persistent=true`; SIGTERM stops the process despite `persistent` | 15 |
 | `70_guistop` | stop initiated by the GUI while the tunnel is up: `ACTION_STOP` over the local socket, and the GUI going away. Uses `mock_gui.py`, which provides the `openfortiGUI` QLocalServer | 22 |
 | `80_env` | independence from the inherited environment: connect with a wrong `HOME` and no `XDG_RUNTIME_DIR`, the child reaches the GUI over `--api-socket`, log and `gw_cert.cache` follow `--main-config`, nothing written to `/root`, `main.conf` keeps its owner | 10 |
-| `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up | 25 |
-| `91_distro` | both packages on **every supported distribution**, in a container each: build with `packaging/build-deb.sh`, install with all dependencies resolvable, sudoers file parsed by that distribution's `visudo`, the `--start-vpn *` wildcard effective and nothing beyond it, the `-E` semantics of whichever sudo is in charge, a real tunnel started through it, and — where KDE Frameworks 6 exists — the KRunner plugin built, installed and found where KRunner looks | 99 |
+| `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up; a failing `sudo` produces exactly one error dialog and an unknown profile name does not take the GUI down | 34 |
+| `91_distro` | both packages on **every supported distribution**, in a container each: build with `packaging/build-deb.sh`, install with all dependencies resolvable, sudoers file parsed by that distribution's `visudo`, the `--start-vpn *` wildcard effective and nothing beyond it, the `-E` semantics of whichever sudo is in charge, a real tunnel started through it, and — where KDE Frameworks 6 exists — the KRunner plugin built, installed and found where KRunner looks | 97-101 |
 
 Four of these checks used to report the crashes described under
 [Findings](#8-findings-in-openfortigui). Since the fix they are regression
@@ -854,6 +854,45 @@ by `argc > 1`, so `openfortigui --main-config /path` exited with 0 without doing
 anything. The decision is now made by which options were actually given
 (`cliMode()`), which is also what lets `90_gui` run the GUI against an isolated
 configuration.
+
+### 12. A failing VPN process failed silently — fixed
+
+`vpnManager::onVPNProcessFinished()` and `onVPNProcessErrorOccurred()` did
+nothing but `qDebug()`: they dropped the connection from the map and returned.
+`vpnLogger` recognises the frequent causes in the child's output and explains them
+properly — sudo asking for a password above all — but everything without a
+pattern was silent. The entry appeared in the list, disappeared again, and that
+was the entire feedback for
+
+* `sudo: user … is not allowed to execute …` — no rule, or one that does not match,
+* a sudoers file with a syntax error, which sudo refuses with exit code 1,
+* no sudo at all (`QProcess::FailedToStart`, not a single byte of output),
+* a child that died from a signal.
+
+Both handlers now report an abnormal end, and only an abnormal one: stopping a
+VPN ends in `QCoreApplication::quit()` and therefore in exit code 0, and a failed
+connection attempt reports itself over the api, also with 0. The generic message
+waits two seconds and drops itself if `vpnLogger` reported something specific for
+that VPN meanwhile (`reported_errors`), so one failure produces one dialog and the
+better wording wins. The detail is the tail of the per-VPN log — read from the
+file, not from the process buffer, because draining that buffer would take the
+data away from the logger and the log would lose the very message being
+complained about.
+
+Found while reviewing [PR #209](https://github.com/theinvisible/openfortigui/pull/209),
+which reported the same failures. Its own approach — a configurable sudo binary
+plus free-form sudo options — is not needed after finding 6, and the sudoers file
+it ships drops the `--start-vpn *` argument restriction and adds an unrestricted
+`NOPASSWD` rule for `/usr/bin/openfortivpn`, which through `--pppd-plugin=<file>`
+is passwordless root for every member of group `sudo`. The error reporting was
+worth taking; `visudo -c` rejects that file outright.
+
+**A crash came out of the same review:** `startVPN()` dereferenced the null
+pointer `getVpnProfileByName()` returns for a name it does not know, so a single
+api message took the whole GUI down — and anything on that socket can send one, a
+KRunner entry pointing at a renamed profile included. It now reports the name and
+returns. `90_gui` part f) covers all of it, with a `sudo` of its own in front of
+`PATH`.
 
 ## 9. Known limitations
 

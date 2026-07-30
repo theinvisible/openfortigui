@@ -273,12 +273,152 @@ $(tail -n 20 "$(case_app_log)" 2>/dev/null)"
             # into the GUI's own -- that file is where the prompt has to show up.
             VPNLOG="$LAB_CLIENT_HOME/.openfortigui/logs/vpn/$PROFILE_PEM.log"
             assert_contains "the prompt is in the VPN log" "$VPNLOG" 'PEM pass phrase'
+
+            # The stop a user performs: the GUI asks the child to end, it quits
+            # with exit code 0, and stopVPN() drops the connection right away --
+            # so the process handlers stay quiet. Nothing about a normal stop may
+            # look like a failure (see part f for the other direction).
+            if python3 "$LAB_SRC_DIR/api_send.py" vpn-stop "$PROFILE_PEM" >/dev/null; then
+                sleep 6
+                if gui_win '^Error$' 200 >/dev/null; then
+                    gui_screenshot fail-stop-dialog >/dev/null
+                    fail "stopping the VPN raises no error dialog" \
+                        "vpnManager::onVPNProcessFinished() may only report an abnormal end."
+                else
+                    ok "stopping the VPN raises no error dialog"
+                fi
+            else
+                skip "stopping the VPN raises no error dialog" "the GUI was not reachable"
+            fi
         fi
 
         client_stop TERM 20 >/dev/null 2>&1 || client_kill >/dev/null 2>&1 || true
         rm -f "$LAB_PROFILE_DIR/$PROFILE_PEM.conf"
     fi
 fi
+
+# --------------------------------------------------------------------------
+part "f) a failed sudo does not fail silently"
+# --------------------------------------------------------------------------
+#
+# vpnManager's two process handlers only ever qDebug()ed, so when sudo refused,
+# the entry disappeared from the list again and that was all the user got.
+# vpnLogger explains the causes it has a pattern for -- sudo asking for a
+# password, above all -- but everything else was silent: "user is not allowed to
+# execute", a sudoers file with a syntax error, no sudo at all, a crash.
+#
+# What is faked here is only the sudo: what QProcess reports is the same whether
+# the refusal comes from the real one or from a stand-in, and this way the case
+# needs neither root nor a FortiGate.
+
+gui_app_stop
+sleep 1
+
+# Parts d/e ran the child as root, which leaves the application log owned by root
+# -- the GUI could not append to it any more and every qDebug() would be lost.
+as_root rm -f "$CLIENT_APP_LOG"
+
+FAKEBIN="$CASE_OUT_DIR/fakebin"
+EMPTYBIN="$CASE_OUT_DIR/nobin"
+mkdir -p "$FAKEBIN" "$EMPTYBIN"
+PROFILE_SUDO="GuiSudoFailure"
+client_write_profile "$PROFILE_SUDO" >/dev/null
+
+# fake_sudo <message> <exit code> -- a sudo that says its piece and gives up
+fake_sudo() {
+    printf '#!/bin/sh\necho "%s"\nexit %s\n' "$1" "$2" >"$FAKEBIN/sudo"
+    chmod +x "$FAKEBIN/sudo"
+}
+
+# start_with_path <PATH> -- the GUI with a PATH of our choosing
+start_with_path() {
+    LAB_GUI_PATH="$1" gui_app_start
+    LAB_GUI_PATH=""
+}
+
+# error_dialog <check name> <timeout> -- wait for the dialog and dismiss it
+error_dialog() {
+    local name="$1" timeout="$2" id
+    if id="$(gui_wait_window '^Error$' "$timeout" 200)"; then
+        ok "$name"
+        gui_activate "$id"
+        gui_key Return
+        sleep 1
+        return 0
+    fi
+    gui_screenshot "fail-${name//[^a-zA-Z0-9]/-}" >/dev/null
+    fail "$name" "no dialog appeared within ${timeout}s.
+windows on screen:
+$(gui_list_windows)
+last lines of the application log:
+$(tail -n 20 "$(case_app_log)" 2>/dev/null)"
+    return 1
+}
+
+# f1) the refusal nobody had a pattern for
+fake_sudo "sudo: labuser is not allowed to execute '/usr/bin/openfortigui --start-vpn' as root on lab." 1
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+error_dialog "sudo refuses the command: an error dialog appears" 20
+assert_contains "the exit code reaches the log" "$(case_app_log)" 'finished:: 1'
+
+# f2) no sudo at all -- QProcess::FailedToStart, not a single byte of output
+gui_app_stop
+sleep 1
+start_with_path "$EMPTYBIN"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+error_dialog "sudo is not in PATH: an error dialog appears" 20
+assert_contains "the start failure reaches the log" "$(case_app_log)" 'error occurred::'
+
+# f3) one failure, one dialog
+#
+# For this message vpnLogger has a pattern and an explanation of its own, so the
+# generic report has to stay away -- it waits two seconds for exactly that
+# reason. Whichever of the two speaks, the user must not have to close a second
+# dialog saying the same thing in worse words.
+gui_app_stop
+sleep 1
+fake_sudo "sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper" 1
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+if error_dialog "sudo asks for a password: the explanation appears" 20; then
+    SECOND=""
+    for _ in 1 2 3 4 5 6; do
+        sleep 1
+        if SECOND="$(gui_win '^Error$' 200)"; then break; fi
+        SECOND=""
+    done
+    if [[ -z "$SECOND" ]]; then
+        ok "only one dialog for one failure"
+    else
+        gui_screenshot fail-second-dialog >/dev/null
+        fail "a second error dialog followed" \
+            "vpnManager::reportProcessFailure() must drop the generic message once
+vpnLogger has reported a specific one for that VPN."
+    fi
+fi
+
+# f4) a name that does not exist
+#
+# startVPN() dereferenced the null pointer that getVpnProfileByName() returns for
+# an unknown name, so a single api message took the whole GUI down with it -- and
+# anything on that socket can send one, a KRunner entry pointing at a renamed
+# profile included.
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "NoSuchProfileHere" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+error_dialog "an unknown profile name is reported" 15
+if gui_app_running; then
+    ok "the GUI survives an unknown profile name"
+else
+    fail "the GUI died on an unknown profile name" \
+        "vpnManager::startVPN() has to check the result of getVpnProfileByName()."
+fi
+
+gui_app_stop
+rm -f "$LAB_PROFILE_DIR/$PROFILE_SUDO.conf"
 
 # Leave no test profiles behind for the following cases.
 rm -f "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf" "$LAB_PROFILE_DIR/$PROFILE_CANCEL.conf"

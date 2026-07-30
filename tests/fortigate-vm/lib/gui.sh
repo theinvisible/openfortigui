@@ -107,12 +107,16 @@ xwi() { gui_env xwininfo "$@"; }
 # Starts the GUI with the lab configuration. The environment is stripped down on
 # purpose: no session bus (the GUI would export its menu bar to the desktop's
 # global menu and the window would have none), no Wayland, no desktop theme.
+#
+# LAB_GUI_PATH sets the PATH the GUI passes on to its child processes. It is what
+# decides which sudo QProcess::start("sudo", ...) finds, so a case can put its own
+# one in front (cases/90_gui.sh part f).
 gui_app_start() {
     local bin; bin="$(client_require_bin)"
 
     [[ -f "$LAB_MAIN_CONF" ]] || die "$LAB_MAIN_CONF is missing -- run client_init_home first"
 
-    env -i PATH=/usr/bin:/bin \
+    env -i "PATH=${LAB_GUI_PATH:-/usr/bin:/bin}" \
         HOME="$LAB_CLIENT_HOME" \
         "DISPLAY=$LAB_GUI_DISPLAY" \
         QT_QPA_PLATFORM=xcb \

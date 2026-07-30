@@ -21,8 +21,10 @@
 #include "proc/vpnbarracuda.h"
 
 #include <QDataStream>
+#include <QFile>
 #include <QProcess>
 #include <QThread>
+#include <QTimer>
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -79,8 +81,25 @@ void vpnManager::startVPN(const QString &name)
         return;
     }
 
+    // A fresh attempt starts without the errors of the previous one.
+    reported_errors.remove(name);
+
     tiConfVpnProfiles profiles;
     vpnProfile *profile = profiles.getVpnProfileByName(name);
+    if(profile == nullptr)
+    {
+        /*
+         * Anything on the api socket may ask for a name that does not exist --
+         * the KRunner plugin with a stale entry, a renamed profile, a typo in a
+         * script. Dereferencing the null below took the whole GUI down with a
+         * segmentation fault.
+         */
+        vpnMsg msg;
+        msg.type = vpnMsg::TYPE_ERROR;
+        msg.msg = tr("There is no VPN profile named '%1'.").arg(name);
+        emit VPNMessage(name, msg);
+        return;
+    }
 
     switch(profile->device_type)
     {
@@ -364,6 +383,14 @@ void vpnManager::onClientVPNStatsUpdate(QString vpnname, vpnStats stats)
 
 void vpnManager::onClientVPNMessage(QString vpnname, vpnMsg msg)
 {
+    /*
+     * Note that this VPN already has an error on screen. The logger recognises
+     * the common failures in the child's output and explains them properly; the
+     * generic report from the process handlers must not duplicate that.
+     */
+    if(msg.type == vpnMsg::TYPE_ERROR)
+        reported_errors.insert(vpnname);
+
     emit VPNMessage(vpnname, msg);
 }
 
@@ -379,22 +406,130 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
     emit VPNCertificateValidationFailed(vpnname, buffer);
 }
 
-void vpnManager::onVPNProcessFinished(QString name, [[maybe_unused]] int exitCode, [[maybe_unused]] QProcess::ExitStatus exitStatus)
+/*
+ * The last lines of the per-VPN log. The logger writes the child's output there
+ * and flushes on every chunk, so by the time the delayed report fires, whatever
+ * sudo or the child had to say is in the file. Reading it from there rather than
+ * from the process buffer matters: draining the buffer would take the data away
+ * from the logger, and the log would lose the very message being complained
+ * about.
+ */
+static QString logTail(const QString &name, int lines = 15)
 {
-    qDebug() << "VPN process " << name << " finished!";
-    if(connections.contains(name))
-    {
-        connections.remove(name);
-    }
+    tiConfMain main_settings;
+    const QString path = QString("%1/vpn/%2.log")
+            .arg(tiConfMain::formatPath(main_settings.getValue("paths/logs").toString()), name);
+    const QString pointer = QObject::tr("Log: %1").arg(path);
+
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return pointer;
+
+    // The log grows across runs, only its end is of interest.
+    const qint64 window = 8192;
+    if(file.size() > window)
+        file.seek(file.size() - window);
+
+    QStringList tail = QString::fromUtf8(file.readAll()).split('\n', Qt::SkipEmptyParts);
+    if(tail.size() > lines)
+        tail = tail.mid(tail.size() - lines);
+
+    if(tail.isEmpty())
+        return pointer;
+
+    return QString("%1\n\n%2").arg(tail.join('\n'), pointer);
 }
 
-void vpnManager::onVPNProcessErrorOccurred(QString name, [[maybe_unused]] QProcess::ProcessError error)
+/*
+ * Report a failure of the child process -- but not right away.
+ *
+ * The logger recognises the frequent causes in the child's output and explains
+ * them far better than an exit code can (sudo asking for a password, for
+ * instance). It needs a moment to read that output, so the generic message waits
+ * and is dropped if a specific one arrived meanwhile: one failure, one dialog.
+ */
+void vpnManager::reportProcessFailure(const QString &name, const QString &text)
 {
-    qDebug() << "VPN process " << name << " error occurred!";
-    if(connections.contains(name))
+    QTimer::singleShot(2000, this, [this, name, text]() {
+        if(reported_errors.contains(name))
+            return;
+
+        // Started again in the meantime -- no point in reporting the old attempt.
+        if(connections.contains(name))
+            return;
+
+        vpnMsg msg;
+        msg.type = vpnMsg::TYPE_ERROR;
+        msg.msg = text;
+        msg.detail = logTail(name);
+        emit VPNMessage(name, msg);
+    });
+}
+
+/*
+ * Both handlers used to drop the process without a word: when sudo refused, the
+ * entry simply disappeared from the list again. The logger covers the causes it
+ * has a pattern for; everything else -- "user is not allowed to execute", a
+ * syntactically broken sudoers file, a missing sudo, a crash -- left no trace the
+ * user would ever look at.
+ *
+ * Only an abnormal end gets a dialog. Stopping a VPN ends in
+ * QCoreApplication::quit() and therefore in exit code 0, and a connection
+ * attempt that fails reports itself over the api, also with 0. A crash is left to
+ * onVPNProcessErrorOccurred(), which Qt emits before finished().
+ */
+void vpnManager::onVPNProcessFinished(QString name, int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "VPN process " << name << " finished::" << exitCode << exitStatus;
+
+    if(!connections.contains(name))
+        return;
+
+    connections.remove(name);
+
+    if(exitStatus == QProcess::NormalExit && exitCode != 0)
+        reportProcessFailure(name, tr("VPN '%1' could not be started, sudo ended with exit code %2. "
+                                      "Please check the rule in /etc/sudoers.d/openfortigui.")
+                                   .arg(name).arg(exitCode));
+}
+
+void vpnManager::onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error)
+{
+    qDebug() << "VPN process " << name << " error occurred::" << error;
+
+    if(!connections.contains(name))
+        return;
+
+    QProcess *proc = connections[name]->proc;
+    connections.remove(name);
+
+    QString text;
+    switch(error)
     {
-        connections.remove(name);
+    case QProcess::FailedToStart:
+        text = tr("VPN '%1' could not be started: '%2' was not found or is not executable.")
+               .arg(name, (proc != nullptr) ? proc->program() : QStringLiteral("sudo"));
+        break;
+    case QProcess::Crashed:
+        text = tr("The VPN process of '%1' ended unexpectedly.").arg(name);
+        break;
+    case QProcess::Timedout:
+        text = tr("Timeout while waiting for the VPN process of '%1'.").arg(name);
+        break;
+    case QProcess::WriteError:
+        text = tr("Could not write to the VPN process of '%1'.").arg(name);
+        break;
+    case QProcess::ReadError:
+        text = tr("Could not read from the VPN process of '%1'.").arg(name);
+        break;
+    case QProcess::UnknownError:
+    default:
+        text = tr("Unknown error in the VPN process of '%1' (code %2).")
+               .arg(name).arg(static_cast<int>(error));
+        break;
     }
+
+    reportProcessFailure(name, text);
 }
 
 vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QObject(parent)
