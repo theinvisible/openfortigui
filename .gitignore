@@ -34,6 +34,7 @@ target_wrapper.*
 
 # QtCreator
 *.autosave
+.idea
 
 # QtCreator Qml
 *.qmlproject.user
@@ -41,3 +42,14 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+
+# FortiGate-Testlabor: das Fortinet-Image ist nicht frei verteilbar und
+# darf nicht im Repository landen, ebenso Lizenzen und Laufzeit-Artefakte.
+# Das Arbeitsverzeichnis liegt per Default ausserhalb des Repos
+# ($HOME/.cache/openfortigui-testlab), diese Regeln sind die Absicherung.
+*.qcow2
+*.kvm.zip
+*.lic
+tests/fortigate-vm/lab.env
+tests/fortigate-vm/lab/
+tests/fortigate-vm/__pycache__/

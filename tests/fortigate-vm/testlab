@@ -1,0 +1,472 @@
+#!/usr/bin/env bash
+#
+# openfortiGUI FortiGate test lab
+#
+# Boots a FortiGate VM under KVM, configures SSL-VPN and tests the openfortiGUI
+# binary headless against it. See TESTS.md in the repository root.
+
+set -uo pipefail
+
+LAB_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "$LAB_SRC_DIR/lib/common.sh"
+# shellcheck source=lib/vm.sh
+source "$LAB_SRC_DIR/lib/vm.sh"
+# shellcheck source=lib/net.sh
+source "$LAB_SRC_DIR/lib/net.sh"
+# shellcheck source=lib/client.sh
+source "$LAB_SRC_DIR/lib/client.sh"
+
+usage() {
+    cat <<EOF
+${C_BOLD}testlab${C_OFF} <command> [options]
+
+  ${C_BOLD}up${C_OFF}                Bring everything up (prepare, net-up, vm-up, provision)
+  ${C_BOLD}test${C_OFF} [case ...]   Run test cases (default: all under cases/)
+  ${C_BOLD}down${C_OFF}              Tear down VM and network (golden image is kept)
+  ${C_BOLD}status${C_OFF}            State of image, network, VM and SSL-VPN
+
+  preflight           Check tools, permissions and image
+  prepare [--rebuild] Unpack the image, create the golden overlay
+  net-up | net-down   Bridges, taps, netns and the test target
+  uplink on|off       Internet for the FortiGate via NAT (for the license)
+  vm-up | vm-down     Start/stop the VM (fresh overlay on golden)
+  provision           Configure FortiOS (on the running VM)
+  license <file.lic>  Install a VM license via TFTP
+  console             Serial FortiGate console (Ctrl-O quits)
+  fgt <cli> [...]     Run FortiOS commands
+  show                Dump the FortiOS configuration
+  cert-digest         Print the SHA-256 of the gateway certificate
+  clean               Delete everything including images and the test home
+
+Configuration: $LAB_SRC_DIR/lab.env (template: lab.env.example)
+Work directory: $OFGUI_LAB_DIR
+EOF
+}
+
+# --------------------------------------------------------------------------
+# preflight
+# --------------------------------------------------------------------------
+
+cmd_preflight() {
+    step "Preflight"
+    local missing=()
+    local tool
+    for tool in qemu-system-x86_64 qemu-img unzip openssl curl ip socat python3 sha256sum od; do
+        have "$tool" || missing+=("$tool")
+    done
+    (( ${#missing[@]} )) && die "missing tools: ${missing[*]}"
+
+    python3 -c 'import pexpect' 2>/dev/null \
+        || die "python3-pexpect is missing: sudo apt install python3-pexpect"
+
+    [[ -w /dev/kvm ]] || die "/dev/kvm is not writable -- add the user to the 'kvm' group or set an ACL."
+    [[ -x /usr/sbin/pppd ]] || die "/usr/sbin/pppd is missing: sudo apt install ppp"
+
+    vm_resolve_image
+    info "image:  $(basename "$FGT_IMAGE_ZIP") -> FortiOS $FGT_VERSION"
+
+    local bin; bin="$(client_require_bin)"
+    info "binary: $bin"
+
+    # A running GUI would make the test process attach to its local socket; when
+    # the GUI exits, the process dies with it (vpnprocess.cpp, onServerDisconnected).
+    if pgrep -x openfortigui >/dev/null 2>&1 \
+       || pgrep -f 'bin/openfortigui$' >/dev/null 2>&1; then
+        warn "an openfortiGUI instance is running. The test process would attach to"
+        warn "its local socket and die with it -- please close the GUI."
+    fi
+
+    ensure_sudo
+    lab_mkdirs
+    info "preflight ok"
+}
+
+# --------------------------------------------------------------------------
+# FortiOS access
+# --------------------------------------------------------------------------
+
+cmd_provision() {
+    vm_running || die "VM is not running"
+    step "Provisioning FortiOS"
+    fgt_cli_raw provision -v || die "provisioning failed (see $LAB_OUT_DIR/provision.log)"
+
+    # If the VM ran in provisioning mode, the configuration is in the golden
+    # image and future starts need no setup at all.
+    if vm_in_provision_mode; then
+        vm_mark_golden_provisioned
+        info "golden image marked as provisioned"
+    else
+        warn "the VM was not running in provisioning mode -- the configuration only"
+        warn "lives in the throwaway overlay and is lost on the next 'vm-up'."
+    fi
+}
+
+# Push the license onto the currently running VM. The TFTP server binds port 69
+# and therefore needs root.
+_license_upload() {
+    local lic="$1"
+    [[ -f "$lic" ]] || die "license file not found: $lic"
+    step "Installing the VM license ($(basename "$lic"))"
+    as_root env \
+            LAB_CONSOLE_SOCK="$LAB_CONSOLE_SOCK" \
+            LAB_PROVISION_LOG="$LAB_OUT_DIR/provision.log" \
+            FGT_ADMIN_USER="$FGT_ADMIN_USER" FGT_ADMIN_PASS="$FGT_ADMIN_PASS" \
+            FGT_WAN_IP="$FGT_WAN_IP" LAB_HOST_IP="$LAB_HOST_IP" \
+            TIMEOUT_BOOT="$TIMEOUT_BOOT" \
+            python3 "$LAB_SRC_DIR/fgt_provision.py" license "$lic" \
+        || die "license upload failed (see $LAB_OUT_DIR/provision.log)"
+
+    info "the FortiGate reboots after the license upload"
+    wait_for "$TIMEOUT_BOOT" "admin port after the reboot" \
+        tcp_open "$FGT_WAN_IP" "$FGT_ADMIN_SPORT" || die "the FortiGate did not come back"
+    fgt_cli_raw cmd "get system status" 2>/dev/null \
+        | grep -E "License Status|VM Resources" | sed 's/^/    /'
+}
+
+# The license has to go into the golden image, otherwise it is gone again on the
+# next vm-up (which creates a fresh overlay). That is why the VM is run in
+# provisioning mode for this.
+cmd_license() {
+    local lic="${1:-$FGT_LICENSE}"
+    [[ -n "$lic" ]] || die "give the path to the .lic file (or set FGT_LICENSE in lab.env)"
+    [[ -f "$lic" ]] || die "license file not found: $lic"
+    vm_golden_is_provisioned || die "golden is not provisioned -- run 'testlab up' first"
+    net_up
+
+    info "starting the VM in provisioning mode so the license lands in golden"
+    vm_stop
+    vm_start --provision-mode
+    fgt_cli_raw wait-login || die "FortiOS never showed up on the console"
+
+    # Activation needs FortiCare/FortiGuard; the isolated lab network is not
+    # enough for that.
+    net_uplink_up
+    if fgt_cli "execute ping-options source $FGT_WAN_IP" \
+               "execute ping 1.1.1.1" 2>&1 | grep -q "bytes from"; then
+        info "the FortiGate can reach the internet"
+    else
+        warn "the FortiGate cannot reach the internet -- activation may fail."
+        warn "check with: testlab fgt \"execute ping 1.1.1.1\""
+    fi
+
+    _license_upload "$lic"
+
+    info "closing the golden image consistently"
+    fgt_cli_raw cmd "execute shutdown" >/dev/null 2>&1 || true
+    sleep 8
+    vm_stop
+
+    vm_start
+    info "waiting for SSL-VPN"
+    if vm_wait_sslvpn; then
+        info "SSL-VPN now answers on $FGT_WAN_IP:$FGT_SSLVPN_PORT"
+        cmd_status
+    else
+        die "SSL-VPN still does not answer. Check the license status:
+    testlab fgt \"get system status\""
+    fi
+}
+
+# --------------------------------------------------------------------------
+# Bring up and tear down
+# --------------------------------------------------------------------------
+
+cmd_up() {
+    cmd_preflight
+    vm_prepare "$@"
+    net_up
+
+    if ! vm_golden_is_provisioned; then
+        step "First-time provisioning (writes into the golden image directly)"
+        vm_start --provision-mode
+        info "waiting for the FortiOS login (the first boot takes 2-4 minutes)"
+        fgt_cli_raw wait-login || die "FortiOS never showed up on the console.
+Console transcript: $LAB_OUT_DIR/console.log
+If q35/virtio causes trouble, set FGT_MACHINE=pc or FGT_NIC_MODEL=e1000 in lab.env."
+        cmd_provision
+        # The VM is already running in provisioning mode here, so the license
+        # lands in the golden image directly.
+        [[ -n "$FGT_LICENSE" ]] && _license_upload "$FGT_LICENSE"
+        info "shutting FortiOS down so that golden is consistent"
+        fgt_cli_raw cmd "execute shutdown" >/dev/null 2>&1 || true
+        sleep 8
+        vm_stop
+        vm_mark_golden_provisioned
+        info "golden image is provisioned -- future starts need no setup"
+    fi
+
+    vm_start
+    info "waiting for SSL-VPN (FortiOS is booting)"
+    if ! vm_wait_sslvpn; then
+        local licstatus
+        licstatus="$(fgt_cli_raw cmd "get system status" 2>/dev/null \
+                     | grep -E "License Status" | head -n1)"
+        if [[ "$licstatus" == *Invalid* ]]; then
+            die "SSL-VPN is not listening on $FGT_WAN_IP:$FGT_SSLVPN_PORT --${licstatus#*:} license.
+
+An unlicensed FortiGate VM does not start the SSL-VPN daemon: the
+configuration is accepted, but no listener appears and
+'diagnose vpn ssl list' answers with 'Connection refused'. Without a
+VM license the lab cannot be operated.
+
+Request a free 15-day evaluation license at support.fortinet.com for
+this VM's serial number, then run:
+
+    testlab license /path/to/FGVM....lic
+
+Serial number of this VM:
+$(fgt_cli_raw cmd "get system status" 2>/dev/null | grep -E "Serial-Number" | sed 's/^/    /')"
+        fi
+        die "SSL-VPN does not answer on $FGT_WAN_IP:$FGT_SSLVPN_PORT.
+Console transcript: $LAB_OUT_DIR/console.log"
+    fi
+
+    client_init_home
+    cmd_status
+}
+
+cmd_down() {
+    vm_stop
+    client_cleanup_all
+    net_uplink_down
+    net_down
+}
+
+cmd_clean() {
+    cmd_down
+    step "Deleting the work directory"
+    if [[ -d "$OFGUI_LAB_DIR" ]]; then
+        info "removing $OFGUI_LAB_DIR"
+        rm -rf "$OFGUI_LAB_DIR"
+    fi
+    # Side effect of the root child process: tiConfMain::main_config is
+    # initialized statically before --main-config takes effect, so the process
+    # creates an empty /root/.openfortigui.
+    if as_root test -d /root/.openfortigui; then
+        if [[ -z "$(as_root ls -A /root/.openfortigui/vpnprofiles 2>/dev/null)" ]]; then
+            info "removing orphaned /root/.openfortigui"
+            as_root rm -rf /root/.openfortigui
+        else
+            warn "/root/.openfortigui contains profiles -- left untouched"
+        fi
+    fi
+}
+
+cmd_status() {
+    step "Status"
+    vm_resolve_image 2>/dev/null || true
+    printf 'Image:\n'
+    printf '  %-12s %s\n' "version" "${FGT_VERSION:-?}"
+    if [[ -f "${LAB_BASE_IMG:-}" ]]; then
+        printf '  %-12s %spresent%s\n' "base" "$C_GREEN" "$C_OFF"
+    else
+        printf '  %-12s %smissing%s\n' "base" "$C_RED" "$C_OFF"
+    fi
+    if vm_golden_is_provisioned 2>/dev/null; then
+        printf '  %-12s %sprovisioned%s\n' "golden" "$C_GREEN" "$C_OFF"
+    elif [[ -f "${LAB_GOLDEN_IMG:-}" ]]; then
+        printf '  %-12s %sunprovisioned%s\n' "golden" "$C_YELLOW" "$C_OFF"
+    else
+        printf '  %-12s %smissing%s\n' "golden" "$C_RED" "$C_OFF"
+    fi
+
+    net_status
+
+    printf 'VM:\n'
+    if vm_running; then
+        printf '  %-12s %srunning%s (PID %s)\n' "QEMU" "$C_GREEN" "$C_OFF" "$(vm_pid)"
+    else
+        printf '  %-12s %sdown%s\n' "QEMU" "$C_RED" "$C_OFF"
+        return 0
+    fi
+
+    printf 'SSL-VPN:\n'
+    if tcp_open "$FGT_WAN_IP" "$FGT_SSLVPN_PORT"; then
+        printf '  %-12s %sopen%s (%s:%s)\n' "port" "$C_GREEN" "$C_OFF" \
+            "$FGT_WAN_IP" "$FGT_SSLVPN_PORT"
+        vm_tls_info
+        printf '  %-12s %s\n' "cert SHA256" "$(vm_gateway_cert_digest)"
+    else
+        printf '  %-12s %sclosed%s\n' "port" "$C_RED" "$C_OFF"
+    fi
+
+    local bin; bin="$(client_bin)" || bin="(not found)"
+    printf 'Client:\n'
+    printf '  %-12s %s\n' "binary" "$bin"
+    printf '  %-12s %s\n' "test home" "$LAB_CLIENT_HOME"
+}
+
+# --------------------------------------------------------------------------
+# Test runner
+# --------------------------------------------------------------------------
+
+cmd_test() {
+    local keep_going=0
+    local -a wanted=()
+    while (( $# )); do
+        case "$1" in
+            --keep-going) keep_going=1 ;;
+            -*) die "unknown option: $1" ;;
+            *) wanted+=("$1") ;;
+        esac
+        shift
+    done
+
+    vm_running || die "VM is not running -- run 'testlab up' first"
+    net_is_up || die "lab network is missing -- run 'testlab up' first"
+    client_require_bin >/dev/null
+    ensure_sudo
+    client_init_home
+
+    # Clear leftovers of an aborted run first -- in particular an orphaned
+    # gateway route, which would make the FortiGate unreachable.
+    client_cleanup_all
+
+    tcp_open "$FGT_WAN_IP" "$FGT_SSLVPN_PORT" \
+        || die "SSL-VPN on $FGT_WAN_IP:$FGT_SSLVPN_PORT is unreachable.
+Does the host reach the gateway? 'ip route get $FGT_WAN_IP' should
+show 'dev $LAB_BR_OUT'."
+
+    local -a files=()
+    if (( ${#wanted[@]} )); then
+        local w f
+        for w in "${wanted[@]}"; do
+            f="$LAB_SRC_DIR/cases/$w"
+            [[ -f "$f" ]] || f="$LAB_SRC_DIR/cases/${w}.sh"
+            [[ -f "$f" ]] || die "test case not found: $w"
+            files+=("$f")
+        done
+    else
+        mapfile -t files < <(find "$LAB_SRC_DIR/cases" -name '*.sh' | sort)
+    fi
+    (( ${#files[@]} )) || die "no test cases found"
+
+    # Determine the certificate digest once and pass it to every case
+    LAB_GW_DIGEST="$(vm_gateway_cert_digest)"
+    [[ ${#LAB_GW_DIGEST} -eq 64 ]] \
+        || die "could not read the gateway certificate (TLS handshake?).
+Diagnose with: openssl s_client -connect $FGT_WAN_IP:$FGT_SSLVPN_PORT"
+    export LAB_GW_DIGEST
+
+    local results_dir="$LAB_OUT_DIR/results"
+    rm -rf "$results_dir"; mkdir -p "$results_dir"
+
+    local failed=0 ran=0 name rc
+    local start_all=$SECONDS
+    for f in "${files[@]}"; do
+        name="$(basename "$f" .sh)"
+        ran=$(( ran + 1 ))
+        printf '\n%s>>> %s%s\n' "$C_BOLD" "$name" "$C_OFF"
+        local case_out="$LAB_OUT_DIR/$name"
+        rm -rf "$case_out"; mkdir -p "$case_out"
+
+        local t0=$SECONDS
+        env LAB_SRC_DIR="$LAB_SRC_DIR" \
+            CASE_NAME="$name" \
+            CASE_OUT_DIR="$case_out" \
+            CASE_RESULT_FILE="$results_dir/$name.tsv" \
+            LAB_GW_DIGEST="$LAB_GW_DIGEST" \
+            bash "$f"
+        rc=$?
+        printf '%d\n' "$(( SECONDS - t0 ))" >"$results_dir/$name.time"
+
+        if (( rc != 0 )); then
+            failed=$(( failed + 1 ))
+            printf '%s<<< %s FAILED%s (logs: %s)\n' "$C_RED" "$name" "$C_OFF" "$case_out"
+            (( keep_going )) || { warn "stopping (use --keep-going to continue)"; break; }
+        else
+            printf '%s<<< %s ok%s\n' "$C_GREEN" "$name" "$C_OFF"
+        fi
+
+        # Clean up between cases so that none disturbs the next one
+        client_cleanup_all
+    done
+
+    _write_junit "$results_dir" "$LAB_OUT_DIR/junit.xml"
+
+    printf '\n%s' "$C_BOLD"
+    if (( failed == 0 )); then
+        printf 'Result: %d/%d test cases passed%s (%ds)\n' "$ran" "$ran" "$C_OFF" "$(( SECONDS - start_all ))"
+    else
+        printf 'Result: %s%d of %d test cases failed%s (%ds)\n' \
+            "$C_RED" "$failed" "$ran" "$C_OFF" "$(( SECONDS - start_all ))"
+    fi
+    info "JUnit report: $LAB_OUT_DIR/junit.xml"
+    return $(( failed > 0 ? 1 : 0 ))
+}
+
+_write_junit() {
+    local results_dir="$1" out="$2"
+    python3 - "$results_dir" "$out" <<'PY'
+import glob, os, sys
+from xml.sax.saxutils import escape, quoteattr
+
+results_dir, out = sys.argv[1], sys.argv[2]
+suites = []
+for tsv in sorted(glob.glob(os.path.join(results_dir, "*.tsv"))):
+    name = os.path.basename(tsv)[:-4]
+    timefile = os.path.join(results_dir, name + ".time")
+    duration = open(timefile).read().strip() if os.path.exists(timefile) else "0"
+    cases = []
+    for line in open(tsv, errors="replace"):
+        parts = line.rstrip("\n").split("\t")
+        if len(parts) < 2:
+            continue
+        status, check = parts[0], parts[1]
+        detail = parts[2] if len(parts) > 2 else ""
+        body = ""
+        if status == "fail":
+            body = "<failure message=%s>%s</failure>" % (
+                quoteattr(detail[:400] or check), escape(detail))
+        elif status == "skip":
+            body = "<skipped message=%s/>" % quoteattr(detail or "skipped")
+        cases.append("    <testcase classname=%s name=%s>%s</testcase>"
+                     % (quoteattr(name), quoteattr(check), body))
+    failures = sum(1 for line in open(tsv, errors="replace") if line.startswith("fail\t"))
+    suites.append('  <testsuite name=%s tests="%d" failures="%d" time="%s">\n%s\n  </testsuite>'
+                  % (quoteattr(name), len(cases), failures, duration, "\n".join(cases)))
+
+with open(out, "w") as handle:
+    handle.write('<?xml version="1.0" encoding="UTF-8"?>\n<testsuites>\n')
+    handle.write("\n".join(suites))
+    handle.write("\n</testsuites>\n")
+PY
+}
+
+# --------------------------------------------------------------------------
+# Dispatch
+# --------------------------------------------------------------------------
+
+main() {
+    local cmd="${1:-}"
+    [[ $# -gt 0 ]] && shift
+    case "$cmd" in
+        preflight)   cmd_preflight ;;
+        prepare)     vm_prepare "$@" ;;
+        net-up)      net_up ;;
+        net-down)    net_down ;;
+        uplink)      case "${1:-on}" in
+                         on)  net_uplink_up ;;
+                         off) net_uplink_down ;;
+                         *)   die "uplink on|off" ;;
+                     esac ;;
+        vm-up)       net_require_up; vm_start "$@" ;;
+        vm-down)     vm_stop ;;
+        provision)   cmd_provision ;;
+        license)     cmd_license "$@" ;;
+        up)          cmd_up "$@" ;;
+        down)        cmd_down ;;
+        clean)       cmd_clean ;;
+        status)      cmd_status ;;
+        console)     vm_console ;;
+        fgt)         fgt_cli "$@" ;;
+        show)        fgt_cli_raw show ;;
+        cert-digest) vm_gateway_cert_digest ;;
+        test)        cmd_test "$@" ;;
+        ""|-h|--help|help) usage ;;
+        *)           usage; die "unknown command: $cmd" ;;
+    esac
+}
+
+main "$@"

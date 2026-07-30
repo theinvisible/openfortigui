@@ -541,6 +541,42 @@ static int get_gateway_host_ip(struct tunnel *tunnel)
     return 0;
 }
 
+/*
+ * Early stop handler. openfortivpn only installs its own once io_loop() runs
+ * (io.c); before that a SIGTERM would kill the process in the middle of
+ * connecting, leaving routes and pppd behind. This handler just records that a
+ * stop was requested. io_loop() overwrites it as intended and leaves its own
+ * handler installed afterwards, which is why get_sig_received() is the source
+ * of truth from then on -- stopRequested() therefore asks both.
+ */
+static volatile sig_atomic_t worker_stop_requested = 0;
+static volatile sig_atomic_t worker_sig_handler_ready = 0;
+
+static void worker_stop_handler(int signo)
+{
+    (void) signo;
+    worker_stop_requested = 1;
+}
+
+void vpnWorker::requestStop()
+{
+    worker_stop_requested = 1;
+}
+
+bool vpnWorker::stopRequested()
+{
+    if (worker_stop_requested)
+        return true;
+
+    const int sig = get_sig_received();
+    return sig == SIGINT || sig == SIGTERM;
+}
+
+bool vpnWorker::stopSignalSafe()
+{
+    return worker_sig_handler_ready != 0;
+}
+
 vpnWorker::vpnWorker(QObject *parent) : QObject(parent)
 {
     ptr_tunnel = nullptr;
@@ -549,6 +585,33 @@ vpnWorker::vpnWorker(QObject *parent) : QObject(parent)
 void vpnWorker::setConfig(vpnProfile c)
 {
     vpnConfig = c;
+}
+
+void vpnWorker::setTunnel(struct tunnel *tunnel)
+{
+    QMutexLocker lock(&tunnel_mutex);
+    ptr_tunnel = tunnel;
+}
+
+bool vpnWorker::tunnelActive() const
+{
+    QMutexLocker lock(&tunnel_mutex);
+    return ptr_tunnel != nullptr;
+}
+
+int vpnWorker::tunnelState() const
+{
+    QMutexLocker lock(&tunnel_mutex);
+    return (ptr_tunnel != nullptr) ? ptr_tunnel->state : -1;
+}
+
+QString vpnWorker::tunnelPppIface() const
+{
+    QMutexLocker lock(&tunnel_mutex);
+    if(ptr_tunnel == nullptr)
+        return QString();
+
+    return QString::fromLatin1(ptr_tunnel->ppp_iface);
 }
 
 void vpnWorker::updateStatus(vpnClientConnection::connectionStatus status)
@@ -651,10 +714,18 @@ void vpnWorker::process()
     tunnel.ssl_socket = -1;
     tunnel.ssl_context = NULL;
 
+    /*
+     * Catch the stop signal from here on: until io_loop() installs its own
+     * handler, a SIGTERM would otherwise kill the process outright.
+     */
+    if (signal(SIGTERM, worker_stop_handler) != SIG_ERR
+        && signal(SIGINT, worker_stop_handler) != SIG_ERR)
+        worker_sig_handler_ready = 1;
+
 start_tunnel:
 
     tunnel.state = STATE_CONNECTING;
-    ptr_tunnel = &tunnel;
+    setTunnel(&tunnel);
 
     // Step 0: get gateway host IP
     ret = get_gateway_host_ip(&tunnel);
@@ -666,6 +737,13 @@ start_tunnel:
     if (ret)
         goto err_tunnel;
     log_info("Connected to gateway.\n");
+
+    // A stop during a blocking step takes effect as soon as that step
+    // returns -- bail out before starting the next one.
+    if (stopRequested()) {
+        ret = 1;
+        goto err_tunnel;
+    }
 
     // Step 2: connect to the HTTP interface and authenticate to get a
     // cookie
@@ -701,10 +779,22 @@ start_tunnel:
         goto err_tunnel;
     }
 
+    if (stopRequested()) {
+        ret = 1;
+        goto err_tunnel;
+    }
+
     // Step 4: run a pppd process
     ret = pppd_run(&tunnel);
     if (ret)
         goto err_tunnel;
+
+    // pppd is running from here on -- an abort has to go through
+    // err_start_tunnel so that pppd gets terminated.
+    if (stopRequested()) {
+        ret = 1;
+        goto err_start_tunnel;
+    }
 
     // Step 5: ask gateway to start tunneling
     ret = http_send(&tunnel,
@@ -747,22 +837,54 @@ err_tunnel:
 
     // explicitly free the buffer allocated for split routes of the ipv4 config
     if (tunnel.ipv4.split_rt != NULL) {
+        // Every split route holds a strdup(ppp_iface) in rt_dev, which would
+        // otherwise leak on each reconnect (ipv4.c: ipv4_add_split_vpn_route,
+        // ipv4_set_split_routes). route_destroy() is static inline and not
+        // available here, hence by hand.
+        for (int i = 0; i < tunnel.ipv4.split_routes; i++) {
+            free(route_iface(&tunnel.ipv4.split_rt[i]));
+            route_iface(&tunnel.ipv4.split_rt[i]) = NULL;
+        }
         free(tunnel.ipv4.split_rt);
         tunnel.ipv4.split_rt = NULL;
     }
+    // split_routes MUST be reset along with it: otherwise
+    // ipv4_add_split_vpn_route() keeps counting from the stale index on
+    // reconnect, index 0 stays uninitialized and ipv4_set_split_routes()
+    // calls free() on that garbage -> "free(): invalid pointer".
+    tunnel.ipv4.split_routes = 0;
 
     // If persistent try to connect again after successful connect disconnected
-    if(vpnConfig.persistent and tunnel.state == STATE_DISCONNECTING)
+    // stopRequested() MUST be checked here as well: otherwise the persistent
+    // branch answers a SIGTERM with a reconnect instead of shutting down.
+    if(vpnConfig.persistent and tunnel.state == STATE_DISCONNECTING
+       and !stopRequested())
     {
         log_info("Persistent mode enabled, trying to reconnect...\n");
         goto start_tunnel;
     }
 
     tunnel.state = STATE_DOWN;
+
+    // Clear the pointer first, only then emit finished(): the connection to
+    // vpnProcess::closeProcess() is queued and therefore runs once process()
+    // has returned and "tunnel" as a stack variable is gone.
+    setTunnel(nullptr);
     emit finished();
 }
 
 void vpnWorker::end()
 {
+    /*
+     * Last resort for the case where the worker does not react to a stop signal
+     * (see vpnProcess::onShutdownTimeout). Normally the tunnel has already been
+     * cleared by then and this is a no-op -- the teardown runs on the owning
+     * thread at the end of process().
+     */
+    QMutexLocker lock(&tunnel_mutex);
+
+    if(ptr_tunnel == nullptr || ptr_tunnel->on_ppp_if_down == nullptr)
+        return;
+
     ptr_tunnel->on_ppp_if_down(ptr_tunnel);
 }

@@ -29,13 +29,24 @@
 #include <QFileInfo>
 #include <QDir>
 
+#include <signal.h>
+#include <unistd.h>
+
 #include "ticonfmain.h"
+
+// How long to wait for the worker to tear the tunnel down in an orderly
+// fashion before forcing the issue. Generous, because pppd_terminate() and the
+// logout at the gateway can run into a network timeout.
+#define VPN_SHUTDOWN_TIMEOUT_MS 20000
 
 vpnProcess::vpnProcess(QObject *parent) : QObject(parent)
 {
-    init_last_tunnel = false;
+    last_tunnel_state = STATE_DOWN;
+    shutting_down = false;
     thread_worker = nullptr;
     thread_vpn = nullptr;
+    observer = nullptr;
+    observerStats = nullptr;
 }
 
 void vpnProcess::setup(const QString &vpnname)
@@ -70,15 +81,68 @@ void vpnProcess::setup(const QString &vpnname)
 
 void vpnProcess::closeProcess()
 {
-    qDebug() << "shutting down vpn process::" << name;
-
-    if(thread_worker != nullptr && thread_vpn != nullptr)
+    // Second entry: the worker reacted to the stop and emitted finished(),
+    // the tunnel is torn down.
+    if(shutting_down)
     {
-        thread_worker->end();
-        thread_vpn->quit();
-        QThread::sleep(2);
-        thread_vpn->terminate();
+        finishShutdown();
+        return;
     }
+
+    qDebug() << "shutting down vpn process::" << name;
+    shutting_down = true;
+
+    if(observer != nullptr)
+        observer->stop();
+    if(observerStats != nullptr)
+        observerStats->stop();
+
+    /*
+     * The tunnel belongs to the worker thread -- it is not torn down from here.
+     * Instead process() is made to return, which is exactly the path an
+     * external SIGTERM takes: io_loop() aborts, process() restores routes and
+     * DNS and terminates pppd itself, then emits finished(), which brings us
+     * back here. Do not block, or the queued finished() could never arrive.
+     */
+    vpnWorker::requestStop();
+
+    if(!thread_worker.isNull() && thread_worker->tunnelActive()
+       && vpnWorker::stopSignalSafe())
+    {
+        qDebug() << "requesting tunnel shutdown via SIGTERM::" << name;
+        ::kill(::getpid(), SIGTERM);
+        QTimer::singleShot(VPN_SHUTDOWN_TIMEOUT_MS, this, SLOT(onShutdownTimeout()));
+        return;
+    }
+
+    finishShutdown();
+}
+
+void vpnProcess::onShutdownTimeout()
+{
+    qWarning() << "vpn worker did not shut down in time, forcing::" << name;
+
+    // Last resort: the worker is stuck in a blocking call. At least restore
+    // the routes, then shut down the hard way.
+    if(!thread_worker.isNull())
+        thread_worker->end();
+
+    finishShutdown();
+}
+
+void vpnProcess::finishShutdown()
+{
+    if(!thread_vpn.isNull() && thread_vpn->isRunning())
+    {
+        thread_vpn->quit();
+        if(!thread_vpn->wait(2000))
+        {
+            qWarning() << "vpn thread did not stop, terminating::" << name;
+            thread_vpn->terminate();
+            thread_vpn->wait(1000);
+        }
+    }
+
     QCoreApplication::quit();
 }
 
@@ -243,31 +307,35 @@ void vpnProcess::sendCMD(const vpnApi &cmd)
 
 void vpnProcess::updateStats()
 {
-    if(thread_worker->ptr_tunnel != nullptr)
+    if(thread_worker.isNull())
+        return;
+
+    const QString ppp_iface = thread_worker->tunnelPppIface();
+    if(ppp_iface.isEmpty())
+        return;
+
+    QFile file("/proc/net/dev");
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QTextStream in(&file);
+    QString line = in.readLine();
+    QStringList lineParse;
+    QRegularExpression reParse("^\\S{1,}$");
+    while (!line.isNull())
     {
-        QFile file("/proc/net/dev");
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            return;
-
-        QTextStream in(&file);
-        QString line = in.readLine();
-        QStringList lineParse;
-        QRegularExpression reParse("^\\S{1,}$");
-        while (!line.isNull())
+        lineParse = line.split(" ").filter(reParse);
+        if(lineParse[0].left(lineParse[0].length() - 1) == ppp_iface)
         {
-            lineParse = line.split(" ").filter(reParse);
-            if(lineParse[0].left(lineParse[0].length() - 1) == thread_worker->ptr_tunnel->ppp_iface)
-            {
-                stats.bytes_read = lineParse[1].toLongLong();
-                stats.bytes_written = lineParse[9].toLongLong();
-                file.close();
-                return;
-            }
-
-            line = in.readLine();
+            stats.bytes_read = lineParse[1].toLongLong();
+            stats.bytes_written = lineParse[9].toLongLong();
+            file.close();
+            return;
         }
-        file.close();
+
+        line = in.readLine();
     }
+    file.close();
 }
 
 void vpnProcess::requestCred()
@@ -400,45 +468,41 @@ void vpnProcess::onVPNStatusChanged(vpnClientConnection::connectionStatus status
 
 void vpnProcess::onObserverUpdate()
 {
-    if(thread_worker->ptr_tunnel != nullptr)
+    if(thread_worker.isNull())
+        return;
+
+    const int state = thread_worker->tunnelState();
+    if(state < 0 || state == last_tunnel_state)
+        return;
+
+    qDebug() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << state;
+
+    switch(state)
     {
-        if(!init_last_tunnel)
-        {
-            last_tunnel = *(thread_worker->ptr_tunnel);
-            last_tunnel.state = STATE_DOWN;
-            init_last_tunnel = true;
-        }
-
-        if(thread_worker->ptr_tunnel->state != last_tunnel.state)
-        {
-            qDebug() << "vpnProcess::onObserverUpdate::status_update" << name << "state" << thread_worker->ptr_tunnel->state;
-
-            switch(thread_worker->ptr_tunnel->state)
-            {
-            case STATE_DOWN:
-                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
-                onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
-                break;
-            case STATE_UP:
-                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state << "ppp-interface::" << thread_worker->ptr_tunnel->ppp_iface;
-                onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
-                break;
-            case STATE_CONNECTING:
-                qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name << "state" << thread_worker->ptr_tunnel->state;
-                onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTING);
-                break;
-            case STATE_DISCONNECTING:
-                break;
-            }
-
-            last_tunnel.state = thread_worker->ptr_tunnel->state;
-        }
+    case STATE_DOWN:
+        onVPNStatusChanged(vpnClientConnection::STATUS_DISCONNECTED);
+        break;
+    case STATE_UP:
+        qDebug() << "vpnProcess::onObserverUpdate::status_update2" << name
+                 << "ppp-interface::" << thread_worker->tunnelPppIface();
+        onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTED);
+        break;
+    case STATE_CONNECTING:
+        onVPNStatusChanged(vpnClientConnection::STATUS_CONNECTING);
+        break;
+    case STATE_DISCONNECTING:
+        break;
     }
+
+    last_tunnel_state = state;
 }
 
 void vpnProcess::onStatsUpdate()
 {
-    if(thread_worker->ptr_tunnel->state == STATE_UP)
+    if(thread_worker.isNull())
+        return;
+
+    if(thread_worker->tunnelState() == STATE_UP)
     {
         updateStats();
         submitStats();

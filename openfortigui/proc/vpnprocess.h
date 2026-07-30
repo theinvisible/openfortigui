@@ -21,6 +21,7 @@
 #include <QObject>
 #include <QLocalSocket>
 #include <QThread>
+#include <QPointer>
 
 #include "config.h"
 #include "vpnworker.h"
@@ -36,11 +37,13 @@ public:
 private:
     QString name;
     QLocalSocket *apiServer;
-    QThread* thread_vpn;
-    vpnWorker *thread_worker;
+    // QPointer, because both are attached to vpnWorker::finished() via
+    // deleteLater() and closeProcess() only runs after that.
+    QPointer<QThread> thread_vpn;
+    QPointer<vpnWorker> thread_worker;
     QTimer *observer, *observerStats;
-    struct tunnel last_tunnel;
-    bool init_last_tunnel;
+    int last_tunnel_state;
+    bool shutting_down;
 
     bool cred_received, passstore_received;
     struct struct_cred_data
@@ -56,6 +59,7 @@ private:
     bool checkVPNSettings(vpnProfile *profile);
     void sendCMD(const vpnApi &cmd);
     void updateStats();
+    void finishShutdown();
 
     void requestCred();
     void requestPassStore();
@@ -76,6 +80,7 @@ private slots:
     void onObserverUpdate();
     void onStatsUpdate();
     void closeProcess();
+    void onShutdownTimeout();
 };
 
 #endif // VPNPROCESS_H

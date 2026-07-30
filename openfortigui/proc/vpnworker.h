@@ -20,6 +20,8 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QMutex>
+#include <QString>
 #include "vpnprofile.h"
 #include "vpnmanager.h"
 
@@ -35,12 +37,35 @@ class vpnWorker : public QObject
 public:
     explicit vpnWorker(QObject *parent = nullptr);
 
-    struct tunnel *ptr_tunnel;
     void setConfig(vpnProfile c);
+
+    /*
+     * The tunnel is a stack variable of process(), so it only lives while the
+     * worker thread is inside process(). Everything the main thread needs from
+     * it goes through these accessors: they read the pointer under the lock
+     * and hand out copies only. process() resets it to nullptr before
+     * returning, so nobody can ever get a dangling pointer.
+     */
+    bool    tunnelActive() const;
+    int     tunnelState() const;        // -1 if no tunnel is alive
+    QString tunnelPppIface() const;     // empty if no tunnel is alive
+
+    /*
+     * Stop signalling. The teardown has to run on the owning thread, so a stop
+     * request is not carried out across threads. Instead process() is made to
+     * return, exactly like an external SIGTERM would.
+     */
+    static void requestStop();      // set the flag without a signal
+    static bool stopRequested();    // own flag or the io_loop() handler
+    static bool stopSignalSafe();   // true if SIGTERM will not kill us outright
 
 private:
     vpnProfile vpnConfig;
 
+    mutable QMutex tunnel_mutex;
+    struct tunnel *ptr_tunnel;
+
+    void setTunnel(struct tunnel *tunnel);
     void updateStatus(vpnClientConnection::connectionStatus status);
 
 signals:
