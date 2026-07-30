@@ -16,11 +16,11 @@ so `testlab test 90_gui` works without a VM. `91_distro` builds both Debian
 packages inside a container for every supported distribution, installs them there
 and connects with them.
 
-Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 243 checks
-green in 255 s.** Building this lab uncovered three crash and cleanup bugs in
+Last full run (FortiOS 7.4.12, evaluation license): **10/10 cases, 250 checks
+green in 330 s.** Building this lab uncovered three crash and cleanup bugs in
 openfortiGUI; decoupling the VPN process from the inherited environment
 uncovered a fourth, the cookie path a fifth, and the GUI and packaging cases
-three more — all are fixed, and the cases now guard them against regression, see
+four more — all are fixed, and the cases now guard them against regression, see
 [Findings](#8-findings-in-openfortigui).
 
 ---
@@ -285,7 +285,7 @@ printf '%s' "$pw" | openssl enc -aes-128-cbc -a -A \
 | `60_persistent` | a server-side killed tunnel (`execute vpn sslvpn del-tunnel <index>`) is rebuilt via `persistent=true`; SIGTERM stops the process despite `persistent` | 15 |
 | `70_guistop` | stop initiated by the GUI while the tunnel is up: `ACTION_STOP` over the local socket, and the GUI going away. Uses `mock_gui.py`, which provides the `openfortiGUI` QLocalServer | 22 |
 | `80_env` | independence from the inherited environment: connect with a wrong `HOME` and no `XDG_RUNTIME_DIR`, the child reaches the GUI over `--api-socket`, log and `gw_cert.cache` follow `--main-config`, nothing written to `/root`, `main.conf` keeps its owner | 10 |
-| `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up; a failing `sudo` produces exactly one error dialog and an unknown profile name does not take the GUI down | 34 |
+| `90_gui` | the real GUI on a 1280x800 Xvfb screen: settings window, profile editor and group editor fit, have no large minimum size and can be shrunk; Enter saves a profile, Escape discards it; for an encrypted client key the **passphrase** dialog appears (not the OTP one) and answering it brings the tunnel up; a failing `sudo` produces exactly one error dialog and an unknown profile name does not take the GUI down; a child that writes megabytes neither crashes the GUI nor loses a byte | 37 |
 | `91_distro` | both packages on **every supported distribution**, in a container each: build with `packaging/build-deb.sh`, install with all dependencies resolvable, sudoers file parsed by that distribution's `visudo`, the `--start-vpn *` wildcard effective and nothing beyond it, the `-E` semantics of whichever sudo is in charge, a real tunnel started through it, and — where KDE Frameworks 6 exists — the KRunner plugin built, installed and found where KRunner looks | 97-101 |
 
 Four of these checks used to report the crashes described under
@@ -893,6 +893,61 @@ api message took the whole GUI down — and anything on that socket can send one
 KRunner entry pointing at a renamed profile included. It now reports the name and
 returns. `90_gui` part f) covers all of it, with a `sudo` of its own in front of
 `PATH`.
+
+### 13. The logger read the VPN process from the wrong thread — fixed
+
+`vpnLogger` runs in a thread of its own, and `logVPNOutput()` called
+`QProcess::read()` there — on a process belonging to the main thread. A `QProcess`
+may only be used from the thread that owns it: while the logger walked the ring
+buffer, the main thread's socket notifier appended to it. Measured with a probe in
+the read path and four chatty children:
+
+```
+THREADPROBE reader= QThread(0x5b4f55f887d0)
+            process lives in= QThread(0x5b4f55eca3b0, name = "Qt mainThread")
+            reading 25489312 bytes
+```
+
+24 MB in a single `read()`, taken by the wrong thread. The size is the other half
+of the problem: `logVPNOutput()` began with `QThread::msleep(200)`, so the buffer
+filled while the logger slept and was then pulled out in one gulp — the longer the
+`memmove`, the wider the window for corruption. That is where the reporter's
+backtrace ends (`QRingBuffer::read` → `__memmove_avx_unaligned_erms`).
+
+What changed:
+
+* The read happens in the process' own thread — the lambda on
+  `readyReadStandardOutput` has the process as its context object — and only the
+  bytes are handed over, with a queued invocation.
+* The `msleep(200)` is gone. Chunks are coalesced by a 150 ms single-shot timer
+  instead, which is not restarted while it runs, so continuous output cannot
+  starve the buffer. The coalescing has to stay: the patterns are matched with
+  `contains()` on a chunk, and a prompt split across two reads would match
+  nothing — that is issue #166 all over again. Waiting for a complete line is not
+  an option either, because prompts arrive without a trailing newline.
+* Chunks are flushed at 1 MB regardless of the timer, so one round of work stays
+  one round of work. This is not backpressure — there never was any, `QProcess`
+  buffers without a limit unless `setReadBufferSize()` says otherwise.
+* `procFinished()` empties every map and closes and deletes the log file. It used
+  to only set the entry to null, so each connection left an open `QFile` and a row
+  in five maps behind for the lifetime of the GUI.
+* Two connects in `vpnManager` for a `vpnLogger::finished()` signal that does not
+  exist are gone; they printed `QObject::connect: No such signal` on every start
+  and never did anything.
+
+Reported as [PR #207](https://github.com/theinvisible/openfortigui/pull/207),
+whose diagnosis was correct. The other half of that PR — null checks in
+`vpnProcess`' timer callbacks — was already covered: `thread_worker` is a
+`QPointer` checked with `isNull()`, and `ptr_tunnel` is gone entirely in favour of
+`tunnelState()`/`tunnelPppIface()`, which is finding 1.
+
+**The crash itself was not reproduced here.** Four children, 28 MB of output,
+50 s of sustained load on Qt 6.10 — the GUI survived. Undefined behaviour that
+happens not to crash is still undefined; the report came from Qt 5.15 with a
+backtrace. `90_gui` part g) therefore asserts what can be asserted from outside:
+the GUI survives a child that writes 5 MB in one go, and not a byte of it is
+missing from the log — the tail arrives only because `procFinished()` flushes what
+is still pending.
 
 ## 9. Known limitations
 

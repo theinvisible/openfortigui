@@ -16,7 +16,7 @@ tests/fortigate-vm/testlab down    # VM und Netz weg
 > Details: [VM-Lizenz](#vm-lizenz).
 
 Stand des letzten vollständigen Durchlaufs (FortiOS 7.4.12, Eval-Lizenz):
-**10/10 Fälle, 243 Prüfungen grün in 255 s.** Die Abstürze, die dieses Labor
+**10/10 Fälle, 250 Prüfungen grün in 330 s.** Die Abstürze, die dieses Labor
 zutage gebracht hat, sind behoben; die Testfälle bewachen sie jetzt gegen
 Rückfälle — siehe [Befunde](#befunde-in-openfortigui) und, vollständig und
 aktuell, [`TESTS.md`](../../TESTS.md).
@@ -173,7 +173,7 @@ nur einmal. `prepare --rebuild` erzwingt eine Neuprovisionierung.
 | `60_persistent` | serverseitig gekappter Tunnel (`execute vpn sslvpn del-tunnel <index>`) wird per `persistent=true` neu aufgebaut; SIGTERM stoppt trotzdem | vm | 15 |
 | `70_guistop` | von der GUI angestoßener Stop: `ACTION_STOP` über den lokalen Socket, und eine verschwindende GUI. Nutzt `mock_gui.py` | vm | 22 |
 | `80_env` | Unabhängigkeit von der geerbten Umgebung: falsches `HOME`, kein `XDG_RUNTIME_DIR`, das Kind erreicht die GUI über `--api-socket`, nichts landet in `/root` | vm | 10 |
-| `90_gui` | die echte GUI auf 1280×800 (Xvfb): Einstellungen, Profil- und Gruppeneditor passen, haben keine große Mindestgröße und lassen sich verkleinern; Enter speichert, Escape verwirft; bei verschlüsseltem Client-Key erscheint der **Passphrase**-Dialog (nicht der OTP-Dialog) und der Tunnel kommt danach hoch; ein scheiterndes `sudo` erzeugt genau einen Fehlerdialog, ein unbekannter Profilname legt die GUI nicht lahm | gui | 34 |
+| `90_gui` | die echte GUI auf 1280×800 (Xvfb): Einstellungen, Profil- und Gruppeneditor passen, haben keine große Mindestgröße und lassen sich verkleinern; Enter speichert, Escape verwirft; bei verschlüsseltem Client-Key erscheint der **Passphrase**-Dialog (nicht der OTP-Dialog) und der Tunnel kommt danach hoch; ein scheiterndes `sudo` erzeugt genau einen Fehlerdialog, ein unbekannter Profilname legt die GUI nicht lahm; ein Kindprozess mit Megabyte an Ausgabe bringt weder die GUI um noch verliert ein Byte | gui | 37 |
 | `91_distro` | beide Pakete auf **jeder unterstützten Distribution**, je im Container: Bau per `packaging/build-deb.sh`, Installation mit auflösbaren Abhängigkeiten, sudoers-Datei vom `visudo` der Distribution geparst, Wildcard `--start-vpn *` wirksam und nichts darüber hinaus, `-E`-Verhalten des jeweils aktiven sudo, echter Tunnel darüber und — wo KDE Frameworks 6 existiert — das KRunner-Plugin gebaut, installiert und am richtigen Ort | vm docker | 97–101 |
 
 `91_distro` deckt `ubuntu:24.04`, `ubuntu:26.04`, `debian:bookworm` und
@@ -344,9 +344,9 @@ das vorhandene Portal (`full-access`) um.
 
 > Dieser Abschnitt hält den Stand fest, in dem die Befunde gefunden wurden. Die
 > **vollständige und aktuelle** Liste inklusive der Fixes steht in
-> [`TESTS.md`, Abschnitt 8](../../TESTS.md) — dort auch die Befunde 6 bis 12
+> [`TESTS.md`, Abschnitt 8](../../TESTS.md) — dort auch die Befunde 6 bis 13
 > (Umgebungsabhängigkeit, Cookie-Pfad, `sudo -E`, Paketierung, KF6-Port,
-> `--main-config`-Rückfall, stumme Prozessfehler), die erst später dazukamen.
+> `--main-config`-Rückfall, stumme Prozessfehler, Logger-Thread), die erst später dazukamen.
 
 Alle drei sind reproduzierbar und mit gdb-Backtrace belegt.
 

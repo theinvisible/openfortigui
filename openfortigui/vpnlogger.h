@@ -19,10 +19,11 @@
 #define VPNLOGGER_H
 
 #include <QObject>
-#include <QSignalMapper>
 #include <QProcess>
+#include <QPointer>
 #include <QMap>
 #include <QFile>
+#include <QTimer>
 
 #include "ticonfmain.h"
 #include "vpnapi.h"
@@ -48,17 +49,22 @@ public slots:
     void addVPN(const QString &name, QProcess *proc);
 
 private:
-    QSignalMapper *logMapperStdout, *logMapperFinished;
-    QMap<QString, QProcess*> loggers;
+    QMap<QString, QPointer<QProcess>> loggers;
     QMap<QString, QFile*> logfiles;
-    QMap<QString, bool> loglocker;
     QMap<QString, bool> logCertFailedMode;
     QMap<QString, QString> logCertFailedBuffer;
     QMap<QString, vpnProfile> vpnConfigs;
     tiConfMain main_settings;
 
+    // Output that has arrived but is not processed yet, see logVPNData().
+    QMap<QString, QByteArray> pending;
+    QTimer *flushTimer;
+
+    void processOutput(const QString &name, const QByteArray &data);
+
 private slots:
-    void logVPNOutput(const QString &name);
+    void logVPNData(const QString &name, const QByteArray &data);
+    void flushPending();
     void procFinished(const QString &name);
 
 signals:

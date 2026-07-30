@@ -418,6 +418,88 @@ else
 fi
 
 gui_app_stop
+
+# --------------------------------------------------------------------------
+part "g) a chatty child does not corrupt the log or the GUI"
+# --------------------------------------------------------------------------
+#
+# vpnLogger ran QProcess::read() in its own thread on a process owned by the main
+# thread. While it walked the ring buffer, the main thread's socket notifier
+# appended to it -- corruption and a crash in QRingBuffer::read() under load (PR
+# #207). Measured before the fix: single reads of 25 MB out of a process living in
+# "Qt mainThread".
+#
+# The read now happens in the process' own thread and only the bytes are handed
+# over, coalesced by a 150 ms timer instead of by a 200 ms sleep. What is
+# assertable from outside is that nothing is lost: every line the child wrote has
+# to end up in the log, the last chunk included -- that one only arrives because
+# procFinished() flushes what is still pending.
+
+# The payload is generated first so its exact size is known. Counting markers
+# would not do: the logger writes one timestamp per chunk, so a line that falls on
+# a chunk boundary appears split in the log without a single byte being lost.
+PAYLOAD="$CASE_OUT_DIR/chatty-payload.txt"
+seq 1 200000 | sed 's/^/DEBUG:  tunnel chunk /' >"$PAYLOAD"
+CHATTY_BYTES="$(stat -c%s "$PAYLOAD")"
+
+PROFILE_CHATTY="GuiChattyChild"
+client_write_profile "$PROFILE_CHATTY" >/dev/null
+CHATTY_LOG="$LAB_CLIENT_HOME/.openfortigui/logs/vpn/$PROFILE_CHATTY.log"
+rm -f "$CHATTY_LOG"
+
+printf '#!/bin/sh\ncat %s\nexit 0\n' "$PAYLOAD" >"$FAKEBIN/sudo"
+chmod +x "$FAKEBIN/sudo"
+
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_CHATTY" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+
+# Wait until the log stops growing.
+LAST=0
+STABLE=0
+for _ in $(seq 1 60); do
+    sleep 1
+    SIZE="$(stat -c%s "$CHATTY_LOG" 2>/dev/null || echo 0)"
+    if [[ "$SIZE" == "$LAST" ]]; then
+        STABLE=$(( STABLE + 1 ))
+        (( STABLE >= 3 )) && break
+    else
+        STABLE=0
+    fi
+    LAST="$SIZE"
+done
+info "$(( LAST / 1024 ))k of $(( CHATTY_BYTES / 1024 ))k payload bytes logged"
+
+if gui_app_running; then
+    ok "the GUI survives a chatty child ($(( CHATTY_BYTES / 1024 / 1024 )) MB in one go)"
+else
+    fail "the GUI died while logging" \
+        "This is the crash from PR #207: a QProcess may only be read in its own thread.
+$(tail -n 5 "$CASE_OUT_DIR/gui-stdout.log" 2>/dev/null)"
+fi
+
+# Timestamps only add bytes, so anything below the payload size means data was
+# dropped -- the tail of it arrives only because procFinished() flushes what is
+# still pending.
+if (( LAST >= CHATTY_BYTES )); then
+    ok "no output was lost"
+else
+    fail "output was lost" \
+        "the payload is $CHATTY_BYTES bytes, $CHATTY_LOG holds $LAST."
+fi
+
+# The child ended with exit code 0, so nothing about it may look like a failure.
+sleep 3
+if gui_win '^Error$' 200 >/dev/null; then
+    gui_screenshot fail-chatty-dialog >/dev/null
+    fail "a chatty child that exits cleanly raises no dialog" "see part f"
+else
+    ok "a chatty child that exits cleanly raises no dialog"
+fi
+
+gui_app_stop
+rm -f "$CHATTY_LOG"
+rm -f "$LAB_PROFILE_DIR/$PROFILE_CHATTY.conf"
 rm -f "$LAB_PROFILE_DIR/$PROFILE_SUDO.conf"
 
 # Leave no test profiles behind for the following cases.

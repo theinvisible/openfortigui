@@ -19,23 +19,12 @@
 
 #include <QDebug>
 #include <QDateTime>
-#include <QThread>
 
 #include "ticonfmain.h"
 
 vpnLogger::vpnLogger(QObject *parent) : QObject(parent)
 {
-    logMapperStdout = new QSignalMapper(this);
-    logMapperFinished = new QSignalMapper(this);
-    loggers = QMap<QString, QProcess*>();
-    logfiles = QMap<QString, QFile*>();
-    loglocker = QMap<QString, bool>();
-    logCertFailedMode = QMap<QString, bool>();
-    logCertFailedBuffer = QMap<QString, QString>();
-    vpnConfigs = QMap<QString, vpnProfile>();
-
-    connect(logMapperStdout, SIGNAL(mappedString(QString)), this, SLOT(logVPNOutput(QString)));
-    connect(logMapperFinished, SIGNAL(mappedString(QString)), this, SLOT(procFinished(QString)));
+    flushTimer = nullptr;
 }
 
 vpnLogger::~vpnLogger()
@@ -51,7 +40,6 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
 
     vpnConfigs.insert(name, *profile);
     loggers.insert(name, proc);
-    loglocker.insert(name, false);
     logCertFailedMode.insert(name, false);
     logCertFailedBuffer.insert(name, "");
     if(!logfiles.contains(name))
@@ -61,33 +49,94 @@ void vpnLogger::addVPN(const QString &name, QProcess *proc)
         logfiles.insert(name, file);
     }
 
-    connect(proc, SIGNAL(readyReadStandardOutput()), logMapperStdout, SLOT(map()));
-    connect(proc, SIGNAL(finished(int)), logMapperFinished, SLOT(map()));
-    logMapperStdout->setMapping(proc, name);
-    logMapperFinished->setMapping(proc, name);
+    /*
+     * The process belongs to the main thread, so it is read there and only the
+     * bytes travel to this one. Reading it from the logger thread is what a
+     * QProcess must never be subjected to: while this thread walked the ring
+     * buffer, the main thread's socket notifier appended to it, and under load --
+     * a chatty child, a big download -- the buffer got corrupted and the GUI
+     * died in QRingBuffer::read(). Reported as PR #207.
+     *
+     * The lambda has the process as its context object, which is what puts it in
+     * the main thread; the hop back here is a queued invocation.
+     */
+    connect(proc, &QProcess::readyReadStandardOutput, proc, [this, name, proc]() {
+        const QByteArray data = proc->readAllStandardOutput();
+        if(data.isEmpty())
+            return;
+        QMetaObject::invokeMethod(this, [this, name, data]() { logVPNData(name, data); },
+                                  Qt::QueuedConnection);
+    });
+    connect(proc, &QProcess::finished, proc, [this, name]() {
+        QMetaObject::invokeMethod(this, [this, name]() { procFinished(name); },
+                                  Qt::QueuedConnection);
+    });
 }
 
-void vpnLogger::logVPNOutput(const QString &name)
+/*
+ * Collect what arrives and process it in one piece a moment later.
+ *
+ * The patterns below are matched with contains() on a chunk of output, so a line
+ * split across two reads would match nothing -- that is how the passphrase prompt
+ * used to be missed (issue #166). The old code coalesced by sleeping 200 ms in
+ * the logger thread before reading; the timer does the same without blocking a
+ * thread and without holding a lock on someone else's ring buffer.
+ *
+ * The timer is not restarted while it is running, so continuous output cannot
+ * starve the buffer: it is emptied at least every 150 ms. Prompts matter here --
+ * the child writes them without a trailing newline and then waits on stdin, so
+ * waiting for a complete line would wait forever.
+ */
+void vpnLogger::logVPNData(const QString &name, const QByteArray &data)
 {
-    QThread::msleep(200);
+    pending[name].append(data);
 
-    QProcess *proc = loggers[name];
+    /*
+     * A child that outruns the logger must not make the chunks arbitrarily large:
+     * each one is turned into a QString and scanned by a dozen contains(), so the
+     * work per flush should stay bounded. This is not backpressure -- there never
+     * was any, QProcess buffers without a limit unless setReadBufferSize() says
+     * otherwise -- it just keeps one round of work a round of work.
+     */
+    if(pending[name].size() >= 1024 * 1024)
+    {
+        processOutput(name, pending.take(name));
+        return;
+    }
 
-    if(proc == nullptr)
+    if(flushTimer == nullptr)
+    {
+        // Created here so it belongs to the logger thread, not to the one that
+        // constructed this object.
+        flushTimer = new QTimer(this);
+        flushTimer->setSingleShot(true);
+        connect(flushTimer, &QTimer::timeout, this, &vpnLogger::flushPending);
+    }
+
+    if(!flushTimer->isActive())
+        flushTimer->start(150);
+}
+
+void vpnLogger::flushPending()
+{
+    const QStringList names = pending.keys();
+    for(const QString &name : names)
+    {
+        const QByteArray data = pending.take(name);
+        if(!data.isEmpty())
+            processOutput(name, data);
+    }
+}
+
+void vpnLogger::processOutput(const QString &name, const QByteArray &data)
+{
+    QFile *logfile = logfiles.value(name, nullptr);
+    if(logfile == nullptr)
         return;
 
-    if(proc->bytesAvailable() == 0 && proc->isReadable())
-        return;
-
-    qDebug() << QDateTime::currentMSecsSinceEpoch() << "bytes avail::" << proc->bytesAvailable();
-
-    QByteArray blog;
-    blog.append(proc->read(proc->bytesAvailable()));
-
-    QFile *logfile = logfiles[name];
     QTextStream out(logfile);
 
-    QString toLog = QString::fromUtf8(blog);
+    QString toLog = QString::fromUtf8(data);
 
     /*
      * sudo could not run us without asking for a password, which means the
@@ -159,9 +208,10 @@ void vpnLogger::logVPNOutput(const QString &name)
      * profiles with an encrypted client key used to hang forever: no pattern
      * matched, no dialog appeared, and the process waited on stdin (issue #166).
      */
+    int prompt = -1;
     if(toLog.contains("PEM pass phrase"))
     {
-        emit PromptRequest(proc, vpnLogger::PROMPT_PEM_PASSPHRASE);
+        prompt = vpnLogger::PROMPT_PEM_PASSPHRASE;
     }
     else if(vpnConfigs[name].otp_prompt.isEmpty())
     {
@@ -170,13 +220,25 @@ void vpnLogger::logVPNOutput(const QString &name)
            toLog.contains("Two-factor authentication") ||
            toLog.contains("one-time password"))
         {
-            emit PromptRequest(proc, vpnLogger::PROMPT_OTP);
+            prompt = vpnLogger::PROMPT_OTP;
         }
     } else {
         if(toLog.contains(vpnConfigs[name].otp_prompt))
         {
-            emit PromptRequest(proc, vpnLogger::PROMPT_OTP);
+            prompt = vpnLogger::PROMPT_OTP;
         }
+    }
+
+    if(prompt >= 0)
+    {
+        /*
+         * The answer is written to the process by the dialog, in the main thread.
+         * Only the pointer travels; a process that has ended in the meantime
+         * leaves a null QPointer instead of a dangling one.
+         */
+        QPointer<QProcess> proc = loggers.value(name);
+        if(!proc.isNull())
+            emit PromptRequest(proc, prompt);
     }
 
     if(toLog.contains("Gateway certificate validation failed, and the certificate digest is not in the local whitelist."))
@@ -197,9 +259,28 @@ void vpnLogger::logVPNOutput(const QString &name)
     logfile->flush();
 }
 
+/*
+ * Everything belonging to this VPN goes away with the process. The old version
+ * only set the entry to null, so the log file stayed open and every map kept its
+ * row -- one more of each per connection, for the lifetime of the GUI.
+ */
 void vpnLogger::procFinished(const QString &name)
 {
-    loggers[name] = nullptr;
+    // Whatever arrived last still belongs in the log.
+    if(pending.contains(name))
+        processOutput(name, pending.take(name));
+
+    loggers.remove(name);
+    logCertFailedMode.remove(name);
+    logCertFailedBuffer.remove(name);
+    vpnConfigs.remove(name);
+
+    QFile *logfile = logfiles.take(name);
+    if(logfile != nullptr)
+    {
+        logfile->close();
+        delete logfile;
+    }
 }
 
 void vpnLogger::process()

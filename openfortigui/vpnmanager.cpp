@@ -50,8 +50,9 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     //connect(worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
     connect(this, SIGNAL(addVPNLogger(QString,QProcess*)), logger, SLOT(addVPN(QString,QProcess*)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(started()), logger, SLOT(process()));
-    connect(logger, SIGNAL(finished()), logger_thread, SLOT(quit()));
-    connect(logger, SIGNAL(finished()), logger, SLOT(deleteLater()));
+    // vpnLogger has no finished() signal -- the two connects that used to be here
+    // never did anything but print "No such signal" on every start. The thread is
+    // quit in the destructor.
     connect(logger, SIGNAL(PromptRequest(QProcess*,int)), this, SLOT(onPromptRequest(QProcess*,int)), Qt::QueuedConnection);
     connect(logger, SIGNAL(CertificateValidationFailed(QString,QString)), this, SLOT(onCertificateValidationFailed(QString,QString)), Qt::QueuedConnection);
     connect(logger, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
