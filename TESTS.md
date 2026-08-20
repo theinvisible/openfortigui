@@ -746,12 +746,17 @@ that actually does, in a container that is a stock Ubuntu 26.04:
 | classic sudo, rule without `SETENV:` | **refuses to run at all**: `sorry, you are not allowed to preserve the environment` |
 | classic sudo, rule **with** `SETENV:` | environment preserved |
 
-The sudoers rule openfortiGUI ships (`%sudo ALL=NOPASSWD: /usr/bin/openfortigui
---start-vpn *`) has no `SETENV:` tag and never had one. So on the classic sudo the
-call was refused outright, and on sudo-rs the flag was quietly dropped — the
-decisive difference is the tag, not the implementation. Whether it ever worked
-depended entirely on what else was in the user's `/etc/sudoers`, which fits the
-scattered reports of missing dialogs and missing status updates.
+The 0.9.10 packages shipped the rule **with** the tag (`%sudo ALL=NOPASSWD:SETENV:
+/usr/bin/openfortigui --start-vpn *`, since dc2575f in 2020), so package installs
+on classic sudo did preserve the environment; refused-outright was the fate of
+manually configured rules without the tag, and sudo-rs drops `-E` regardless —
+the decisive difference is the tag, not the implementation. That mixture fits
+the scattered reports of missing dialogs and missing status updates. The qt6
+packages ship the rule without `SETENV:` (`%sudo ALL=NOPASSWD:
+/usr/bin/openfortigui --start-vpn *`), because nothing needs the environment any
+more — which also means a still-running 0.9.10 GUI with `main/sudo_preserve_env`
+set cannot start connections after the package upgrade until it is restarted
+(classic sudo then refuses `-E` under the new rule).
 
 The environment is no longer used for this: the socket path travels as
 `--api-socket`, the configuration as `--main-config`, and `-E` is gone. `80_env`

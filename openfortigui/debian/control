@@ -22,6 +22,9 @@ Depends: ${shlibs:Depends},
          libqt6keychain1,
          qt6-translations-l10n
 Recommends: gnome-keyring | kwalletmanager
+# The KF5 runner talks to the old fixed socket path and silently spawns a second
+# GUI against 0.9.11 -- force it out; the KF6 runner depends on >= 0.9.11 anyway.
+Breaks: openfortigui-runner (<< 0.9.11)
 Description: Qt GUI for openfortivpn, a Fortinet SSL-VPN client
  openfortiGUI manages several Fortinet SSL-VPN connections and groups of
  connections. openfortivpn is built in, so no separate client is needed: the

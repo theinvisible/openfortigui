@@ -1,9 +1,23 @@
+# CI for the qt6 line (0.9.11+).
+#
+# Qt6 packages exist only where Qt 6 and debhelper-compat 13 do: Ubuntu 24.04+,
+# Debian bookworm+. Ubuntu 20.04/22.04 and Debian 10/11 stay on the 0.9.10 line
+# (master keeps its own copy of this file) -- their jobs are gone here on purpose:
+# a v* tag triggers every tag job, and a single failing distro would abort the
+# release upload halfway.
+#
+# The KRunner plugin needs KDE Frameworks 6 (Ubuntu 26.04 / Debian trixie);
+# Ubuntu 24.04 and bookworm ship KF5 only, so no runner package is built here
+# until runners for those distributions exist -- see the placeholders below.
+# GitHub Actions (.github/workflows/build-deb.yml) covers 26.04/trixie builds
+# via distribution containers in the meantime.
+
 # Is performed before the scripts in the stages step
-before_script:  
+before_script:
   - source /etc/profile || true
 
 # Defines stages which are to be executed
-stages:  
+stages:
   - build
   - update_repo
 
@@ -15,23 +29,13 @@ stages:
     - echo ""                                                                             > ./debian/changelog
     - echo "openfortigui (99.9.${CI_PIPELINE_ID}-1) precise; urgency=low"                >> ./debian/changelog
     - echo ""                                                                            >> ./debian/changelog
-    - echo "  * Dev build from master"                                                   >> ./debian/changelog
+    - echo "  * Dev build from qt6"                                                     >> ./debian/changelog
     - echo ""                                                                            >> ./debian/changelog
     - echo " -- Rene Hadler <rene@hadler.me>  ${CI_T_DATE}"                              >> ./debian/changelog
     - sed -i 's/\*version =.*/\*version = "99.9.'"${CI_PIPELINE_ID}"'-dev";/' ./config.h
-
-    - cd ../krunner_openfortigui
-    - touch ./debian/changelog
-    - echo ""                                                                             > ./debian/changelog
-    - echo "openfortigui-runner (99.9.${CI_PIPELINE_ID}-1) precise; urgency=low"         >> ./debian/changelog
-    - echo ""                                                                            >> ./debian/changelog
-    - echo "  * Dev build from master"                                                   >> ./debian/changelog
-    - echo ""                                                                            >> ./debian/changelog
-    - echo " -- Rene Hadler <rene@hadler.me>  ${CI_T_DATE}"                              >> ./debian/changelog
-    - sed -i 's/X-KDE-PluginInfo-Version=.*/X-KDE-PluginInfo-Version=99.9.'"${CI_PIPELINE_ID}"'/' ./plasma-runner-openfortigui.desktop
     - cd ..
 
-# Stage "ubuntu-dev"
+# Stage "ubuntu"
 build-ubuntu-2404-64-release:
   image: git.styrion.net:4567/iteas/docker-build-images/iteas-build-ubuntu-2404-64
   stage: build
@@ -39,10 +43,8 @@ build-ubuntu-2404-64-release:
     - cd openfortigui
     - git submodule init && git submodule update
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
-    - mv openforti*.deb build/
+    - mv openfortigui_*.deb build/
     - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
@@ -65,10 +67,8 @@ build-ubuntu-2404-64-dev:
     - cd openfortigui
     - git submodule init && git submodule update
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
-    - mv openforti*.deb build/
+    - mv openfortigui_*.deb build/
     - upload_build_dev build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
@@ -81,218 +81,17 @@ build-ubuntu-2404-64-dev:
 
   only:
     - master
-
-# Stage "ubuntu"
-build-ubuntu-2204-64:
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_release build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-2204-64
-    
-  only:
-    - tags
-
-# Stage "ubuntu-dev"
-build-ubuntu-2204-64-dev:
-  <<: *build_template_def
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_dev build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-2204-64
-    
-  only:
-    - master
-
-build-ubuntu-2004-64:
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_release build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-2004-64
-    
-  only:
-    - tags
-
-# Stage "ubuntu-dev"
-build-ubuntu-2004-64-dev:
-  <<: *build_template_def
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openforti*.deb build/
-    - upload_build_dev build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-ubuntu-2004-64
-    
-  only:
-    - master
+    - qt6
 
 # Stage "debian"
-build-debian-10-64:  
+build-debian-12-64:
   stage: build
   script:
     - cd openfortigui
     - git submodule init && git submodule update
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
-    - upload_build_release build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-debian-10-64
-
-  only:
-    - tags
-
-# Stage "debian-dev"
-build-debian-10-64-dev:
-  <<: *build_template_def
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
-    - upload_build_dev build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-debian-10-64
-    
-  only:
-    - master
-
-# Stage "debian"
-build-debian-11-64:  
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
-    - upload_build_release build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-debian-11-64
-
-  only:
-    - tags
-
-# Stage "debian-dev"
-build-debian-11-64-dev:
-  <<: *build_template_def
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
-    - upload_build_dev build/openforti*.deb || true
-
-  # The files which are to be made available in GitLab
-  artifacts:
-    paths:
-      - build/*
-
-  tags:
-    - build-debian-11-64
-    
-  only:
-    - master
-
-# Stage "debian"
-build-debian-12-64:  
-  stage: build
-  script:
-    - cd openfortigui
-    - git submodule init && git submodule update
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd .. && mkdir build
-    - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
     - upload_build_release build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
@@ -314,11 +113,8 @@ build-debian-12-64-dev:
     - cd openfortigui
     - git submodule init && git submodule update
     - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
-    - cd ../krunner_openfortigui
-    - echo "y" | debuild -eDEB_BUILD_OPTIONS="parallel=4" -us -uc
     - cd .. && mkdir build
     - mv openfortigui_*.deb build/
-    - mv openfortigui-runner_*.deb build/
     - upload_build_dev build/openforti*.deb || true
 
   # The files which are to be made available in GitLab
@@ -328,11 +124,19 @@ build-debian-12-64-dev:
 
   tags:
     - build-debian-12-64
-    
+
   only:
     - master
+    - qt6
 
-update_repo-release:  
+# Placeholders: enable once build images/runners for these distributions exist.
+# They are also the first two with KF6, i.e. where openfortigui-runner comes back
+# (build steps then: cd krunner_openfortigui && debuild ... like the app).
+#
+# build-ubuntu-2604-64-release:  image iteas-build-ubuntu-2604-64, tags k8s-iteas-prod
+# build-debian-13-64-release:    tags build-debian-13-64
+
+update_repo-release:
   stage: update_repo
   script:
     - update_build_release
@@ -343,7 +147,7 @@ update_repo-release:
   only:
     - tags
 
-update_repo-dev:  
+update_repo-dev:
   stage: update_repo
   script:
     - update_build_dev
@@ -353,3 +157,4 @@ update_repo-dev:
 
   only:
     - master
+    - qt6

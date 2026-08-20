@@ -1,0 +1,26 @@
+openfortigui (0.9.11-1) unstable; urgency=medium
+
+  0.9.11 is the Qt6 port. Configuration, profiles and stored passwords carry
+  over unchanged, in both directions. Three things are worth knowing:
+
+  * Restart openfortiGUI once after this upgrade. A 0.9.10 GUI that keeps
+    running cannot start new connections any more: it may still call sudo -E,
+    which the sudoers rule shipped with this version no longer permits, and a
+    newly started binary will not find the old GUI's socket. Established
+    tunnels keep running -- close the old GUI and start it again.
+
+  * ~/.openfortigui is now kept private to the owning user (directory 0700,
+    files 0600) and re-tightened on every start. Group-shared profile
+    directories in a home stop working on purpose; global profiles under
+    /etc/openfortigui/vpnprofiles are unaffected.
+
+  * The KRunner plugin now needs KDE Frameworks 6 (openfortigui-runner
+    0.9.11, Ubuntu 26.04 / Debian trixie or later). The old KF5 plugin is
+    removed on upgrade because it cannot talk to this version.
+
+  Also of note: the embedded openfortivpn is now 1.24.1, which drops the
+  OpenSSL ENGINE code path (keys via PKCS#11 engines). If you modified
+  /etc/sudoers.d/openfortigui, dpkg asks about the changed file -- keeping
+  your version is safe, the SETENV: tag is simply no longer needed.
+
+ -- Rene Hadler <rene@hadler.me>  Thu, 20 Aug 2026 20:35:12 +0200

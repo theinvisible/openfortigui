@@ -7,6 +7,30 @@ Official public apt-repo: https://apt.iteas.at/
 
 ![alt text](https://hadler.me/wordpress/wp-content/uploads/2018/02/openfortigui1.png "OpenFortiGUI main page")
 
+## Upgrading from 0.9.10 (the Qt5 line)
+
+0.9.11 is the Qt6 port. Profiles, groups, the configuration and stored
+passwords carry over unchanged -- there is nothing to migrate by hand. What
+does change:
+
+* **Restart openfortiGUI once after the upgrade.** A 0.9.10 GUI that keeps
+  running cannot start new connections (it may still call `sudo -E`, which the
+  new sudoers rule no longer permits), and a newly started 0.9.11 binary will
+  not find the old GUI's socket. Established tunnels keep running.
+* **Supported distributions:** Qt6 packages exist for Ubuntu 24.04 and later
+  and Debian bookworm and later. Ubuntu 20.04/22.04 and Debian 10/11 stay on
+  the 0.9.10 line, apt keeps them there automatically.
+* **The KRunner plugin needs KDE Frameworks 6** (Ubuntu 26.04 / Debian trixie
+  or later). The KF5 plugin is removed on upgrade -- it cannot talk to 0.9.11.
+* `~/.openfortigui` is kept private to the owning user now (0700, files 0600),
+  re-tightened on every start. Global profiles under
+  `/etc/openfortigui/vpnprofiles` are unaffected.
+* The embedded openfortivpn is 1.24.1, which drops the OpenSSL ENGINE code
+  path (keys via PKCS#11 engines).
+* If you modified `/etc/sudoers.d/openfortigui`, dpkg asks about the changed
+  file; keeping your version is safe -- the `SETENV:` tag is simply no longer
+  needed.
+
 ## Storing passwords in the system keyring
 
 By default openfortiGUI encrypts profile passwords itself, with the AES key and

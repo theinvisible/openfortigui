@@ -27,7 +27,12 @@ ui_*.h
 *.qmlc
 *.jsc
 Makefile*
-*build-*
+# Shadow-build directories (Qt Creator "build-<kit>", CLion "cmake-build-<profile>").
+# Directories only: a bare "*build-*" also swallowed packaging/build-deb.sh and
+# .github/workflows/build-deb.yml, which belong in the repository.
+build-*/
+cmake-build-*/
+debhelper-build-stamp
 
 # Qt unit tests
 target_wrapper.*

@@ -1,0 +1,116 @@
+name: Debian packages
+
+# One package per supported distribution. The build itself lives in
+# packaging/build-deb.sh, which is the same script the distribution test case
+# (tests/fortigate-vm/cases/91_distro.sh) runs inside a container -- so what CI
+# builds is what was tested locally.
+#
+# The jobs run in distribution containers rather than on runner images: dh_shlibdeps
+# writes the build host's Qt version into the dependencies, so a package has to be
+# built on the distribution it is meant for, and GitHub offers no runner for most
+# of these.
+
+on:
+  push:
+    branches: [master, qt6]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu:24.04
+          - ubuntu:26.04
+          - debian:bookworm
+          - debian:trixie
+
+    steps:
+      # git has to be there before checkout, otherwise the action falls back to a
+      # tarball download and the openfortivpn submodule stays empty.
+      - name: Prerequisites
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates dpkg-dev lintian
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Build dependencies come from debian/control; the script installs them.
+      - name: Build the package
+        run: packaging/build-deb.sh openfortigui out
+
+      - name: Artifact name
+        id: name
+        run: echo "slug=$(printf '%s' '${{ matrix.image }}' | tr ':/' '--')" >>"$GITHUB_OUTPUT"
+
+      # Informational: packaging complaints should be visible without blocking a
+      # release.
+      - name: lintian
+        continue-on-error: true
+        run: lintian --no-tag-display-limit out/*.deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openfortigui-${{ steps.name.outputs.slug }}
+          path: out/*.deb
+          if-no-files-found: error
+
+  # The KRunner plugin needs KDE Frameworks 6. Ubuntu 24.04 and Debian bookworm
+  # ship KF5 only, so they are absent from this list -- the KF5 version of the
+  # plugin was dropped with the port.
+  runner:
+    name: runner ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu:26.04
+          - debian:trixie
+
+    steps:
+      - name: Prerequisites
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates dpkg-dev lintian
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # The plugin compiles the application's own sources from ../openfortigui,
+      # which is why the whole tree is needed here as well.
+      - name: Build the plugin package
+        run: packaging/build-deb.sh krunner_openfortigui out
+
+      - name: Artifact name
+        id: name
+        run: echo "slug=$(printf '%s' '${{ matrix.image }}' | tr ':/' '--')" >>"$GITHUB_OUTPUT"
+
+      - name: lintian
+        continue-on-error: true
+        run: lintian --tag-display-limit 0 out/*.deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openfortigui-runner-${{ steps.name.outputs.slug }}
+          path: out/*.deb
+          if-no-files-found: error
