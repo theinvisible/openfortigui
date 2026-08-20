@@ -61,7 +61,7 @@ public:
     tiConfVpnProfiles();
     ~tiConfVpnProfiles();
 
-    void saveVpnProfile(const vpnProfile &profile);
+    bool saveVpnProfile(const vpnProfile &profile);
     void readVpnProfiles();
     void setReadProfilePasswords(bool read);
 

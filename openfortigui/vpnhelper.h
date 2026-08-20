@@ -20,6 +20,8 @@
 
 #include <QString>
 
+class tiConfMain;
+
 struct vpnHelperResult
 {
     bool status;
@@ -45,6 +47,7 @@ public:
     static QString Qaes128_encrypt(const QString &plain, const QString &key, const QString &iv);
     static QString Qaes128_decrypt(const QString &cipher, const QString &key, const QString &iv);
     static bool aesKeyUsable(const QString &key, const QString &iv);
+    static bool mainAesKeyIv(tiConfMain &settings, QString &key, QString &iv);
 
     static void ssl_handleErrors(void);
 

@@ -57,7 +57,7 @@ void tiConfMain::initMainConf()
         QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
-        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner | QFileDevice::ReadGroup | QFileDevice::ExeGroup);
+        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
         QString logs_vpn_dir = QString("%1/logs/vpn").arg(conf_main_dir.absolutePath());
@@ -86,13 +86,17 @@ void tiConfMain::initMainConf()
         conf.setValue("gui/disable_notifications", false);
         conf.setValue("gui/connect_on_dblclick", false);
         conf.sync();
+        // main.conf holds the AES key -- owner-only, and set explicitly: the
+        // fresh file above was created with umask defaults.
+        QFile::setPermissions(tiConfMain::formatPath(tiConfMain::main_config),
+                              QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     }
     else
     {
         QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
-        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner | QFileDevice::ReadGroup | QFileDevice::ExeGroup);
+        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 
         QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
@@ -178,6 +182,25 @@ void tiConfMain::initMainConf()
             {
                 conf.setValue("gui/connect_on_dblclick", false);
                 conf.sync();
+            }
+
+            /*
+             * Existing installations carry umask-default modes from before the
+             * files were restricted to the owner. Self-healing on every start
+             * rather than a one-time migration: it is a handful of files, and a
+             * profile restored from a backup gets fixed up too.
+             */
+            const QFileDevice::Permissions filePerms = QFileDevice::ReadOwner | QFileDevice::WriteOwner;
+            QFile::setPermissions(tiConfMain::formatPath(tiConfMain::main_config), filePerms);
+            const QStringList secretDirs = {
+                tiConfMain::formatPath(conf.value("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local).toString()),
+                tiConfMain::formatPath(conf.value("paths/localvpngroups", openfortigui_config::vpngroups_local).toString())
+            };
+            for(const QString &dir : secretDirs)
+            {
+                QDirIterator it(dir, QStringList() << "*.conf", QDir::Files);
+                while(it.hasNext())
+                    QFile::setPermissions(it.next(), filePerms);
             }
         }
     }
@@ -295,13 +318,22 @@ tiConfVpnProfiles::~tiConfVpnProfiles()
     delete main_settings;
 }
 
-void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
+bool tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 {
     QRegularExpression rexpName(openfortigui_config::validatorName);
     if(!rexpName.match(profile.name).hasMatch())
     {
         qWarning() << "tiConfVpnProfile::saveVpnProfile() -> vpnprofile has not a valid name: " << profile.name;
-        return;
+        return false;
+    }
+
+    // Get the keys before touching the file: aborting after the remove below
+    // would already have destroyed the stored profile.
+    QString aeskey, aesiv;
+    if(!vpnHelper::mainAesKeyIv(*main_settings, aeskey, aesiv))
+    {
+        qWarning() << "tiConfVpnProfile::saveVpnProfile() -> AES key/IV unavailable, not saving:" << profile.name;
+        return false;
     }
 
     QString filename = QString(tiConfMain::formatPath(main_settings->getValue("paths/localvpnprofiles").toString())).append("/%1.conf").arg(profile.name);
@@ -311,15 +343,6 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
 
     if(QFile::exists(filename))
         QFile::remove(filename);
-
-    QString aeskey, aesiv;
-    if(main_settings->getValue("main/use_system_password_store").toBool()) {
-        aeskey = vpnHelper::systemPasswordStoreRead("aeskey").data;
-        aesiv = vpnHelper::systemPasswordStoreRead("aesiv").data;
-    } else {
-        aeskey = main_settings->getValue("main/aeskey").toString();
-        aesiv = main_settings->getValue("main/aesiv").toString();
-    }
 
     auto f = std::make_unique<QSettings>(filename, QSettings::IniFormat);
 
@@ -368,6 +391,11 @@ void tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->endGroup();
 
     f->sync();
+    // The remove above makes every save create a fresh file with umask defaults,
+    // so this has to happen after every sync, not just once.
+    QFile::setPermissions(filename, QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+
+    return true;
 }
 
 void tiConfVpnProfiles::readVpnProfiles()
@@ -385,15 +413,12 @@ void tiConfVpnProfiles::readVpnProfiles()
     profileDirs[vpnProfile::Origin_GLOBAL] = tiConfMain::formatPath(main_settings->getValue("paths/globalvpnprofiles").toString());
 
     QString aeskey, aesiv;
+    bool have_keys = false;
     if(read_profile_passwords)
     {
-        if(main_settings->getValue("main/use_system_password_store").toBool()) {
-            aeskey = vpnHelper::systemPasswordStoreRead("aeskey").data;
-            aesiv = vpnHelper::systemPasswordStoreRead("aesiv").data;
-        } else {
-            aeskey = main_settings->getValue("main/aeskey").toString();
-            aesiv = main_settings->getValue("main/aesiv").toString();
-        }
+        have_keys = vpnHelper::mainAesKeyIv(*main_settings, aeskey, aesiv);
+        if(!have_keys)
+            qWarning() << "tiConfVpnProfile::readVpnProfiles() -> AES key/IV unavailable, profiles are loaded without their secrets";
     }
 
     QRegularExpression rexpName(openfortigui_config::validatorName);
@@ -422,7 +447,7 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->gateway_host = f->value("gateway_host").toString();
                 vpnprofile->gateway_port = f->value("gateway_port").toInt();
                 vpnprofile->username = f->value("username").toString();
-                if(read_profile_passwords) {
+                if(read_profile_passwords && have_keys) {
                     vpnprofile->password = vpnHelper::Qaes128_decrypt(f->value("password").toString(), aeskey, aesiv);
                     vpnprofile->cookie = vpnHelper::Qaes128_decrypt(f->value("cookie").toString(), aeskey, aesiv);
                 }
@@ -519,11 +544,15 @@ bool tiConfVpnProfiles::renameVpnProfile(const QString &oldname, const QString &
 bool tiConfVpnProfiles::copyVpnProfile(const QString &origname, const QString &cpname, vpnProfile::Origin sourceOrigin)
 {
     vpnProfile *vpn = getVpnProfileByName(origname, sourceOrigin);
+    if(vpn == nullptr)
+    {
+        qWarning() << "tiConfVpnProfiles::copyVpnProfile() -> source profile not found:" << origname;
+        return false;
+    }
+
     vpnProfile newvpn = *vpn;
     newvpn.name = cpname;
-    saveVpnProfile(newvpn);
-
-    return true;
+    return saveVpnProfile(newvpn);
 }
 
 tiConfVpnGroups::tiConfVpnGroups()
@@ -577,6 +606,7 @@ void tiConfVpnGroups::saveVpnGroup(const vpnGroup &group)
     f->endGroup();
 
     f->sync();
+    QFile::setPermissions(filename, QFileDevice::ReadOwner | QFileDevice::WriteOwner);
 }
 
 void tiConfVpnGroups::readVpnGroups()

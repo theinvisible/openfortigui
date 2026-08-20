@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "vpnapi.h"
+#include "ticonfmain.h"
 #include <qt6keychain/keychain.h>
 
 #include <openssl/conf.h>
@@ -291,6 +292,49 @@ bool vpnHelper::aesKeyUsable(const QString &key, const QString &iv)
     // AES-128-CBC: both have to be exactly 16 bytes. Anything else and OpenSSL
     // reads past the end of what we hand it.
     return key.toUtf8().length() == 16 && iv.toUtf8().length() == 16;
+}
+
+/*
+ * The AES key and IV for the profile secrets, from the system password store or
+ * from main.conf depending on main/use_system_password_store. Returns false when
+ * they are unavailable or unusable -- most importantly when the keychain cannot
+ * be read (locked wallet, no D-Bus session): encrypting with the empty strings
+ * the failed read used to hand back silently destroyed every stored password.
+ */
+bool vpnHelper::mainAesKeyIv(tiConfMain &settings, QString &key, QString &iv)
+{
+    key.clear();
+    iv.clear();
+
+    if(settings.getValue("main/use_system_password_store").toBool())
+    {
+        const vpnHelperResult keyResult = systemPasswordStoreRead("aeskey");
+        const vpnHelperResult ivResult = systemPasswordStoreRead("aesiv");
+        if(!keyResult.status || !ivResult.status)
+        {
+            qWarning() << "vpnHelper::mainAesKeyIv:: could not read the AES key/IV from the system password store::"
+                       << (keyResult.status ? ivResult.msg : keyResult.msg);
+            return false;
+        }
+
+        key = keyResult.data;
+        iv = ivResult.data;
+    }
+    else
+    {
+        key = settings.getValue("main/aeskey").toString();
+        iv = settings.getValue("main/aesiv").toString();
+    }
+
+    if(!aesKeyUsable(key, iv))
+    {
+        qWarning() << "vpnHelper::mainAesKeyIv:: AES key/IV are not 16 bytes";
+        key.clear();
+        iv.clear();
+        return false;
+    }
+
+    return true;
 }
 
 QString vpnHelper::Qaes128_encrypt(const QString &plain, const QString &key, const QString &iv)

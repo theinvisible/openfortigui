@@ -179,6 +179,31 @@ else
 fi
 
 # --------------------------------------------------------------------------
+part "b2) file permissions: config, profiles and API socket are owner-only"
+# --------------------------------------------------------------------------
+
+# main.conf is written by client_init_home with umask defaults on purpose --
+# the mode below is the GUI's self-healing migration at work, the profile file
+# tests saveVpnProfile(), the socket tests QLocalServer::UserAccessOption.
+perm_check() {
+    local expected="$1" path="$2" mode
+    if ! mode="$(stat -c %a "$path" 2>/dev/null)"; then
+        fail "missing for permission check: $path"
+        return
+    fi
+    if [[ "$mode" == "$expected" ]]; then
+        ok "mode $expected: $path"
+    else
+        fail "mode $mode instead of $expected: $path"
+    fi
+}
+
+perm_check 700 "$LAB_CLIENT_HOME/.openfortigui"
+perm_check 600 "$LAB_MAIN_CONF"
+perm_check 600 "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf"
+perm_check 700 "$LAB_API_SOCK"
+
+# --------------------------------------------------------------------------
 part "c) group editor"
 # --------------------------------------------------------------------------
 

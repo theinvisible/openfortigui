@@ -62,8 +62,16 @@ void setupWizard::loadAESData()
     if(main_settings.getValue("main/use_system_password_store").toBool())
     {
         ui->cbUseSystemPasswordStore->setChecked(true);
-        ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
-        ui->leAESIV->setText(vpnHelper::systemPasswordStoreRead("aesiv").data);
+        const vpnHelperResult keyResult = vpnHelper::systemPasswordStoreRead("aeskey");
+        const vpnHelperResult ivResult = vpnHelper::systemPasswordStoreRead("aesiv");
+        if(!keyResult.status || !ivResult.status)
+            QMessageBox::warning(this, tr("System password manager error"),
+                                 tr("The AES key could not be read from the system password store. Is the password store locked? Error message: %1")
+                                 .arg(keyResult.status ? ivResult.msg : keyResult.msg));
+        // saveAESData() refuses anything that is not exactly 16 chars, so the
+        // empty fields cannot overwrite the stored key by accident.
+        ui->leAESKey->setText(keyResult.data);
+        ui->leAESIV->setText(ivResult.data);
     }
     else
     {

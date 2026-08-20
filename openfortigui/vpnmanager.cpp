@@ -37,6 +37,9 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     const QString socket_path = vpnApi::socketPath();
     QLocalServer::removeServer(socket_path);
     server = new QLocalServer(this);
+    // Credentials travel over this socket in the clear; restrict it to the
+    // owning user. The root VPN child is unaffected, root bypasses file modes.
+    server->setSocketOptions(QLocalServer::UserAccessOption);
     connect(server, SIGNAL(newConnection()), this, SLOT(onClientConnected()));
     if(!server->listen(socket_path))
         qDebug() << "vpnManager::DiskMain() on apiServer->listen::" << socket_path << "::" << server->errorString();

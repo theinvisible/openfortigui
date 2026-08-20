@@ -45,8 +45,21 @@ vpnSetting::vpnSetting(QWidget *parent) :
     ui->cbUseSystemPasswordStore->setChecked(confMain.getValue("main/use_system_password_store").toBool());
     if(confMain.getValue("main/use_system_password_store").toBool())
     {
-        ui->leAESKey->setText(vpnHelper::systemPasswordStoreRead("aeskey").data);
-        ui->leAESIV->setText(vpnHelper::systemPasswordStoreRead("aesiv").data);
+        const vpnHelperResult keyResult = vpnHelper::systemPasswordStoreRead("aeskey");
+        const vpnHelperResult ivResult = vpnHelper::systemPasswordStoreRead("aesiv");
+        if(!keyResult.status || !ivResult.status)
+        {
+            // Saving now would overwrite the stored key with the empty field
+            // contents -- lock the key settings until the store is readable.
+            ui->leAESKey->setDisabled(true);
+            ui->leAESIV->setDisabled(true);
+            ui->cbUseSystemPasswordStore->setDisabled(true);
+            QMessageBox::warning(this, tr("System password manager error"),
+                                 tr("The AES key could not be read from the system password store, the key settings are disabled. Is the password store locked? Error message: %1")
+                                 .arg(keyResult.status ? ivResult.msg : keyResult.msg));
+        }
+        ui->leAESKey->setText(keyResult.data);
+        ui->leAESIV->setText(ivResult.data);
     }
     else
     {
@@ -101,8 +114,14 @@ void vpnSetting::on_btnSave_clicked()
     confMain.setValue("main/use_system_password_store", ui->cbUseSystemPasswordStore->isChecked());
 
     if(ui->cbUseSystemPasswordStore->isChecked()) {
-        vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
-        vpnHelper::systemPasswordStoreWrite("aesiv", ui->leAESIV->text());
+        // The fields are disabled when the store could not be read at load time
+        // (and when the config is read-only) -- never push their contents into
+        // the store then, that would replace the stored key with an empty one.
+        if(ui->leAESKey->isEnabled())
+        {
+            vpnHelper::systemPasswordStoreWrite("aeskey", ui->leAESKey->text());
+            vpnHelper::systemPasswordStoreWrite("aesiv", ui->leAESIV->text());
+        }
         ui->leAESKey->setText("");
         ui->leAESIV->setText("");
     } else {

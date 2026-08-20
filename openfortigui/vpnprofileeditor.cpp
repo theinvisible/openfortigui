@@ -320,7 +320,12 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.pppd_ipparam = ui->lePPPDIPParam->text();
     vpn.pppd_call = ui->lePPPDCallName->text();
 
-    vpns.saveVpnProfile(vpn);
+    if(!vpns.saveVpnProfile(vpn))
+    {
+        QMessageBox::critical(this, tr("VPN-profile"),
+                              tr("The profile could not be saved: the AES key is not available. Is the system password store locked?"));
+        return;
+    }
 
     window()->close();
 

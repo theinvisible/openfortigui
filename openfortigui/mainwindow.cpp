@@ -343,7 +343,8 @@ void MainWindow::on_btnCopyVPN_clicked()
     if (ok && !vpnNameNew.isEmpty())
     {
         tiConfVpnProfiles profiles;
-        profiles.copyVpnProfile(vpnName, vpnNameNew);
+        if(!profiles.copyVpnProfile(vpnName, vpnNameNew))
+            QMessageBox::warning(this, tr("Copy VPN-profile"), tr("The VPN-profile could not be copied."));
         refreshVpnProfileList();
     }
 }
@@ -847,7 +848,12 @@ void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)
         if(QMessageBox::question(this, tr("Gateway certificate validation failed"), info) == QMessageBox::Yes)
         {
             profile->trusted_cert = hash;
-            profiles.saveVpnProfile(*profile);
+            if(!profiles.saveVpnProfile(*profile))
+            {
+                QMessageBox::warning(this, tr("Gateway certificate validation failed"),
+                                     tr("The certificate could not be stored in the VPN-profile. Is the system password store locked?"));
+                return;
+            }
 
             /*
              * Reconnect right away. Storing the hash used to be all that

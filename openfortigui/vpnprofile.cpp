@@ -94,12 +94,10 @@ QString vpnProfile::readSecret(const QString &key)
     QString profileDir = profileDirs[origin_location];
 
     QString aeskey, aesiv;
-    if(main_settings->getValue("main/use_system_password_store").toBool()) {
-        aeskey = vpnHelper::systemPasswordStoreRead("aeskey").data;
-        aesiv = vpnHelper::systemPasswordStoreRead("aesiv").data;
-    } else {
-        aeskey = main_settings->getValue("main/aeskey").toString();
-        aesiv = main_settings->getValue("main/aesiv").toString();
+    if(!vpnHelper::mainAesKeyIv(*main_settings, aeskey, aesiv))
+    {
+        qWarning() << "vpnProfile::readSecret() -> AES key/IV unavailable, returning no secret for" << name;
+        return "";
     }
 
     auto f = std::make_unique<QSettings>(profileDir + QDir::separator() + name + ".conf", QSettings::IniFormat);

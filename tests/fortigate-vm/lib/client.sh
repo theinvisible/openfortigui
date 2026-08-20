@@ -63,7 +63,7 @@ ofg_decrypt() {
 client_init_home() {
     local conf_dir="$LAB_CLIENT_HOME/.openfortigui"
     mkdir -p "$conf_dir/vpnprofiles" "$conf_dir/vpngroups" "$conf_dir/logs/vpn"
-    chmod 0750 "$conf_dir"
+    chmod 0700 "$conf_dir"
 
     cat >"$LAB_MAIN_CONF" <<EOF
 [main]
