@@ -782,9 +782,9 @@ every target instead of trusting that it would work:
   `/usr/share/dpkg/buildflags.mk`. That works on all four targets and depends on
   no debhelper feature version.
 - **`Build-Depends` never listed the actual build dependencies** — only
-  `debhelper (>= 8.0.0)`. The GitLab CI hid this behind a prepared image. They are
-  declared now, which is what lets both the container test and the GitHub workflow
-  install them with `apt-get build-dep` from that one list.
+  `debhelper (>= 8.0.0)`. The old GitLab CI hid this behind a prepared image. They
+  are declared now, which is what lets both the container test and the GitHub
+  workflow install them with `apt-get build-dep` from that one list.
 - **`openfortigui.pro` had drifted from `CMakeLists.txt`.** The submodule bump to
   openfortivpn v1.24.1 was only carried out in the CMake build; the qmake project
   — the one the package is built from — still lacked `openfortivpn/src/http_server.c`
@@ -1028,9 +1028,9 @@ complete transcript is available independently in
 
 ## 11. CI
 
-**The lab itself does not run in CI.** There is deliberately no hook in
-`.gitlab-ci.yml`: the runners have no KVM. The JUnit report is prepared for the
-day a runner with virtualization support is added.
+**The lab itself does not run in CI.** GitHub-hosted runners have no KVM. The
+JUnit report is prepared for the day a runner with virtualization support is
+added.
 
 **The packages do.** `.github/workflows/build-deb.yml` builds one package per
 supported distribution on every push and pull request, in a matrix of
@@ -1043,6 +1043,13 @@ informational step.
 
 A second job builds the KRunner plugin, over the shorter list of targets that have
 KDE Frameworks 6 (`ubuntu:26.04`, `debian:trixie`).
+
+The workflow is the whole release path (the GitLab pipeline is gone): a `v*` tag
+additionally publishes the built packages to the iteas apt repository over the
+aptly REST API — one serial job, one snapshot/publish cycle per codename, the
+Release file signed server-side by aptly — and attaches them to the GitHub
+Release. CI holds only `APTLY_API`/`APTLY_AUTH` as repository secrets, never key
+material.
 
 The distribution lists exist twice on purpose — once in the workflow matrix, once
 in `91_distro` — because a GitHub matrix cannot be read from a shell array. Keep
