@@ -1,119 +1,14 @@
-cmake_minimum_required (VERSION 3.9)
-project (openfortigui)
+cmake_minimum_required(VERSION 3.16)
 
-set (CMAKE_CONFIGURATION_TYPES Debug Release)
-
-# Set the CXX standard as C++11
-set(CMAKE_CXX_STANDARD 17)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
-find_package(Qt6Keychain REQUIRED)
-
-# Add 'd' suffix to debug libs
-set(CMAKE_DEBUG_POSTFIX _debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
-
-# Generate debug symbol file (pdb)
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG")
-endif ()
-
-# Set lib flag
-# add_definitions(-DFORTI_LIBRARY)
+# Umbrella for developer builds: cmake -S <repo> -B cmake-build-debug builds the
+# application, with the binary at <build>/bin/openfortigui (tests/fortigate-vm
+# relies on that path). No version here on purpose: the version is maintained
+# centrally in openfortigui/CMakeLists.txt (project(... VERSION ...)), which is
+# also what the Debian package build enters directly.
 #
-# These replace openfortivpn's configure run -- keep them in sync with
-# openfortivpn/configure.ac when bumping the submodule. HAVE_RESOLVCONF stays
-# undefined on purpose: openfortiGUI writes /etc/resolv.conf directly, so
-# RESOLVCONF_PATH is empty as well. LEGACY_PPPD is only used by
-# openfortivpn/src/main.c, which we do not compile.
-add_definitions(-DHAVE_USR_SBIN_PPPD=1
-    -DHAVE_PROC_NET_ROUTE=1
-    -DHAVE_STRUCT_TERMIOS=1
-    -DHAVE_RT_ENTRY_WITH_RT_DST=1
-    -DHAVE_SYSTEMD=0
-    -DPPP_PATH="/usr/sbin/pppd"
-    -DRESOLVCONF_PATH=""
-    -DHAVE_PTY_H=1
-    -DHAVE_SO_BINDTODEVICE=1
-    -DHAVE_PTHREAD_MUTEXATTR_SETROBUST=1
-    -DHAVE_VDPRINTF=1)
+# The KRunner plugin (krunner_openfortigui/) is not part of this umbrella: it
+# needs KF6/ECM, which the older target distributions do not ship. It builds
+# standalone through its own CMakeLists.txt and debian/.
+project(openfortigui-repo LANGUAGES NONE)
 
-#########################################################
-# Sources
-#########################################################
-
-# Add the qt include dirs
-include_directories(${QT_INCLUDE_DIRS})
-
-include_directories(openfortigui openfortigui/openfortivpn)
-
-list (APPEND FORTI_LIBS
-    Qt6::Widgets
-    Qt6::Network
-    Qt6::Core
-    crypto
-    ssl
-    pthread
-    util
-    qt6keychain
-)
-
-list (APPEND FORTI_SOURCE_FILES
-openfortigui/main.cpp
-openfortigui/mainwindow.cpp
-openfortigui/openfortivpn/src/config.c
-openfortigui/openfortivpn/src/hdlc.c
-openfortigui/openfortivpn/src/http.c
-openfortigui/openfortivpn/src/http_server.c
-openfortigui/openfortivpn/src/io.c
-openfortigui/openfortivpn/src/ipv4.c
-openfortigui/openfortivpn/src/log.c
-openfortigui/openfortivpn/src/tunnel.c
-openfortigui/openfortivpn/src/userinput.c
-openfortigui/openfortivpn/src/xml.c
-openfortigui/vpnmanager.cpp
-openfortigui/ticonfmain.cpp
-openfortigui/vpnapi.cpp
-openfortigui/proc/vpnprocess.cpp
-openfortigui/proc/vpnbarracuda.cpp
-openfortigui/vpnprofile.cpp
-openfortigui/vpnprofileeditor.cpp
-openfortigui/proc/vpnworker.cpp
-openfortigui/vpngroup.cpp
-openfortigui/vpngroupeditor.cpp
-openfortigui/vpnsetting.cpp
-openfortigui/vpnlogin.cpp
-openfortigui/vpnhelper.cpp
-openfortigui/vpnlogger.cpp
-openfortigui/vpnotplogin.cpp
-openfortigui/setupwizard.cpp
-openfortigui/vpnchangelog.cpp
-)
-
-# Add resource file if needed
-list (APPEND FORTI_SOURCE_FILES openfortigui/res.qrc)
-
-
-#Add UI Files if needed
-list (APPEND FORTI_SOURCE_FILES
-    openfortigui/mainwindow.ui
-    openfortigui/vpnprofileeditor.ui
-    openfortigui/vpngroupeditor.ui
-    openfortigui/vpnsetting.ui
-    openfortigui/vpnlogin.ui
-    openfortigui/vpnotplogin.ui
-    openfortigui/setupwizard.ui
-    openfortigui/vpnchangelog.ui
-)
-
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-
-add_executable(${PROJECT_NAME} ${FORTI_SOURCE_FILES})
-
-target_link_libraries (${PROJECT_NAME} ${FORTI_LIBS} ${EXTRA_LIBRARIES})
+add_subdirectory(openfortigui)

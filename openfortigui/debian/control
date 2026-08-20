@@ -3,6 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Rene Hadler <rene@hadler.me>
 Build-Depends: debhelper-compat (= 13),
+               cmake,
                qt6-base-dev,
                qt6-base-dev-tools,
                qtkeychain-qt6-dev,

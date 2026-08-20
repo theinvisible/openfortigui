@@ -776,11 +776,10 @@ every target instead of trusting that it would work:
   binary on a Qt6-only system, and debhelper's default qmake buildsystem invokes
   exactly that. `--buildsystem=qmake6` fixed it on Ubuntu — and then broke on
   Debian bookworm, whose debhelper 13.11 does not know that buildsystem yet
-  (*unable to load build system class 'qmake6'*; it arrived in 13.14). `rules`
-  now uses the plain `makefile` buildsystem and calls `qmake6` itself in
-  `override_dh_auto_configure`, passing the flags from
-  `/usr/share/dpkg/buildflags.mk`. That works on all four targets and depends on
-  no debhelper feature version.
+  (*unable to load build system class 'qmake6'*; it arrived in 13.14). The
+  workaround at the time was the plain `makefile` buildsystem with an explicit
+  `qmake6` call; since qmake was dropped entirely, `rules` simply uses
+  `--buildsystem=cmake`, which every target's debhelper knows.
 - **`Build-Depends` never listed the actual build dependencies** — only
   `debhelper (>= 8.0.0)`. The old GitLab CI hid this behind a prepared image. They
   are declared now, which is what lets both the container test and the GitHub
@@ -792,8 +791,12 @@ every target instead of trusting that it would work:
   and `OPENSSL_ENGINE` while missing `HAVE_PTHREAD_MUTEXATTR_SETROBUST` and
   `HAVE_VDPRINTF`. The release build would have failed to compile.
 
-Both build systems stand in for openfortivpn's `configure` run, so they have to
-be changed together. There is a comment to that effect in each of them now.
+That drift is what eventually killed the qmake build for good: `openfortigui.pro`
+was removed and CMake is the only build system now — `debian/rules` builds with
+`--buildsystem=cmake`, installation happens through the `install()` rules in
+`openfortigui/CMakeLists.txt`, and the program version is maintained centrally in
+its `project(... VERSION ...)` line (`packaging/build-deb.sh` refuses to build
+when `debian/changelog` disagrees).
 
 The `debian/` directory was brought up to current practice in the same pass, and
 `lintian` is quiet on the result:

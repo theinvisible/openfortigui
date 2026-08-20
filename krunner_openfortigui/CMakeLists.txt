@@ -44,6 +44,16 @@ kcoreaddons_add_plugin(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${OFGUI_DIR})
 
+# The application sources include config.h, which requires OPENFORTIGUI_VERSION.
+# Its single source of truth is the project(... VERSION ...) line in the
+# application's CMakeLists.txt -- parse it from there instead of repeating it.
+file(STRINGS ${OFGUI_DIR}/CMakeLists.txt _ofgui_project REGEX "^project\\(openfortigui VERSION ")
+string(REGEX MATCH "[0-9]+\\.[0-9]+[0-9.]*" OPENFORTIGUI_VERSION "${_ofgui_project}")
+if(NOT OPENFORTIGUI_VERSION)
+    message(FATAL_ERROR "could not parse VERSION from ${OFGUI_DIR}/CMakeLists.txt")
+endif()
+target_compile_definitions(${PROJECT_NAME} PRIVATE OPENFORTIGUI_VERSION="${OPENFORTIGUI_VERSION}")
+
 target_link_libraries(${PROJECT_NAME}
     KF6::Runner
     Qt6::Core

@@ -73,6 +73,27 @@ trap 'rm -rf "$WORK"' EXIT
 REPO="$(dirname "$SRC")"
 NAME="$(basename "$SRC")"
 
+# --------------------------------------------------------------------------
+# Version consistency
+# --------------------------------------------------------------------------
+# The single source of truth for the program version is the
+# project(openfortigui VERSION ...) line in openfortigui/CMakeLists.txt; the
+# package version comes from debian/changelog. Out of sync, the package would
+# ship a binary that reports a different version than the .deb claims. Both
+# packages release in lockstep (the runner depends on openfortigui >= version),
+# so the check applies to whichever one is being built.
+
+code_version="$(sed -nE 's/^project\(openfortigui VERSION ([0-9.]+).*/\1/p' \
+    "$REPO/openfortigui/CMakeLists.txt")"
+[[ -n "$code_version" ]] \
+    || die "could not parse VERSION from $REPO/openfortigui/CMakeLists.txt"
+
+pkg_version="$(dpkg-parsechangelog -l "$SRC/debian/changelog" -S Version)"
+pkg_version="${pkg_version%-*}"   # strip the Debian revision (-1)
+
+[[ "$code_version" == "$pkg_version" ]] \
+    || die "version mismatch: CMakeLists.txt says $code_version, $NAME/debian/changelog says $pkg_version"
+
 # The KRunner plugin compiles the application's sources from ../openfortigui, so
 # that directory travels along whenever it is not the one being built.
 COPY=("$NAME")
@@ -80,15 +101,19 @@ COPY=("$NAME")
 
 log "copying ${COPY[*]}"
 # Build leftovers stay behind: dpkg-buildpackage runs debian/rules clean first
-# anyway, but a stale Makefile from another Qt version is asking for trouble.
+# anyway, but a stale CMakeCache.txt in the source directory makes CMake refuse
+# an out-of-source configure outright.
 tar -C "$REPO" \
     --exclude='*/debian/openfortigui' --exclude='*/debian/.debhelper' \
-    --exclude='*/build' --exclude='*.o' --exclude='moc_*' \
+    --exclude='*/build' --exclude='*/obj-*' --exclude='*/cmake-build-*' \
+    --exclude='CMakeCache.txt' --exclude='*/CMakeFiles' \
+    --exclude='*.o' --exclude='moc_*' \
     --exclude='ui_*.h' --exclude='qrc_*' --exclude='.git' \
     -cf - "${COPY[@]}" | tar -C "$WORK" -xf -
 
 BUILD_SRC="$WORK/$NAME"
-rm -f "$BUILD_SRC/Makefile" "$BUILD_SRC/.qmake.stash" "$BUILD_SRC/openfortigui"
+# A binary from an old in-source build must not end up in the package by accident.
+rm -f "$BUILD_SRC/openfortigui" "$BUILD_SRC/Makefile" "$BUILD_SRC/.qmake.stash"
 
 log "dpkg-buildpackage in $BUILD_SRC"
 ( cd "$BUILD_SRC" && dpkg-buildpackage -b -uc -us "-j$(nproc)" )

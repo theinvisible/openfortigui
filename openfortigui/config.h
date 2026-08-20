@@ -18,10 +18,17 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// The version is maintained centrally in CMakeLists.txt (project(... VERSION))
+// and arrives here as a compile definition; a build that forgets to pass it
+// must fail loudly instead of baking in a stale or empty version.
+#ifndef OPENFORTIGUI_VERSION
+#error "OPENFORTIGUI_VERSION is not defined -- it comes from project(... VERSION ...) in CMakeLists.txt"
+#endif
+
 namespace openfortigui_config
 {
     inline constexpr const char *name = "openfortiGUI";
-    inline constexpr const char *version = "0.9.11";
+    inline constexpr const char *version = OPENFORTIGUI_VERSION;
     inline constexpr const char *file_main = "~/.openfortigui/main.conf";
     inline constexpr const char *file_gw_cert_cache = "~/.openfortigui/gw_cert.cache";
     inline constexpr const char *initd_default = "/etc/init.d/openfortigui";

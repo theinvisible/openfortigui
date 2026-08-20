@@ -50,7 +50,7 @@ dock_cached_deb() {
     local newer
     newer="$(find "$REPO_ROOT/openfortigui" "$REPO_ROOT/krunner_openfortigui" \
         "$REPO_ROOT/packaging" \
-        \( -name '*.cpp' -o -name '*.h' -o -name '*.ui' -o -name '*.pro' \
+        \( -name '*.cpp' -o -name '*.h' -o -name '*.ui' -o -name 'CMakeLists.txt' \
            -o -name '*.qrc' -o -name '*.sh' -o -path '*/debian/*' \) \
         -newer "$deb" -print -quit 2>/dev/null)"
     [[ -n "$newer" ]] && return 1
