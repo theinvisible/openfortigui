@@ -43,7 +43,7 @@ namespace openfortigui_config
 
     inline constexpr const char *validatorName = "^[a-zA-ZäöüÄÖÜ0-9 \\-_]{3,}$";
 
-    inline constexpr int changelogRev = 24;
+    inline constexpr int changelogRev = 25;
 }
 
 #endif // CONFIG_H

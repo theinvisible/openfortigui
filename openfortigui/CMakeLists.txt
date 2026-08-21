@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 # plugin parses this line (see ../krunner_openfortigui/CMakeLists.txt), and
 # packaging/build-deb.sh refuses to build when debian/changelog disagrees --
 # so the version is maintained only here.
-project(openfortigui VERSION 0.9.11 LANGUAGES C CXX)
+project(openfortigui VERSION 0.9.12 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
