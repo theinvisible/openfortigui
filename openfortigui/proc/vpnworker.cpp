@@ -115,6 +115,14 @@ static int on_ppp_if_up(struct tunnel *tunnel)
 {
     log_info("Interface %s is UP.\n", tunnel->ppp_iface);
 
+    {
+        /* Drop invalid route by pppd (or tun) in all cases. */
+        int ret = ipv4_drop_wrong_route(tunnel);
+
+        if (ret != 0)
+            log_warn("Issue occurs while checking for wrong route, continuing anyway.\n");
+    }
+
     if (tunnel->config->set_routes) {
         int ret;
 
@@ -530,7 +538,12 @@ static int get_gateway_host_ip(struct tunnel *tunnel)
     QHostInfo hInfo = QHostInfo::fromName(tunnel->config->gateway_host);
     if(hInfo.error() != QHostInfo::NoError || hInfo.addresses().isEmpty())
     {
-        qWarning() << "DNS lookup error: " << hInfo.errorString();
+        // log_error, not qWarning: the child's qWarning goes to openfortigui.log
+        // only, invisible to the GUI. On stdout the logger picks it up, shows a
+        // dialog and it lands in the per-VPN log (issue #164).
+        log_error("Could not resolve gateway host %s: %s\n",
+                  tunnel->config->gateway_host,
+                  hInfo.errorString().toUtf8().constData());
         return 1;
     }
 

@@ -445,6 +445,82 @@ fi
 gui_app_stop
 
 # --------------------------------------------------------------------------
+part "h) a failed connection attempt is reported (issue #164)"
+# --------------------------------------------------------------------------
+#
+# The silent class: the child says nothing vpnLogger has a pattern for and exits
+# with code 0 -- exactly what a tunnel that never comes up looks like (another
+# VPN holding routes or DNS, above all). The row used to flip back to
+# "Disconnected" and that was all. Since the fix, an attempt that never reaches
+# CONNECTED is reported once, no matter how it dies.
+
+# h1) child exits 0 without a recognisable word -- the generic report speaks
+sleep 1
+fake_sudo "INFO:   something nobody has a pattern for" 0
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+error_dialog "a silent exit-0 attempt is reported" 20
+
+# h2) the child names the cause -- the specific dialog speaks, the generic stays
+# away (same one-failure-one-dialog contract as f3). The line is what
+# get_gateway_host_ip() (vpnworker.cpp) prints when the gateway does not resolve.
+gui_app_stop
+sleep 1
+fake_sudo "ERROR:  Could not resolve gateway host vpn.example.invalid: Host not found" 0
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+if error_dialog "an unresolvable gateway is explained" 20; then
+    SECOND=""
+    for _ in 1 2 3 4 5 6; do
+        sleep 1
+        if SECOND="$(gui_win '^Error$' 200)"; then break; fi
+        SECOND=""
+    done
+    if [[ -z "$SECOND" ]]; then
+        ok "the generic report stays away when the logger spoke"
+    else
+        gui_screenshot fail-h2-second-dialog >/dev/null
+        fail "a second error dialog followed" \
+            "vpnManager must drop the generic issue-#164 report once vpnLogger
+has explained the failure for that VPN."
+    fi
+fi
+
+# h3) a stop by the user is not a failure
+#
+# stopVPN() removes the connection from the map before the child winds down --
+# that is what tells a cancelled attempt from a failed one. Stopping while the
+# child is still in its startup phase must therefore stay silent.
+gui_app_stop
+sleep 1
+printf '#!/bin/sh\nsleep 4\nexit 0\n' >"$FAKEBIN/sudo"
+chmod +x "$FAKEBIN/sudo"
+start_with_path "$FAKEBIN:/usr/bin:/bin"
+python3 "$LAB_SRC_DIR/api_send.py" vpn-start "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+sleep 1
+python3 "$LAB_SRC_DIR/api_send.py" vpn-stop "$PROFILE_SUDO" >/dev/null \
+    || fail "could not reach the GUI over $LAB_API_SOCK"
+SECOND=""
+for _ in 1 2 3 4 5 6 7 8; do
+    sleep 1
+    if SECOND="$(gui_win '^Error$' 200)"; then break; fi
+    SECOND=""
+done
+if [[ -z "$SECOND" ]]; then
+    ok "a stop by the user raises no dialog"
+else
+    gui_screenshot fail-h3-stop-dialog >/dev/null
+    fail "a cancelled attempt was reported as a failure" \
+        "stopVPN() removes the map entry; onClientVPNStatusChanged/onVPNProcessFinished
+must treat a missing entry as a user stop, not as a silent failure."
+fi
+
+gui_app_stop
+
+# --------------------------------------------------------------------------
 part "g) a chatty child does not corrupt the log or the GUI"
 # --------------------------------------------------------------------------
 #
@@ -513,14 +589,10 @@ else
         "the payload is $CHATTY_BYTES bytes, $CHATTY_LOG holds $LAST."
 fi
 
-# The child ended with exit code 0, so nothing about it may look like a failure.
-sleep 3
-if gui_win '^Error$' 200 >/dev/null; then
-    gui_screenshot fail-chatty-dialog >/dev/null
-    fail "a chatty child that exits cleanly raises no dialog" "see part f"
-else
-    ok "a chatty child that exits cleanly raises no dialog"
-fi
+# The child exited 0 -- but it never reached CONNECTED, so since the issue #164
+# fix this is a failed attempt and is reported exactly once (part h checks the
+# mechanism itself; here it just must survive 5 MB of output on the way).
+error_dialog "the failed chatty attempt is reported (issue #164)" 20
 
 gui_app_stop
 rm -f "$CHATTY_LOG"

@@ -48,6 +48,10 @@ public:
     connectionStatus status;
     QProcess *proc;
 
+    // Whether this attempt ever reached STATUS_CONNECTED. A disconnect without
+    // it is a FAILED attempt and is reported to the user (issue #164).
+    bool ever_connected;
+
     void setSocket(QLocalSocket *sock);
     void setBarracudaObj(vpnBarracuda *bar);
     vpnBarracuda *getBarracudaObj();

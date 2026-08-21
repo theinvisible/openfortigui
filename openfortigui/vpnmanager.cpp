@@ -365,12 +365,61 @@ void vpnManager::onClientConnected()
     }
 }
 
+/*
+ * The single most reported cause for a silently failing attempt is a VPN of
+ * another vendor already holding the default route (issue #164). By the time a
+ * failed attempt is reported our own ppp interface is gone again, so a default
+ * route through a ppp/tun/tap/wg interface at that moment belongs to someone
+ * else. Only a hint -- parallel VPNs can work -- hence the careful wording.
+ */
+static QString otherVpnHint()
+{
+    QFile route(QStringLiteral("/proc/net/route"));
+    if(!route.open(QIODevice::ReadOnly | QIODevice::Text))
+        return QString();
+
+    const QStringList lines = QString::fromLatin1(route.readAll()).split('\n', Qt::SkipEmptyParts);
+    for(int i = 1; i < lines.size(); i++) // line 0 is the header
+    {
+        const QStringList fields = lines.at(i).split('\t', Qt::SkipEmptyParts);
+        if(fields.size() < 2 || fields.at(1) != QLatin1String("00000000"))
+            continue;
+
+        const QString iface = fields.at(0);
+        if(iface.startsWith("ppp") || iface.startsWith("tun")
+           || iface.startsWith("tap") || iface.startsWith("wg"))
+            return QObject::tr(" Another VPN connection appears to be active (interface %1) -- "
+                               "this can prevent the tunnel from coming up.").arg(iface);
+    }
+
+    return QString();
+}
+
 void vpnManager::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status)
 {
     qDebug() << "vpnManager::onClientVPNStatusChanged()" << vpnname << "status" << status;
 
+    if(status == vpnClientConnection::STATUS_CONNECTED && connections.contains(vpnname))
+        connections[vpnname]->ever_connected = true;
+
     if(status == vpnClientConnection::STATUS_DISCONNECTED)
+    {
+        /*
+         * A connection that is still in the map was NOT stopped by the user:
+         * stopVPN() removes it before the child starts its teardown. If it never
+         * reached CONNECTED either, this was a failed connection attempt -- which
+         * used to vanish without a word (issue #164): the row flipped back to
+         * "Disconnected" while the reason sat only in the log file.
+         */
+        const bool failed_attempt = connections.contains(vpnname)
+                && !connections[vpnname]->ever_connected;
+
         connections.remove(vpnname);
+
+        if(failed_attempt)
+            reportProcessFailure(vpnname, tr("The connection attempt for VPN '%1' failed.").arg(vpnname)
+                                          + otherVpnHint());
+    }
 
     emit VPNStatusChanged(vpnname, status);
 }
@@ -489,12 +538,22 @@ void vpnManager::onVPNProcessFinished(QString name, int exitCode, QProcess::Exit
     if(!connections.contains(name))
         return;
 
+    const bool ever_connected = connections[name]->ever_connected;
     connections.remove(name);
 
     if(exitStatus == QProcess::NormalExit && exitCode != 0)
         reportProcessFailure(name, tr("VPN '%1' could not be started, sudo ended with exit code %2. "
                                       "Please check the rule in /etc/sudoers.d/openfortigui.")
                                    .arg(name).arg(exitCode));
+    /*
+     * Exit code 0, but the attempt never reached CONNECTED and no DISCONNECTED
+     * status arrived either (that removes the map entry in
+     * onClientVPNStatusChanged): the child died before it ever talked on the
+     * api socket. Same silent failure class as issue #164.
+     */
+    else if(exitStatus == QProcess::NormalExit && !ever_connected)
+        reportProcessFailure(name, tr("The connection attempt for VPN '%1' failed.").arg(name)
+                                   + otherVpnHint());
 }
 
 void vpnManager::onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error)
@@ -540,7 +599,10 @@ vpnClientConnection::vpnClientConnection(const QString &n, QObject *parent) : QO
 {
     name = n;
     status = STATUS_DISCONNECTED;
+    proc = nullptr;
+    socket = nullptr;
     barracuda_obj = nullptr;
+    ever_connected = false;
 }
 
 void vpnClientConnection::setSocket(QLocalSocket *sock)
@@ -570,7 +632,9 @@ void vpnClientConnection::sendCMD(const vpnApi &cmd)
 
     qDebug() << "vpnClientConnection::sendCMD::" << cmd.objName << "::" << cmd.action;
 
-    if(!socket->isOpen())
+    // The socket only exists once the child has connected -- stopping a VPN
+    // whose attempt is still in the sudo/startup phase must not crash here.
+    if(socket == nullptr || !socket->isOpen())
     {
         qWarning() << "Socket ist nicht offen";
         return;

@@ -175,10 +175,77 @@ void vpnLogger::processOutput(const QString &name, const QByteArray &data)
         return;
     }
 
-    if(toLog.contains("ERROR:  Could not authenticate to gateway"))
+    /*
+     * From "Gateway certificate validation failed" until "Closed connection to
+     * gateway." the output belongs to the certificate whitelist flow further
+     * down -- and the same chunk usually also carries "Could not authenticate
+     * to gateway". That text must not be consumed as a plain authentication
+     * error then, or the whitelist dialog never appears.
+     */
+    const bool cert_flow = logCertFailedMode[name]
+            || toLog.contains("Gateway certificate validation failed");
+
+    /*
+     * Two spellings exist upstream: "Could not authenticate to gateway"
+     * (http.c) and "Could not authenticate to the gateway. Please make sure
+     * tunnel mode is allowed..." (io.c). The old pattern only matched the
+     * first, so the second failed silently.
+     */
+    if(!cert_flow && toLog.contains("ERROR:  Could not authenticate to"))
     {
         vpnMsg msg;
         msg.msg = tr("Error: Authentication failed, please check your username/password/cert/otp!");
+        msg.detail = tr("Error: %1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
+    /*
+     * The 60 s wait for the ppp interface ran out. The classic cause is a
+     * conflicting interface or route from a VPN of another vendor (issue #164).
+     */
+    if(!cert_flow && toLog.contains("Timed out waiting for the ppp interface"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: Timeout while waiting for the VPN network interface.");
+        msg.detail = tr("This often happens when routes or interfaces conflict -- for example "
+                        "when another VPN connection is active.\n\n%1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
+    // The gateway hostname did not resolve -- with another VPN active this is
+    // typically its DNS setup getting in the way (issue #164).
+    if(!cert_flow && toLog.contains("Could not resolve gateway host"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: The VPN gateway hostname could not be resolved.");
+        msg.detail = tr("Check the gateway in the profile and your DNS setup -- an active VPN "
+                        "of another vendor can take DNS over.\n\n%1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
+    // Hard errors from the tunnel setup phase that had no pattern and therefore
+    // never produced a dialog.
+    if(!cert_flow && (toLog.contains("VPN allocation request failed")
+       || toLog.contains("Could not get VPN configuration")
+       || toLog.contains("Could not start tunnel")))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: The VPN tunnel could not be started.");
         msg.detail = tr("Error: %1").arg(toLog);
         msg.type = vpnMsg::TYPE_ERROR;
         emit VPNMessage(name, msg);
