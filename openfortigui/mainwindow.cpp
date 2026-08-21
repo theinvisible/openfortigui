@@ -193,11 +193,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     autostartVPNs();
 
+    // Deferred: these window-modal dialogs must not be shown from the
+    // constructor. The main window is shown after it, so a dialog mapped here
+    // has no visible parent yet, ends up BEHIND the main window and blocks it
+    // -- which looks like a frozen application (raise() cannot fix that on
+    // Wayland). A queued call runs once the main window is up.
     if(!main_settings.getValue("main/setupwizard").toBool())
-        onSetupWizard();
+        QTimer::singleShot(0, this, &MainWindow::onSetupWizard);
 
     if(main_settings.getValue("main/changelogrev_read", 0).toInt() > 0 && openfortigui_config::changelogRev > main_settings.getValue("main/changelogrev_read", 0).toInt())
-        onChangelog();
+        QTimer::singleShot(0, this, &MainWindow::onChangelog);
 
     if(main_settings.getValue("main/changelogrev_read", 0).toInt() == 0)
         main_settings.setValue("main/changelogrev_read", openfortigui_config::changelogRev);

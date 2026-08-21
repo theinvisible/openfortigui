@@ -17,7 +17,10 @@ name: Debian packages
 # basic auth, never key material. Pushes to master/qt6 stay workflow artifacts.
 #
 # Requires repository secrets:
-#   * APTLY_API  - base URL of the aptly REST API (kept out of this file)
+#   * APTLY_API  - base URL of the aptly REST API INCLUDING the /api suffix,
+#                  e.g. https://apt-api.example.com/api (kept out of this file);
+#                  without /api aptly answers 404 early and the proxy turns the
+#                  aborted upload into a misleading 502
 #   * APTLY_AUTH - HTTP basic auth "user:password" for the aptly API
 
 on:

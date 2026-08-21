@@ -32,6 +32,8 @@ public:
     explicit vpnChangelog(QWidget *parent = nullptr);
     ~vpnChangelog();
 
+    QSize sizeHint() const override;
+
     void initAfter();
 
 private:

@@ -21,6 +21,7 @@
 #include "ticonfmain.h"
 #include "proc/vpnprocess.h"
 #include "vpnmanager.h"
+#include <cstdio>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -40,6 +41,21 @@ QFile *openfortiguiLog = nullptr;
 
 void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString & str)
 {
+    // Once QCoreApplication is gone (exit handlers, static destruction) Qt is
+    // tearing itself down and constructing QSettings here dereferences freed
+    // state -- that crashed with SIGSEGV on shutdown. The same applies when a
+    // message is emitted from INSIDE the QSettings machinery this handler
+    // uses (endless recursion). Such messages go to stderr only.
+    static thread_local bool inHandler = false;
+    if(QCoreApplication::instance() == nullptr || inHandler)
+    {
+        fprintf(stderr, "openfortiGUI: %s\n", qPrintable(str));
+        if(type == QtFatalMsg)
+            abort();
+        return;
+    }
+    inHandler = true;
+
     tiConfMain main_settings;
     QTextStream sout(stdout);
 
@@ -76,6 +92,7 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
     }
 
     openfortiguiLog->flush();
+    inHandler = false;
 }
 
 bool isRunningAlready()

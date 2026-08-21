@@ -33,6 +33,15 @@ vpnChangelog::~vpnChangelog()
     delete ui;
 }
 
+// openToolWindow() opens at the content's size hint, and the layout here is
+// dominated by the QTextBrowser, whose own hint is tiny -- the window came up
+// far too small to read a changelog in. Report the size the form was designed
+// at instead (openToolWindow still caps it to the available screen).
+QSize vpnChangelog::sizeHint() const
+{
+    return QSize(700, 500);
+}
+
 void vpnChangelog::initAfter()
 {
     window()->installEventFilter(this);
