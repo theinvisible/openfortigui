@@ -58,6 +58,7 @@ vpnManager::vpnManager(QObject *parent) : QObject(parent)
     // quit in the destructor.
     connect(logger, SIGNAL(PromptRequest(QProcess*,int)), this, SLOT(onPromptRequest(QProcess*,int)), Qt::QueuedConnection);
     connect(logger, SIGNAL(CertificateValidationFailed(QString,QString)), this, SLOT(onCertificateValidationFailed(QString,QString)), Qt::QueuedConnection);
+    connect(logger, SIGNAL(SAMLAuthRequest(QString)), this, SLOT(onSAMLAuthRequest(QString)), Qt::QueuedConnection);
     connect(logger, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)), Qt::QueuedConnection);
     connect(logger_thread, SIGNAL(finished()), logger_thread, SLOT(deleteLater()));
     logger_thread->start();
@@ -457,6 +458,12 @@ void vpnManager::onCertificateValidationFailed(QString vpnname, QString buffer)
 {
     qDebug() << "certificatefailedrequest from vpnmanager";
     emit VPNCertificateValidationFailed(vpnname, buffer);
+}
+
+void vpnManager::onSAMLAuthRequest(QString vpnname)
+{
+    qDebug() << "saml auth request from vpnmanager for" << vpnname;
+    emit VPNSAMLAuthRequest(vpnname);
 }
 
 /*

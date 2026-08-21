@@ -268,6 +268,35 @@ void vpnLogger::processOutput(const QString &name, const QByteArray &data)
         return;
     }
 
+    // The SAML browser login did not complete within the wait window (or the
+    // listener could not be started, e.g. the port is taken).
+    if(toLog.contains("Failed to receive SAML session id"))
+    {
+        vpnMsg msg;
+        msg.msg = tr("Error: The SAML login did not complete.");
+        msg.detail = tr("The browser login was not finished in time, or the local "
+                        "callback port could not be used. Try connecting again.\n\n%1").arg(toLog);
+        msg.type = vpnMsg::TYPE_ERROR;
+        emit VPNMessage(name, msg);
+
+        out << toLog;
+        logfile->flush();
+        return;
+    }
+
+    /*
+     * The child's SAML listener is up and printed "Authenticate at '<url>'" --
+     * the cue for the GUI to open the user's browser (the root child must not
+     * do that itself). Only a trigger: the GUI rebuilds the URL from the
+     * profile instead of trusting a string scraped out of process output. The
+     * line reappears on every retry round of the listener, hence the dedup.
+     */
+    if(!samlAuthRequested.value(name, false) && toLog.contains("Authenticate at '"))
+    {
+        samlAuthRequested[name] = true;
+        emit SAMLAuthRequest(name);
+    }
+
     /*
      * The gateway's prompts are only visible as text on the child's stdout, so
      * they are recognised by pattern. openfortivpn asks for the private key
@@ -340,6 +369,7 @@ void vpnLogger::procFinished(const QString &name)
     loggers.remove(name);
     logCertFailedMode.remove(name);
     logCertFailedBuffer.remove(name);
+    samlAuthRequested.remove(name);
     vpnConfigs.remove(name);
 
     QFile *logfile = logfiles.take(name);

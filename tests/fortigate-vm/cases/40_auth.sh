@@ -135,4 +135,55 @@ $(tail -n 25 "$LOG_E")"
     client_stop TERM 30 >/dev/null 2>&1 || true
 fi
 
+# --------------------------------------------------------------------------
+part "f) SAML listener and session-id handoff (the local half, issue #186)"
+# --------------------------------------------------------------------------
+#
+# The lab FortiGate has no IdP, so a real SSO login cannot be tested. What can
+# be tested end-to-end is everything on this side of it: with saml_login the
+# child starts openfortivpn's listener, prints the URL the GUI opens in the
+# browser, accepts the gateway's redirect (played by curl here) and carries the
+# received session id into the authentication against the gateway.
+
+LOG_F="$(case_log f-saml)"
+SAML_PORT=18020
+client_write_profile "lab-auth-saml" \
+    "trusted_cert=$LAB_GW_DIGEST" "username=" "password_plain=" \
+    "saml_login=true" "saml_port=$SAML_PORT" >/dev/null
+client_start "lab-auth-saml" "$LOG_F" || fail "process did not start"
+
+if client_wait_log "$LOG_F" "Listening for SAML login on port $SAML_PORT" 30; then
+    ok "the SAML listener is up on the configured port"
+else
+    fail "the SAML listener did not start" "$(tail -n 15 "$LOG_F")"
+fi
+
+if client_wait_log "$LOG_F" "Authenticate at '" 10 \
+   && grep -q "/remote/saml/start?redirect=1" "$LOG_F"; then
+    ok "the login URL is printed (the GUI's cue to open the browser)"
+else
+    fail "no usable login URL in the log" "$(grep -i saml "$LOG_F" | tail -n 5)"
+fi
+
+# The browser redirect, played by curl: GET /?id=<session id>
+RESPONSE="$(curl -s --max-time 10 "http://127.0.0.1:$SAML_PORT/?id=SamlTestId123" || true)"
+if [[ "$RESPONSE" == *"SAML session id received"* ]]; then
+    ok "the listener accepts the redirect and answers the browser"
+else
+    fail "the redirect was not accepted" "listener response: $RESPONSE"
+fi
+
+# With the id in hand the child must move on to the gateway (the auth itself
+# then fails -- the lab FortiGate knows no SAML -- but the chain listener ->
+# session id -> authentication attempt is proven).
+if client_wait_log "$LOG_F" 'Connected to gateway' 30; then
+    ok "the session id reaches the gateway authentication"
+else
+    fail "the child never contacted the gateway after the redirect" "$(tail -n 15 "$LOG_F")"
+fi
+assert_not_contains "the SAML wait did not fail" "$LOG_F" 'Failed to receive SAML session id'
+
+client_stop TERM 30 >/dev/null 2>&1 || true
+rm -f "$LAB_PROFILE_DIR/lab-auth-saml.conf"
+
 case_finish

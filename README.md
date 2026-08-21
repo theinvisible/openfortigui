@@ -7,6 +7,16 @@ Official public apt-repo: https://apt.iteas.at/
 
 ![alt text](https://hadler.me/wordpress/wp-content/uploads/2018/02/openfortigui1.png "OpenFortiGUI main page")
 
+## SAML single sign-on (SSO)
+
+For gateways that authenticate via SAML (Microsoft SSO and the like), enable
+*Login via browser (SAML SSO)* in the VPN profile. On connect, openfortiGUI
+opens your web browser on the gateway's SAML login page; after signing in, the
+gateway redirects to a local listener (`127.0.0.1`, port configurable in the
+profile, default 8020) and the tunnel comes up automatically. Alternatively, a
+manually obtained `SVPNCOOKIE` can still be pasted into the profile's Cookie
+field.
+
 ## Upgrading from 0.9.10 (the Qt5 line)
 
 0.9.11 is the Qt6 port. Profiles, groups, the configuration and stored

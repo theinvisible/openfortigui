@@ -168,7 +168,7 @@ nur einmal. `prepare --rebuild` erzwingt eine Neuprovisionierung.
 | `10_connect` | Verbindung mit gepinntem Zertifikat: `Tunnel is up and running.`, ppp-Interface mit Pool-Adresse, Anwendungslog ohne Critical/Fatal | vm | 9 |
 | `20_routing` | Split-Route auf das Innennetz, **Default-Route unverändert**, Byte-Zähler aus `/proc/net/dev`; optional Datenpfad und DNS-Push | vm | 5 |
 | `30_cert` | unbekanntes Zertifikat wird abgelehnt und der Digest so geloggt, wie `MainWindow` ihn per Regex extrahiert; falscher Digest; `insecure_ssl` allein hebt die Prüfung **nicht** auf; `gw_cert.cache`; `min_tls`/`seclevel1`/TLS 1.3; SNI; Passphrase-Prompt für einen verschlüsselten Client-Key | vm | 19 |
-| `40_auth` | falsches Passwort, unbekannter Benutzer, fehlendes Profil, fehlendes Passwort ohne GUI, Exit-Code des Fehlerpfads; Anmeldung per SVPNCOOKIE | vm | 17 |
+| `40_auth` | falsches Passwort, unbekannter Benutzer, fehlendes Profil, fehlendes Passwort ohne GUI, Exit-Code des Fehlerpfads; Anmeldung per SVPNCOOKIE; SAML-Listener und Session-ID-Übergabe (lokale Hälfte, ohne IdP) | vm | 22 |
 | `50_disconnect` | SIGTERM: sauberer Abbau, ppp weg, Routen und Adressen wie vorher, Split-Route abgebaut, keine Prozessreste, Exit-Code | vm | 15 |
 | `60_persistent` | serverseitig gekappter Tunnel (`execute vpn sslvpn del-tunnel <index>`) wird per `persistent=true` neu aufgebaut; SIGTERM stoppt trotzdem | vm | 15 |
 | `70_guistop` | von der GUI angestoßener Stop: `ACTION_STOP` über den lokalen Socket, und eine verschwindende GUI. Nutzt `mock_gui.py` | vm | 22 |

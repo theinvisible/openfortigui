@@ -159,6 +159,8 @@ client_write_profile() {
         # Encrypted like the password; "cookie_plain" is the readable input.
         [cookie_plain]=""
         [sni]=""
+        [saml_login]=false
+        [saml_port]=8020
     )
 
     local kv key
@@ -210,6 +212,8 @@ pppd_ipparam=${p[pppd_ipparam]}
 pppd_call=${p[pppd_call]}
 seclevel1=${p[seclevel1]}
 min_tls=${p[min_tls]}
+saml_login=${p[saml_login]}
+saml_port=${p[saml_port]}
 EOF
     printf '%s' "$file"
 }

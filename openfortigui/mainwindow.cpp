@@ -28,6 +28,7 @@
 #include <QToolButton>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QTimer>
 #include <QScrollArea>
 
@@ -96,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(vpnmanager, SIGNAL(VPNPromptRequest(QProcess*,int)), this, SLOT(onClientVPNPromptRequest(QProcess*,int)));
     connect(vpnmanager, SIGNAL(VPNMessage(QString,vpnMsg)), this, SLOT(onClientVPNMessage(QString,vpnMsg)));
     connect(vpnmanager, SIGNAL(VPNCertificateValidationFailed(QString,QString)), this, SLOT(onClientCertValidationFAiled(QString,QString)));
+    connect(vpnmanager, SIGNAL(VPNSAMLAuthRequest(QString)), this, SLOT(onClientSAMLAuthRequest(QString)));
     connect(vpnmanager, SIGNAL(VPNShowMainWindowRequest()), this, SLOT(showMainWindow()));
 
     signalMapper = new QSignalMapper(this);
@@ -801,6 +803,53 @@ void MainWindow::onClientVPNPromptRequest(QProcess *proc, int type)
     f->initAfter();
 
     prefWindow->show();
+}
+
+/*
+ * The child's SAML listener is up (issue #186): open the browser for the
+ * single sign-on. The child runs as root and must not start a browser; the log
+ * line is only the trigger -- the URL is rebuilt here from the profile, so
+ * nothing scraped out of process output is handed to the browser.
+ */
+void MainWindow::onClientSAMLAuthRequest(QString vpnname)
+{
+    tiConfVpnProfiles profiles;
+    vpnProfile *profile = profiles.getVpnProfileByName(vpnname);
+    if(profile == nullptr || !profile->saml_login)
+        return;
+
+    QUrl url;
+    url.setScheme("https");
+    url.setHost(profile->gateway_host);
+    url.setPort(profile->gateway_port);
+    url.setPath("/remote/saml/start");
+    QUrlQuery query;
+    query.addQueryItem("redirect", "1");
+    if(!profile->realm.isEmpty())
+        query.addQueryItem("realm", profile->realm);
+    url.setQuery(query);
+
+    if(QDesktopServices::openUrl(url))
+    {
+        tiConfMain main_settings;
+        if(!main_settings.getValue("gui/disable_notifications", false).toBool())
+            tray->showMessage(tr("VPN-Status"),
+                              tr("SAML login for VPN %1: please finish signing in in your browser").arg(vpnname),
+                              QSystemTrayIcon::Information, 6000);
+    }
+    else
+    {
+        // No browser could be started -- hand the user the URL instead. Not
+        // modal: the child keeps waiting meanwhile.
+        auto *box = new QMessageBox(QMessageBox::Information,
+                                    tr("SAML login"),
+                                    tr("Please open this URL in your browser to sign in for VPN %1:\n\n%2")
+                                    .arg(vpnname, url.toString()),
+                                    QMessageBox::Ok, this);
+        box->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        box->setAttribute(Qt::WA_DeleteOnClose);
+        box->show();
+    }
 }
 
 void MainWindow::onClientCertValidationFAiled(QString vpnname, QString buffer)

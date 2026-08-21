@@ -53,6 +53,9 @@ private:
     QMap<QString, QFile*> logfiles;
     QMap<QString, bool> logCertFailedMode;
     QMap<QString, QString> logCertFailedBuffer;
+    // The SAML listener prints its "Authenticate at" line again on every retry
+    // round -- the browser must only be opened once per connection attempt.
+    QMap<QString, bool> samlAuthRequested;
     QMap<QString, vpnProfile> vpnConfigs;
     tiConfMain main_settings;
 
@@ -71,6 +74,8 @@ signals:
     void PromptRequest(QProcess *proc, int type);
     void CertificateValidationFailed(QString name, QString buffer);
     void VPNMessage(QString name, vpnMsg msg);
+    // The child's SAML listener is up and waits for the browser redirect.
+    void SAMLAuthRequest(QString name);
 
 public slots:
     void process();

@@ -388,6 +388,8 @@ bool tiConfVpnProfiles::saveVpnProfile(const vpnProfile &profile)
     f->setValue("pppd_call", profile.pppd_call);
     f->setValue("seclevel1", profile.seclevel1);
     f->setValue("min_tls", profile.min_tls);
+    f->setValue("saml_login", profile.saml_login);
+    f->setValue("saml_port", profile.saml_port);
     f->endGroup();
 
     f->sync();
@@ -485,6 +487,8 @@ void tiConfVpnProfiles::readVpnProfiles()
                 vpnprofile->pppd_call = f->value("pppd_call").toString();
                 vpnprofile->seclevel1 = f->value("seclevel1", false).toBool();
                 vpnprofile->min_tls = f->value("min_tls", "default").toString();
+                vpnprofile->saml_login = f->value("saml_login", false).toBool();
+                vpnprofile->saml_port = f->value("saml_port", 8020).toInt();
                 f->endGroup();
 
                 switch(it_profileDirs.key())

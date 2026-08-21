@@ -87,6 +87,8 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
     ui->cbPersistent->setChecked(config->persistent);
     ui->comboVPNDevice->setCurrentIndex(config->device_type);
     ui->leSNI->setText(config->sni);
+    ui->cbSamlLogin->setChecked(config->saml_login);
+    ui->sbSamlPort->setValue((config->saml_port > 0 && config->saml_port <= 65535) ? config->saml_port : 8020);
 
     const QString cookie = config->readCookie();
     if(!config->username.isEmpty() || !cookie.isEmpty())
@@ -146,6 +148,9 @@ void vpnProfileEditor::loadVpnProfile(const QString &profile, vpnProfile::Origin
         ui->lePassword->setDisabled(true);
         ui->leCookie->setDisabled(true);
         ui->leSNI->setDisabled(true);
+        ui->cbSamlLogin->setDisabled(true);
+        ui->sbSamlPort->setDisabled(true);
+        ui->gbSaml->setDisabled(true);
         ui->cbPersistent->setDisabled(true);
         ui->gbCredentials->setDisabled(true);
         ui->gbCertificate->setDisabled(true);
@@ -275,6 +280,8 @@ void vpnProfileEditor::on_btnSave_clicked()
     vpn.persistent = ui->cbPersistent->isChecked();
     vpn.device_type = static_cast<vpnProfile::Device>(ui->comboVPNDevice->currentData().toInt());
     vpn.sni = ui->leSNI->text();
+    vpn.saml_login = ui->cbSamlLogin->isChecked();
+    vpn.saml_port = ui->sbSamlPort->value();
 
     if(ui->gbCredentials->isChecked())
     {

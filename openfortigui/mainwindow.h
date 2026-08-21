@@ -97,6 +97,7 @@ private slots:
     void onClientVPNCredRequest(QString vpnname);
     void onClientVPNPromptRequest(QProcess *proc, int type);
     void onClientCertValidationFAiled(QString vpnname, QString buffer);
+    void onClientSAMLAuthRequest(QString vpnname);
 
     void onClientVPNStatsUpdate(QString vpnname, vpnStats stats);
     void onClientVPNMessage(QString vpnname, vpnMsg msg);

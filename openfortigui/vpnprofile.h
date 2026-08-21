@@ -53,6 +53,11 @@ public:
     QString sni;
     // SVPNCOOKIE, used in place of username/password when set.
     QString cookie;
+    // SAML single sign-on: the VPN child listens on 127.0.0.1:saml_port for the
+    // gateway's browser redirect; the login itself happens in the user's
+    // browser. Takes precedence over username/password (issue #186).
+    bool saml_login;
+    int saml_port;
 
     bool set_routes;
     bool set_dns;

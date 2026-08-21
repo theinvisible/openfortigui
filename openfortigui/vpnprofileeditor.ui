@@ -225,6 +225,67 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="gbSaml">
+         <property name="title">
+          <string>Single Sign-On (SAML)</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_saml">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelSamlLogin">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>SAML login</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbSamlLogin">
+            <property name="text">
+             <string>Login via browser (SAML SSO)</string>
+            </property>
+            <property name="toolTip">
+             <string>Sign in through your web browser. Takes precedence over username and password.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelSamlPort">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Local callback port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="sbSamlPort">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>8020</number>
+            </property>
+            <property name="toolTip">
+             <string>Port on 127.0.0.1 where the gateway's browser redirect is received (openfortivpn default: 8020).</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="gbCertificate">
          <property name="title">
           <string>Certificate</string>

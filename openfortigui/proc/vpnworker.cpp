@@ -22,6 +22,7 @@ extern "C"  {
 #include "openfortivpn/src/log.h"
 #include "openfortivpn/src/tunnel.h"
 #include "openfortivpn/src/http.h"
+#include "openfortivpn/src/http_server.h"
 #include "openfortivpn/src/userinput.h"
 
 /*
@@ -696,6 +697,16 @@ void vpnWorker::process()
         config.cookie = strdup(cookie.toUtf8().constData());
     }
 
+    /*
+     * SAML single sign-on (issue #186). saml_port != 0 is the enable flag in
+     * the core; never pass 0 through as a port, bind(0) would pick an
+     * ephemeral one nobody knows. The listener itself runs below, before the
+     * tunnel is started.
+     */
+    if(vpnConfig.saml_login)
+        config.saml_port = (vpnConfig.saml_port > 0 && vpnConfig.saml_port <= 65535)
+                ? static_cast<uint16_t>(vpnConfig.saml_port) : 8020;
+
     if(!vpnConfig.ca_file.isEmpty())
         config.ca_file = strdup(vpnConfig.ca_file.toUtf8().constData());
 
@@ -762,6 +773,42 @@ void vpnWorker::process()
     if (signal(SIGTERM, worker_stop_handler) != SIG_ERR
         && signal(SIGINT, worker_stop_handler) != SIG_ERR)
         worker_sig_handler_ready = 1;
+
+    /*
+     * SAML: wait for the browser redirect before the tunnel is started -- the
+     * mirror of upstream main.c (which runs this before its run_tunnel() loop,
+     * so a persistent reconnect does not wait again; the session id is
+     * single-use anyway). wait_for_http_request() prints the URL to
+     * authenticate at, the GUI picks that line up from the log and opens the
+     * browser; here it blocks in select() for at most 5 x 10 s per call and
+     * cannot be interrupted from outside. Real SSO logins easily take longer
+     * than upstream's single 50 s window, so the call is retried a few times,
+     * checking for a stop in between: ~5 minutes in total.
+     */
+    if (config.saml_port != 0) {
+        int saml_ok = 0;
+
+        // The browser login IS part of connecting: publish the tunnel with
+        // STATE_CONNECTING before the wait, or the GUI row sits on
+        // "Disconnected" for the whole SSO phase (start_tunnel below sets the
+        // same state again, which is fine).
+        tunnel.state = STATE_CONNECTING;
+        setTunnel(&tunnel);
+
+        for (int round = 0; round < 6 && !stopRequested(); round++) {
+            if (wait_for_http_request(&config) == 0
+                && strlen(config.saml_session_id) > 0) {
+                saml_ok = 1;
+                break;
+            }
+        }
+
+        if (!saml_ok) {
+            log_error("Failed to receive SAML session id\n");
+            ret = 1;
+            goto err_tunnel;
+        }
+    }
 
 start_tunnel:
 

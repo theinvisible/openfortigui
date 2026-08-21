@@ -36,6 +36,8 @@ vpnProfile::vpnProfile()
     realm = "";
     sni = "";
     cookie = "";
+    saml_login = false;
+    saml_port = 8020; // openfortivpn's --saml-login default
 
     set_routes = true;
     set_dns = false;

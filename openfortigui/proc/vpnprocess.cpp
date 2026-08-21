@@ -180,6 +180,12 @@ void vpnProcess::startVPN()
         return;
     }
 
+    // A SAML profile authenticates in the browser: no password-store roundtrip
+    // and its 30 s timeout -- mirrors upstream main.c, where saml_port
+    // suppresses the username requirement and the password prompt.
+    if(profile->saml_login)
+        usePasswordStore = false;
+
     // Try to fetch password from current user password store
     if(usePasswordStore)
     {
@@ -216,12 +222,23 @@ void vpnProcess::startVPN()
         profile->cookie = profile->readCookie();
     }
 
+    // With SAML the browser login is the only credential: whatever else the
+    // profile carries is cleared so the worker's auth path has nothing but the
+    // SAML session id to work with.
+    if(profile->saml_login)
+    {
+        profile->username = "";
+        profile->password = "";
+        profile->cookie = "";
+    }
+
     // Reset stats
     stats.bytes_read = 0;
     stats.bytes_written = 0;
     stats.vpn_start = 0;
 
-    if((!profile->username.isEmpty() && profile->password.isEmpty()) || profile->always_ask_otp)
+    if(!profile->saml_login
+       && ((!profile->username.isEmpty() && profile->password.isEmpty()) || profile->always_ask_otp))
     {
         cred_received = false;
         requestCred();

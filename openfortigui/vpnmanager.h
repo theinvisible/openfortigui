@@ -114,6 +114,7 @@ signals:
     void VPNMessage(QString vpnname, vpnMsg msg);
     void VPNPromptRequest(QProcess *proc, int type);
     void VPNCertificateValidationFailed(QString vpnname, QString buffer);
+    void VPNSAMLAuthRequest(QString vpnname);
     void VPNShowMainWindowRequest();
 
     void addVPNLogger(const QString &name, QProcess *proc);
@@ -126,6 +127,7 @@ public slots:
     void onClientVPNMessage(QString vpnname, vpnMsg msg);
     void onPromptRequest(QProcess *proc, int type);
     void onCertificateValidationFailed(QString vpnname, QString buffer);
+    void onSAMLAuthRequest(QString vpnname);
     void onVPNProcessFinished(QString name, int exitCode, QProcess::ExitStatus exitStatus);
     void onVPNProcessErrorOccurred(QString name, QProcess::ProcessError error);
 };
