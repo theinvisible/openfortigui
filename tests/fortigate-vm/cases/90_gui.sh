@@ -17,6 +17,13 @@
 # the wrong question. Checked here is that the dialog appears, that it is the
 # passphrase dialog and not the OTP one, and that answering it gets the tunnel up.
 #
+# #210, #212 -- the permission migration ran for every tiConfMain, so it
+# chmod()ed the profile files over and over; the inotify events that caused fed
+# the profile watcher, which rebuilt the tray menu without end. Same loop, three
+# reports: a flickering tray menu with dead entries (#210), a core at 100% and a
+# log growing by gigabytes (#212). Checked here is that an idle GUI neither
+# re-reads the profiles nor touches the mode of a profile file.
+#
 # Parts a-c need no FortiGate. They run against a virtual screen only and are
 # skipped by nothing; parts d-e need the lab and skip without it.
 
@@ -183,8 +190,9 @@ part "b2) file permissions: config, profiles and API socket are owner-only"
 # --------------------------------------------------------------------------
 
 # main.conf is written by client_init_home with umask defaults on purpose --
-# the mode below is the GUI's self-healing migration at work, the profile file
-# tests saveVpnProfile(), the socket tests QLocalServer::UserAccessOption.
+# the mode below is tiConfMain::migrateMainConf() at work, and doubles as the
+# check that main() still calls it. The profile file tests saveVpnProfile(), the
+# socket tests QLocalServer::UserAccessOption.
 perm_check() {
     local expected="$1" path="$2" mode
     if ! mode="$(stat -c %a "$path" 2>/dev/null)"; then
@@ -202,6 +210,49 @@ perm_check 700 "$LAB_CLIENT_HOME/.openfortigui"
 perm_check 600 "$LAB_MAIN_CONF"
 perm_check 600 "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf"
 perm_check 700 "$LAB_API_SOCK"
+
+# --------------------------------------------------------------------------
+part "b3) the profile list does not refresh itself in a loop (#210)"
+# --------------------------------------------------------------------------
+#
+# The permission migration checked above used to run in the tiConfMain
+# constructor and chmod() every profile file unconditionally. chmod() emits
+# inotify IN_ATTRIB even when the mode is unchanged, MainWindow's watcher on the
+# profile directories reported that as a directory change, refreshVpnProfileList()
+# rebuilt both lists and the whole tray menu, logged while doing so -- and every
+# log line built the next tiConfMain, which swept again. The tray menu flickered
+# without end and QMenu::clear() deleted the action the user was about to click,
+# so its entries did nothing. One profile was enough to start it; with none the
+# sweep found no files and nothing happened, which is the asymmetry in the report.
+#
+# Measured here is the mechanism, not the symptom: Xvfb has no system tray host,
+# so the tray menu cannot be clicked at all from here. An idle GUI must not read
+# the profiles again, and must not touch the mode of a profile file.
+
+IDLE_SECONDS=8
+
+CT_BEFORE="$(stat -c %Z "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf")"
+N_BEFORE="$(grep -c 'vpnprofile found' "$(case_app_log)" 2>/dev/null || true)"
+sleep "$IDLE_SECONDS"
+N_AFTER="$(grep -c 'vpnprofile found' "$(case_app_log)" 2>/dev/null || true)"
+CT_AFTER="$(stat -c %Z "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf")"
+
+READS=$(( N_AFTER - N_BEFORE ))
+# Not "== 0": a genuine change in the profile directory is allowed to cause a
+# refresh. The loop produced five figures in ten seconds, so the margin is wide.
+if (( READS <= 5 )); then
+    ok "the profile list stays idle ($READS reads in ${IDLE_SECONDS}s)"
+else
+    fail "the profile list refreshes in a loop" \
+        "$READS profile reads in ${IDLE_SECONDS} idle seconds -- see issue #210"
+fi
+
+if [[ "$CT_BEFORE" == "$CT_AFTER" ]]; then
+    ok "no chmod() on an idle profile file"
+else
+    fail "the mode of a profile file is being set while nothing happens" \
+        "ctime moved from $CT_BEFORE to $CT_AFTER -- every one of those is an inotify IN_ATTRIB"
+fi
 
 # --------------------------------------------------------------------------
 part "c) group editor"

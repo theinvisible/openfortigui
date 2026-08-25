@@ -33,6 +33,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class QTimer;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -92,6 +94,7 @@ private slots:
     void onChangelog();
 
     void onWatcherVpnProfilesChanged(const QString &path);
+    void onVpnProfilesRefreshTimeout();
 
     void onClientVPNStatusChanged(QString vpnname, vpnClientConnection::connectionStatus status);
     void onClientVPNCredRequest(QString vpnname);
@@ -112,8 +115,11 @@ private:
     QMenu *tray_group_menu;
     QStandardItem *root_local_vpn, *root_global_vpn;
     QFileSystemWatcher *watcherVpnProfiles;
+    QTimer *timerVpnProfilesRefresh;
     QMap<QString, QAction*> trayItems;
+    QMap<QString, QAction*> trayGroupItems;
 
+    void setupVpnProfileWatcher();
     void refreshVpnProfileList();
     void refreshVpnGroupList();
     void autostartVPNs();

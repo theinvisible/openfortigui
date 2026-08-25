@@ -35,6 +35,13 @@ public:
 
     void initMainConf();
 
+    /*
+     * One-time configuration migration. Must be called explicitly, exactly once
+     * per process, and never from the constructor -- see the implementation for
+     * why (issue #210).
+     */
+    static void migrateMainConf();
+
     QVariant getValue(const QString &iniPath, const QVariant &defaultValue = QVariant());
     void setValue(const QString &iniPath, const QVariant &val);
     void sync();

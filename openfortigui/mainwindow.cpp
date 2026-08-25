@@ -187,10 +187,20 @@ MainWindow::MainWindow(QWidget *parent) :
     refreshVpnGroupList();
 
     tiConfMain main_settings;
+
+    /*
+     * Coalesce watcher events. Saving a single profile already produces several
+     * directoryChanged signals -- QSettings writes through a temporary file and
+     * the mode is set afterwards -- and each one used to rebuild both lists and
+     * the whole tray menu (issue #210).
+     */
+    timerVpnProfilesRefresh = new QTimer(this);
+    timerVpnProfilesRefresh->setSingleShot(true);
+    timerVpnProfilesRefresh->setInterval(300);
+    connect(timerVpnProfilesRefresh, SIGNAL(timeout()), this, SLOT(onVpnProfilesRefreshTimeout()));
+
     watcherVpnProfiles = new QFileSystemWatcher(this);
-    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/globalvpnprofiles").toString()));
-    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpnprofiles").toString()));
-    watcherVpnProfiles->addPath(tiConfMain::formatPath(main_settings.getValue("paths/localvpngroups").toString()));
+    setupVpnProfileWatcher();
     connect(watcherVpnProfiles, SIGNAL(directoryChanged(QString)), this, SLOT(onWatcherVpnProfilesChanged(QString)));
 
     autostartVPNs();
@@ -1055,7 +1065,11 @@ void MainWindow::showMainWindow()
 {
     show();
     raise();
-    QApplication::setActiveWindow(this);
+    // activateWindow() rather than QApplication::setActiveWindow(), which is
+    // deprecated as of Qt 6.7. Identical behaviour. Note that under Wayland a
+    // client cannot raise or focus itself without an activation token, so both
+    // of these are no-ops there.
+    activateWindow();
 }
 
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
@@ -1102,7 +1116,11 @@ void MainWindow::refreshVpnProfileList()
     {
         tray_menu->addAction(QIcon::fromTheme("application-exit", QIcon(":/img/quit.png")), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
         tray_menu->addAction(QIcon::fromTheme("preferences-system", QIcon(":/img/settings.png")), tr("Settings"), this, SLOT(onVPNSettings()));
-        tray_menu->addAction(QIcon(":/img/show.png"), tr("Show mainwindow"), this, SLOT(show()));
+        // Same entry point as the tray left-click and as the ACTION_SHOW_MAIN
+        // request of a second instance. A plain show() neither raises nor
+        // activates, so the entry looked dead whenever the main window was
+        // merely behind another one.
+        tray_menu->addAction(QIcon::fromTheme("window-new", QIcon(":/img/show.png")), tr("Show mainwindow"), this, SLOT(showMainWindow()));
         tray_menu->addSeparator();
         tray_menu->addMenu(tray_group_menu);
         tray_menu->addSeparator();
@@ -1220,12 +1238,17 @@ void MainWindow::refreshVpnProfileList()
         tray_menu->addSeparator();
         tray_menu->addMenu(tray_group_menu);
         tray_menu->addSeparator();
-        tray_menu->addAction(QIcon::fromTheme("window-new", QIcon(":/img/show.png")), tr("Show mainwindow"), this, SLOT(show()));
+        tray_menu->addAction(QIcon::fromTheme("window-new", QIcon(":/img/show.png")), tr("Show mainwindow"), this, SLOT(showMainWindow()));
         tray_menu->addAction(QIcon::fromTheme("preferences-system", QIcon(":/img/settings.png")), tr("Settings"), this, SLOT(onVPNSettings()));
         tray_menu->addAction(QIcon::fromTheme("application-exit", QIcon(":/img/quit.png")), tr("Quit OpenFortiGUI"), this, SLOT(onQuit()));
     }
 
-    tray->setContextMenu(tray_menu);
+    // Always the same menu object. Re-setting it makes the tray host tear the
+    // exported menu down and build it up again, which is visible as a flicker
+    // on the D-Bus based trays (issue #210).
+    if(tray->contextMenu() != tray_menu)
+        tray->setContextMenu(tray_menu);
+
     ui->tvVpnProfiles->setSortingEnabled(true);
     ui->tvVpnProfiles->sortByColumn(1, Qt::AscendingOrder);
 
@@ -1251,11 +1274,30 @@ void MainWindow::refreshVpnGroupList()
     QStandardItem *item3 = nullptr;
     int row = model->rowCount();
 
-    tray_group_menu->clear();
-
     vpnClientConnection *conn;
-    QMap<QString, QAction*> trayItems;
     QList<vpnGroup*> vpngroups = vpngroupss.getVpnGroups();
+
+    /*
+     * Only rebuild the submenu when the groups themselves changed. This runs on
+     * every VPN status change (onClientVPNStatusChanged), and clear() deletes
+     * the actions -- including the one the user is about to click, so the
+     * submenu fell apart under the cursor while a connection was coming up
+     * (issue #210). Otherwise just patch the status icons of what is there.
+     *
+     * QMap::keys() comes back sorted by key, hence the sort() on the names.
+     */
+    QStringList groupNames;
+    for(vpnGroup *vpngroup : vpngroups)
+        groupNames << vpngroup->name;
+    groupNames.sort();
+
+    const bool rebuildMenu = (groupNames != trayGroupItems.keys());
+    if(rebuildMenu)
+    {
+        tray_group_menu->clear();
+        trayGroupItems.clear();
+    }
+
     for(int i=0; i < vpngroups.count(); i++)
     {
         vpnGroup *vpngroup = vpngroups.at(i);
@@ -1315,15 +1357,25 @@ void MainWindow::refreshVpnGroupList()
         model->setItem(row, 2, item2);
 
         // Menu
-        QAction *action = new QAction(status, vpngroup->name, tray_group_menu);
-        connect(action, SIGNAL(triggered(bool)), signalMapperGroups, SLOT(map()));
-        signalMapperGroups->setMapping(action, vpngroup->name);
-        trayItems[vpngroup->name] = action;
+        if(rebuildMenu)
+        {
+            QAction *action = new QAction(status, vpngroup->name, tray_group_menu);
+            connect(action, SIGNAL(triggered(bool)), signalMapperGroups, SLOT(map()));
+            signalMapperGroups->setMapping(action, vpngroup->name);
+            trayGroupItems[vpngroup->name] = action;
+        }
+        else
+        {
+            trayGroupItems[vpngroup->name]->setIcon(status);
+        }
     }
 
-    for (auto it = trayItems.cbegin(); it != trayItems.cend(); ++it)
+    if(rebuildMenu)
     {
-        tray_group_menu->insertAction(nullptr, it.value());
+        for (auto it = trayGroupItems.cbegin(); it != trayGroupItems.cend(); ++it)
+        {
+            tray_group_menu->insertAction(nullptr, it.value());
+        }
     }
 
     ui->tvVPNGroups->header()->resizeSection(0, 50);
@@ -1448,6 +1500,39 @@ void MainWindow::onChangelog()
 
 void MainWindow::onWatcherVpnProfilesChanged([[maybe_unused]] const QString &path)
 {
+    // start() on a running timer restarts it, so a burst of events collapses
+    // into a single refresh 300 ms after the last of them (issue #210).
+    timerVpnProfilesRefresh->start();
+}
+
+void MainWindow::onVpnProfilesRefreshTimeout()
+{
+    setupVpnProfileWatcher();
+
     refreshVpnProfileList();
     refreshVpnGroupList();
+}
+
+/*
+ * Watch the three profile directories, adding only what is not watched yet.
+ *
+ * Qt drops a watch when the watched directory itself disappears, so a profile
+ * directory replaced wholesale -- by a restore or a sync tool -- would never be
+ * reported again. initMainConf() recreates the directories, so re-adding what is
+ * missing after every event is enough. addPath() on a path that is still watched
+ * only logs a warning, hence the containment check.
+ */
+void MainWindow::setupVpnProfileWatcher()
+{
+    tiConfMain main_settings;
+    const QStringList paths = {
+        tiConfMain::formatPath(main_settings.getValue("paths/globalvpnprofiles").toString()),
+        tiConfMain::formatPath(main_settings.getValue("paths/localvpnprofiles").toString()),
+        tiConfMain::formatPath(main_settings.getValue("paths/localvpngroups").toString())
+    };
+
+    const QStringList watched = watcherVpnProfiles->directories();
+    for(const QString &path : paths)
+        if(!watched.contains(path))
+            watcherVpnProfiles->addPath(path);
 }

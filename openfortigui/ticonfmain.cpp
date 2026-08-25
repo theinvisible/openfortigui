@@ -33,6 +33,41 @@
 QString tiConfMain::main_config = tiConfMain::formatPath(openfortigui_config::file_main);
 QString tiConfMain::main_gw_cert_cache = tiConfMain::formatPath(openfortigui_config::file_gw_cert_cache);
 
+namespace {
+
+/*
+ * chmod() to owner-only, but only when it is not already owner-only.
+ *
+ * A chmod() that changes nothing still updates ctime and still emits inotify
+ * IN_ATTRIB. MainWindow watches the profile directories, so "set it anyway, it
+ * is cheap" is exactly what it is not: every such call was reported as a
+ * directory change and triggered another refresh (issue #210).
+ *
+ * Note the comparison. On Unix QFile reports the owner bits twice -- ReadOwner
+ * and ReadUser are the same mode bit -- so an equality test against
+ * ReadOwner|WriteOwner never matches and would chmod() every single time. What
+ * is checked instead is that no group or other access is left over, that no
+ * unwanted execute bit is set, and that the owner can read and write.
+ */
+void restrictToOwner(const QString &path, bool isDir = false)
+{
+    const QFileDevice::Permissions wanted = QFileDevice::ReadOwner | QFileDevice::WriteOwner
+                                            | (isDir ? QFileDevice::ExeOwner : QFileDevice::Permissions());
+    QFileDevice::Permissions unwanted = QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ExeGroup
+                                        | QFileDevice::ReadOther | QFileDevice::WriteOther | QFileDevice::ExeOther;
+    if(!isDir)
+        unwanted |= QFileDevice::ExeOwner | QFileDevice::ExeUser;
+
+    const QFileDevice::Permissions have = QFile(path).permissions();
+    if((have & unwanted) == 0 && (have & wanted) == wanted)
+        return;
+
+    if(!QFile::setPermissions(path, wanted))
+        qWarning() << "tiConfMain -> could not restrict permissions on" << path;
+}
+
+} // namespace
+
 tiConfMain::tiConfMain()
 {
     initMainConf();
@@ -72,7 +107,11 @@ void tiConfMain::initMainConf()
         logsdir_vpn_path.mkpath(logs_vpn_dir);
 
         QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
-        conf.setValue("main/debug", true);
+        // Off by default. Debug logging writes every VPN process line and every
+        // list refresh to openfortigui.log, which has no rotation and no size
+        // limit -- it is a diagnostic aid, enabled in the settings dialog when
+        // it is actually needed (issue #212).
+        conf.setValue("main/debug", false);
         conf.setValue("main/aeskey", openfortigui_config::aeskey);
         conf.setValue("main/aesiv", openfortigui_config::aesiv);
         conf.setValue("main/start_minimized", false);
@@ -96,7 +135,8 @@ void tiConfMain::initMainConf()
         QFileInfo finfo(tiConfMain::formatPath(tiConfMain::main_config));
         QDir conf_main_dir = finfo.absoluteDir();
         conf_main_dir.mkpath(conf_main_dir.absolutePath());
-        QFile::setPermissions(conf_main_dir.absolutePath(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+        // The mode of an existing directory is fixed up by migrateMainConf(),
+        // not here: this runs for every tiConfMain and must stay free of writes.
 
         QString vpnprofiles_dir = QString("%1/vpnprofiles").arg(conf_main_dir.absolutePath());
         QString logs_dir = QString("%1/logs").arg(conf_main_dir.absolutePath());
@@ -110,99 +150,144 @@ void tiConfMain::initMainConf()
         logsdir_path.mkpath(logs_dir);
         QDir logsdir_vpn_path(logs_vpn_dir);
         logsdir_vpn_path.mkpath(logs_vpn_dir);
+    }
+}
 
-        /*
-         * Only ever migrate as the owning user, never from the VPN child
-         * process. QSettings replaces the file atomically -- writing it as root
-         * would leave main.conf owned by root, after which isWritable() is false
-         * and the settings dialog stays disabled for good. The GUI runs before
-         * any VPN process, so it is always the one that migrates.
-         */
-        if(geteuid() != 0)
-        {
-            QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
+/*
+ * The one-time configuration migration, called explicitly from main().
+ *
+ * It used to sit in initMainConf(), which meant it ran for every single
+ * tiConfMain -- including the one logMessageOutput() builds for every log line.
+ * Its permission sweep chmod()s every profile file, and chmod() emits inotify
+ * IN_ATTRIB even when the mode is unchanged, so MainWindow's watcher on the
+ * profile directories reported a change, refreshed the lists, logged while doing
+ * so, and every log line swept again -- which is why it did not settle down but
+ * ran away: with N profiles one pass produced N log lines and each of those
+ * swept N files again. The tray menu was rebuilt without end: it flickered, and
+ * QMenu::clear() deleted the very action the user was about to click, so "Show
+ * mainwindow" and "Settings" did nothing (issue #210). The same loop kept a core
+ * at 100% and wrote the log at ~800 kB/s, some 2.7 GiB per hour (issue #212).
+ * With no profiles at all the sweep found no files and nothing happened, which
+ * is why the reports only show up once an entry exists.
+ *
+ * Only ever migrate as the owning user, never from the VPN child process.
+ * QSettings replaces the file atomically -- writing it as root would leave
+ * main.conf owned by root, after which isWritable() is false and the settings
+ * dialog stays disabled for good. The GUI runs before any VPN process, so it is
+ * always the one that migrates.
+ */
+void tiConfMain::migrateMainConf()
+{
+    if(geteuid() == 0)
+        return;
 
-            /*
-             * AES key and IV used to be written only when main.conf was created
-             * from scratch. A configuration carried over from an older version
-             * therefore had none, and every stored password decrypted to
-             * garbage -- reported as "bad decrypt" and as authentication
-             * failures with no visible cause (issues #160, #201). The keys are
-             * not a secret in themselves (they sit in main.conf), so filling
-             * them in is safe; only the password store variant keeps them
-             * elsewhere and is left alone.
-             */
-            if(!conf.value("main/use_system_password_store", false).toBool()
-               && !vpnHelper::aesKeyUsable(conf.value("main/aeskey").toString(),
-                                           conf.value("main/aesiv").toString()))
-            {
-                qWarning() << "AES key/IV missing or invalid in" << tiConfMain::main_config
-                           << "-- restoring the defaults. Stored passwords that were"
-                              " encrypted with a different key have to be entered again.";
-                conf.setValue("main/aeskey", openfortigui_config::aeskey);
-                conf.setValue("main/aesiv", openfortigui_config::aesiv);
-                conf.sync();
-            }
+    // Belt and braces. There is a single call site in main(), but a future one
+    // must not be able to bring the sweep storm back. Keyed on the config file,
+    // because --main-config (setMainConfig) can still change it.
+    static QString migrated;
+    if(migrated == tiConfMain::main_config)
+        return;
+    migrated = tiConfMain::main_config;
 
-            if(!conf.contains("main/setupwizard"))
-            {
-                conf.setValue("main/setupwizard", false);
-                conf.sync();
-            }
+    QSettings conf(tiConfMain::formatPath(tiConfMain::main_config), QSettings::IniFormat);
 
-            if(!conf.contains("main/changelogrev_read"))
-            {
-                conf.setValue("main/changelogrev_read", 0);
-                conf.sync();
-            }
+    /*
+     * AES key and IV used to be written only when main.conf was created
+     * from scratch. A configuration carried over from an older version
+     * therefore had none, and every stored password decrypted to
+     * garbage -- reported as "bad decrypt" and as authentication
+     * failures with no visible cause (issues #160, #201). The keys are
+     * not a secret in themselves (they sit in main.conf), so filling
+     * them in is safe; only the password store variant keeps them
+     * elsewhere and is left alone.
+     */
+    if(!conf.value("main/use_system_password_store", false).toBool()
+       && !vpnHelper::aesKeyUsable(conf.value("main/aeskey").toString(),
+                                   conf.value("main/aesiv").toString()))
+    {
+        qWarning() << "AES key/IV missing or invalid in" << tiConfMain::main_config
+                   << "-- restoring the defaults. Stored passwords that were"
+                      " encrypted with a different key have to be entered again.";
+        conf.setValue("main/aeskey", openfortigui_config::aeskey);
+        conf.setValue("main/aesiv", openfortigui_config::aesiv);
+        conf.sync();
+    }
 
-            /*
-             * "sudo -E" is gone: the VPN child process no longer depends on an
-             * inherited environment, it gets the config and socket paths handed
-             * over explicitly. Existing configurations must be switched off
-             * actively, because sudo-rs (Ubuntu 26.04 and later) rejects -E and
-             * the connection would keep failing (issue #208).
-             */
-            if(!conf.contains("checks/sudo_env_migrated"))
-            {
-                conf.remove("main/sudo_preserve_env");
-                conf.remove("checks/sudopresenv");
-                conf.remove("checks/sudopresenv_lastos");
-                conf.setValue("checks/sudo_env_migrated", true);
-                conf.sync();
-            }
+    if(!conf.contains("main/setupwizard"))
+    {
+        conf.setValue("main/setupwizard", false);
+        conf.sync();
+    }
 
-            if(!conf.contains("gui/disable_notifications"))
-            {
-                conf.setValue("gui/disable_notifications", false);
-                conf.sync();
-            }
+    if(!conf.contains("main/changelogrev_read"))
+    {
+        conf.setValue("main/changelogrev_read", 0);
+        conf.sync();
+    }
 
-            if(!conf.contains("gui/connect_on_dblclick"))
-            {
-                conf.setValue("gui/connect_on_dblclick", false);
-                conf.sync();
-            }
+    /*
+     * "sudo -E" is gone: the VPN child process no longer depends on an
+     * inherited environment, it gets the config and socket paths handed
+     * over explicitly. Existing configurations must be switched off
+     * actively, because sudo-rs (Ubuntu 26.04 and later) rejects -E and
+     * the connection would keep failing (issue #208).
+     */
+    if(!conf.contains("checks/sudo_env_migrated"))
+    {
+        conf.remove("main/sudo_preserve_env");
+        conf.remove("checks/sudopresenv");
+        conf.remove("checks/sudopresenv_lastos");
+        conf.setValue("checks/sudo_env_migrated", true);
+        conf.sync();
+    }
 
-            /*
-             * Existing installations carry umask-default modes from before the
-             * files were restricted to the owner. Self-healing on every start
-             * rather than a one-time migration: it is a handful of files, and a
-             * profile restored from a backup gets fixed up too.
-             */
-            const QFileDevice::Permissions filePerms = QFileDevice::ReadOwner | QFileDevice::WriteOwner;
-            QFile::setPermissions(tiConfMain::formatPath(tiConfMain::main_config), filePerms);
-            const QStringList secretDirs = {
-                tiConfMain::formatPath(conf.value("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local).toString()),
-                tiConfMain::formatPath(conf.value("paths/localvpngroups", openfortigui_config::vpngroups_local).toString())
-            };
-            for(const QString &dir : secretDirs)
-            {
-                QDirIterator it(dir, QStringList() << "*.conf", QDir::Files);
-                while(it.hasNext())
-                    QFile::setPermissions(it.next(), filePerms);
-            }
-        }
+    if(!conf.contains("gui/disable_notifications"))
+    {
+        conf.setValue("gui/disable_notifications", false);
+        conf.sync();
+    }
+
+    if(!conf.contains("gui/connect_on_dblclick"))
+    {
+        conf.setValue("gui/connect_on_dblclick", false);
+        conf.sync();
+    }
+
+    /*
+     * Debug logging is off by default now. Every existing configuration carries
+     * main/debug=true, because initMainConf() used to write it on every fresh
+     * install -- it was never a choice the user made, and openfortigui.log is
+     * neither rotated nor capped, so it just kept growing (issue #212).
+     *
+     * Switched off actively rather than by changing the default, which a stored
+     * value would ignore. Runs exactly once: whoever ticks the box in the
+     * settings dialog afterwards keeps it on.
+     */
+    if(!conf.contains("checks/debug_default_migrated"))
+    {
+        conf.setValue("main/debug", false);
+        conf.setValue("checks/debug_default_migrated", true);
+        conf.sync();
+    }
+
+    /*
+     * Existing installations carry umask-default modes from before the files
+     * were restricted to the owner, and a profile restored from a backup needs
+     * the same treatment. restrictToOwner() only chmod()s what is actually
+     * wrong -- an unnecessary chmod() is an inotify event, and that is what fed
+     * the refresh loop described above.
+     */
+    restrictToOwner(QFileInfo(tiConfMain::formatPath(tiConfMain::main_config)).absolutePath(), true);
+    restrictToOwner(tiConfMain::formatPath(tiConfMain::main_config));
+    const QStringList secretDirs = {
+        tiConfMain::formatPath(conf.value("paths/localvpnprofiles", openfortigui_config::vpnprofiles_local).toString()),
+        tiConfMain::formatPath(conf.value("paths/localvpngroups", openfortigui_config::vpngroups_local).toString())
+    };
+    for(const QString &dir : secretDirs)
+    {
+        QDirIterator it(dir, QStringList() << "*.conf", QDir::Files);
+        while(it.hasNext())
+            restrictToOwner(it.next());
     }
 }
 

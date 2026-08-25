@@ -301,6 +301,17 @@ int main(int argc, char *argv[])
             exit(0);
         }
 
+        /*
+         * The one-time configuration migration, explicitly and exactly once.
+         * Not in the tiConfMain constructor: that one runs for every log line,
+         * and its permission sweep kept retriggering the profile watcher, which
+         * rebuilt the tray menu without end (issue #210). After the
+         * isRunningAlready() exit above, so a second invocation never touches
+         * the first instance's files, and before MainWindow, whose constructor
+         * reads the values supplied here.
+         */
+        tiConfMain::migrateMainConf();
+
         MainWindow w;
 
         if(main_settings.getValue("main/start_minimized").toBool() == false)
