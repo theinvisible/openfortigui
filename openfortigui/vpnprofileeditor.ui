@@ -278,7 +278,7 @@
              <number>8020</number>
             </property>
             <property name="toolTip">
-             <string>Port on 127.0.0.1 where the gateway's browser redirect is received (openfortivpn default: 8020).</string>
+             <string>Port on 127.0.0.1 where the gateway's browser redirect is received. Leave this at 8020 unless you know better: the redirect target is chosen by the gateway, and it is documented as the fixed http://127.0.0.1:8020/ - another value here will simply never be called back.</string>
             </property>
            </widget>
           </item>

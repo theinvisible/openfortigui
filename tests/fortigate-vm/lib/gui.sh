@@ -229,6 +229,19 @@ gui_click() {
     sleep 1
 }
 
+# gui_double_click <id> <dx> <dy> -- double-click relative to the client area
+#
+# --repeat 2 rather than two gui_click calls: Qt only turns the second press into
+# a MouseButtonDblClick when it arrives inside the double-click interval, and two
+# separate xdotool invocations are too far apart for that.
+gui_double_click() {
+    local id="$1" dx="$2" dy="$3" x y
+    read -r x y <<<"$(gui_win_pos "$id")"
+    [[ -n "$x" && -n "$y" ]] || return 1
+    xd mousemove $(( x + dx )) $(( y + dy )) click --repeat 2 --delay 80 1
+    sleep 1.5
+}
+
 # gui_screenshot <name> -- raw X dump into the case output, for failures
 gui_screenshot() {
     have xwd || return 0

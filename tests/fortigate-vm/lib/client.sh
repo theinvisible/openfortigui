@@ -89,6 +89,10 @@ initd=/etc/init.d/openfortigui
 
 [checks]
 sudopresenv=false
+# Opt out of the one-time migration that switches debug logging off (issue #212).
+# Several cases assert on the GUI's qDebug output -- 'finished::', 'error
+# occurred::', 'vpnprofile found' -- so the lab wants debug=true above to stick.
+debug_default_migrated=true
 
 [gui]
 disable_notifications=true

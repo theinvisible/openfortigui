@@ -255,6 +255,43 @@ else
 fi
 
 # --------------------------------------------------------------------------
+part "b4) a double-click on a profile still reaches its handler (#211)"
+# --------------------------------------------------------------------------
+#
+# Qt sends Press, Release, MouseButtonDblClick, Release -- the second click is
+# not a press. So QAbstractItemView compares the index under the cursor against
+# the pressedIndex it stored on the FIRST click, up to a double-click interval
+# earlier, and emits nothing when they differ. refreshVpnProfileList() rebuilds
+# the rows with removeRows() + setChild(), which invalidates every persistent
+# index, so while the refresh loop of #210 was running every double-click was
+# dropped without a trace: no connect, no editor, nothing (issue #211).
+#
+# Checked with connect_on_dblclick at its lab default (false), where the handler
+# opens the profile editor. That is the branch with no side effects -- the connect
+# branch differs only by the flag the handler reads at click time, and what broke
+# was the signal, not either branch.
+
+if [[ -f "$LAB_PROFILE_DIR/$PROFILE_SAVE.conf" ]]; then
+    # 251/176 from the client-area origin is the first profile row: past the
+    # toolbar, past the header, past the "Local VPNs" category row.
+    gui_double_click "$MAIN" 251 176
+    if EDIT="$(gui_wait_window ' - Edit VPN$' 6)"; then
+        ok "a double-click on a profile row arrives (the editor opens)"
+        gui_activate "$EDIT"
+        gui_key Escape
+        gui_wait_no_window ' - Edit VPN$' 6 >/dev/null \
+            || fail "the editor opened by the double-click did not close again"
+    else
+        gui_screenshot fail-dblclick >/dev/null
+        fail "a double-click on a profile row does nothing" \
+            "no editor window appeared -- see issue #211. Windows on screen:
+$(gui_list_windows)"
+    fi
+else
+    skip "double-click check" "part b did not leave a profile behind"
+fi
+
+# --------------------------------------------------------------------------
 part "c) group editor"
 # --------------------------------------------------------------------------
 

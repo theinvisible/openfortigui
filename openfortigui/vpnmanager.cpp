@@ -31,6 +31,7 @@
 #include <QJsonArray>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QTcpServer>
 
 vpnManager::vpnManager(QObject *parent) : QObject(parent)
 {
@@ -82,7 +83,42 @@ void vpnManager::startVPN(const QString &name)
 {
     if(connections.contains(name))
     {
+        /*
+         * Used to return in silence, which is confusing precisely when it
+         * matters most: during a SAML login the child sits in its browser wait
+         * for up to five minutes, the row says "Connecting", and clicking
+         * connect again did nothing at all -- no message, no new attempt, and no
+         * second browser window either, because the logger opens it only once
+         * per child. That is what a reporter on issue #186 ran into after the
+         * gateway answered his first SAML request with a 403.
+         */
         qDebug() << "VPN already running with name" << name;
+
+        vpnClientConnection *running = connections.value(name);
+        tiConfVpnProfiles profiles;
+        vpnProfile *profile = profiles.getVpnProfileByName(name);
+        const bool samlWaiting = profile != nullptr && profile->saml_login
+                && running != nullptr
+                && running->status == vpnClientConnection::STATUS_CONNECTING;
+
+        if(samlWaiting)
+        {
+            // Reopen the browser rather than telling the user to find the old
+            // tab. The child is still listening, so the redirect it gets from
+            // this round is just as good as the first one.
+            vpnMsg msg;
+            msg.type = vpnMsg::TYPE_INFO;
+            msg.msg = tr("VPN %1 is waiting for the browser login. Opening the login page again.").arg(name);
+            emit VPNMessage(name, msg);
+            emit VPNSAMLAuthRequest(name);
+        }
+
+        /*
+         * Anything else stays silent on purpose. Starting a group calls this for
+         * every member (onActionStartVPNGroup), so a notice for "already
+         * running" would mean one modal dialog per member that is already up --
+         * and the row and the tray icon show that state anyway.
+         */
         return;
     }
 
@@ -104,6 +140,35 @@ void vpnManager::startVPN(const QString &name)
         msg.msg = tr("There is no VPN profile named '%1'.").arg(name);
         emit VPNMessage(name, msg);
         return;
+    }
+
+    /*
+     * Check the SAML callback port before starting anything. The listener in the
+     * child binds it with SO_REUSEADDR, which covers TIME_WAIT but does not let a
+     * second live listener in -- so a still-waiting child from an earlier attempt
+     * does block it. bind() then fails immediately, and because the retry loop
+     * has no delay of its own it burns through all its rounds at once: the user
+     * got "Failed to receive SAML session id" instantly and with no hint as to
+     * why (issue #186).
+     */
+    if(profile->saml_login)
+    {
+        const quint16 port = (profile->saml_port > 0 && profile->saml_port <= 65535)
+                ? static_cast<quint16>(profile->saml_port) : 8020;
+        QTcpServer probe;
+        if(!probe.listen(QHostAddress::LocalHost, port))
+        {
+            vpnMsg msg;
+            msg.type = vpnMsg::TYPE_ERROR;
+            msg.msg = tr("The SAML login port %1 is already in use, VPN %2 cannot start.").arg(port).arg(name);
+            msg.detail = tr("Another connection attempt is probably still waiting for its browser login."
+                            " Disconnect it first, or wait for it to time out.");
+            qWarning() << "SAML callback port" << port << "is in use, not starting" << name
+                       << "::" << probe.errorString();
+            emit VPNMessage(name, msg);
+            return;
+        }
+        probe.close();
     }
 
     switch(profile->device_type)

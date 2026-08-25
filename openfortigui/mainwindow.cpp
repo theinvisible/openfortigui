@@ -310,14 +310,21 @@ void MainWindow::on_btnEditVPN_clicked()
     QItemSelectionModel *selmodel = ui->tvVpnProfiles->selectionModel();
     QModelIndexList sellist = selmodel->selectedRows(1);
 
+    // Both of these are reached by a double-click when "connect on double-click"
+    // is off, and both used to return without a trace -- which made a swallowed
+    // double-click indistinguishable from one that arrived (issue #211).
     if(sellist.count() < 1)
     {
+        qDebug() << "MainWindow::on_btnEditVPN_clicked() -> nothing selected, ignoring";
         return;
     }
 
     QString vpnName = model->itemFromIndex(sellist.at(0))->text();
     if(vpnName.isEmpty())
+    {
+        qDebug() << "MainWindow::on_btnEditVPN_clicked() -> selected row carries no profile name, ignoring";
         return;
+    }
 
     vpnClientConnection *cl = vpnmanager->getClientConnection(vpnName);
     if(cl != 0 && cl->status != vpnClientConnection::STATUS_DISCONNECTED)
@@ -584,11 +591,22 @@ void MainWindow::onStartVPN()
 
     if(sellist.count() < 1)
     {
+        qDebug() << "MainWindow::onStartVPN() -> nothing selected, ignoring";
         return;
     }
 
     QStandardItem *item = model->itemFromIndex(sellist.at(0));
     QString itemName = item->text();
+
+    // A root row ("Local VPNs" / "Global VPNs") only fills column 0, so column 1
+    // is empty here. Without this the empty name travelled all the way into
+    // startVPN() and came back as "There is no VPN profile named ''" -- which is
+    // how a double-click on a category used to be reported (issue #211).
+    if(itemName.isEmpty())
+    {
+        qDebug() << "MainWindow::onStartVPN() -> selected row carries no profile name, ignoring";
+        return;
+    }
 
     if(ui->tabMain->currentIndex() == 1)
     {
@@ -838,6 +856,14 @@ void MainWindow::onClientSAMLAuthRequest(QString vpnname)
     if(!profile->realm.isEmpty())
         query.addQueryItem("realm", profile->realm);
     url.setQuery(query);
+
+    /*
+     * Info, not debug: debug logging is off by default, and when a gateway
+     * answers the SAML request with an error the first question is always which
+     * URL was actually opened -- realm included (issue #186). Nothing secret in
+     * it, the child prints the same URL to its own log.
+     */
+    qInfo() << "SAML login for" << vpnname << "-> opening" << url.toString();
 
     if(QDesktopServices::openUrl(url))
     {
