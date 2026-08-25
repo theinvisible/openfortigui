@@ -13,7 +13,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+# 6.4 is what Ubuntu 24.04 and Debian bookworm ship, and the oldest the code is
+# built against. Pinned so a too-old Qt6 fails here instead of somewhere in the
+# middle of the build.
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Widgets Network)
 find_package(Qt6Keychain REQUIRED)
 
 # Add 'd' suffix to debug libs

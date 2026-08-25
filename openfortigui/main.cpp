@@ -36,6 +36,8 @@
 #include <QTranslator>
 #include <QMessageBox>
 #include <QLocalSocket>
+#include <QSystemTrayIcon>
+#include <QIcon>
 
 QFile *openfortiguiLog = nullptr;
 
@@ -95,26 +97,48 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
     inHandler = false;
 }
 
-bool isRunningAlready()
+/*
+ * Hand the running GUI a "show your window" request. Returns true when there was
+ * one to talk to, which is also the answer to "is an instance already running".
+ *
+ * This used to be a separate isRunningAlready() that counted lines of `ps -A`
+ * containing the binary name. The VPN children run as
+ * `sudo <applicationFilePath> --start-vpn ...` and matched it too, so with a
+ * child alive and the GUI gone a fresh start believed it was the second instance,
+ * found no socket, and exited without showing anything -- while the only way back
+ * to a hidden window on a session without a system tray is exactly that fresh
+ * start. Asking the socket answers the real question instead of guessing from
+ * process names, and it is the same socket the request goes out on anyway.
+ *
+ * A socket file left behind by a crashed GUI refuses the connection, so it counts
+ * as "not running"; vpnManager clears it with QLocalServer::removeServer() before
+ * it listens.
+ */
+static bool askRunningInstanceToShowMainWindow()
 {
-    QStringList arguments;
-    arguments << "-A";
-
-    QProcess *ch = new QProcess();
-    ch->start("ps", arguments);
-    ch->waitForFinished(5000);
-    ch->waitForReadyRead(5000);
-    QString line;
-    int count = 0;
-    while(!ch->atEnd())
+    QLocalSocket apiServer;
+    apiServer.connectToServer(vpnApi::socketPath());
+    if(!apiServer.waitForConnected(1000))
     {
-        line = QString::fromLatin1(ch->readLine());
-        if(line.contains(QFileInfo(QCoreApplication::applicationFilePath()).fileName()))
-            count++;
+        qDebug() << "no running instance on" << vpnApi::socketPath() << "::" << apiServer.errorString();
+        return false;
     }
-    delete ch;
 
-    return (count > 1) ? true : false;
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_0);
+    vpnApi apiData;
+    apiData.action = vpnApi::ACTION_SHOW_MAIN;
+    out << apiData;
+
+    apiServer.write(block);
+    apiServer.flush();
+    // The receiver reads on its event loop; give the bytes a chance to leave
+    // before this process exits.
+    apiServer.waitForBytesWritten(1000);
+
+    qInfo() << "another instance is running, asked it to show its main window";
+    return true;
 }
 
 /*
@@ -272,49 +296,53 @@ int main(int argc, char *argv[])
         QApplication a(argc, argv);
         QApplication::setApplicationName(openfortigui_config::name);
         QApplication::setApplicationVersion(openfortigui_config::version);
+        /*
+         * Without this Qt derives the Wayland app-id from argv[0], and the
+         * compositor cannot match our surface to the desktop entry: wrong icon in
+         * the dash and in alt-tab, no grouping, and no chance of xdg-activation
+         * ever applying to us. Must be set before the first window exists.
+         */
+        QGuiApplication::setDesktopFileName("openfortigui");
+        QApplication::setWindowIcon(QIcon(":/img/app.png"));
         a.installTranslator(&qtTranslator);
         a.installTranslator(&openfortiguiTranslator);
         a.setQuitOnLastWindowClosed(false);
 
-        if(isRunningAlready())
-        {
-            // Ask the running instance to show the main window instead of error message
-            QLocalSocket apiServer;
-            apiServer.connectToServer(vpnApi::socketPath());
-            if(apiServer.waitForConnected(1000))
-            {
-                QByteArray block;
-                QDataStream out(&block, QIODevice::WriteOnly);
-                out.setVersion(QDataStream::Qt_6_0);
-                vpnApi apiData;
-                apiData.action = vpnApi::ACTION_SHOW_MAIN;
-                out << apiData;
-
-                apiServer.write(block);
-                apiServer.flush();
-            }
-            else
-            {
-                qWarning() << apiServer.errorString();
-            }
-
+        // A second invocation is how the user asks the running instance for its
+        // window back -- the only way there is when the session has no tray.
+        if(askRunningInstanceToShowMainWindow())
             exit(0);
-        }
 
         /*
          * The one-time configuration migration, explicitly and exactly once.
          * Not in the tiConfMain constructor: that one runs for every log line,
          * and its permission sweep kept retriggering the profile watcher, which
-         * rebuilt the tray menu without end (issue #210). After the
-         * isRunningAlready() exit above, so a second invocation never touches
-         * the first instance's files, and before MainWindow, whose constructor
-         * reads the values supplied here.
+         * rebuilt the tray menu without end (issue #210). After the exit above,
+         * so a second invocation never touches the first instance's files, and
+         * before MainWindow, whose constructor reads the values supplied here.
          */
         tiConfMain::migrateMainConf();
 
         MainWindow w;
 
-        if(main_settings.getValue("main/start_minimized").toBool() == false)
+        /*
+         * "Start minimized" means "start into the tray" -- with no tray to start
+         * into it would mean "start invisible", and the window could only be
+         * reached by starting the binary a second time. Show it instead.
+         *
+         * Unlike the check in MainWindow::warnIfNoSystemTray() this one has to
+         * run at startup, where a StatusNotifierItem host may still be coming up.
+         * The error is in the harmless direction: a false negative shows a window
+         * the user wanted hidden, never the reverse.
+         */
+        const bool startMinimized = main_settings.getValue("main/start_minimized").toBool();
+        const bool trayAvailable = QSystemTrayIcon::isSystemTrayAvailable();
+
+        if(startMinimized && !trayAvailable)
+            qWarning() << "start_minimized is set but no system tray is available"
+                       << "-- showing the main window, it could not be reached otherwise";
+
+        if(!startMinimized || !trayAvailable)
             w.show();
 
         return a.exec();

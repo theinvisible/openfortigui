@@ -2,7 +2,9 @@
 Type=Application
 Name=openFortiGUI
 Comment=GUI for openfortivpn
-Icon=/usr/share/pixmaps/openfortigui.png
+Icon=openfortigui
 Exec=/usr/bin/openfortigui
 Terminal=false
 Categories=Network;Application;
+StartupNotify=true
+StartupWMClass=openfortigui

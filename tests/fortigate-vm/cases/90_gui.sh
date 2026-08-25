@@ -308,6 +308,107 @@ $(gui_list_windows)"
 fi
 
 # --------------------------------------------------------------------------
+part "c2) no system tray: the application stays reachable"
+# --------------------------------------------------------------------------
+#
+# There is no tray without a StatusNotifierItem host -- KDE ships one, GNOME
+# needs the AppIndicator extension, a wlroots session without a tray applet has
+# none. Closing the window hides it anyway, so the app used to become
+# unreachable: no icon to click, and start_minimized made it invisible from the
+# first second.
+#
+# This lab is itself such a session, which is what makes the case testable here:
+# gui_app_start runs with env -i, so there is no session bus for an SNI host, and
+# bare Xvfb has no _NET_SYSTEM_TRAY_S0 owner either.
+#
+# This part owns the application lifecycle: it stops the instance from the top of
+# the case, runs its own, and starts a fresh one at the end for the parts below.
+
+gui_app_stop
+
+# gui_app_start_once -- a transient second invocation; it asks the running
+# instance for its window over the api socket and exits.
+gui_app_start_once() {
+    local bin; bin="$(client_require_bin)"
+    env -i "PATH=${LAB_GUI_PATH:-/usr/bin:/bin}" \
+        HOME="$LAB_CLIENT_HOME" \
+        "DISPLAY=$LAB_GUI_DISPLAY" \
+        QT_QPA_PLATFORM=xcb \
+        "$bin" --main-config "$LAB_MAIN_CONF" --api-socket "$LAB_API_SOCK" \
+        >>"$CASE_OUT_DIR/gui-stdout.log" 2>&1
+    sleep 1.5
+}
+
+sed -i '/^notray_hint_shown=/d' "$LAB_MAIN_CONF"
+sed -i 's/^start_minimized=.*/start_minimized=true/' "$LAB_MAIN_CONF"
+gui_app_start
+
+# Precondition, asserted rather than assumed: without this the rest proves
+# nothing, because every check below is about the no-tray branch.
+if grep -q 'system tray available: false' "$(case_app_log)"; then
+    ok "the lab session has no system tray (as the checks below assume)"
+
+    assert_true "start_minimized does not hide the window when there is no tray" \
+        gui_wait_window '^OpenFortiGUI$' 10
+    assert_contains "the override is logged" "$(case_app_log)" \
+        'start_minimized is set but no system tray is available'
+
+    gui_app_stop
+    sed -i 's/^start_minimized=.*/start_minimized=false/' "$LAB_MAIN_CONF"
+    sed -i '/^notray_hint_shown=/d' "$LAB_MAIN_CONF"
+    gui_app_start
+
+    if MAIN2="$(gui_win '^OpenFortiGUI$')"; then
+        gui_close_window "$MAIN2"
+
+        if gui_wait_window '^System tray$' 6 >/dev/null; then
+            ok "closing without a tray explains where the application went"
+        else
+            gui_screenshot fail-notray-hint >/dev/null
+            fail "closing without a tray gives no hint at all" "windows on screen:
+$(gui_list_windows)"
+        fi
+
+        assert_true "the window is gone" gui_wait_no_window '^OpenFortiGUI$' 6
+        # The point of hiding rather than quitting: a running tunnel must survive
+        # someone closing the window.
+        assert_true "the process is still alive" gui_app_running
+        assert_contains "the hint is remembered" "$LAB_MAIN_CONF" 'notray_hint_shown=true'
+
+        gui_key Return   # dismiss the hint
+        gui_wait_no_window '^System tray$' 6 >/dev/null || true
+
+        # The only way back without a tray, and the reason the ps-based
+        # isRunningAlready() had to go: it counted the sudo'd VPN children.
+        gui_app_start_once
+        assert_true "starting again brings the window back" \
+            gui_wait_window '^OpenFortiGUI$' 10
+
+        if MAIN3="$(gui_win '^OpenFortiGUI$')"; then
+            gui_close_window "$MAIN3"
+            if gui_wait_window '^System tray$' 4 >/dev/null; then
+                fail "the hint comes back on every close" \
+                    "notray_hint_shown should have suppressed it"
+            else
+                ok "the hint is shown once, not on every close"
+            fi
+        fi
+    else
+        fail "main window not found after restart" "windows on screen:
+$(gui_list_windows)"
+    fi
+else
+    skip "no-tray checks" \
+        "the log does not say 'system tray available: false' -- something provides a tray here"
+fi
+
+# Leave a running instance behind: the parts below talk to it over the api socket.
+gui_app_stop
+sed -i '/^notray_hint_shown=/d' "$LAB_MAIN_CONF"
+gui_app_start
+MAIN="$(gui_win '^OpenFortiGUI$')" || fail "main window did not come back for the remaining parts"
+
+# --------------------------------------------------------------------------
 part "d) passphrase dialog for an encrypted client key (#166)"
 # --------------------------------------------------------------------------
 

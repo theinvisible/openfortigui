@@ -64,6 +64,36 @@ Note that switching the option changes where key and IV live, not the passwords
 themselves. Passwords stored under the previous key have to be entered once
 again afterwards.
 
+## The system tray, and Wayland
+
+openfortiGUI lives in the system tray: closing the window hides it and leaves the
+tunnel up, and the tray icon brings it back.
+
+**A tray only exists if something provides one.** KDE Plasma ships a
+StatusNotifierItem host, and Ubuntu's GNOME enables the AppIndicator extension by
+default. Plain GNOME — Fedora Workstation, Debian with GNOME — and wlroots
+sessions without a tray applet have none, and then there is no icon. openfortiGUI
+notices this: it keeps running with the tunnel up, says so once when you close the
+window, and ignores *"start minimized"* rather than starting invisibly. Starting
+openfortiGUI again brings the window back — the second start hands the request to
+the instance that is already running. On GNOME, installing the AppIndicator
+extension gets you a real tray icon.
+
+Two Wayland limits worth knowing about, neither of them fixable from inside the
+application:
+
+- **openfortiGUI cannot raise or focus its own window.** A Wayland client needs an
+  activation token from the compositor for that, tied to an input event it
+  received itself. A click in the tray menu goes to the compositor's panel, and
+  the StatusNotifierItem protocol carries no token — so *"Show mainwindow"* maps
+  the window but cannot pull it in front of whatever you were looking at. On X11
+  it can.
+- **Window positions are the compositor's business.** openfortiGUI centres its
+  window on startup under X11; under Wayland the compositor places it.
+
+If either matters to you, `QT_QPA_PLATFORM=xcb openfortigui` runs the application
+on XWayland, where both work as they do on X11.
+
 ## sudo configuration
 
 The VPN process needs root for pppd and the routing table, so openfortiGUI

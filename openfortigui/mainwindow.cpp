@@ -105,11 +105,24 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapperGroups = new QSignalMapper(this);
     connect(signalMapperGroups, SIGNAL(mappedString(QString)), this, SLOT(onActionStartVPNGroup(QString)));
 
-    // Center window on startup
-    QRect geom = QGuiApplication::screens()[0]->availableGeometry();
-    if(geom.width() > 2560 && geom.height() > 1440)
-        resize(geom.width() / 3, geom.height() / 3);
-    move((geom.width() - width()) / 2, (geom.height() - height()) / 2);
+    /*
+     * Center window on startup. primaryScreen() rather than screens()[0], which
+     * is not documented to be the primary one and would be an out-of-range index
+     * on a headless start. Wayland ignores move() on a top-level -- the
+     * compositor places us there -- so this is effectively X11-only, but it is
+     * correct there and harmless elsewhere.
+     */
+    if(QScreen *screen = QGuiApplication::primaryScreen())
+    {
+        const QRect geom = screen->availableGeometry();
+        if(geom.width() > 2560 && geom.height() > 1440)
+            resize(geom.width() / 3, geom.height() / 3);
+        // Offset by the screen's own origin: on a multi-monitor layout the
+        // primary screen does not have to start at (0,0), and centering against
+        // the bare size put the window onto the wrong output.
+        move(geom.x() + (geom.width() - width()) / 2,
+             geom.y() + (geom.height() - height()) / 2);
+    }
 
     // Treeview VPNs
     QStringList headers;
@@ -143,6 +156,14 @@ MainWindow::MainWindow(QWidget *parent) :
     tray = new QSystemTrayIcon(this);
     tray->setIcon(QIcon(":/img/app.png"));
     tray->show();
+    /*
+     * There is no tray at all without a StatusNotifierItem host: on KDE it comes
+     * with the shell, on GNOME it needs the AppIndicator extension, and a
+     * wlroots session without a tray applet has none either. tray->show() is
+     * silent about that, so record it -- it is the first thing to know when a
+     * user reports a missing icon, and the close handler below depends on it.
+     */
+    qInfo() << "system tray available:" << QSystemTrayIcon::isSystemTrayAvailable();
     tray_menu = tray->contextMenu();
     tray_group_menu = new QMenu(tr("VPN-Groups"));
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onTrayIconActivated(QSystemTrayIcon::ActivationReason)));
@@ -793,6 +814,8 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 
 void MainWindow::onClientVPNCredRequest(QString vpnname)
 {
+    showBeforeChildDialog();
+
     vpnLogin *f = new vpnLogin(nullptr);
     f->setData(vpnmanager, vpnname);
     auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Login"));
@@ -800,7 +823,7 @@ void MainWindow::onClientVPNCredRequest(QString vpnname)
 
     prefWindow->show();
     prefWindow->raise();
-    QApplication::setActiveWindow(prefWindow);
+    prefWindow->activateWindow();
 }
 
 void MainWindow::onClientVPNPromptRequest(QProcess *proc, int type)
@@ -824,6 +847,8 @@ void MainWindow::onClientVPNPromptRequest(QProcess *proc, int type)
         break;
     }
 
+    showBeforeChildDialog();
+
     vpnOTPLogin *f = new vpnOTPLogin(nullptr);
     f->setData(proc);
     f->setPrompt(question, fieldLabel);
@@ -831,6 +856,10 @@ void MainWindow::onClientVPNPromptRequest(QProcess *proc, int type)
     f->initAfter();
 
     prefWindow->show();
+    // Same treatment as the credentials dialog above -- both are the child asking
+    // the user something, and both were inconsistent about it before.
+    prefWindow->raise();
+    prefWindow->activateWindow();
 }
 
 /*
@@ -1087,6 +1116,27 @@ void MainWindow::ontvVpnProfilesCustomContextMenu(const QPoint &point)
     }
 }
 
+/*
+ * Bring the main window up before opening a dialog the child process asked for.
+ *
+ * openToolWindow() makes these Qt::WindowModal with the main window as parent,
+ * and the child asks for credentials, an OTP or a key passphrase at a moment the
+ * user did not choose -- typically after connecting from the tray, with the main
+ * window closed away. On Wayland an xdg_toplevel whose parent surface was never
+ * mapped has undefined stacking: the dialog tends to come up unfocused or not
+ * visibly at all, so the connection just seems to hang until openfortivpn gives
+ * up. Showing the parent first gives the dialog a mapped surface to sit on.
+ *
+ * Doing it unconditionally would also be defensible -- somebody is being asked
+ * for a secret, the application belongs in front -- but hidden is the case that
+ * matters and staying out of the way otherwise is cheap.
+ */
+void MainWindow::showBeforeChildDialog()
+{
+    if(isHidden())
+        showMainWindow();
+}
+
 void MainWindow::showMainWindow()
 {
     show();
@@ -1101,8 +1151,11 @@ void MainWindow::showMainWindow()
 MainWindow::TASKBAR_POSITION MainWindow::taskbarPosition()
 {
     QScreen *screen = QGuiApplication::primaryScreen();
-    QRect geo = screen->geometry();
-    QRect geoAvail = screen->availableGeometry();
+    if(screen == nullptr)
+        return MainWindow::TASKBAR_POSITION_BOTTOM;
+
+    const QRect geo = screen->geometry();
+    const QRect geoAvail = screen->availableGeometry();
 
     return (geoAvail.top() > geo.top()) ? MainWindow::TASKBAR_POSITION_TOP : MainWindow::TASKBAR_POSITION_BOTTOM;
 }
@@ -1455,12 +1508,52 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
     if(object == this && event->type() == QEvent::Close)
     {
         hide();
+        warnIfNoSystemTray();
 
         event->ignore();
         return true;
     }
 
     return false;
+}
+
+/*
+ * Closing the window hides it, which is only a sensible thing to do when there is
+ * a tray icon to bring it back. Without a StatusNotifierItem host there is none,
+ * and the only way back is starting the binary again -- so say so, once.
+ *
+ * Quitting instead would be the tidier gesture but the wrong one: ~vpnManager
+ * stops every connection, so it would tear down a running tunnel just because
+ * the user closed a window.
+ *
+ * Checked here rather than at startup on purpose. Qt has no signal for tray
+ * availability, and a host may well register after we came up; by the time
+ * someone closes the window it is long there, so this avoids a false alarm.
+ */
+void MainWindow::warnIfNoSystemTray()
+{
+    if(QSystemTrayIcon::isSystemTrayAvailable())
+        return;
+
+    tiConfMain main_settings;
+    if(main_settings.getValue("gui/notray_hint_shown", false).toBool())
+        return;
+
+    main_settings.setValue("gui/notray_hint_shown", true);
+    main_settings.sync();
+
+    qWarning() << "no system tray available -- the window was hidden with no icon to bring it back";
+
+    // Not modal: the application carries on, and the VPN with it.
+    auto *box = new QMessageBox(QMessageBox::Information,
+                                tr("System tray"),
+                                tr("No system tray was found, so openfortiGUI has no tray icon.\n\n"
+                                   "It keeps running in the background and your VPN stays connected."
+                                   " Start openfortiGUI again to get this window back.\n\n"
+                                   "On GNOME a tray icon needs the AppIndicator extension."),
+                                QMessageBox::Ok, nullptr);
+    box->setAttribute(Qt::WA_DeleteOnClose);
+    box->show();
 }
 
 void MainWindow::onActionAbout()
@@ -1500,12 +1593,17 @@ void MainWindow::onVPNSettings()
 
 void MainWindow::onSetupWizard()
 {
+    // Also reached from the constructor via a queued call, and with
+    // start_minimized set the main window is never shown at all -- the dialog
+    // would be window-modal against a parent that has no surface.
+    showBeforeChildDialog();
+
     setupWizard *f = new setupWizard(nullptr);
     auto *prefWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Setup wizard"));
 
     prefWindow->show();
     prefWindow->raise();
-    QApplication::setActiveWindow(prefWindow);
+    prefWindow->activateWindow();
 }
 
 void MainWindow::onActionLogs()
@@ -1515,13 +1613,17 @@ void MainWindow::onActionLogs()
 
 void MainWindow::onChangelog()
 {
+    // Queued from the constructor after an upgrade; same unmapped-parent problem
+    // as the setup wizard when start_minimized is set.
+    showBeforeChildDialog();
+
     vpnChangelog *f = new vpnChangelog(nullptr);
     auto *changeWindow = openToolWindow(this, f, windowTitle() + QObject::tr(" - Changelog"));
     f->initAfter();
 
     changeWindow->show();
     changeWindow->raise();
-    QApplication::setActiveWindow(changeWindow);
+    changeWindow->activateWindow();
 }
 
 void MainWindow::onWatcherVpnProfilesChanged([[maybe_unused]] const QString &path)

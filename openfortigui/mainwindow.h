@@ -127,6 +127,9 @@ private:
 
     QStandardItem *getVpnProfileItem(const QString &vpnname, int column);
 
+    void warnIfNoSystemTray();
+    void showBeforeChildDialog();
+
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 };

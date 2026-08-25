@@ -242,6 +242,22 @@ gui_double_click() {
     sleep 1.5
 }
 
+# gui_close_window <id> -- close a window the way a user would
+#
+# Alt+F4 through the window manager, which is what produces a real
+# WM_DELETE_WINDOW and thus a QEvent::Close for MainWindow::eventFilter().
+#
+# Deliberately not "xdotool windowclose": that one destroys the X window without
+# asking the client ("will destroy the window, but will not try to kill the
+# client"), so Qt never sees a close event and the handler under test never runs.
+# wmctrl -c would send the right message but is not among the tools the GUI tests
+# require. gui_app_stop() is no substitute either -- it kills the process.
+gui_close_window() {
+    gui_activate "$1"
+    xd key --clearmodifiers alt+F4
+    sleep 1.5
+}
+
 # gui_screenshot <name> -- raw X dump into the case output, for failures
 gui_screenshot() {
     have xwd || return 0
