@@ -75,6 +75,10 @@ tiConfMain::tiConfMain()
     if(!QFile(tiConfMain::formatPath(tiConfMain::main_config)).exists())
     {
         qCritical() << QString("tiConfMain::tiConfMain() -> Main configuration file <").append(tiConfMain::main_config).append("> not found, please fix this...");
+        // Hand logging back to Qt before leaving: exit() does not unwind the
+        // QApplication, so the log handler would keep constructing QSettings
+        // while Qt tears its static state down, and crash on the way out.
+        qInstallMessageHandler(nullptr);
         exit(EXIT_FAILURE);
     }
 

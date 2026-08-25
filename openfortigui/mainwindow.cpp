@@ -791,10 +791,7 @@ void MainWindow::onClientVPNStatusChanged(QString vpnname, vpnClientConnection::
 
     refreshVpnGroupList();
 
-    if(vpnmanager->isSomeClientConnected())
-        tray->setIcon(QIcon(":/img/app-enc.png"));
-    else
-        tray->setIcon(QIcon(":/img/app.png"));
+    updateTrayIcon(vpnmanager->isSomeClientConnected());
 
     if(isHidden() && !main_settings.getValue("gui/disable_notifications", false).toBool())
     {
@@ -1210,7 +1207,6 @@ void MainWindow::refreshVpnProfileList()
     QString filter = ui->leSearch->text();
     trayItems.clear();
     QList<vpnProfile*> vpns = vpnss.getVpnProfiles();
-    bool isVPNConnected = false;
     for(int i=0; i < vpns.count(); i++)
     {
         vpnProfile *vpn = vpns.at(i);
@@ -1231,7 +1227,6 @@ void MainWindow::refreshVpnProfileList()
             case vpnClientConnection::STATUS_CONNECTED:
                 status = QIcon(":/img/connected.png");
                 item4 = new QStandardItem(status, tr("Connected"));
-                isVPNConnected = true;
                 break;
             case vpnClientConnection::STATUS_CONNECTING:
                 status = QIcon(":/img/connecting.png");
@@ -1294,18 +1289,19 @@ void MainWindow::refreshVpnProfileList()
         case vpnProfile::Origin_BOTH:
             break;
         }
-        // Update tray
-        if(isVPNConnected)
-            tray->setIcon(QIcon(":/img/app-enc.png"));
-        else
-            tray->setIcon(QIcon(":/img/app.png"));
-
         // Menu
         QAction *action = new QAction(status, vpn->name, tray_menu);
         connect(action, SIGNAL(triggered(bool)), signalMapper, SLOT(map()));
         signalMapper->setMapping(action, vpn->name);
         trayItems[vpn->name] = action;
     }
+
+    /*
+     * Once, and from the authoritative source. A loop-local flag was wrong here:
+     * the search filter `continue`s before the status check, so filtering the
+     * list while a tunnel was up made the icon claim "disconnected".
+     */
+    updateTrayIcon(vpnmanager->isSomeClientConnected());
 
     for (auto it = trayItems.cbegin(); it != trayItems.cend(); ++it)
     {
@@ -1515,6 +1511,28 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
     }
 
     return false;
+}
+
+/*
+ * The tray icon, published only when it actually changes.
+ *
+ * This used to sit inside the per-profile loop of refreshVpnProfileList(), so one
+ * refresh set the icon once per profile -- and every set is a NewIcon signal to
+ * the StatusNotifierItem host, which rebuilds its icon for each one. While the
+ * refresh loop of #210 was running that measured ~190 signals per second on a
+ * three-profile config; GNOME Shell's appindicator extension leaks a Clutter
+ * actor per signal and eventually ran out of memory and crashed the session.
+ *
+ * The loop is gone, but re-publishing an unchanged icon is still pointless
+ * traffic to another process, so remember what was last set.
+ */
+void MainWindow::updateTrayIcon(bool someConnected)
+{
+    if(trayIconConnected == someConnected)
+        return;
+
+    trayIconConnected = someConnected;
+    tray->setIcon(QIcon(someConnected ? ":/img/app-enc.png" : ":/img/app.png"));
 }
 
 /*

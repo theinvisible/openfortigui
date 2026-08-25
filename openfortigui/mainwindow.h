@@ -129,6 +129,11 @@ private:
 
     void warnIfNoSystemTray();
     void showBeforeChildDialog();
+    void updateTrayIcon(bool someConnected);
+
+    // What the tray icon currently shows. The constructor publishes the
+    // disconnected icon, so false is the truth at startup.
+    bool trayIconConnected = false;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);

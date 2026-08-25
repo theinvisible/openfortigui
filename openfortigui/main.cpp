@@ -98,6 +98,25 @@ void logMessageOutput(QtMsgType type, const QMessageLogContext &, const QString 
 }
 
 /*
+ * exit(), but without taking the logging handler down with us.
+ *
+ * exit() runs Qt's static destructors, and Qt emits warnings while it does. The
+ * QApplication lives on main()'s stack and exit() never unwinds it, so the
+ * QCoreApplication::instance() guard in logMessageOutput() still thinks it is
+ * safe -- while QSettings' static state is already gone. Constructing the
+ * tiConfMain in the handler then segfaults, right after the process had already
+ * done its job. That is what a second invocation did on every run, and it is
+ * why "openfortigui is already running" left a crash dump behind.
+ *
+ * Handing logging back to Qt first costs one line and removes the whole class.
+ */
+[[noreturn]] static void leaveApplication(int code)
+{
+    qInstallMessageHandler(nullptr);
+    exit(code);
+}
+
+/*
  * Hand the running GUI a "show your window" request. Returns true when there was
  * one to talk to, which is also the answer to "is an instance already running".
  *
@@ -311,7 +330,7 @@ int main(int argc, char *argv[])
         // A second invocation is how the user asks the running instance for its
         // window back -- the only way there is when the session has no tray.
         if(askRunningInstanceToShowMainWindow())
-            exit(0);
+            leaveApplication(0);
 
         /*
          * The one-time configuration migration, explicitly and exactly once.
