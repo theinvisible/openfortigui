@@ -31,6 +31,11 @@ LAB_GUI_XVFB_PID=""
 LAB_GUI_WM_PID=""
 LAB_GUI_APP_PID=""
 
+# Extra environment for the application, in the style of CLIENT_EXTRA_ENV. The
+# environment is otherwise wiped (see gui_app_start), so a case that needs a
+# session bus has to hand it in here.
+GUI_EXTRA_ENV=()
+
 # --------------------------------------------------------------------------
 # Requirements
 # --------------------------------------------------------------------------
@@ -111,6 +116,10 @@ xwi() { gui_env xwininfo "$@"; }
 # LAB_GUI_PATH sets the PATH the GUI passes on to its child processes. It is what
 # decides which sudo QProcess::start("sudo", ...) finds, so a case can put its own
 # one in front (cases/90_gui.sh part f).
+#
+# GUI_EXTRA_ENV adds to the stripped environment -- the one way to give the
+# application a session bus, which cases/95_trayicon.sh needs and everything else
+# deliberately does without.
 gui_app_start() {
     local bin; bin="$(client_require_bin)"
 
@@ -120,6 +129,7 @@ gui_app_start() {
         HOME="$LAB_CLIENT_HOME" \
         "DISPLAY=$LAB_GUI_DISPLAY" \
         QT_QPA_PLATFORM=xcb \
+        "${GUI_EXTRA_ENV[@]}" \
         "$bin" --main-config "$LAB_MAIN_CONF" --api-socket "$LAB_API_SOCK" "$@" \
         >"$CASE_OUT_DIR/gui-stdout.log" 2>&1 &
     LAB_GUI_APP_PID=$!
@@ -312,4 +322,118 @@ gui_open_add_menu() {
         gui_key Escape
     done
     return 1
+}
+
+# --------------------------------------------------------------------------
+# A session bus with a StatusNotifierItem host
+# --------------------------------------------------------------------------
+#
+# Only cases/95_trayicon.sh wants this. Everything else runs without a session
+# bus on purpose, which is what makes the "no tray at all" case testable.
+
+LAB_GUI_DBUS_PID=""
+LAB_GUI_SNI_PID=""
+LAB_GUI_SNI_LOG=""
+
+# gui_start_session_bus
+#
+# Starts a private session bus plus the watcher stub, exports
+# DBUS_SESSION_BUS_ADDRESS and appends it to GUI_EXTRA_ENV so the application
+# picks the D-Bus tray backend. Sets LAB_GUI_SNI_LOG to the icon log.
+gui_start_session_bus() {
+    have dbus-daemon || die "dbus-daemon is missing: sudo apt install dbus"
+    have gdbus       || die "gdbus is missing: sudo apt install libglib2.0-bin"
+    python3 -c 'import dbus, gi' 2>/dev/null \
+        || die "the tray case needs python3-dbus and python3-gi:
+    sudo apt install python3-dbus python3-gi"
+
+    local addrfile="$CASE_OUT_DIR/dbus-address" pidfile="$CASE_OUT_DIR/dbus-pid"
+    dbus-daemon --session --fork --print-address=3 --print-pid=4 \
+        3>"$addrfile" 4>"$pidfile" \
+        || die "could not start a private session bus"
+
+    LAB_GUI_DBUS_PID="$(cat "$pidfile")"
+    DBUS_SESSION_BUS_ADDRESS="$(cat "$addrfile")"
+    export DBUS_SESSION_BUS_ADDRESS
+    [[ -n "$DBUS_SESSION_BUS_ADDRESS" ]] || die "the session bus printed no address"
+
+    LAB_GUI_SNI_LOG="$CASE_OUT_DIR/sni-icons.log"
+    : >"$LAB_GUI_SNI_LOG"
+    python3 "$LAB_SRC_DIR/sni_host.py" "$LAB_GUI_SNI_LOG" \
+        >"$CASE_OUT_DIR/sni-host.log" 2>&1 &
+    LAB_GUI_SNI_PID=$!
+
+    local waited=0
+    until gdbus call --session --dest org.freedesktop.DBus \
+                     --object-path /org/freedesktop/DBus \
+                     --method org.freedesktop.DBus.NameHasOwner \
+                     org.kde.StatusNotifierWatcher 2>/dev/null | grep -q true; do
+        (( waited >= 20 )) && die "the StatusNotifierWatcher stub did not appear:
+$(cat "$CASE_OUT_DIR/sni-host.log" 2>/dev/null)"
+        sleep 0.5
+        waited=$(( waited + 1 ))
+    done
+
+    GUI_EXTRA_ENV+=("DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS")
+    info "private session bus (pid $LAB_GUI_DBUS_PID) with a StatusNotifierItem host"
+}
+
+gui_stop_session_bus() {
+    [[ -n "$LAB_GUI_SNI_PID"  ]] && kill "$LAB_GUI_SNI_PID"  2>/dev/null
+    [[ -n "$LAB_GUI_DBUS_PID" ]] && kill "$LAB_GUI_DBUS_PID" 2>/dev/null
+    LAB_GUI_SNI_PID=""; LAB_GUI_DBUS_PID=""
+    unset DBUS_SESSION_BUS_ADDRESS
+}
+
+# --------------------------------------------------------------------------
+# Reading the icon log
+# --------------------------------------------------------------------------
+
+# sni_icon_count -- how many icon states have been observed so far
+sni_icon_count() { grep -c . "$LAB_GUI_SNI_LOG" 2>/dev/null || true; }
+
+# sni_icon_sha [n] -- the sha of the n-th line (default: the last one)
+sni_icon_sha() {
+    local line
+    if [[ -n "${1:-}" ]]; then
+        line="$(sed -n "${1}p" "$LAB_GUI_SNI_LOG" 2>/dev/null)"
+    else
+        line="$(tail -n 1 "$LAB_GUI_SNI_LOG" 2>/dev/null)"
+    fi
+    [[ -n "$line" ]] || return 1
+    printf '%s' "$line" | sed -n 's/.*sha=\([0-9a-f]*\).*/\1/p'
+}
+
+# sni_wait_icons <count> [timeout] -- wait until at least <count> states are logged
+sni_wait_icons() {
+    local want="$1" timeout="${2:-15}" waited=0
+    while (( $(sni_icon_count) < want )); do
+        (( waited >= timeout * 2 )) && return 1
+        sleep 0.5
+        waited=$(( waited + 1 ))
+    done
+    return 0
+}
+
+# sni_item_service -- the bus name of the registered StatusNotifierItem
+sni_item_service() {
+    [[ -f "$LAB_GUI_SNI_LOG.item" ]] || return 1
+    cut -d' ' -f1 "$LAB_GUI_SNI_LOG.item"
+}
+
+# sni_menu_labels -- the labels of the exported tray menu, one per line
+#
+# Qt puts the tray menu on /MenuBar and speaks com.canonical.dbusmenu. Reading it
+# is the only way from outside to see which profiles the menu actually holds,
+# which is what makes the search filter observable at all.
+sni_menu_labels() {
+    local service; service="$(sni_item_service)" || return 1
+    # Depth 3 rather than -1: gdbus would read a bare "-1" as an option, and three
+    # levels are more than the menu has. The property filter is passed but Qt
+    # ignores it and answers with everything, icon data included -- which is why
+    # this greps rather than parses.
+    gdbus call --session --dest "$service" --object-path /MenuBar \
+        --method com.canonical.dbusmenu.GetLayout 0 3 "['label']" 2>/dev/null \
+        | grep -o "'label': <'[^']*'>" \
+        | sed "s/^'label': <'//; s/'>$//"
 }

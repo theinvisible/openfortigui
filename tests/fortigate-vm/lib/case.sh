@@ -53,6 +53,7 @@ case_setup() {
 case_teardown() {
     local rc=$?
     gui_stop_display 2>/dev/null || true
+    gui_stop_session_bus 2>/dev/null || true
     client_cleanup_all
     # Keep the application log for troubleshooting
     if as_root test -f "$CLIENT_APP_LOG"; then

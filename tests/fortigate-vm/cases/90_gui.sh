@@ -40,6 +40,15 @@ client_require_bin >/dev/null
 # A GUI of our own would attach to a foreign socket, and a leftover VPN child
 # would make isRunningAlready() (main.cpp) believe an instance is up.
 client_cleanup_all
+
+# The application log has to belong to the user the GUI runs as. Every case
+# before this one starts the client through sudo, so root creates the file 0644
+# root:root -- and then the GUI, running as the developer, cannot append a single
+# line to it. Nothing fails loudly when that happens: the log simply stays empty
+# of anything the GUI said, and every assertion below that reads it degrades to a
+# skip. That is how part c2 came to be skipped in a full-suite run while passing
+# on its own. case_setup does the same thing for the cases that call it.
+as_root rm -f "$CLIENT_APP_LOG" 2>/dev/null || true
 if pgrep -f 'bin/openfortigui$' >/dev/null 2>&1; then
     skip "GUI tests" "another openfortiGUI instance is running -- please close it"
     case_finish
@@ -403,7 +412,12 @@ else
 fi
 
 # Leave a running instance behind: the parts below talk to it over the api socket.
+# The configuration is restored here rather than inside the branch above, so that
+# a skip cannot leave start_minimized=true behind for the next case -- with a
+# tray present that setting hides the main window, which is correct behaviour and
+# a very confusing way for an unrelated case to fail.
 gui_app_stop
+sed -i 's/^start_minimized=.*/start_minimized=false/' "$LAB_MAIN_CONF"
 sed -i '/^notray_hint_shown=/d' "$LAB_MAIN_CONF"
 gui_app_start
 MAIN="$(gui_win '^OpenFortiGUI$')" || fail "main window did not come back for the remaining parts"
